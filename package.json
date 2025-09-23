@@ -7,6 +7,7 @@
     "db:push": "supabase db push",
     "functions:deploy": "supabase functions deploy",
     "functions:serve": "supabase functions serve",
+    "test": "jest",
     "status": "supabase status",
     "deploy:all": "./deploy.sh",
     "test:rpc": "node ./scripts/test_rpc.js"
@@ -15,6 +16,14 @@
     "@supabase/supabase-js": "^2.0.0"
   },
   "devDependencies": {
-    "supabase": "^1.0.0"
+    "supabase": "^1.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/__tests__/**/*.test.ts"]
   }
 }
