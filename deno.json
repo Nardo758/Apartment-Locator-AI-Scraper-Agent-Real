@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "lib": ["deno.ns", "deno.window"],
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    },
+    "tasks": {
+        "scrape": {
+            "script": "src/main.ts",
+            "args": [],
+            "type": "run"
+        }
+    },
+    "importMap": "./import_map.json"
+}

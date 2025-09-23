@@ -1,0 +1,15 @@
+name: Weekly Apartment Scraping
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Sundays at 2 AM
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Scraping
+        run: |
+          curl -X POST ${{ secrets.SUPABASE_URL }}/functions/v1/scraper-orchestrator \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"action": "start_weekly_scraping"}'

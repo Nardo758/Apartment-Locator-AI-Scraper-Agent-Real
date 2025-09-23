@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  supabase:
+    image: supabase/supabase:latest
+    ports:
+      - "5432:5432"

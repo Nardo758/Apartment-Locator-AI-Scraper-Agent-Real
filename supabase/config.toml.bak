@@ -1,0 +1,6 @@
+## Backup of original config.toml created by the assistant
+# Original contents:
+# [postgres]
+# port = 54322
+# user = "postgres"
+# password = "your-local-password"

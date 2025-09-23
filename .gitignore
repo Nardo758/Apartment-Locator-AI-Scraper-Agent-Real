@@ -1,0 +1,18 @@
+# Supabase
+.supabase/
+.env
+.env.local
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+
+# Optional: lockfiles
+package-lock.json

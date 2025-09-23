@@ -1,0 +1,16 @@
+name: Deploy to Supabase
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+      - name: Push DB
+        run: supabase db push
+      - name: Deploy Functions
+        run: supabase functions deploy --no-verify-jwt --all

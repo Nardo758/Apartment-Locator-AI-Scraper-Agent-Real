@@ -1,0 +1,20 @@
+{
+  "name": "apartment-scraper",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "supabase start",
+    "db:push": "supabase db push",
+    "functions:deploy": "supabase functions deploy",
+    "functions:serve": "supabase functions serve",
+    "status": "supabase status",
+    "deploy:all": "./deploy.sh",
+    "test:rpc": "node ./scripts/test_rpc.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "supabase": "^1.0.0"
+  }
+}

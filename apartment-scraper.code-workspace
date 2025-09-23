@@ -1,0 +1,47 @@
+{
+    "folders": [
+        {
+            "name": "Apartment Scraper",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "deno.enable": true,
+    "deno.unstable": ["unstable"],
+        "deno.importMap": "./supabase/functions/import_map.json",
+        "typescript.preferences.includePackageJsonAutoImports": "auto",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit"
+        },
+        "files.associations": {
+            "*.sql": "postgresql"
+        },
+        "[typescript]": {
+            "editor.defaultFormatter": "denoland.vscode-deno"
+        },
+        "[json]": {
+            "editor.defaultFormatter": "vscode.json-language-features"
+        },
+        "[sql]": {
+            "editor.defaultFormatter": "mtxr.sqltools"
+        },
+        "supabase.publicUrl": "https://your-project-ref.supabase.co",
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/.supabase": true
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "denoland.vscode-deno",
+            "Supabase.vscode-supabase-extension",
+            "ms-azuretools.vscode-docker",
+            "bradlc.vscode-tailwindcss",
+            "ms-vscode.vscode-json",
+            "esbenp.prettier-vscode",
+            "mtxr.sqltools",
+            "mtxr.sqltools-driver-pg"
+        ]
+    }
+}
