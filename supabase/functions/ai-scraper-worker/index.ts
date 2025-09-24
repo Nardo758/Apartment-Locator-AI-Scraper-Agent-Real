@@ -1,6 +1,7 @@
 // ai-scraper-worker/index.ts
 import { serve } from "std/http/server.ts";
 import { recommendedConfig } from "../openai_config.ts";
+import { createClient } from '@supabase/supabase-js';
 // Validate AI-extracted fields
 function validateAiResult(result: Record<string, unknown>): boolean {
   const requiredFields = ["name", "address", "city", "state", "current_price"];
@@ -82,7 +83,10 @@ serve(async (req: Request) => {
       body: JSON.stringify(openaiBody),
     });
 
-    const aiResponse = await resp.json();
+  const aiResponse = await resp.json();
+  // OpenAI usage object typically appears here: { prompt_tokens, completion_tokens, total_tokens }
+  type OpenAIUsage = { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+  const usage = ((aiResponse as unknown) as { usage?: OpenAIUsage })?.usage ?? null;
     const respAny = aiResponse as unknown as { choices?: Array<Record<string, unknown>> };
     const firstChoice = respAny.choices?.[0] ?? null;
     let content: unknown = "";
@@ -114,6 +118,54 @@ serve(async (req: Request) => {
         status: 422,
         headers: { "content-type": "application/json" },
       });
+    }
+
+    // If we have usage information, estimate cost and record it to the DB (daily aggregate)
+    try {
+      if (usage && typeof usage === 'object') {
+        const promptTokens = Number((usage as Record<string, unknown>)['prompt_tokens'] ?? 0);
+        const completionTokens = Number((usage as Record<string, unknown>)['completion_tokens'] ?? 0);
+        const totalTokens = Number((usage as Record<string, unknown>)['total_tokens'] ?? (promptTokens + completionTokens));
+
+        // Simple per-1k-token pricing table (estimates). Adjust to actual rates as needed.
+        const MODEL_PRICING: Record<string, { prompt: number; completion: number }> = {
+          'gpt-3.5-turbo': { prompt: 0.0015, completion: 0.002 },
+          'gpt-3.5-turbo-16k': { prompt: 0.0015, completion: 0.002 },
+          'gpt-4-turbo-preview': { prompt: 0.03, completion: 0.06 },
+        };
+
+        const modelKey = String(completionParams.model ?? recommendedConfig.model ?? 'gpt-3.5-turbo');
+        const pricing = MODEL_PRICING[modelKey] ?? { prompt: 0.0015, completion: 0.002 };
+        const estimatedCost = ((promptTokens * pricing.prompt) + (completionTokens * pricing.completion)) / 1000;
+
+        // Try to write daily aggregate to scraping_costs. If Supabase env not set, skip silently.
+        const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
+        const SUPABASE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_ANON_KEY') || '';
+        if (SUPABASE_URL && SUPABASE_KEY) {
+          try {
+            const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+            const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+            await sb.rpc('rpc_inc_scraping_costs', {
+              p_date: today,
+              p_properties_scraped: 1,
+              p_ai_requests: 1,
+              p_tokens_used: totalTokens,
+              p_estimated_cost: Number(estimatedCost.toFixed(6)),
+              p_details: { model: modelKey, prompt_tokens: promptTokens, completion_tokens: completionTokens },
+            });
+          } catch (e) {
+            console.error('Failed to record scraping cost via RPC:', e);
+          }
+        }
+
+        // Return the result including usage/cost metadata for easier debugging
+        return new Response(JSON.stringify({ status: "ok", data: result, usage: { prompt_tokens: promptTokens, completion_tokens: completionTokens, total_tokens: totalTokens, estimated_cost: Number(estimatedCost.toFixed(6)), model: modelKey } }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }
+    } catch (e) {
+      console.error('Error while processing usage info:', e);
     }
 
     return new Response(JSON.stringify({ status: "ok", data: result }), {

@@ -18,17 +18,27 @@ DO $do$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'price_history_record_change') THEN
     CREATE OR REPLACE FUNCTION public.price_history_record_change()
-    RETURNS trigger
+    RETURNS TRIGGER
     LANGUAGE plpgsql
     AS $$
     BEGIN
       IF TG_OP = 'INSERT' THEN
-        INSERT INTO public.price_history (external_id, price, change_type) VALUES (NEW.external_id, NEW.current_price, 'scraped');
+        INSERT INTO public.price_history (external_id, price, change_type)
+        VALUES (NEW.external_id, NEW.current_price, 'initial');
         RETURN NEW;
       ELSIF TG_OP = 'UPDATE' THEN
         IF NEW.current_price IS DISTINCT FROM OLD.current_price THEN
           INSERT INTO public.price_history (external_id, price, change_type)
-          VALUES (NEW.external_id, NEW.current_price, CASE WHEN NEW.current_price > OLD.current_price THEN 'increased' ELSE 'decreased' END);
+          VALUES (
+            NEW.external_id,
+            NEW.current_price,
+            CASE
+              WHEN OLD.current_price IS NULL THEN 'initial'
+              WHEN NEW.current_price > OLD.current_price THEN 'increased'
+              WHEN NEW.current_price < OLD.current_price THEN 'decreased'
+              ELSE 'unchanged'
+            END
+          );
         END IF;
         RETURN NEW;
       END IF;
@@ -38,17 +48,27 @@ BEGIN
   ELSE
     -- Replace to ensure definition is up-to-date
     CREATE OR REPLACE FUNCTION public.price_history_record_change()
-    RETURNS trigger
+    RETURNS TRIGGER
     LANGUAGE plpgsql
     AS $$
     BEGIN
       IF TG_OP = 'INSERT' THEN
-        INSERT INTO public.price_history (external_id, price, change_type) VALUES (NEW.external_id, NEW.current_price, 'scraped');
+        INSERT INTO public.price_history (external_id, price, change_type)
+        VALUES (NEW.external_id, NEW.current_price, 'initial');
         RETURN NEW;
       ELSIF TG_OP = 'UPDATE' THEN
         IF NEW.current_price IS DISTINCT FROM OLD.current_price THEN
           INSERT INTO public.price_history (external_id, price, change_type)
-          VALUES (NEW.external_id, NEW.current_price, CASE WHEN NEW.current_price > OLD.current_price THEN 'increased' ELSE 'decreased' END);
+          VALUES (
+            NEW.external_id,
+            NEW.current_price,
+            CASE
+              WHEN OLD.current_price IS NULL THEN 'initial'
+              WHEN NEW.current_price > OLD.current_price THEN 'increased'
+              WHEN NEW.current_price < OLD.current_price THEN 'decreased'
+              ELSE 'unchanged'
+            END
+          );
         END IF;
         RETURN NEW;
       END IF;

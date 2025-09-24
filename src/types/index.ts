@@ -17,3 +17,5 @@ export interface ScraperOptions {
         bathrooms?: number;
     };
 }
+
+export type { Apartment } from './apartment'

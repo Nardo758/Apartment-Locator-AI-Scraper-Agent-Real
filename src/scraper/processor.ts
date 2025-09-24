@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ScrapingJob } from './orchestrator';
 import process from 'node:process';
 
+
 type WorkerResult = {
   success: boolean;
   external_id?: string;
@@ -60,6 +61,31 @@ export async function processBatchWithCostOptimization(supabase: SupabaseClient,
         p_duration: duration,
         p_price_changed: workerResult.price_changed === true,
       });
+
+      // If worker returned usage metadata, record it
+      try {
+  type UsageShape = { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; estimated_cost?: number; model?: string };
+        const usage = ((workerResult as unknown) as { usage?: UsageShape })?.usage ?? null;
+        if (usage && typeof usage === 'object') {
+          const prompt = Number(usage.prompt_tokens ?? 0);
+          const completion = Number(usage.completion_tokens ?? 0);
+          const model = String(usage.model ?? (chosenModelKey ?? 'gpt-3.5-turbo'));
+          const estimateModule = await import('./costs');
+          const estimateCostFromTokens = estimateModule.estimateCostFromTokens as (modelKey: string, promptTokens: number, completionTokens: number) => number;
+          const estimated = Number(usage.estimated_cost ?? estimateCostFromTokens(model, prompt, completion));
+          const today = new Date().toISOString().slice(0, 10);
+          await supabase.rpc('rpc_inc_scraping_costs', {
+            p_date: today,
+            p_properties_scraped: 1,
+            p_ai_requests: 1,
+            p_tokens_used: prompt + completion,
+            p_estimated_cost: estimated,
+            p_details: { model, prompt_tokens: prompt, completion_tokens: completion },
+          });
+        }
+      } catch (e) {
+        console.error('Failed to record scraping cost in processor:', e);
+      }
 
       const newStatus = workerResult.success ? 'completed' : 'failed';
       await supabase.from('scraping_queue').update({ status: newStatus, completed_at: new Date().toISOString() }).eq('external_id', job.external_id).eq('id', job.queue_id);

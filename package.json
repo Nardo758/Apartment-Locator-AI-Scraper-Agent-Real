@@ -13,17 +13,23 @@
     "test:rpc": "node ./scripts/test_rpc.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.0.0"
+    "@supabase/supabase-js": "^2.0.0",
+    "@types/node": "^24.5.2",
+    "node-geocoder": "^4.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   },
   "devDependencies": {
-    "supabase": "^1.0.0",
+    "@types/jest": "^29.0.0",
     "jest": "^29.0.0",
-    "ts-jest": "^29.0.0",
-    "@types/jest": "^29.0.0"
+    "supabase": "^1.0.0",
+    "ts-jest": "^29.0.0"
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testMatch": ["**/__tests__/**/*.test.ts"]
+    "testMatch": [
+      "**/__tests__/**/*.test.ts"
+    ]
   }
 }
