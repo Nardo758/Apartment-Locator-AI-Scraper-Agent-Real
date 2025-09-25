@@ -1,0 +1,175 @@
+{
+  "timestamp": "2025-09-25T08:35:20.000Z",
+  "migration": "20250925083520_add_location_fields_to_scraped_properties",
+  "status": "post-migration-template",
+  "description": "Expected verification output after successful migration",
+  "expected_schema_changes": {
+    "new_columns": [
+      {
+        "column_name": "latitude", 
+        "data_type": "numeric",
+        "is_nullable": "YES",
+        "numeric_precision": 10,
+        "numeric_scale": 8,
+        "column_comment": "Property latitude for mapping and distance calculations (-90 to 90)"
+      },
+      {
+        "column_name": "longitude",
+        "data_type": "numeric", 
+        "is_nullable": "YES",
+        "numeric_precision": 11,
+        "numeric_scale": 8,
+        "column_comment": "Property longitude for mapping and distance calculations (-180 to 180)"
+      },
+      {
+        "column_name": "zip_code",
+        "data_type": "character varying",
+        "is_nullable": "YES", 
+        "character_maximum_length": 10,
+        "column_comment": "Property ZIP/postal code extracted from address or geocoding"
+      }
+    ]
+  },
+  "expected_indexes": [
+    {
+      "indexname": "idx_scraped_properties_location",
+      "indexdef": "CREATE INDEX idx_scraped_properties_location ON public.scraped_properties USING btree (latitude, longitude) WHERE ((latitude IS NOT NULL) AND (longitude IS NOT NULL))"
+    },
+    {
+      "indexname": "idx_scraped_properties_zip_code", 
+      "indexdef": "CREATE INDEX idx_scraped_properties_zip_code ON public.scraped_properties USING btree (zip_code) WHERE (zip_code IS NOT NULL)"
+    }
+  ],
+  "expected_constraints": [
+    {
+      "constraint_name": "check_latitude_range",
+      "constraint_type": "CHECK",
+      "check_clause": "((latitude IS NULL) OR ((latitude >= (-90)) AND (latitude <= 90)))"
+    },
+    {
+      "constraint_name": "check_longitude_range", 
+      "constraint_type": "CHECK",
+      "check_clause": "((longitude IS NULL) OR ((longitude >= (-180)) AND (longitude <= 180)))"
+    }
+  ],
+  "validation_queries": {
+    "column_existence": "SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = 'scraped_properties' AND column_name IN ('latitude', 'longitude', 'zip_code')",
+    "index_existence": "SELECT indexname FROM pg_indexes WHERE tablename = 'scraped_properties' AND indexname LIKE '%location%' OR indexname LIKE '%zip_code%'",
+    "constraint_existence": "SELECT constraint_name FROM information_schema.check_constraints WHERE constraint_name IN ('check_latitude_range', 'check_longitude_range')",
+    "data_selectability": "SELECT id, latitude, longitude, zip_code FROM scraped_properties LIMIT 1",
+    "coordinate_validation": "SELECT COUNT(*) as invalid_coords FROM scraped_properties WHERE latitude < -90 OR latitude > 90 OR longitude < -180 OR longitude > 180"
+  },
+  "expected_behavior": {
+    "new_inserts": {
+      "description": "New property inserts should accept NULL values for location fields",
+      "test_query": "INSERT INTO scraped_properties (property_id, unit_number, source, name, address, city, state, current_price, bedrooms, bathrooms, listing_url) VALUES ('TEST123', '1A', 'test', 'Test Property', '123 Test St', 'Test City', 'TX', 1200, 1, 1.0, 'http://test.com') RETURNING id, latitude, longitude, zip_code"
+    },
+    "location_updates": {
+      "description": "Should be able to update properties with valid coordinates",
+      "test_query": "UPDATE scraped_properties SET latitude = 40.7128, longitude = -74.0060, zip_code = '10001' WHERE id = (SELECT id FROM scraped_properties LIMIT 1) RETURNING latitude, longitude, zip_code"
+    },
+    "constraint_violations": {
+      "description": "Invalid coordinates should be rejected by constraints",
+      "test_cases": [
+        {
+          "case": "Invalid latitude (>90)",
+          "query": "UPDATE scraped_properties SET latitude = 91.0 WHERE id = (SELECT id FROM scraped_properties LIMIT 1)",
+          "expected_result": "CHECK constraint violation"
+        },
+        {
+          "case": "Invalid longitude (<-180)",
+          "query": "UPDATE scraped_properties SET longitude = -181.0 WHERE id = (SELECT id FROM scraped_properties LIMIT 1)", 
+          "expected_result": "CHECK constraint violation"
+        }
+      ]
+    }
+  },
+  "migration_verification_steps": [
+    "1. Verify all new columns exist with correct data types",
+    "2. Confirm indexes were created and are active", 
+    "3. Validate constraints are enforced",
+    "4. Test data insertion and updates work correctly",
+    "5. Confirm existing data and functionality is unaffected",
+    "6. Verify geocoding scripts can access new columns"
+  ],
+  "success_criteria": {
+    "schema": "All 3 new columns (latitude, longitude, zip_code) exist with correct types and constraints",
+    "indexes": "2 new indexes created for location-based queries", 
+    "constraints": "2 check constraints active for coordinate validation",
+    "compatibility": "Existing queries and inserts continue to work",
+    "geocoding": "geocode_properties.js script runs without errors"
+  },
+  "rollback_indicators": [
+    "Migration fails to apply completely",
+    "Existing functionality breaks", 
+    "Constraint violations prevent normal operations",
+    "Performance degrades significantly",
+    "Index creation fails"
+  ],
+  "post_migration_tasks": [
+    "Run verification scripts to confirm success",
+    "Execute backfill scripts to populate location data", 
+    "Monitor database performance with new indexes",
+    "Update application code to use location features",
+    "Set up ongoing geocoding for new properties"
+  ],
+  "sample_data_structure": {
+    "before_migration": {
+      "id": 1,
+      "property_id": "PROP123", 
+      "unit_number": "1A",
+      "external_id": "PROP123_1A",
+      "source": "apartments.com",
+      "name": "Test Apartment",
+      "address": "123 Main St", 
+      "city": "New York",
+      "state": "NY",
+      "current_price": 2500,
+      "bedrooms": 2,
+      "bathrooms": 2.0,
+      "square_feet": 1000
+    },
+    "after_migration": {
+      "id": 1,
+      "property_id": "PROP123",
+      "unit_number": "1A", 
+      "external_id": "PROP123_1A",
+      "source": "apartments.com",
+      "name": "Test Apartment",
+      "address": "123 Main St",
+      "city": "New York", 
+      "state": "NY",
+      "current_price": 2500,
+      "bedrooms": 2,
+      "bathrooms": 2.0,
+      "square_feet": 1000,
+      "latitude": null,
+      "longitude": null,
+      "zip_code": null
+    },
+    "after_geocoding": {
+      "id": 1,
+      "property_id": "PROP123",
+      "unit_number": "1A",
+      "external_id": "PROP123_1A", 
+      "source": "apartments.com",
+      "name": "Test Apartment",
+      "address": "123 Main St",
+      "city": "New York",
+      "state": "NY", 
+      "current_price": 2500,
+      "bedrooms": 2,
+      "bathrooms": 2.0,
+      "square_feet": 1000,
+      "latitude": 40.7128,
+      "longitude": -74.0060,
+      "zip_code": "10001"
+    }
+  },
+  "monitoring_queries": {
+    "completion_status": "SELECT COUNT(*) as total, COUNT(latitude) as geocoded, ROUND((COUNT(latitude)::decimal/COUNT(*))*100, 2) as completion_rate FROM scraped_properties",
+    "recent_updates": "SELECT COUNT(*) FROM scraped_properties WHERE updated_at > NOW() - INTERVAL '1 hour' AND (latitude IS NOT NULL OR zip_code IS NOT NULL)",
+    "coordinate_distribution": "SELECT COUNT(*) as count, CASE WHEN latitude IS NOT NULL AND longitude IS NOT NULL THEN 'Both coords' WHEN latitude IS NOT NULL THEN 'Lat only' WHEN longitude IS NOT NULL THEN 'Lng only' ELSE 'No coords' END as status FROM scraped_properties GROUP BY status",
+    "zip_code_stats": "SELECT COUNT(*) as total, COUNT(DISTINCT zip_code) as unique_zips, COUNT(zip_code) as with_zips FROM scraped_properties"
+  }
+}
