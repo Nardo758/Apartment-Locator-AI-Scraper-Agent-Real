@@ -81,6 +81,47 @@ BEGIN
         ALTER TABLE public.apartments ADD COLUMN is_active BOOLEAN DEFAULT true;
     END IF;
     
+    -- Add property_type column if it doesn't exist (add with default, then set NOT NULL)
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'property_type'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN property_type VARCHAR(50) DEFAULT 'apartment';
+    END IF;
+    
+    -- Ensure existing NULL values are filled and column has proper default
+    UPDATE public.apartments SET property_type = 'apartment' WHERE property_type IS NULL;
+    ALTER TABLE public.apartments ALTER COLUMN property_type SET DEFAULT 'apartment';
+    
+    -- Make sure column is NOT NULL
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'property_type'
+        AND is_nullable = 'YES'
+    ) THEN
+        ALTER TABLE public.apartments ALTER COLUMN property_type SET NOT NULL;
+    END IF;
+    
+    -- Add description column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'description'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN description TEXT;
+    END IF;
+    
+    -- Add contact_info column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'contact_info'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN contact_info JSONB DEFAULT '{}';
+    END IF;
+    
     -- Create the unique index if it doesn't exist
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -104,7 +145,8 @@ INSERT INTO public.apartments (
     square_feet,
     amenities,
     is_active,
-    scraped_at
+    scraped_at,
+    property_type
 )
 SELECT 
     sp.external_id,
@@ -118,16 +160,13 @@ SELECT
     sp.square_feet,
     COALESCE(sp.amenities, '[]'::jsonb) AS amenities,
     (sp.status = 'active') AS is_active,
-    sp.scraped_at
+    sp.scraped_at,
+    'apartment' AS property_type
 FROM public.scraped_properties sp
 WHERE sp.external_id IS NOT NULL
 ON CONFLICT (external_id) DO NOTHING;
 
--- Add any missing columns that might be in your frontend schema
-ALTER TABLE public.apartments 
-ADD COLUMN IF NOT EXISTS property_type VARCHAR(50),
-ADD COLUMN IF NOT EXISTS description TEXT,
-ADD COLUMN IF NOT EXISTS contact_info JSONB DEFAULT '{}';
+-- Additional columns are now handled in the column check section above
 
 COMMIT;
 
