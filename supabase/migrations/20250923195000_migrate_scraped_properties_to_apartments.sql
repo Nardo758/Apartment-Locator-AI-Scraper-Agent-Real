@@ -26,10 +26,10 @@ CREATE TABLE IF NOT EXISTS public.apartments (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Ensure external_id column exists and create unique index idempotently
-DO $INDEX$ 
+-- Ensure all required columns exist in apartments table
+DO $COLUMNS$ 
 BEGIN
-    -- First ensure the column exists
+    -- Add external_id column if it doesn't exist
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'apartments' 
@@ -38,7 +38,41 @@ BEGIN
         ALTER TABLE public.apartments ADD COLUMN external_id TEXT;
     END IF;
     
-    -- Then create the index if it doesn't exist
+    -- Add rent_price column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'rent_price'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN rent_price INTEGER;
+    END IF;
+    
+    -- Add other columns that might be missing
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'source'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN source TEXT DEFAULT 'legacy_migration';
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'amenities'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN amenities JSONB DEFAULT '[]';
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'scraped_at'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN scraped_at TIMESTAMP WITH TIME ZONE;
+    END IF;
+    
+    -- Create the unique index if it doesn't exist
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
         WHERE indexname = 'apartments_external_id_key'
@@ -46,7 +80,7 @@ BEGIN
         CREATE UNIQUE INDEX apartments_external_id_key 
         ON public.apartments (external_id);
     END IF;
-END $INDEX$;
+END $COLUMNS$;
 
 -- Migrate data from scraped_properties
 INSERT INTO public.apartments (
