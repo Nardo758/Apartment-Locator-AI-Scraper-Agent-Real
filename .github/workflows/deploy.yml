@@ -23,7 +23,7 @@ jobs:
           supabase link --project-ref $SUPABASE_PROJECT_ID
       
       - name: Push DB
-        run: supabase db push
+        run: supabase db push --include-all
         
       - name: Deploy Functions
         run: supabase functions deploy --no-verify-jwt --all
