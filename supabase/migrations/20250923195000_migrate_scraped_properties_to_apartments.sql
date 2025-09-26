@@ -26,9 +26,19 @@ CREATE TABLE IF NOT EXISTS public.apartments (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create unique index idempotently
-DO $$ 
+-- Ensure external_id column exists and create unique index idempotently
+DO $INDEX$ 
 BEGIN
+    -- First ensure the column exists
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'external_id'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN external_id TEXT;
+    END IF;
+    
+    -- Then create the index if it doesn't exist
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
         WHERE indexname = 'apartments_external_id_key'
@@ -36,7 +46,7 @@ BEGIN
         CREATE UNIQUE INDEX apartments_external_id_key 
         ON public.apartments (external_id);
     END IF;
-END $$;
+END $INDEX$;
 
 -- Migrate data from scraped_properties
 INSERT INTO public.apartments (
