@@ -47,6 +47,15 @@ BEGIN
         ALTER TABLE public.apartments ADD COLUMN rent_price INTEGER;
     END IF;
     
+    -- Add rent_amount column if it doesn't exist (some schemas might expect this)
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'rent_amount'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN rent_amount INTEGER;
+    END IF;
+    
     -- Add other columns that might be missing
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
@@ -140,6 +149,7 @@ INSERT INTO public.apartments (
     city,
     state,
     rent_price,
+    rent_amount,
     bedrooms,
     bathrooms,
     square_feet,
@@ -154,7 +164,8 @@ SELECT
     sp.address,
     sp.city,
     sp.state,
-    sp.current_price AS rent_price,
+    COALESCE(sp.current_price, 0) AS rent_price,
+    COALESCE(sp.current_price, 0) AS rent_amount,
     sp.bedrooms,
     sp.bathrooms,
     sp.square_feet,
@@ -164,6 +175,7 @@ SELECT
     'apartment' AS property_type
 FROM public.scraped_properties sp
 WHERE sp.external_id IS NOT NULL
+  AND sp.current_price IS NOT NULL
 ON CONFLICT (external_id) DO NOTHING;
 
 -- Additional columns are now handled in the column check section above
