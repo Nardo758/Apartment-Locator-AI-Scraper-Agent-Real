@@ -72,6 +72,15 @@ BEGIN
         ALTER TABLE public.apartments ADD COLUMN scraped_at TIMESTAMP WITH TIME ZONE;
     END IF;
     
+    -- Add is_active column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'apartments' 
+        AND column_name = 'is_active'
+    ) THEN
+        ALTER TABLE public.apartments ADD COLUMN is_active BOOLEAN DEFAULT true;
+    END IF;
+    
     -- Create the unique index if it doesn't exist
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
