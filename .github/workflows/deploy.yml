@@ -26,4 +26,4 @@ jobs:
         run: supabase db push --include-all
         
       - name: Deploy Functions
-        run: supabase functions deploy --no-verify-jwt --all
+        run: supabase functions deploy --no-verify-jwt
