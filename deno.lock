@@ -12,5 +12,21 @@
     "https://deno.land/std@0.177.0/async/retry.ts": "5efa3ba450ac0c07a40a82e2df296287b5013755d232049efd7ea2244f15b20f",
     "https://deno.land/std@0.177.0/async/tee.ts": "47e42d35f622650b02234d43803d0383a89eb4387e1b83b5a40106d18ae36757",
     "https://deno.land/std@0.177.0/http/server.ts": "cbb17b594651215ba95c01a395700684e569c165a567e4e04bba327f41197433"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@supabase/supabase-js@^2.58.0",
+        "npm:@types/jest@29",
+        "npm:@types/node@^24.5.2",
+        "npm:csv-parse@^6.1.0",
+        "npm:jest@29",
+        "npm:node-geocoder@^4.4.1",
+        "npm:supabase@1",
+        "npm:ts-jest@29",
+        "npm:ts-node@^10.9.2",
+        "npm:typescript@^5.9.2"
+      ]
+    }
   }
 }

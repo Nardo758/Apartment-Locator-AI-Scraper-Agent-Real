@@ -7,11 +7,33 @@ import * as market from './market';
 import { extractAmenities } from './amenities';
 import { classifyPropertyType } from './propertyType';
 import { computeAiPricing } from '../lib/pricing-engine';
+import { ClaudeService, type PropertyIntelligence } from '../services/claude-service.ts';
 
 export { SCRAPING_STRATEGY };
 export type { ScrapingStrategy, ScrapingTier, CostPriority };
 
 export { getScrapingBatch, shouldScrapeProperty, getDaysSince, calculateStabilityScore, getRecommendedFrequency, processScrapingResult };
+
+// Enhance property data with Claude AI intelligence
+export async function enhanceWithClaudeIntelligence(url: string, htmlContent: string, propertyName: string): Promise<PropertyIntelligence | null> {
+  try {
+    console.log(`🧠 Getting Claude intelligence for: ${propertyName}`);
+    
+    const claudeService = new ClaudeService();
+    const result = await claudeService.analyzeProperty(url, htmlContent, propertyName);
+
+    if (result.success) {
+      console.log('✅ Claude analysis successful:', result.data.confidence_score);
+      return result.data;
+    } else {
+      console.warn('⚠️ Claude analysis failed, using fallback:', result.error);
+      return result.data; // Still return fallback data
+    }
+  } catch (error) {
+    console.error('❌ Claude intelligence error:', error);
+    return null;
+  }
+}
 
 // Enrich scraped property data with market intelligence. Accepts a Supabase client
 // to fetch an existing property record by external_id so we can preserve first_seen_at.
@@ -40,7 +62,7 @@ export async function scrapePropertyWithMarketData(supabase: SupabaseClient, pro
 }
 
 // Final enhanced scraping function: runs enhanced scraping, market enrichment, amenities parsing and classification.
-export async function scrapePropertyComplete(supabase: SupabaseClient, propertyData: Record<string, unknown>) {
+export async function scrapePropertyComplete(supabase: SupabaseClient, propertyData: Record<string, unknown>, htmlContent?: string) {
     // Phase 1: Basic enhancements
     const phase1Data = scrapePropertyEnhanced(propertyData);
     // Phase 2: Market intelligence (needs supabase to lookup first_seen)
@@ -52,13 +74,47 @@ export async function scrapePropertyComplete(supabase: SupabaseClient, propertyD
     const amenities = extractAmenities((propertyData['description'] as string) ?? '');
     const propertyType = classifyPropertyType(propertyData['name'] as string | undefined, propertyData['description'] as string | undefined);
 
-    return {
+    // Phase 4: Claude AI intelligence (if HTML content is available)
+    let claudeIntelligence = null;
+    if (htmlContent && propertyData['url'] && propertyData['name']) {
+        claudeIntelligence = await enhanceWithClaudeIntelligence(
+            propertyData['url'] as string,
+            htmlContent,
+            propertyData['name'] as string
+        );
+    }
+
+    const baseResult = {
         ...phase2Data,
         ...amenities,
         property_type: propertyType,
         // compute AI pricing heuristics (non-blocking deterministic calculation)
         ...(await computeAiPricing(supabase, { ...phase2Data as Record<string, unknown>, ...amenities } as Record<string, unknown>)),
     };
+
+    // Add Claude intelligence fields if available
+    if (claudeIntelligence) {
+        return {
+            ...baseResult,
+            year_built: claudeIntelligence.year_built,
+            unit_count: claudeIntelligence.unit_count,
+            building_type: claudeIntelligence.building_type,
+            neighborhood: claudeIntelligence.neighborhood,
+            transit_access: claudeIntelligence.transit_access,
+            walk_score: claudeIntelligence.walk_score,
+            intelligence_confidence: claudeIntelligence.confidence_score,
+            intelligence_source: claudeIntelligence.research_source,
+            researched_at: claudeIntelligence.researched_at,
+            // Merge Claude amenities with existing ones, avoiding duplicates
+            amenities: [...new Set([...amenities.amenities || [], ...claudeIntelligence.amenities])],
+            // Override property_type if Claude has higher confidence and different classification
+            property_type: claudeIntelligence.confidence_score > 70 && claudeIntelligence.property_type !== 'unknown' 
+                ? claudeIntelligence.property_type 
+                : propertyType,
+        };
+    }
+
+    return baseResult;
 }
 
 export class ApartmentScraper {

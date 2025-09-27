@@ -12,6 +12,11 @@
             "script": "src/main.ts",
             "args": [],
             "type": "run"
+        },
+        "test-claude": {
+            "script": "test-claude.ts",
+            "args": [],
+            "type": "run"
         }
     },
     "importMap": "./import_map.json"
