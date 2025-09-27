@@ -1,7 +1,8 @@
-const { createClient } = require('@supabase/supabase-js');
-const { backfillZipCodes, generateZipReport } = require('./backfill_zip_codes');
-const { geocodePropertiesOnce } = require('./geocode_properties');
-const fs = require('fs');
+import { createClient } from '@supabase/supabase-js';
+import { backfillZipCodes, generateZipReport } from './backfill_zip_codes.js';
+import { geocodePropertiesOnce } from './geocode_properties.js';
+import fs from 'fs';
+import process from "node:process";
 
 // Load environment variables
 const envFile = '.env.local';

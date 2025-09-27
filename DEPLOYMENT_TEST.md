@@ -7,6 +7,7 @@ This file was created to test the fixed GitHub Actions deployment workflow.
 **Status**: Testing new workflow with proper authentication
 
 The deployment should now work with:
+
 - ✅ Official Supabase CLI installation
 - ✅ GitHub secrets authentication
 - ✅ Location fields migration deployment

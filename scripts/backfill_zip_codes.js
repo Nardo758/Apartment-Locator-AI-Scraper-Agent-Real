@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
+import process from "node:process";
 
 // Load environment variables
 const envFile = '.env.local';

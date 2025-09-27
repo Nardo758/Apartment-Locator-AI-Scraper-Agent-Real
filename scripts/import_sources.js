@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { parse } = require('csv-parse');
+import process from "node:process";
 
 // Optional: supabase client (handle ESM-only package via dynamic import)
 let supabase;

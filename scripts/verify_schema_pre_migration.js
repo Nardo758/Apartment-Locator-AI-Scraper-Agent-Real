@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
+import process from "node:process";
 
 // Load environment variables
 const envFile = '.env.local';
@@ -37,7 +38,7 @@ async function verifyPreMigration() {
 
   // Check if scraped_properties table exists
   try {
-    const { data, error } = await supabase
+    const { data: _data, error } = await supabase
       .from('scraped_properties')
       .select('id')
       .limit(1);
@@ -213,7 +214,7 @@ async function generatePreMigrationSnapshot() {
     }
 
     // Get row count
-    const { data: countData, error: countError } = await supabase
+    const { data: countData, error: _countError } = await supabase
       .from('scraped_properties')
       .select('id', { count: 'exact', head: true });
 

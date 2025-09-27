@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+import process from "node:process";
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.argv.find(arg => arg.startsWith('--url=')).split('=')[1];
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.argv.find(arg => arg.startsWith('--key=')).split('=')[1];

@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
+import process from "node:process";
 
 // Load environment variables
 const envFile = '.env.local';
@@ -212,7 +213,7 @@ async function verifyMigrationSuccess() {
   // Test 4: Test that we can insert/update with new columns
   try {
     // Try to select with new columns (this will fail if columns don't exist)
-    const { data, error } = await supabase
+    const { data: _data, error } = await supabase
       .from('scraped_properties')
       .select('id, latitude, longitude, zip_code')
       .limit(1);
@@ -307,7 +308,7 @@ async function generatePostMigrationSnapshot() {
     }
 
     // Get indexes
-    const { data: indexData, error: indexError } = await supabase.rpc('exec_sql', {
+    const { data: indexData, error: _indexError } = await supabase.rpc('exec_sql', {
       sql: `
         SELECT indexname, indexdef
         FROM pg_indexes 
@@ -318,7 +319,7 @@ async function generatePostMigrationSnapshot() {
     });
 
     // Get constraints
-    const { data: constraintData, error: constraintError } = await supabase.rpc('exec_sql', {
+    const { data: constraintData, error: _constraintError } = await supabase.rpc('exec_sql', {
       sql: `
         SELECT constraint_name, check_clause
         FROM information_schema.check_constraints 
@@ -329,13 +330,13 @@ async function generatePostMigrationSnapshot() {
     });
 
     // Get sample data with new columns
-    const { data: sampleData, error: sampleError } = await supabase
+    const { data: sampleData, error: _sampleError } = await supabase
       .from('scraped_properties')
       .select('id, external_id, address, city, state, latitude, longitude, zip_code')
       .limit(5);
 
     // Get row count
-    const { data: countData, error: countError } = await supabase
+    const { data: countData, error: _countError } = await supabase
       .from('scraped_properties')
       .select('id', { count: 'exact', head: true });
 
@@ -371,7 +372,7 @@ async function generatePostMigrationSnapshot() {
 /**
  * Compare pre and post migration snapshots
  */
-async function compareSnapshots(preFile, postFile) {
+function compareSnapshots(preFile, postFile) {
   if (!fs.existsSync(preFile) || !fs.existsSync(postFile)) {
     console.log('⚠️  Cannot compare snapshots - files not found');
     return;
@@ -410,7 +411,7 @@ async function main() {
   console.log(`🚀 Location Fields Migration - Post-Migration Verification (${env})\n`);
   
   const passed = await verifyMigrationSuccess();
-  const postSnapshot = await generatePostMigrationSnapshot();
+  const _postSnapshot = await generatePostMigrationSnapshot();
   
   // Try to find and compare with pre-migration snapshot
   const preFiles = fs.readdirSync('.').filter(f => f.startsWith('verification_pre_migration_'));

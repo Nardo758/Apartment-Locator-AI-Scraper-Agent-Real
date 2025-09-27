@@ -32,7 +32,22 @@ function validateAiResult(result: Record<string, unknown>): boolean {
 serve(async (req: Request) => {
   try {
   const payload = (await req.json().catch(() => ({}))) as Record<string, unknown>;
-  const { source = "unknown", cleanHtml = "" } = payload as { source?: string; cleanHtml?: string };
+  const { source = "unknown", cleanHtml = "", url = "", external_id, source_url, source_name, scraping_job_id } = payload as { source?: string; cleanHtml?: string; url?: string; external_id?: string; source_url?: string; source_name?: string; scraping_job_id?: number };
+
+  // If no cleanHtml provided but url is available, fetch the HTML
+  let htmlContent = cleanHtml;
+  if (!htmlContent && url) {
+    try {
+      const htmlResponse = await fetch(url);
+      if (htmlResponse.ok) {
+        htmlContent = await htmlResponse.text();
+      } else {
+        return new Response(JSON.stringify({ status: "error", message: `Failed to fetch HTML from ${url}: ${htmlResponse.status}` }), { status: 400, headers: { "content-type": "application/json" } });
+      }
+    } catch (fetchError) {
+      return new Response(JSON.stringify({ status: "error", message: `Error fetching HTML: ${fetchError}` }), { status: 500, headers: { "content-type": "application/json" } });
+    }
+  }
 
     // Build messages per user's spec
     const messages = [
@@ -42,7 +57,7 @@ serve(async (req: Request) => {
       },
       {
         role: "user",
-        content: `Extract apartment data from this ${source} page HTML:\n\n${cleanHtml}`,
+        content: `Extract apartment data from this ${source} page HTML:\n\n${htmlContent}`,
       },
     ];
 
@@ -118,6 +133,55 @@ serve(async (req: Request) => {
         status: 422,
         headers: { "content-type": "application/json" },
       });
+    }
+
+    // Save apartment data to database with source tracking
+    try {
+      const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
+      const SUPABASE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+      if (SUPABASE_URL && SUPABASE_KEY) {
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        const apartmentData = {
+          external_id: external_id || `ai-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          source: source,
+          title: result.name,
+          address: result.address,
+          city: result.city,
+          state: result.state,
+          rent_price: result.current_price,
+          rent_amount: result.current_price, // Set both rent_price and rent_amount
+          bedrooms: result.bedrooms,
+          bathrooms: result.bathrooms,
+          free_rent_concessions: result.free_rent_concessions,
+          application_fee: result.application_fee,
+          admin_fee_waived: result.admin_fee_waived,
+          admin_fee_amount: result.admin_fee_amount,
+          is_active: true,
+          scraped_at: new Date().toISOString(),
+          source_url: source_url,
+          source_name: source_name,
+          scraping_job_id: scraping_job_id,
+        };
+
+        // Remove undefined/null values
+        const cleanData = Object.fromEntries(
+          Object.entries(apartmentData).filter(([_, v]) => v !== undefined && v !== null)
+        );
+
+        const { data, error } = await supabase
+          .from('apartments')
+          .upsert(cleanData, { onConflict: 'external_id' });
+
+        if (error) {
+          console.error('Failed to save apartment:', error);
+        } else {
+          console.log('Saved apartment:', data);
+        }
+      }
+    } catch (saveError) {
+      console.error('Error saving apartment:', saveError);
+      // Don't fail the request if saving fails, just log it
     }
 
     // If we have usage information, estimate cost and record it to the DB (daily aggregate)
