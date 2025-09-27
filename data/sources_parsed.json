@@ -1,0 +1,472 @@
+[
+  {
+    "name": "Buckhead960",
+    "url": "https://buckhead960.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Mezzo Buckhead",
+    "url": "https://www.mezzoapartmenthomes.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Elora at Buckhead",
+    "url": "https://www.eloraatbuckhead.com/",
+    "priority": "High"
+  },
+  {
+    "name": "MAA Midtown",
+    "url": "https://www.maac.com/georgia/atlanta/maa-midtown/",
+    "priority": "Medium"
+  },
+  {
+    "name": "MAA Riverside",
+    "url": "https://www.maac.com/georgia/atlanta/maa-riverside/",
+    "priority": "Low"
+  },
+  {
+    "name": "MAA Corporate Site (Atlanta)",
+    "url": "https://www.maac.com/georgia/atlanta/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Camden Midtown Atlanta",
+    "url": "https://www.camdenliving.com/apartments/atlanta-ga/camden-midtown-atlanta",
+    "priority": "High"
+  },
+  {
+    "name": "Camden Phipps",
+    "url": "https://www.camdenliving.com/apartments/atlanta-ga/camden-phipps",
+    "priority": "Medium"
+  },
+  {
+    "name": "Camden Buckhead Square",
+    "url": "https://www.camdenliving.com/apartments/atlanta-ga/camden-buckhead-square",
+    "priority": "High"
+  },
+  {
+    "name": "Camden Buckhead",
+    "url": "https://www.camdenliving.com/apartments/atlanta-ga/camden-buckhead",
+    "priority": "Low"
+  },
+  {
+    "name": "Camden Brookwood",
+    "url": "https://www.camdenliving.com/apartments/atlanta-ga/camden-brookwood",
+    "priority": "Medium"
+  },
+  {
+    "name": "Camden Atlanta Portal",
+    "url": "https://www.camdenliving.com/apartments/atlanta-ga",
+    "priority": "High"
+  },
+  {
+    "name": "AMLI Buckhead",
+    "url": "https://www.amli.com/apartments/atlanta/buckhead-apartments/amli-buckhead",
+    "priority": "Medium"
+  },
+  {
+    "name": "AMLI Brookhaven",
+    "url": "https://www.amli.com/apartments/atlanta/brookhaven-apartments/amli-brookhaven",
+    "priority": "Low"
+  },
+  {
+    "name": "AMLI Atlanta Portal",
+    "url": "https://www.amli.com/apartments/atlanta",
+    "priority": "High"
+  },
+  {
+    "name": "Greystar Atlanta Metro",
+    "url": "https://www.greystar.com/homes-to-rent/us/ga/atlanta-metro",
+    "priority": "Medium"
+  },
+  {
+    "name": "Greystar Georgia",
+    "url": "https://www.greystar.com/homes-to-rent/us/ga",
+    "priority": "Low"
+  },
+  {
+    "name": "Virginia Highlands Apartments",
+    "url": "https://www.virginiahighlandsapartments.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Highland Walk Apartments",
+    "url": "https://www.highland-walk.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Highland View Apartments",
+    "url": "https://www.highlandview-atl.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "675 N Highland",
+    "url": "https://www.675nhighland.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Inman Quarter",
+    "url": "https://inmanquarter.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Veridian at Sandy Springs",
+    "url": "https://www.veridianaptsatlanta.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "The Overlook Sandy Springs",
+    "url": "https://www.theoverlooksandysprings.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Elme Sandy Springs",
+    "url": "https://www.elmesandysprings.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Gateway Chastain",
+    "url": "https://www.gatewaychastainsandysprings.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Atler at Brookhaven",
+    "url": "https://www.atlerbrookhaven.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Marquis at Buckhead",
+    "url": "https://www.marquisbuckhead.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Cortland Atlanta Metro",
+    "url": "https://cortland.com/apartments/atlanta-metro/",
+    "priority": "High"
+  },
+  {
+    "name": "Apartments.com Atlanta",
+    "url": "https://www.apartments.com/atlanta-ga/",
+    "priority": "Low"
+  },
+  {
+    "name": "RentCafe Atlanta",
+    "url": "https://www.rentcafe.com/apartments-for-rent/us/ga/atlanta/",
+    "priority": "Medium"
+  },
+  {
+    "name": "ApartmentList",
+    "url": "https://www.apartmentlist.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Smart City Locating",
+    "url": "https://smartcitylocating.com/atlanta-apartments/",
+    "priority": "Medium"
+  },
+  {
+    "name": "PROMOVE Atlanta",
+    "url": "https://atlanta.promove.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Post Properties",
+    "url": "https://www.post-properties.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Bozzuto Properties",
+    "url": "https://www.bozzuto.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Wood Partners",
+    "url": "https://www.woodpartners.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "JPI Apartments",
+    "url": "https://www.jpi.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Gables Residential",
+    "url": "https://www.gables.com/",
+    "priority": "High"
+  },
+  {
+    "name": "ZRS Management",
+    "url": "https://www.zrsmanagement.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Aimco",
+    "url": "https://www.aimco.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "UDR",
+    "url": "https://www.udr.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Equity Residential",
+    "url": "https://www.equityapartments.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "AvalonBay Communities",
+    "url": "https://www.avaloncommunities.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Sovereign at Buckhead",
+    "url": "https://www.sovereignbuckhead.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Grandview at Buckhead",
+    "url": "https://www.grandviewbuckhead.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Park Place Buckhead",
+    "url": "https://www.parkplacebuckhead.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Paramount on Peachtree",
+    "url": "https://www.paramountonpeachtree.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Paces Ridge",
+    "url": "https://www.pacesridge.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Sutton Buckhead",
+    "url": "https://www.suttonbuckhead.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Metropolitan",
+    "url": "https://www.themetropolitanbuckhead.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Alexan Buckhead Village",
+    "url": "https://www.alexanbuckheadvillage.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Elle of Buckhead",
+    "url": "https://www.elleofbuckhead.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Hanover Buckhead Village",
+    "url": "https://www.hanover-company.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Atlantic",
+    "url": "https://www.theatlanticsouth.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Atlantic House",
+    "url": "https://www.atlantichouseatl.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "1016 Residences",
+    "url": "https://www.1016residences.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Selig",
+    "url": "https://www.theselig.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Viewpoint Midtown",
+    "url": "https://www.viewpointmidtown.com/",
+    "priority": "High"
+  },
+  {
+    "name": "915 Midtown",
+    "url": "https://www.915midtown.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Solace on Peachtree",
+    "url": "https://www.solaceonpeachtree.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "The Artisan Luxury",
+    "url": "https://www.theartisanluxury.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Novare Opus",
+    "url": "https://www.novareopus.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "SkyHouse Midtown",
+    "url": "https://www.skyhousemidtown.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "SkyHouse Downtown",
+    "url": "https://www.skyhousedowntown.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Standard Downtown",
+    "url": "https://www.standarddowntown.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Element Downtown",
+    "url": "https://www.elementdowntown.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Centennial Yards",
+    "url": "https://www.centennialyards.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "The Healey Building",
+    "url": "https://www.healeybuilding.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Capitol Gateway",
+    "url": "https://www.capitolgateway.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Urban Capital Lofts",
+    "url": "https://www.urbancapitallofts.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "The Flats at Atlantic Station",
+    "url": "https://www.flatsatlanticstation.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Twelve Centennial Park",
+    "url": "https://www.twelvecentennial.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "The Lofts at Atlantic Station",
+    "url": "https://www.atlanticstationlofts.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Beacon at Glenwood Park",
+    "url": "https://www.beaconatglenwood.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Grant Park Lofts",
+    "url": "https://www.grantparklofts.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Eastside Village",
+    "url": "https://www.eastsidevillage.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Mille at EAV",
+    "url": "https://www.milleateav.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Decatur Square",
+    "url": "https://www.decatursquare.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Abbey at Decatur",
+    "url": "https://www.abbeyatdecatur.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Bell Decatur",
+    "url": "https://www.belldecatur.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Church Street Station",
+    "url": "https://www.churchstreetstation.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Artisan at Oakhurst",
+    "url": "https://www.artisanoakhurst.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Krog Street Lofts",
+    "url": "https://www.krogstreetlofts.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Vinings Village",
+    "url": "https://www.viningsvillage.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Club at Vinings",
+    "url": "https://www.clubatvinings.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Riverside Club",
+    "url": "https://www.riversideclub.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "Post Vinings",
+    "url": "https://www.postvinings.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "The Residences at Vinings Mountain",
+    "url": "https://www.viningsresidences.com/",
+    "priority": "High"
+  },
+  {
+    "name": "Cumberland Pointe",
+    "url": "https://www.cumberlandpointe.com/",
+    "priority": "Low"
+  },
+  {
+    "name": "The Reserve at Ballantyne",
+    "url": "https://www.reserveballantyne.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Marquis on Edwards Mill",
+    "url": "https://www.marquisonedwards.com/",
+    "priority": "High"
+  },
+  {
+    "name": "The Haven at Riverwood",
+    "url": "https://www.havenriverwood.com/",
+    "priority": "Medium"
+  },
+  {
+    "name": "Westwood Commons",
+    "url": "https://www.westwoodcommons.com/",
+    "priority": "Low"
+  }
+]

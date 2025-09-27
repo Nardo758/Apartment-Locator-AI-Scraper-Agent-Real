@@ -13,8 +13,9 @@
     "test:rpc": "node ./scripts/test_rpc.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.0.0",
+    "@supabase/supabase-js": "^2.58.0",
     "@types/node": "^24.5.2",
+    "csv-parse": "^6.1.0",
     "node-geocoder": "^4.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
