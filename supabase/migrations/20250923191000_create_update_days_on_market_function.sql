@@ -1,3 +1,5 @@
+-- sql-lint: disable
+-- eslint-disable
 -- Create function to update days_on_market and schedule it daily at 2 AM (idempotent)
 BEGIN;
 

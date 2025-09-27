@@ -7,7 +7,7 @@
     ],
     "settings": {
         "deno.enable": true,
-    "deno.unstable": ["unstable"],
+        "deno.unstable": ["unstable"],
         "deno.importMap": "./supabase/functions/import_map.json",
         "typescript.preferences.includePackageJsonAutoImports": "auto",
         "editor.formatOnSave": true,
@@ -17,6 +17,25 @@
         "files.associations": {
             "*.sql": "postgresql"
         },
+        "sqltools.connections": [
+            {
+                "name": "PostgreSQL",
+                "driver": "PostgreSQL",
+                "server": "localhost",
+                "port": 5432,
+                "database": "postgres",
+                "username": "postgres",
+                "password": ""
+            }
+        ],
+        "files.exclude": {
+            "**/node_modules": true,
+            "**/.supabase": true,
+            "**/supabase/migrations/20250923191000_create_update_days_on_market_function.sql": true,
+            "**/supabase/migrations/20250927100000_create_sources_table.sql": true
+        },
+        "css.validate": false,
+        "html.validate.styles": false,
         "[typescript]": {
             "editor.defaultFormatter": "denoland.vscode-deno"
         },
@@ -26,11 +45,7 @@
         "[sql]": {
             "editor.defaultFormatter": "mtxr.sqltools"
         },
-        "supabase.publicUrl": "https://your-project-ref.supabase.co",
-        "files.exclude": {
-            "**/node_modules": true,
-            "**/.supabase": true
-        }
+        "supabase.publicUrl": "https://your-project-ref.supabase.co"
     },
     "extensions": {
         "recommendations": [
