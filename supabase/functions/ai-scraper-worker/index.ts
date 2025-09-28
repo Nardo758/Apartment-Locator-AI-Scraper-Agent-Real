@@ -2,13 +2,17 @@
 import { serve } from "std/http/server.ts";
 import { createClient } from '@supabase/supabase-js';
 
+// Import concession services
+import { ConcessionDetector } from '../../../src/services/enhanced-concession-detector.ts';
+import { ConcessionTracker, calculateEffectiveRent } from '../../../src/services/concession-tracker.ts';
+
 // Import data transformation functions
 async function transformScrapedToFrontendFormat(scrapedData: any) {
   // Calculate AI price
   const aiPrice = await calculateAiPrice(scrapedData);
   
-  // Calculate effective price
-  const effectivePrice = await calculateEffectivePrice(scrapedData);
+  // Calculate effective price with concessions
+  const effectivePrice = await calculateEffectivePriceWithConcessions(scrapedData);
   
   // Extract amenities and features
   const amenities = await extractAmenities(scrapedData);
@@ -73,13 +77,20 @@ async function calculateAiPrice(scrapedData: any): Promise<number> {
   return Math.round(adjustedPrice);
 }
 
-async function calculateEffectivePrice(scrapedData: any): Promise<number> {
+async function calculateEffectivePriceWithConcessions(scrapedData: any): Promise<number> {
   let effectivePrice = scrapedData.current_price || 0;
   
-  // Subtract concessions
+  // Enhanced concession calculation
+  const concessions = [];
   if (scrapedData.free_rent_concessions) {
-    const concessionValue = parseConcessionValue(scrapedData.free_rent_concessions);
-    effectivePrice -= concessionValue;
+    concessions.push(scrapedData.free_rent_concessions);
+  }
+  if (scrapedData.concessions && Array.isArray(scrapedData.concessions)) {
+    concessions.push(...scrapedData.concessions);
+  }
+  
+  if (concessions.length > 0) {
+    effectivePrice = calculateEffectiveRent(effectivePrice, concessions);
   }
   
   // Add fees
@@ -229,20 +240,39 @@ serve(async (req: Request) => {
       }
     }
 
-    // Build Claude-compatible messages
-    const systemPrompt = `You are an expert web scraper for apartment rental data.
-Extract the following fields from HTML and return ONLY valid JSON:
-- name, address, city, state (2 letters)
-- current_price (number only, no symbols)
-- bedrooms, bathrooms (numbers)
-- square_feet (number)
-- amenities (array of strings)
-- free_rent_concessions (text description)
-- application_fee (number or null)
-- admin_fee_waived (boolean)
-- admin_fee_amount (number or null)
+    // Enhanced concession detection pre-scan
+    const quickConcessions = ConcessionDetector.detectConcessionKeywords(htmlContent);
+    const concessionContext = ConcessionDetector.extractConcessionContext(htmlContent);
+    console.log(`🔍 Quick concession scan: ${quickConcessions.length} offers found`);
+    console.log('🎯 Concession context:', concessionContext);
 
-Return valid JSON. Use null for missing fields.`;
+    // Enhanced Claude prompt with concession focus
+    const systemPrompt = `CRITICAL: You are analyzing data DIRECTLY from the property's official website. Extract apartment rental data with SPECIAL FOCUS on concessions and free rent offers.
+
+MANDATORY FIELDS TO EXTRACT (in order of priority):
+1. CONCESSIONS & FREE RENT (HIGHEST PRIORITY):
+   - concessions (array of ALL concession offers found)
+   - free_rent_concessions (specific free rent promotions)
+   - waived_fees (any waived application/admin fees)
+
+2. CORE PROPERTY DATA:
+   - name, address, city, state (2 letters)
+   - current_price (number only, no symbols)
+   - bedrooms, bathrooms (numbers)
+   - square_feet (number)
+
+3. FEES & PRICING:
+   - application_fee (number or null)
+   - admin_fee_waived (boolean)
+   - admin_fee_amount (number or null)
+   - base_rent (rent before concessions)
+   - effective_rent (rent after concessions)
+
+4. AMENITIES & FEATURES:
+   - amenities (array of strings)
+   - unit_features (array of unit-specific features)
+
+Return valid JSON. Use null for missing fields. If concessions are found ANYWHERE, they MUST be included.`;
 
     const userMessage = `Extract apartment data from this ${source} page HTML:\n\n${htmlContent}`;
 
@@ -341,7 +371,17 @@ Return valid JSON. Use null for missing fields.`;
       if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes('demo')) {
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        // Save to legacy apartments table (existing functionality)
+        // Enhanced apartment data with concession support
+        const concessions = result.concessions || [];
+        const hasConcessions = concessions.length > 0 || result.free_rent_concessions;
+        
+        // Calculate effective rent
+        const baseRent = result.base_rent || result.current_price;
+        let effectiveRent = baseRent;
+        if (hasConcessions && result.free_rent_concessions) {
+          effectiveRent = calculateEffectiveRent(baseRent, [result.free_rent_concessions]);
+        }
+
         const apartmentData = {
           external_id: external_id || `claude-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           source: source,
@@ -359,6 +399,16 @@ Return valid JSON. Use null for missing fields.`;
           application_fee: result.application_fee,
           admin_fee_waived: result.admin_fee_waived,
           admin_fee_amount: result.admin_fee_amount,
+          
+          // Enhanced concession fields
+          concessions_applied: hasConcessions,
+          concession_details: hasConcessions ? 
+            [result.free_rent_concessions, ...concessions].filter(Boolean).join(', ') : null,
+          base_rent: baseRent,
+          effective_rent: effectiveRent,
+          net_effective_rent: effectiveRent,
+          intelligence_confidence: 0.85, // Default confidence for Claude extraction
+          
           is_active: true,
           scraped_at: new Date().toISOString(),
           source_url: source_url,
@@ -453,10 +503,20 @@ Return valid JSON. Use null for missing fields.`;
       console.error('Failed to record scraping cost:', e);
     }
 
-    // Return success response with usage information
+    // Enhanced response with concession information
+    const concessionSummary = {
+      concessions_detected: quickConcessions.length > 0,
+      quick_scan_results: quickConcessions,
+      concession_context: concessionContext,
+      has_free_rent: result.free_rent_concessions ? true : false,
+      has_concessions_array: result.concessions && result.concessions.length > 0,
+      effective_rent_calculated: result.effective_rent !== result.current_price
+    };
+
     return new Response(JSON.stringify({ 
       status: "ok", 
       data: result,
+      concession_analysis: concessionSummary,
       frontend_sync: Deno.env.get('ENABLE_FRONTEND_SYNC') === 'true',
       usage: {
         input_tokens: inputTokens,
