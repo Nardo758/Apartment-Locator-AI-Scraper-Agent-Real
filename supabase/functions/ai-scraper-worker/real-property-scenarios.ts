@@ -23,20 +23,20 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
     htmlTemplate: `
       <div class="luxury-apartment-listing" data-testid="property-details">
         <header class="property-header">
-          <h1 class="property-name">{{PROPERTY_NAME}}</h1>
+          <h1 class="property-name">PROPERTY_NAME_PLACEHOLDER</h1>
           <div class="property-address">
-            <span class="street">{{STREET_ADDRESS}}</span>
-            <span class="city-state">{{CITY}}, {{STATE}} {{ZIP}}</span>
+            <span class="street">STREET_ADDRESS_PLACEHOLDER</span>
+            <span class="city-state">CITY_PLACEHOLDER, STATE_PLACEHOLDER ZIP_PLACEHOLDER</span>
           </div>
         </header>
         
         <section class="pricing-section">
-          <div class="rent-price" data-price="{{MONTHLY_RENT}}">
+          <div class="rent-price" data-price="MONTHLY_RENT_PLACEHOLDER">
             <span class="currency">$</span>
-            <span class="amount">{{MONTHLY_RENT}}</span>
+            <span class="amount">MONTHLY_RENT_PLACEHOLDER</span>
             <span class="period">/month</span>
           </div>
-          <div class="deposit-info">Security deposit: ${{SECURITY_DEPOSIT}}</div>
+          <div class="deposit-info">Security deposit: $SECURITY_DEPOSIT_PLACEHOLDER</div>
         </section>
         
         <section class="unit-details">
@@ -501,10 +501,38 @@ export function fillScenarioTemplate(
     html = html.replace(new RegExp(placeholder, 'g'), value);
   });
   
-  // Handle remaining placeholders with defaults
+  // Handle remaining placeholders with sensible defaults
+  const defaultReplacements: Record<string, string> = {
+    '{{SECURITY_DEPOSIT}}': variation.fees?.security?.toString() || variation.monthlyRent.toString(),
+    '{{PET_DEPOSIT}}': variation.fees?.pet?.toString() || '300',
+    '{{ADMIN_FEE_WAIVED}}': Math.random() > 0.5 ? '(waived for qualified applicants)' : '',
+    '{{UNIT_TYPE}}': variation.bedrooms === 0 ? 'Studio' : `${variation.bedrooms} Bedroom`,
+    '{{AVAILABILITY_DATE}}': 'immediately',
+    '{{FEE_INFO}}': variation.fees?.application ? `Application fee: $${variation.fees.application}` : 'No application fee',
+    '{{SPECIAL_FEATURE}}': 'In-unit laundry',
+    '{{APPLIANCE_PACKAGE}}': 'Stainless steel appliances',
+    '{{BUILDING_DESCRIPTION}}': 'Modern building in prime location',
+    '{{BUILDING_AMENITY_1}}': 'Fitness center',
+    '{{BUILDING_AMENITY_2}}': 'Rooftop deck',
+    '{{BUILDING_AMENITY_3}}': 'Concierge service',
+    '{{APPLICATION_FEE_TEXT}}': variation.fees?.application ? `Application fee: $${variation.fees.application}` : 'No application fee',
+    '{{ADMIN_FEE_TEXT}}': variation.fees?.admin ? `Admin fee: $${variation.fees.admin}` : 'No admin fee',
+    '{{MOVE_IN_SPECIAL}}': variation.specialOffers?.[0] || 'Contact for current specials'
+  };
+
+  // Apply default replacements
+  Object.entries(defaultReplacements).forEach(([placeholder, value]) => {
+    html = html.replace(new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'), value);
+  });
+
+  // Handle any remaining placeholders with generic defaults
   html = html.replace(/\{\{[^}]+\}\}/g, match => {
-    console.warn(`Unhandled placeholder: ${match}`);
-    return 'N/A';
+    const placeholder = match.replace(/[{}]/g, '');
+    if (placeholder.toLowerCase().includes('fee')) return '$0';
+    if (placeholder.toLowerCase().includes('rate') || placeholder.toLowerCase().includes('price')) return '$1,500';
+    if (placeholder.toLowerCase().includes('occupancy')) return '4';
+    if (placeholder.toLowerCase().includes('stay')) return '30 days';
+    return 'Available';
   });
   
   return html;
