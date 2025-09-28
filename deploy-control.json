@@ -5,7 +5,11 @@
   "batch_size": 50,
   "max_daily_properties": 1000,
   "cost_limit_daily": 50,
-  "regions": ["atlanta", "new-york", "chicago"],
+  "regions": [
+    "atlanta",
+    "new-york",
+    "chicago"
+  ],
   "auto_pause_on_errors": true,
   "max_consecutive_failures": 5,
   "quality_threshold": 70.0,
