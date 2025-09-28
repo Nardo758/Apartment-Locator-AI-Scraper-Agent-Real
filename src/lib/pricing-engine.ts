@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { existsSync } from 'fs';
-import { resolve, isAbsolute } from 'path';
+import { existsSync } from 'node:fs';
+import { resolve, isAbsolute } from 'node:path';
 import * as process from 'node:process';
 
 export type PricingResult = {
