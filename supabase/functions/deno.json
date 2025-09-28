@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "strict": true,
+    "lib": ["deno.ns", "deno.window"],
+    "target": "esnext"
+  },
+  "unstable": ["sloppy-imports"]
+}

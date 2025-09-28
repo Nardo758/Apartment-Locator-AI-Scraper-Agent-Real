@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import * as market from './market';
-import { extractAmenities } from './amenities';
-import { classifyPropertyType } from './propertyType';
+import * as market from './market.ts';
+import { extractAmenities } from './amenities.ts';
+import { classifyPropertyType } from './propertyType.ts';
 
 // Minimal helpers: detectSignificantChanges, log helpers are intentionally small and pluggable.
 export function detectSignificantChanges(oldData: Record<string, unknown>, newData: Record<string, unknown>): Array<{ field: string; old: unknown; new: unknown }> {

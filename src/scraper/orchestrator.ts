@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { getModelCost } from './costs';
+import { getModelCost } from './costs.ts';
 import { 
   transformScrapedToFrontendFormat, 
   batchTransformProperties,

@@ -5,17 +5,18 @@
         "lib": ["deno.ns", "deno.window"],
         "strict": true,
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "allowImportingTsExtensions": true
     },
     "tasks": {
         "scrape": {
             "script": "src/main.ts",
-            "args": [],
+            "args": ["--unstable-sloppy-imports"],
             "type": "run"
         },
         "test-claude": {
             "script": "test-claude.ts",
-            "args": [],
+            "args": ["--unstable-sloppy-imports"],
             "type": "run"
         }
     },

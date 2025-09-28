@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { ScrapingJob } from './orchestrator';
-import { syncToFrontendSchema, type FrontendProperty } from './orchestrator';
-import { transformScrapedToFrontendFormat, type ScrapedPropertyData } from './data-transformer';
+import type { ScrapingJob } from './orchestrator.ts';
+import { syncToFrontendSchema, type FrontendProperty } from './orchestrator.ts';
+import { transformScrapedToFrontendFormat, type ScrapedPropertyData } from './data-transformer.ts';
 import process from 'node:process';
 
 
