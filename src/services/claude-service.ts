@@ -1,6 +1,10 @@
 import { Anthropic } from '@anthropic-ai/sdk';
 
 export interface PropertyIntelligence {
+  concessions: string[];
+  free_rent_offers: string[];
+  base_rent_by_unit: Record<string, number>;
+  fees: Record<string, number>;
   year_built: number | null;
   unit_count: number | null;
   property_type: string;
@@ -12,6 +16,7 @@ export interface PropertyIntelligence {
   confidence_score: number;
   researched_at: string;
   research_source: string;
+  data_source: string;
 }
 
 export interface ClaudeAnalysisResult {
@@ -54,29 +59,66 @@ export class ClaudeService {
   }
 
   private buildPropertyAnalysisPrompt(url: string, htmlContent: string, propertyName: string): string {
-    return `You are an expert real estate analyst. Analyze this property listing and extract structured information.
+    return `CRITICAL: You are analyzing data DIRECTLY from the property's official website. This is the PRIMARY source and should be trusted over any third-party data.
 
 PROPERTY: ${propertyName}
-URL: ${url}
+OFFICIAL WEBSITE: ${url}
 
-HTML CONTEXT:
-${htmlContent.substring(0, 3000)}
+HTML CONTENT FROM PROPERTY WEBSITE:
+${htmlContent.substring(0, 4000)}
 
-Extract the following information as JSON:
+--- MANDATORY FIELDS TO EXTRACT ---
 
+1. **CONCESSION & FREE RENT INFORMATION (HIGHEST PRIORITY)**
+   - "1 month free" or "6 weeks free" offers
+   - "Reduced deposit" or "$0 deposit" offers
+   - "Waived application fees" or "admin fees"
+   - "Move-in specials" or "limited time offers"
+   - "Military discount" or "corporate discount"
+   - Any time-limited promotions
+
+2. **PRICING & FEE STRUCTURE**
+   - Base rent amounts by unit type
+   - Mandatory fees (admin, application, amenities)
+   - Optional fees (parking, storage, pets)
+   - Deposit amounts and requirements
+
+3. **PROPERTY CHARACTERISTICS**
+   - Year built (exact if available)
+   - Total number of units/floorplans
+   - Property type (luxury, mid-range, affordable, student)
+   - Building style (high-rise, garden, townhome)
+   - Renovation history if mentioned
+
+4. **AMENITIES & FEATURES**
+   - Community amenities (pool, gym, clubhouse)
+   - Unit amenities (appliances, finishes)
+   - Pet policies and fees
+   - Parking availability and costs
+
+5. **NEIGHBORHOOD CONTEXT**
+   - Exact neighborhood/submarket
+   - Walkability features
+   - Transit access mentioned
+   - Nearby attractions/schools
+
+Return as JSON with this EXACT structure:
 {
-  "year_built": "number or null if unknown",
-  "unit_count": "number or null if unknown",
-  "property_type": "luxury, mid-range, affordable, student, senior, etc.",
-  "amenities": "array of amenities like ['pool', 'gym', 'parking']",
-  "neighborhood": "neighborhood name or description",
-  "building_type": "high-rise, mid-rise, garden-style, townhome, etc.",
-  "transit_access": "description of transit options",
-  "walk_score": "number 0-100 or null if unknown",
-  "confidence_score": "0-100 based on how clear the information was"
+  "concessions": ["array of ALL concession offers found"],
+  "free_rent_offers": ["specific free rent promotions"],
+  "base_rent_by_unit": {"Studio": 1500, "1Bed": 1800, "2Bed": 2200},
+  "fees": {"application": 75, "admin": 200, "deposit": 500},
+  "year_built": 2020,
+  "unit_count": 250,
+  "property_type": "luxury",
+  "amenities": ["pool", "gym", "rooftop"],
+  "neighborhood": "Midtown",
+  "transit_access": "MARTA station 2 blocks",
+  "confidence_score": 85,
+  "data_source": "property_website"
 }
 
-Return ONLY valid JSON, no other text.`;
+IMPORTANT: If concessions or free rent are mentioned ANYWHERE in the content, they MUST be included in the response.`;
   }
 
   private parseClaudeResponse(responseText: string): PropertyIntelligence {
@@ -100,6 +142,10 @@ Return ONLY valid JSON, no other text.`;
   private validateIntelData(data: any): PropertyIntelligence {
     // Ensure required fields with defaults
     return {
+      concessions: Array.isArray(data.concessions) ? data.concessions : [],
+      free_rent_offers: Array.isArray(data.free_rent_offers) ? data.free_rent_offers : [],
+      base_rent_by_unit: typeof data.base_rent_by_unit === 'object' ? data.base_rent_by_unit : {},
+      fees: typeof data.fees === 'object' ? data.fees : {},
       year_built: data.year_built || null,
       unit_count: data.unit_count || null,
       property_type: data.property_type || 'unknown',
@@ -110,12 +156,17 @@ Return ONLY valid JSON, no other text.`;
       walk_score: data.walk_score || null,
       confidence_score: data.confidence_score || 0,
       researched_at: new Date().toISOString(),
-      research_source: 'claude'
+      research_source: 'claude',
+      data_source: data.data_source || 'property_website'
     };
   }
 
   private getDefaultResponse(): PropertyIntelligence {
     return {
+      concessions: [],
+      free_rent_offers: [],
+      base_rent_by_unit: {},
+      fees: {},
       year_built: null,
       unit_count: null,
       property_type: 'unknown',
@@ -126,7 +177,8 @@ Return ONLY valid JSON, no other text.`;
       walk_score: null,
       confidence_score: 0,
       researched_at: new Date().toISOString(),
-      research_source: 'claude_fallback'
+      research_source: 'claude_fallback',
+      data_source: 'property_website'
     };
   }
 }

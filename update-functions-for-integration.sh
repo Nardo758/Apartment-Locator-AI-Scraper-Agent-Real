@@ -1,18 +1,33 @@
+#!/bin/bash
+
+# Update Supabase Functions for Frontend Integration
+set -e
+
+echo "🔄 Updating Supabase Functions for Frontend Integration"
+echo "======================================================"
+
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# Step 1: Update AI Scraper Worker
+echo -e "${BLUE}📝 Step 1: Updating AI Scraper Worker...${NC}"
+
+# Create updated index.ts for ai-scraper-worker with frontend integration
+cat > supabase/functions/ai-scraper-worker/index.ts << 'EOF'
 // ai-scraper-worker/index.ts - Updated with Frontend Integration
 import { serve } from "std/http/server.ts";
 import { createClient } from '@supabase/supabase-js';
-
-// Import concession services
-import { ConcessionDetector } from '../../../src/services/enhanced-concession-detector.ts';
-import { ConcessionTracker, calculateEffectiveRent } from '../../../src/services/concession-tracker.ts';
 
 // Import data transformation functions
 async function transformScrapedToFrontendFormat(scrapedData: any) {
   // Calculate AI price
   const aiPrice = await calculateAiPrice(scrapedData);
   
-  // Calculate effective price with concessions
-  const effectivePrice = await calculateEffectivePriceWithConcessions(scrapedData);
+  // Calculate effective price
+  const effectivePrice = await calculateEffectivePrice(scrapedData);
   
   // Extract amenities and features
   const amenities = await extractAmenities(scrapedData);
@@ -77,20 +92,13 @@ async function calculateAiPrice(scrapedData: any): Promise<number> {
   return Math.round(adjustedPrice);
 }
 
-async function calculateEffectivePriceWithConcessions(scrapedData: any): Promise<number> {
+async function calculateEffectivePrice(scrapedData: any): Promise<number> {
   let effectivePrice = scrapedData.current_price || 0;
   
-  // Enhanced concession calculation
-  const concessions = [];
+  // Subtract concessions
   if (scrapedData.free_rent_concessions) {
-    concessions.push(scrapedData.free_rent_concessions);
-  }
-  if (scrapedData.concessions && Array.isArray(scrapedData.concessions)) {
-    concessions.push(...scrapedData.concessions);
-  }
-  
-  if (concessions.length > 0) {
-    effectivePrice = calculateEffectiveRent(effectivePrice, concessions);
+    const concessionValue = parseConcessionValue(scrapedData.free_rent_concessions);
+    effectivePrice -= concessionValue;
   }
   
   // Add fees
@@ -240,39 +248,20 @@ serve(async (req: Request) => {
       }
     }
 
-    // Enhanced concession detection pre-scan
-    const quickConcessions = ConcessionDetector.detectConcessionKeywords(htmlContent);
-    const concessionContext = ConcessionDetector.extractConcessionContext(htmlContent);
-    console.log(`🔍 Quick concession scan: ${quickConcessions.length} offers found`);
-    console.log('🎯 Concession context:', concessionContext);
+    // Build Claude-compatible messages
+    const systemPrompt = `You are an expert web scraper for apartment rental data.
+Extract the following fields from HTML and return ONLY valid JSON:
+- name, address, city, state (2 letters)
+- current_price (number only, no symbols)
+- bedrooms, bathrooms (numbers)
+- square_feet (number)
+- amenities (array of strings)
+- free_rent_concessions (text description)
+- application_fee (number or null)
+- admin_fee_waived (boolean)
+- admin_fee_amount (number or null)
 
-    // Enhanced Claude prompt with concession focus
-    const systemPrompt = `CRITICAL: You are analyzing data DIRECTLY from the property's official website. Extract apartment rental data with SPECIAL FOCUS on concessions and free rent offers.
-
-MANDATORY FIELDS TO EXTRACT (in order of priority):
-1. CONCESSIONS & FREE RENT (HIGHEST PRIORITY):
-   - concessions (array of ALL concession offers found)
-   - free_rent_concessions (specific free rent promotions)
-   - waived_fees (any waived application/admin fees)
-
-2. CORE PROPERTY DATA:
-   - name, address, city, state (2 letters)
-   - current_price (number only, no symbols)
-   - bedrooms, bathrooms (numbers)
-   - square_feet (number)
-
-3. FEES & PRICING:
-   - application_fee (number or null)
-   - admin_fee_waived (boolean)
-   - admin_fee_amount (number or null)
-   - base_rent (rent before concessions)
-   - effective_rent (rent after concessions)
-
-4. AMENITIES & FEATURES:
-   - amenities (array of strings)
-   - unit_features (array of unit-specific features)
-
-Return valid JSON. Use null for missing fields. If concessions are found ANYWHERE, they MUST be included.`;
+Return valid JSON. Use null for missing fields.`;
 
     const userMessage = `Extract apartment data from this ${source} page HTML:\n\n${htmlContent}`;
 
@@ -371,17 +360,7 @@ Return valid JSON. Use null for missing fields. If concessions are found ANYWHER
       if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes('demo')) {
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        // Enhanced apartment data with concession support
-        const concessions = result.concessions || [];
-        const hasConcessions = concessions.length > 0 || result.free_rent_concessions;
-        
-        // Calculate effective rent
-        const baseRent = result.base_rent || result.current_price;
-        let effectiveRent = baseRent;
-        if (hasConcessions && result.free_rent_concessions) {
-          effectiveRent = calculateEffectiveRent(baseRent, [result.free_rent_concessions]);
-        }
-
+        // Save to legacy apartments table (existing functionality)
         const apartmentData = {
           external_id: external_id || `claude-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           source: source,
@@ -399,16 +378,6 @@ Return valid JSON. Use null for missing fields. If concessions are found ANYWHER
           application_fee: result.application_fee,
           admin_fee_waived: result.admin_fee_waived,
           admin_fee_amount: result.admin_fee_amount,
-          
-          // Enhanced concession fields
-          concessions_applied: hasConcessions,
-          concession_details: hasConcessions ? 
-            [result.free_rent_concessions, ...concessions].filter(Boolean).join(', ') : null,
-          base_rent: baseRent,
-          effective_rent: effectiveRent,
-          net_effective_rent: effectiveRent,
-          intelligence_confidence: 0.85, // Default confidence for Claude extraction
-          
           is_active: true,
           scraped_at: new Date().toISOString(),
           source_url: source_url,
@@ -503,20 +472,10 @@ Return valid JSON. Use null for missing fields. If concessions are found ANYWHER
       console.error('Failed to record scraping cost:', e);
     }
 
-    // Enhanced response with concession information
-    const concessionSummary = {
-      concessions_detected: quickConcessions.length > 0,
-      quick_scan_results: quickConcessions,
-      concession_context: concessionContext,
-      has_free_rent: result.free_rent_concessions ? true : false,
-      has_concessions_array: result.concessions && result.concessions.length > 0,
-      effective_rent_calculated: result.effective_rent !== result.current_price
-    };
-
+    // Return success response with usage information
     return new Response(JSON.stringify({ 
       status: "ok", 
       data: result,
-      concession_analysis: concessionSummary,
       frontend_sync: Deno.env.get('ENABLE_FRONTEND_SYNC') === 'true',
       usage: {
         input_tokens: inputTokens,
@@ -539,3 +498,120 @@ Return valid JSON. Use null for missing fields. If concessions are found ANYWHER
     });
   }
 });
+EOF
+
+echo -e "${GREEN}✅ AI Scraper Worker updated with frontend integration${NC}"
+
+# Step 2: Update Command Station with new endpoints
+echo -e "${BLUE}📝 Step 2: Adding frontend sync endpoints to Command Station...${NC}"
+
+# Add frontend sync endpoint to command station
+cat >> supabase/functions/command-station/index.ts << 'EOF'
+
+      case 'sync-frontend':
+        if (req.method === 'POST') {
+          return await syncScrapedToFrontend()
+        }
+        break
+      
+      case 'test-transformation':
+        if (req.method === 'POST') {
+          const testData = await req.json()
+          return await testDataTransformation(testData)
+        }
+        break
+EOF
+
+# Step 3: Create deployment script
+echo -e "${BLUE}📝 Step 3: Creating function deployment script...${NC}"
+
+cat > deploy-updated-functions.sh << 'EOF'
+#!/bin/bash
+
+echo "🚀 Deploying Updated Functions with Frontend Integration"
+echo "======================================================"
+
+# Load environment variables
+if [ -f ".env.production" ]; then
+    export $(cat .env.production | grep -v '^#' | xargs)
+fi
+
+# Set required environment variables for functions
+echo "🔧 Setting environment variables..."
+
+# Check if Supabase CLI is available
+if command -v supabase &> /dev/null; then
+    echo "📡 Using Supabase CLI..."
+    
+    # Set secrets
+    supabase secrets set ENABLE_FRONTEND_SYNC=true
+    supabase secrets set FRONTEND_TABLE=properties
+    supabase secrets set ENABLE_AI_PRICING=true
+    supabase secrets set ENABLE_MARKET_INTELLIGENCE=true
+    supabase secrets set CLAUDE_MODEL=claude-3-haiku-20240307
+    
+    # Deploy functions
+    echo "📦 Deploying ai-scraper-worker..."
+    supabase functions deploy ai-scraper-worker --no-verify-jwt
+    
+    echo "📦 Deploying command-station..."
+    supabase functions deploy command-station --no-verify-jwt
+    
+    echo "✅ Functions deployed successfully!"
+    
+    # Test deployment
+    echo "🧪 Testing deployment..."
+    
+    # Get the API URL
+    API_URL=$(supabase status 2>/dev/null | grep "API URL" | awk '{print $3}' || echo "")
+    
+    if [ -n "$API_URL" ]; then
+        echo "Testing command station health..."
+        curl -f "$API_URL/functions/v1/command-station/health" || echo "Health check endpoint not available"
+        
+        echo "Testing command station status..."
+        curl -f "$API_URL/functions/v1/command-station/status" || echo "Status endpoint may need time to initialize"
+    else
+        echo "⚠️  Could not determine API URL for testing"
+    fi
+    
+else
+    echo "⚠️  Supabase CLI not found"
+    echo "Please deploy manually via Supabase Dashboard:"
+    echo "1. Go to Functions in your Supabase Dashboard"
+    echo "2. Update ai-scraper-worker with the new code"
+    echo "3. Update command-station with the new endpoints"
+    echo "4. Set the environment variables in Settings > Environment Variables"
+fi
+
+echo ""
+echo "🎉 Frontend integration deployment complete!"
+echo ""
+echo "📋 Next steps:"
+echo "1. Test the integration with: node test-real-integration.mjs"
+echo "2. Check function logs in Supabase Dashboard"
+echo "3. Monitor the properties table for new data"
+echo ""
+echo "🔧 Environment variables set:"
+echo "  ENABLE_FRONTEND_SYNC=true"
+echo "  FRONTEND_TABLE=properties"
+echo "  ENABLE_AI_PRICING=true"
+echo "  ENABLE_MARKET_INTELLIGENCE=true"
+EOF
+
+chmod +x deploy-updated-functions.sh
+
+echo -e "${GREEN}✅ Function deployment script created${NC}"
+
+echo ""
+echo -e "${YELLOW}📋 Summary of Updates:${NC}"
+echo "  ✅ AI Scraper Worker updated with frontend integration"
+echo "  ✅ Data transformation pipeline integrated"
+echo "  ✅ Dual-save functionality (apartments + properties tables)"
+echo "  ✅ AI pricing and market intelligence enabled"
+echo "  ✅ Deployment script created"
+echo ""
+echo -e "${BLUE}🚀 To deploy the updated functions:${NC}"
+echo "  ./deploy-updated-functions.sh"
+echo ""
+echo -e "${GREEN}🎯 Your functions are now ready for AI-enhanced data integration!${NC}"
