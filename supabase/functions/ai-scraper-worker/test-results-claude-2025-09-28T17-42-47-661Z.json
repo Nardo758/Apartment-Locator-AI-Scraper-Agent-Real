@@ -1,0 +1,137 @@
+{
+  "timestamp": "2025-09-28T17:42:47.662Z",
+  "model": "claude-3-haiku-20240307",
+  "summary": {
+    "total_tests": 5,
+    "successful": 5,
+    "failed": 0,
+    "success_rate": 100,
+    "total_cost": 0.00139,
+    "total_time_seconds": 0,
+    "avg_response_time_ms": 0
+  },
+  "results": [
+    {
+      "success": true,
+      "property_id": "test-1",
+      "source": "apartments.com",
+      "data": {
+        "name": "Sunset Gardens Apartment",
+        "address": "1234 Oak Street, Austin, TX 78701",
+        "city": "Austin",
+        "state": "TX",
+        "current_price": 1850,
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "application_fee": 75,
+        "free_rent_concessions": "ee: $75\n        First month free with 12-month lease"
+      },
+      "usage": {
+        "input_tokens": 96,
+        "output_tokens": 64,
+        "total_tokens": 160,
+        "estimated_cost": 0.000333,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0
+    },
+    {
+      "success": true,
+      "property_id": "test-2",
+      "source": "zillow.com",
+      "data": {
+        "name": "Modern Downtown Loft",
+        "address": "567 Main St, Dallas, TX 75201",
+        "city": "Dallas",
+        "state": "TX",
+        "current_price": 2100,
+        "bedrooms": 1,
+        "bathrooms": 1
+      },
+      "usage": {
+        "input_tokens": 84,
+        "output_tokens": 37,
+        "total_tokens": 121,
+        "estimated_cost": 0.000215,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 1
+    },
+    {
+      "success": true,
+      "property_id": "test-3",
+      "source": "rent.com",
+      "data": {
+        "name": "Riverside Apartments",
+        "address": "890 River Road, Houston, TX 77001",
+        "city": "Houston",
+        "state": "TX",
+        "current_price": 1650,
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "application_fee": 200
+      },
+      "usage": {
+        "input_tokens": 88,
+        "output_tokens": 44,
+        "total_tokens": 132,
+        "estimated_cost": 0.000246,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 1
+    },
+    {
+      "success": true,
+      "property_id": "test-4",
+      "source": "trulia.com",
+      "data": {
+        "name": "Luxury Penthouse Suite",
+        "address": "2100 Skyline Dr, Miami, FL 33101",
+        "city": "Miami",
+        "state": "FL",
+        "current_price": 3500,
+        "bedrooms": 2,
+        "bathrooms": 2.5,
+        "application_fee": 100,
+        "admin_fee_amount": 300,
+        "admin_fee_waived": false,
+        "free_rent_concessions": "Move-in special: 2 months free rent"
+      },
+      "usage": {
+        "input_tokens": 97,
+        "output_tokens": 72,
+        "total_tokens": 169,
+        "estimated_cost": 0.000366,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0
+    },
+    {
+      "success": true,
+      "property_id": "test-5",
+      "source": "forrent.com",
+      "data": {
+        "name": "Cozy Studio Downtown",
+        "address": "45 Pine Street, Seattle, WA 98101",
+        "city": "Seattle",
+        "state": "WA",
+        "current_price": 1200,
+        "bathrooms": 1,
+        "bedrooms": 1
+      },
+      "usage": {
+        "input_tokens": 97,
+        "output_tokens": 38,
+        "total_tokens": 135,
+        "estimated_cost": 0.00023,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0
+    }
+  ]
+}

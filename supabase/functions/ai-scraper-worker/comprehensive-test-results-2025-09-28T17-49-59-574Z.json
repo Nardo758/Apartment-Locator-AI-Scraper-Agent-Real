@@ -1,0 +1,488 @@
+{
+  "timestamp": "2025-09-28T17:49:59.574Z",
+  "model": "claude-3-haiku-20240307",
+  "test_config": {
+    "total_properties": 100,
+    "test_duration_ms": 9926,
+    "processing_time_ms": 7
+  },
+  "summary": {
+    "total_tests": 100,
+    "successful": 92,
+    "failed": 8,
+    "success_rate": 92,
+    "total_cost": 0.037915,
+    "avg_cost_per_property": 0.000379,
+    "avg_response_time_ms": 0
+  },
+  "scenario_performance": {
+    "student_housing": {
+      "total": 21,
+      "successful": 20
+    },
+    "studio_apartment": {
+      "total": 21,
+      "successful": 18
+    },
+    "townhouse_rental": {
+      "total": 20,
+      "successful": 19
+    },
+    "luxury_high_rise": {
+      "total": 19,
+      "successful": 18
+    },
+    "budget_apartment": {
+      "total": 19,
+      "successful": 17
+    }
+  },
+  "sample_results": [
+    {
+      "success": true,
+      "property_id": "test-1",
+      "source": "apartments.com",
+      "scenario": "student_housing",
+      "data": {
+        "name": "Garden Court",
+        "address": "2112 Cedar Lane, Houston, TX",
+        "city": "2112 Cedar Lane",
+        "state": "HO",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null,
+        "free_rent_concessions": "Move-in special: 2 months free rent",
+        "current_price": 1000
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 171,
+        "output_tokens": 74,
+        "total_tokens": 245,
+        "estimated_cost": 0.000433,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 1,
+      "expected": {
+        "name": "Garden Court",
+        "address": "2112 Cedar Lane",
+        "city": "Houston",
+        "state": "TX",
+        "price": 1572,
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "appFee": 104,
+        "adminFee": null,
+        "adminWaived": true,
+        "concessions": "Move-in special: 2 months free rent"
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-2",
+      "source": "zillow.com",
+      "scenario": "student_housing",
+      "data": {
+        "name": "University Heights",
+        "address": "8660 Pine Road, Charlotte, NC",
+        "city": "8660 Pine Road",
+        "state": "CH",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null,
+        "current_price": 1000
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 171,
+        "output_tokens": 58,
+        "total_tokens": 229,
+        "estimated_cost": 0.000369,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "University Heights",
+        "address": "8660 Pine Road",
+        "city": "Charlotte",
+        "state": "NC",
+        "price": 1563,
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "appFee": 0,
+        "adminFee": null,
+        "adminWaived": true,
+        "concessions": "Free parking for first 6 months"
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-3",
+      "source": "zillow.com",
+      "scenario": "studio_apartment",
+      "data": {
+        "name": "Sunset Gardens",
+        "address": "4171 Maple Drive",
+        "current_price": 128,
+        "bedrooms": 0,
+        "bathrooms": 1,
+        "application_fee": 128,
+        "admin_fee_amount": 128,
+        "admin_fee_waived": false,
+        "city": "Unknown City",
+        "state": "XX"
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 129,
+        "output_tokens": 58,
+        "total_tokens": 187,
+        "estimated_cost": 0.000335,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "Sunset Gardens",
+        "address": "4171 Maple Drive",
+        "city": "Miami",
+        "state": "FL",
+        "price": 2565,
+        "bedrooms": 0,
+        "bathrooms": 1,
+        "appFee": 0,
+        "adminFee": 128,
+        "adminWaived": false,
+        "concessions": null
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-4",
+      "source": "rent.com",
+      "scenario": "studio_apartment",
+      "data": {
+        "name": "Lakefront Towers",
+        "address": "6205 Mill Avenue",
+        "bedrooms": 0,
+        "bathrooms": 3,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null,
+        "city": "Unknown City",
+        "state": "XX",
+        "current_price": 1000
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 130,
+        "output_tokens": 53,
+        "total_tokens": 183,
+        "estimated_cost": 0.000316,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "Lakefront Towers",
+        "address": "6205 Mill Avenue",
+        "city": "Seattle",
+        "state": "WA",
+        "price": 1518,
+        "bedrooms": 0,
+        "bathrooms": 3,
+        "appFee": 42,
+        "adminFee": null,
+        "adminWaived": true,
+        "concessions": "Reduced security deposit"
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-5",
+      "source": "zillow.com",
+      "scenario": "townhouse_rental",
+      "data": {
+        "name": "Garden Court",
+        "address": "4829 Park Avenue, Dallas, TX 62997",
+        "city": "4829 Park Avenue",
+        "state": "DA",
+        "current_price": 283,
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "application_fee": 283,
+        "admin_fee_amount": 283,
+        "admin_fee_waived": false,
+        "free_rent_concessions": "Admin fee: $283 First month free with 12-month lease"
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 191,
+        "output_tokens": 87,
+        "total_tokens": 278,
+        "estimated_cost": 0.000501,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "Garden Court",
+        "address": "4829 Park Avenue",
+        "city": "Dallas",
+        "state": "TX",
+        "price": 3571,
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "appFee": 194,
+        "adminFee": 283,
+        "adminWaived": false,
+        "concessions": "First month free with 12-month lease"
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-6",
+      "source": "apartments.com",
+      "scenario": "student_housing",
+      "data": {
+        "name": "Lakefront Towers",
+        "address": "4408 Elm Street, Seattle, WA",
+        "city": "4408 Elm Street",
+        "state": "SE",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null,
+        "free_rent_concessions": "Move-in special: 2 months free rent",
+        "current_price": 1000
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 172,
+        "output_tokens": 75,
+        "total_tokens": 247,
+        "estimated_cost": 0.000438,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "Lakefront Towers",
+        "address": "4408 Elm Street",
+        "city": "Seattle",
+        "state": "WA",
+        "price": 1500,
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "appFee": 217,
+        "adminFee": null,
+        "adminWaived": true,
+        "concessions": "Move-in special: 2 months free rent"
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-7",
+      "source": "apartments.com",
+      "scenario": "luxury_high_rise",
+      "data": {
+        "name": "Summit Ridge",
+        "address": "3460 Market Street",
+        "city": "Portland",
+        "state": "OR",
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "current_price": 1000
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 230,
+        "output_tokens": 38,
+        "total_tokens": 268,
+        "estimated_cost": 0.000336,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "Summit Ridge",
+        "address": "3460 Market Street",
+        "city": "Portland",
+        "state": "OR",
+        "price": 6334,
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "appFee": 28,
+        "adminFee": 244,
+        "adminWaived": false,
+        "concessions": null
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-8",
+      "source": "zillow.com",
+      "scenario": "luxury_high_rise",
+      "data": {
+        "name": "City Center Apartments",
+        "address": "4814 First Street",
+        "city": "Orlando",
+        "state": "FL",
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null,
+        "current_price": 1000
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 238,
+        "output_tokens": 54,
+        "total_tokens": 292,
+        "estimated_cost": 0.000406,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "City Center Apartments",
+        "address": "4814 First Street",
+        "city": "Orlando",
+        "state": "FL",
+        "price": 6579,
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "appFee": 89,
+        "adminFee": null,
+        "adminWaived": true,
+        "concessions": null
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-9",
+      "source": "zillow.com",
+      "scenario": "studio_apartment",
+      "data": {
+        "name": "Lakefront Towers",
+        "address": "8599 Church Road",
+        "current_price": 152,
+        "bedrooms": 0,
+        "bathrooms": 1,
+        "application_fee": 152,
+        "admin_fee_amount": 152,
+        "admin_fee_waived": false,
+        "city": "Unknown City",
+        "state": "XX"
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 129,
+        "output_tokens": 59,
+        "total_tokens": 188,
+        "estimated_cost": 0.000339,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 1,
+      "expected": {
+        "name": "Lakefront Towers",
+        "address": "8599 Church Road",
+        "city": "Denver",
+        "state": "CO",
+        "price": 1514,
+        "bedrooms": 0,
+        "bathrooms": 1,
+        "appFee": 0,
+        "adminFee": 152,
+        "adminWaived": false,
+        "concessions": "Reduced security deposit"
+      }
+    },
+    {
+      "success": true,
+      "property_id": "test-10",
+      "source": "zillow.com",
+      "scenario": "luxury_high_rise",
+      "data": {
+        "name": "Parkview Residences",
+        "address": "2843 Church Road",
+        "city": "Portland",
+        "state": "OR",
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null,
+        "current_price": 1000
+      },
+      "error": null,
+      "usage": {
+        "input_tokens": 239,
+        "output_tokens": 53,
+        "total_tokens": 292,
+        "estimated_cost": 0.000403,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 0,
+      "expected": {
+        "name": "Parkview Residences",
+        "address": "2843 Church Road",
+        "city": "Portland",
+        "state": "OR",
+        "price": 4843,
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "appFee": 134,
+        "adminFee": null,
+        "adminWaived": true,
+        "concessions": "Free parking for first 6 months"
+      }
+    }
+  ],
+  "failed_results": [
+    {
+      "property_id": "test-20",
+      "scenario": "townhouse_rental",
+      "error": "Simulated parsing failure"
+    },
+    {
+      "property_id": "test-30",
+      "scenario": "budget_apartment",
+      "error": "Simulated parsing failure"
+    },
+    {
+      "property_id": "test-36",
+      "scenario": "studio_apartment",
+      "error": "Simulated parsing failure"
+    },
+    {
+      "property_id": "test-61",
+      "scenario": "studio_apartment",
+      "error": "Simulated parsing failure"
+    },
+    {
+      "property_id": "test-65",
+      "scenario": "budget_apartment",
+      "error": "Simulated parsing failure"
+    },
+    {
+      "property_id": "test-67",
+      "scenario": "studio_apartment",
+      "error": "Simulated parsing failure"
+    },
+    {
+      "property_id": "test-69",
+      "scenario": "luxury_high_rise",
+      "error": "Simulated parsing failure"
+    },
+    {
+      "property_id": "test-79",
+      "scenario": "student_housing",
+      "error": "Simulated parsing failure"
+    }
+  ]
+}
