@@ -124,12 +124,13 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/deno
-        key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
+        key: ${{ runner.os }}-deno-${{ hashFiles('**/import_map.json', '**/deno.json') }}
         restore-keys: |
           ${{ runner.os }}-deno-
 
     - name: Install dependencies
-      run: deno cache --lock=deno.lock src/main.ts
+      run: |
+        deno cache src/main.ts
 
     - name: Run scraper for ${{ matrix.region }}
       run: |
