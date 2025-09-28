@@ -183,19 +183,23 @@ done
 
 # Test 8: GitHub Actions workflow
 echo -e "\n${BLUE}⚙️  Test 8: GitHub Actions Workflow${NC}"
-if [[ -f ".github/workflows/enhanced-weekly-scraper.yml" ]]; then
-    echo -e "${GREEN}✅ GitHub Actions workflow exists${NC}"
+if [[ -f ".github/workflows/deploy.yml" ]] || [[ -f ".github/workflows/weekly-scraper.yml" ]]; then
+    echo -e "${GREEN}✅ GitHub Actions workflows exist${NC}"
     
     # Basic YAML syntax check if yq is available
     if command -v yq &> /dev/null; then
-        if yq eval '.name' .github/workflows/enhanced-weekly-scraper.yml &>/dev/null; then
-            echo -e "${GREEN}✅ Workflow YAML syntax is valid${NC}"
-        else
-            echo -e "${RED}❌ Workflow YAML syntax error${NC}"
-        fi
+        for workflow in .github/workflows/*.yml; do
+            if [[ -f "$workflow" ]]; then
+                if yq eval '.name' "$workflow" &>/dev/null; then
+                    echo -e "${GREEN}✅ $(basename "$workflow") YAML syntax is valid${NC}"
+                else
+                    echo -e "${RED}❌ $(basename "$workflow") YAML syntax error${NC}"
+                fi
+            fi
+        done
     fi
 else
-    echo -e "${RED}❌ GitHub Actions workflow not found${NC}"
+    echo -e "${RED}❌ GitHub Actions workflows not found${NC}"
 fi
 
 # Test Summary

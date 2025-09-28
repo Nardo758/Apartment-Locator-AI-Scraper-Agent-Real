@@ -1,4 +1,4 @@
-import { ApartmentScraper } from './scraper/index.ts';
+import { ApartmentScraper } from './scraper/index';
 
 async function main() {
     const scraper = new ApartmentScraper();

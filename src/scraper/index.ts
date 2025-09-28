@@ -7,7 +7,7 @@ import * as market from './market';
 import { extractAmenities } from './amenities';
 import { classifyPropertyType } from './propertyType';
 import { computeAiPricing } from '../lib/pricing-engine';
-import { ClaudeService, type PropertyIntelligence } from '../services/claude-service.ts';
+import { ClaudeService, type PropertyIntelligence } from '../services/claude-service';
 
 export { SCRAPING_STRATEGY };
 export type { ScrapingStrategy, ScrapingTier, CostPriority };

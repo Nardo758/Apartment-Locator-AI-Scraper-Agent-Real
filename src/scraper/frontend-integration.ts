@@ -1,7 +1,7 @@
 // Scraper Frontend Integration
 // src/scraper/frontend-integration.ts
 
-import { frontendDataService } from '../services/frontend-data-service.ts';
+import { frontendDataService } from '../services/frontend-data-service';
 import { createClient } from '@supabase/supabase-js';
 
 interface ScraperResult {
