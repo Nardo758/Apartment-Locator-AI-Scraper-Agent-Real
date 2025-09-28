@@ -120,28 +120,38 @@ echo ""
 
 # Test 5: GitHub Actions Workflow
 echo -e "${BLUE}⚙️  Test 5: GitHub Actions Workflow${NC}"
-WORKFLOW_FILE=".github/workflows/enhanced-weekly-scraper.yml"
 
-if [[ -f "$WORKFLOW_FILE" ]]; then
-    echo -e "${GREEN}✅ GitHub Actions workflow exists${NC}"
+if [[ -f ".github/workflows/deploy.yml" ]] || [[ -f ".github/workflows/weekly-scraper.yml" ]]; then
+    echo -e "${GREEN}✅ GitHub Actions workflows exist${NC}"
     
-    # Check for required secrets
-    REQUIRED_SECRETS=("SUPABASE_URL" "SUPABASE_ANON_KEY" "SUPABASE_SERVICE_ROLE_KEY" "ANTHROPIC_API_KEY")
-    for secret in "${REQUIRED_SECRETS[@]}"; do
-        if grep -q "$secret" "$WORKFLOW_FILE"; then
-            echo -e "${GREEN}   Uses secret: $secret${NC}"
-        else
-            echo -e "${YELLOW}   ⚠️  Secret not referenced: $secret${NC}"
+    # Check for required secrets in deploy.yml
+    if [[ -f ".github/workflows/deploy.yml" ]]; then
+        DEPLOY_WORKFLOW=".github/workflows/deploy.yml"
+        REQUIRED_SECRETS=("SUPABASE_URL" "SUPABASE_ANON_KEY" "SUPABASE_SERVICE_ROLE_KEY" "ANTHROPIC_API_KEY")
+        for secret in "${REQUIRED_SECRETS[@]}"; do
+            if grep -q "$secret" "$DEPLOY_WORKFLOW"; then
+                echo -e "${GREEN}   Uses secret: $secret${NC}"
+            else
+                echo -e "${YELLOW}   ⚠️  Secret not referenced: $secret${NC}"
+            fi
+        done
+        
+        # Check workflow triggers
+        if grep -q "schedule:" "$DEPLOY_WORKFLOW"; then
+            echo -e "${GREEN}   Deploy has scheduled trigger${NC}"
         fi
-    done
-    
-    # Check workflow triggers
-    if grep -q "schedule:" "$WORKFLOW_FILE"; then
-        echo -e "${GREEN}   Has scheduled trigger${NC}"
+        
+        if grep -q "workflow_dispatch:" "$DEPLOY_WORKFLOW"; then
+            echo -e "${GREEN}   Deploy has manual trigger${NC}"
+        fi
     fi
     
-    if grep -q "workflow_dispatch:" "$WORKFLOW_FILE"; then
-        echo -e "${GREEN}   Has manual trigger${NC}"
+    # Check weekly scraper workflow
+    if [[ -f ".github/workflows/weekly-scraper.yml" ]]; then
+        WEEKLY_WORKFLOW=".github/workflows/weekly-scraper.yml"
+        if grep -q "schedule:" "$WEEKLY_WORKFLOW"; then
+            echo -e "${GREEN}   Weekly scraper has scheduled trigger${NC}"
+        fi
     fi
 else
     echo -e "${RED}❌ GitHub Actions workflow not found${NC}"
