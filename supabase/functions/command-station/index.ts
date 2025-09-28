@@ -477,6 +477,7 @@ async function handleImportConfig(req: Request): Promise<Response> {
 
 /**
  * Get list of available endpoints
+ * Updated: Fixed syntax errors for deployment
  */
 async function getAvailableEndpoints(): Promise<string[]> {
   return [
