@@ -487,3 +487,15 @@ async function getAvailableEndpoints(): Promise<string[]> {
     'GET /help', 'GET /version'
   ];
 }
+      case 'sync-frontend':
+        if (req.method === 'POST') {
+          return await syncScrapedToFrontend()
+        }
+        break
+      
+      case 'test-transformation':
+        if (req.method === 'POST') {
+          const testData = await req.json()
+          return await testDataTransformation(testData)
+        }
+        break
