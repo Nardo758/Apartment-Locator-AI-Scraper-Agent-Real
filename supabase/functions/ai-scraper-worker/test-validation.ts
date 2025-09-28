@@ -201,6 +201,43 @@ function runValidationTests(): void {
   }
 }
 
+// Deno test format
+Deno.test("AI Result Validation Tests", () => {
+  console.log("🧪 Running AI Result Validation Tests");
+  console.log("=" .repeat(50));
+  
+  let passed = 0;
+  let failed = 0;
+  
+  testCases.forEach((testCase, index) => {
+    const result = validateAiResult(testCase.data);
+    const success = result === testCase.expected;
+    
+    if (success) {
+      passed++;
+      console.log(`✅ Test ${index + 1}: ${testCase.name}`);
+    } else {
+      failed++;
+      console.log(`❌ Test ${index + 1}: ${testCase.name}`);
+      console.log(`   Expected: ${testCase.expected}, Got: ${result}`);
+      console.log(`   Data: ${JSON.stringify(testCase.data, null, 2)}`);
+      throw new Error(`Test failed: ${testCase.name}`);
+    }
+  });
+  
+  console.log("\n📊 TEST SUMMARY");
+  console.log("=" .repeat(30));
+  console.log(`Total Tests: ${testCases.length}`);
+  console.log(`Passed: ${passed} (${((passed / testCases.length) * 100).toFixed(1)}%)`);
+  console.log(`Failed: ${failed} (${((failed / testCases.length) * 100).toFixed(1)}%)`);
+  
+  if (failed === 0) {
+    console.log("\n🎉 All validation tests passed!");
+  } else {
+    console.log(`\n⚠️  ${failed} test(s) failed. Please review the validation logic.`);
+  }
+});
+
 // Run tests if this file is executed directly
 if (import.meta.main) {
   runValidationTests();
