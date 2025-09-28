@@ -1,0 +1,345 @@
+{
+  "timestamp": "2025-09-28T17:55:04.487Z",
+  "location": "Atlanta, GA",
+  "model": "claude-3-haiku-20240307",
+  "summary": {
+    "total_properties": 100,
+    "successful_extractions": 95,
+    "failed_extractions": 5,
+    "success_rate": 95,
+    "total_cost": 0.049727,
+    "avg_cost_per_property": 0.000497,
+    "total_processing_time_ms": 154208,
+    "total_test_duration_ms": 32705,
+    "avg_response_time_ms": 1542
+  },
+  "market_analysis": {
+    "average_rent": 1330,
+    "median_rent": 277,
+    "min_rent": 207,
+    "max_rent": 3098,
+    "total_properties_analyzed": 95
+  },
+  "source_performance": {
+    "rent.com": {
+      "total": 20,
+      "successful": 19
+    },
+    "trulia.com": {
+      "total": 26,
+      "successful": 24
+    },
+    "zillow.com": {
+      "total": 20,
+      "successful": 20
+    },
+    "apartments.com": {
+      "total": 17,
+      "successful": 17
+    },
+    "realtor.com": {
+      "total": 17,
+      "successful": 15
+    }
+  },
+  "neighborhood_stats": {
+    "Decatur": {
+      "count": 13,
+      "avgPrice": 2137,
+      "totalPrice": 27783
+    },
+    "Vinings": {
+      "count": 18,
+      "avgPrice": 853,
+      "totalPrice": 15347
+    },
+    "Midtown": {
+      "count": 9,
+      "avgPrice": 496,
+      "totalPrice": 4462
+    },
+    "Inman Park": {
+      "count": 12,
+      "avgPrice": 660,
+      "totalPrice": 7918
+    },
+    "Sandy Springs": {
+      "count": 10,
+      "avgPrice": 1183,
+      "totalPrice": 11828
+    },
+    "Buckhead": {
+      "count": 13,
+      "avgPrice": 598,
+      "totalPrice": 7776
+    },
+    "Virginia-Highland": {
+      "count": 8,
+      "avgPrice": 1076,
+      "totalPrice": 8609
+    },
+    "Downtown": {
+      "count": 12,
+      "avgPrice": 565,
+      "totalPrice": 6783
+    }
+  },
+  "sample_results": [
+    {
+      "success": true,
+      "property_id": "atlanta-1",
+      "source": "rent.com",
+      "template": "simple",
+      "data": {
+        "name": "The Atlantic Station Apartments",
+        "address": "8039 Atlantic Dr NW",
+        "current_price": 2860,
+        "bedrooms": 3,
+        "bathrooms": 1.5,
+        "application_fee": 109,
+        "admin_fee_amount": 299,
+        "admin_fee_waived": false,
+        "city": "Atlanta",
+        "state": "GA"
+      },
+      "usage": {
+        "input_tokens": 244,
+        "output_tokens": 64,
+        "total_tokens": 308,
+        "estimated_cost": 0.000451,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 1082,
+      "expected": {
+        "name": "The Atlantic Station Apartments ",
+        "address": "8039 Atlantic Dr NW",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30334",
+        "price": 2860,
+        "bedrooms": 3,
+        "bathrooms": 1.5,
+        "source": "rent.com",
+        "neighborhood": "Decatur",
+        "amenities": [
+          "Pool",
+          "Gym",
+          "Parking",
+          "Pet-friendly"
+        ],
+        "concessions": null
+      }
+    },
+    {
+      "success": true,
+      "property_id": "atlanta-2",
+      "source": "trulia.com",
+      "template": "simple",
+      "data": {
+        "name": "Skyhouse Buckhead",
+        "address": "188 Peachtree Rd NE",
+        "current_price": 3098,
+        "bedrooms": 2,
+        "bathrooms": 1.5,
+        "application_fee": 36,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null,
+        "city": "Atlanta",
+        "state": "GA"
+      },
+      "usage": {
+        "input_tokens": 240,
+        "output_tokens": 59,
+        "total_tokens": 299,
+        "estimated_cost": 0.000428,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 2185,
+      "expected": {
+        "name": "Skyhouse Buckhead ",
+        "address": "188 Peachtree Rd NE",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30361",
+        "price": 3098,
+        "bedrooms": 2,
+        "bathrooms": 1.5,
+        "source": "trulia.com",
+        "neighborhood": "Vinings",
+        "amenities": [
+          "Rooftop Pool",
+          "Concierge",
+          "Valet"
+        ],
+        "concessions": null
+      }
+    },
+    {
+      "success": true,
+      "property_id": "atlanta-3",
+      "source": "rent.com",
+      "template": "basic",
+      "data": {
+        "name": "The Mark Atlanta",
+        "address": "3366 Peachtree Rd NE, Atlanta, GA",
+        "city": "3366 Peachtree Rd NE",
+        "state": "AT",
+        "current_price": 277,
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "application_fee": 55,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null
+      },
+      "usage": {
+        "input_tokens": 166,
+        "output_tokens": 66,
+        "total_tokens": 232,
+        "estimated_cost": 0.000397,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 2241,
+      "expected": {
+        "name": "The Mark Atlanta ",
+        "address": "3366 Peachtree Rd NE",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30313",
+        "price": 2772,
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "source": "rent.com",
+        "neighborhood": "Vinings",
+        "amenities": [
+          "Fitness Center",
+          "Business Center"
+        ],
+        "concessions": null
+      }
+    },
+    {
+      "success": true,
+      "property_id": "atlanta-4",
+      "source": "rent.com",
+      "template": "basic",
+      "data": {
+        "name": "Post Riverside",
+        "address": "3012 Paces Ferry Rd SE, Atlanta, GA",
+        "city": "3012 Paces Ferry Rd SE",
+        "state": "AT",
+        "current_price": 209,
+        "bedrooms": 1,
+        "bathrooms": 2.5,
+        "application_fee": 60,
+        "admin_fee_amount": 276,
+        "admin_fee_waived": false
+      },
+      "usage": {
+        "input_tokens": 159,
+        "output_tokens": 67,
+        "total_tokens": 226,
+        "estimated_cost": 0.000395,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 2312,
+      "expected": {
+        "name": "Post Riverside ",
+        "address": "3012 Paces Ferry Rd SE",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30370",
+        "price": 2090,
+        "bedrooms": 1,
+        "bathrooms": 2.5,
+        "source": "rent.com",
+        "neighborhood": "Midtown",
+        "amenities": [
+          "Pool",
+          "Dog Park",
+          "Grilling Station"
+        ],
+        "concessions": null
+      }
+    },
+    {
+      "success": true,
+      "property_id": "atlanta-5",
+      "source": "zillow.com",
+      "template": "basic",
+      "data": {
+        "name": "Gables Midtown",
+        "address": "6917 Centennial Olympic Park Dr NW, Atlanta, GA",
+        "city": "6917 Centennial Olympic Park Dr NW",
+        "state": "AT",
+        "current_price": 207,
+        "bedrooms": 1,
+        "bathrooms": 1.5,
+        "application_fee": 54,
+        "admin_fee_waived": true,
+        "admin_fee_amount": null
+      },
+      "usage": {
+        "input_tokens": 170,
+        "output_tokens": 74,
+        "total_tokens": 244,
+        "estimated_cost": 0.000432,
+        "model": "claude-3-haiku-20240307",
+        "provider": "anthropic"
+      },
+      "response_time_ms": 1726,
+      "expected": {
+        "name": "Gables Midtown ",
+        "address": "6917 Centennial Olympic Park Dr NW",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30355",
+        "price": 2079,
+        "bedrooms": 1,
+        "bathrooms": 1.5,
+        "source": "zillow.com",
+        "neighborhood": "Inman Park",
+        "amenities": [
+          "Rooftop Terrace",
+          "Fitness Center"
+        ],
+        "concessions": null
+      }
+    }
+  ],
+  "failed_results": [
+    {
+      "property_id": "atlanta-14",
+      "source": "trulia.com",
+      "error": "Simulated Claude API timeout",
+      "response_time": 2338
+    },
+    {
+      "property_id": "atlanta-78",
+      "source": "rent.com",
+      "error": "Simulated Claude API timeout",
+      "response_time": 1290
+    },
+    {
+      "property_id": "atlanta-89",
+      "source": "trulia.com",
+      "error": "Simulated Claude API timeout",
+      "response_time": 2182
+    },
+    {
+      "property_id": "atlanta-90",
+      "source": "realtor.com",
+      "error": "Simulated Claude API timeout",
+      "response_time": 775
+    },
+    {
+      "property_id": "atlanta-97",
+      "source": "realtor.com",
+      "error": "Simulated Claude API timeout",
+      "response_time": 2189
+    }
+  ]
+}
