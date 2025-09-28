@@ -46,7 +46,7 @@ jobs:
         deno-version: '1.40.4'
 
     - name: Cache Deno dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/deno
         key: ${{ runner.os }}-deno-${{ hashFiles('**/import_map.json', '**/deno.json') }}
@@ -107,7 +107,7 @@ jobs:
         version: latest
 
     - name: Cache Deno dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/deno
         key: ${{ runner.os }}-deno-${{ hashFiles('**/import_map.json', '**/deno.json') }}

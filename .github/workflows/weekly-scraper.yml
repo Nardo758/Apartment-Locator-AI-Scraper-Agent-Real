@@ -121,7 +121,7 @@ jobs:
         deno-version: '1.40.4'
 
     - name: Cache dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/deno
         key: ${{ runner.os }}-deno-${{ hashFiles('**/import_map.json', '**/deno.json') }}
@@ -177,7 +177,7 @@ jobs:
 
     - name: Upload region report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: scraper-reports
         path: region_report_*.json
@@ -194,7 +194,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Download reports
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: scraper-reports
         path: ./reports/
