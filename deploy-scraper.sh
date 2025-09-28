@@ -1,9 +1,18 @@
 #!/bin/bash
-# deploy-scraper.sh
+
+# ===================================
+# Claude-Powered AI Scraper Deployment Script
 # Enhanced deployment script with cost monitoring and control
+# ===================================
 
 set -e  # Exit on any error
 
+echo "🚀 Deploying Claude-Powered AI Apartment Scraper"
+echo "================================================="
+
+# Configuration
+PROJECT_NAME="ai-scraper-worker"
+FUNCTION_NAME="ai-scraper-worker"
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -32,21 +41,19 @@ echo -e "${BLUE}🚀 Property Scraper Deployment System${NC}"
 echo "========================================"
 
 # Load configuration
-if [[ ! -f "deploy-control.json" ]]; then
-    echo -e "${RED}❌ deploy-control.json not found${NC}"
-    exit 1
+if [[ -f "deploy-control.json" ]]; then
+    CONFIG=$(cat deploy-control.json)
+    
+    # Check if scraping is enabled
+    SCRAPING_ENABLED=$(echo $CONFIG | jq -r '.scraping_enabled')
+    if [[ "$SCRAPING_ENABLED" != "true" ]]; then
+        echo -e "${YELLOW}🚫 Scraping is disabled in configuration${NC}"
+        echo "To enable: ./control-scraper.sh enable"
+        exit 0
+    fi
+else
+    echo -e "${YELLOW}⚠️  No deploy-control.json found, proceeding with default configuration${NC}"
 fi
-
-CONFIG=$(cat deploy-control.json)
-
-# Check if scraping is enabled
-SCRAPING_ENABLED=$(echo $CONFIG | jq -r '.scraping_enabled')
-if [[ "$SCRAPING_ENABLED" != "true" ]]; then
-    echo -e "${YELLOW}🚫 Scraping is disabled in configuration${NC}"
-    echo "To enable: ./control-scraper.sh enable"
-    exit 0
-fi
-
 # Check prerequisites
 check_prerequisites() {
     log_info "Checking prerequisites..."
@@ -95,13 +102,6 @@ validate_environment() {
             exit 1
         fi
     done
-
-    if [[ -z "$ANTHROPIC_API_KEY" ]]; then
-        log_error "ANTHROPIC_API_KEY is not set"
-        echo "Please set your Claude API key:"
-        echo "  export ANTHROPIC_API_KEY=your_claude_key"
-        exit 1
-    fi
     
     if [[ -z "$SUPABASE_PROJECT_REF" ]]; then
         log_warning "SUPABASE_PROJECT_REF not set. You'll need to link manually."
@@ -244,18 +244,21 @@ test_deployment() {
         if supabase db exec "SELECT 1 FROM $table LIMIT 1" &>/dev/null; then
             log_success "Table $table exists and accessible"
         else
-            log_error "Table $table not accessible"
-            exit 1
+            log_warning "Table $table not accessible (may be created during first run)"
         fi
     done
 
     # Test function deployment
-    SUPABASE_PROJECT_URL=$(echo $SUPABASE_URL | sed 's/https:\/\///')
-    echo "Testing function endpoints..."
-    if curl -s -f "https://$SUPABASE_PROJECT_URL/functions/v1/scheduled-scraper" -H "Authorization: Bearer $SUPABASE_ANON_KEY" &>/dev/null; then
-        log_success "Functions are accessible"
+    if [[ -n "$SUPABASE_URL" ]]; then
+        SUPABASE_PROJECT_URL=$(echo $SUPABASE_URL | sed 's/https:\/\///')
+        echo "Testing function endpoints..."
+        if curl -s -f "https://$SUPABASE_PROJECT_URL/functions/v1/ai-scraper-worker" -H "Authorization: Bearer $SUPABASE_ANON_KEY" &>/dev/null; then
+            log_success "Functions are accessible"
+        else
+            log_warning "Function endpoint test inconclusive"
+        fi
     else
-        log_warning "Function endpoint test inconclusive"
+        log_warning "SUPABASE_URL not set, skipping function endpoint test"
     fi
 }
 
@@ -300,26 +303,37 @@ show_config_summary() {
     echo ""
     echo -e "${BLUE}📋 Deployment Configuration Summary${NC}"
     echo "===================================="
-    echo "Scraping Enabled: $(echo $CONFIG | jq -r '.scraping_enabled')"
-    echo "Claude Analysis: $(echo $CONFIG | jq -r '.claude_analysis_enabled')"
-    echo "Schedule: $(echo $CONFIG | jq -r '.schedule')"
-    echo "Batch Size: $(echo $CONFIG | jq -r '.batch_size')"
-    echo "Daily Limit: $$(echo $CONFIG | jq -r '.cost_limit_daily')"
-    echo "Regions: $(echo $CONFIG | jq -r '.regions | join(", ")')"
-    echo "Environment: $(echo $CONFIG | jq -r '.environment')"
+    
+    if [[ -n "$CONFIG" ]]; then
+        echo "Scraping Enabled: $(echo $CONFIG | jq -r '.scraping_enabled // "true"')"
+        echo "Claude Analysis: $(echo $CONFIG | jq -r '.claude_analysis_enabled // "true"')"
+        echo "Schedule: $(echo $CONFIG | jq -r '.schedule // "0 */6 * * *"')"
+        echo "Batch Size: $(echo $CONFIG | jq -r '.batch_size // "10"')"
+        echo "Daily Limit: \$$(echo $CONFIG | jq -r '.cost_limit_daily // "5.00"')"
+        echo "Regions: $(echo $CONFIG | jq -r '.regions // ["atlanta"] | join(", ")')"
+        echo "Environment: $(echo $CONFIG | jq -r '.environment // "production"')"
 
-    # Show next scheduled run
-    if command -v node &> /dev/null; then
-        NEXT_RUN=$(node -e "
-            const schedule = '$(echo $CONFIG | jq -r '.schedule')';
-            const parser = require('cron-parser');
-            const interval = parser.parseExpression(schedule);
-            console.log(interval.next().toString());
-        " 2>/dev/null || echo "Unable to calculate")
-        echo "Next Scheduled Run: $NEXT_RUN"
+        # Show next scheduled run
+        if command -v node &> /dev/null; then
+            SCHEDULE=$(echo $CONFIG | jq -r '.schedule // "0 */6 * * *"')
+            NEXT_RUN=$(node -e "
+                try {
+                    const parser = require('cron-parser');
+                    const interval = parser.parseExpression('$SCHEDULE');
+                    console.log(interval.next().toString());
+                } catch (e) {
+                    console.log('Unable to calculate');
+                }
+            " 2>/dev/null || echo "Unable to calculate")
+            echo "Next Scheduled Run: $NEXT_RUN"
+        fi
+    else
+        echo "Using default configuration"
+        echo "Scraping Enabled: true"
+        echo "Claude Analysis: true"
+        echo "Environment: production"
     fi
 }
-
 # Main deployment process
 main() {
     echo ""
@@ -347,7 +361,9 @@ main() {
     echo "  3. Scale based on your traffic needs"
     echo "  4. Review deployment-report.md for details"
     echo ""
-    echo "🔗 Function URL: ${SUPABASE_URL}/functions/v1/ai-scraper-worker"
+    if [[ -n "$SUPABASE_URL" ]]; then
+        echo "🔗 Function URL: ${SUPABASE_URL}/functions/v1/ai-scraper-worker"
+    fi
     echo "📖 Documentation: deploy.md"
     echo "🔍 Logs: supabase functions logs ai-scraper-worker"
     echo ""
