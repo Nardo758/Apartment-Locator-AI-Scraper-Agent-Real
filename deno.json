@@ -1,11 +1,7 @@
 {
     "compilerOptions": {
-        "target": "esnext",
-        "module": "esnext",
         "lib": ["deno.ns", "deno.window"],
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true
+        "strict": true
     },
     "tasks": {
         "scrape": {

@@ -129,7 +129,7 @@ jobs:
           ${{ runner.os }}-deno-
 
     - name: Install dependencies
-      run: deno cache --lock=deno.lock --lock-write src/main.ts
+      run: deno cache --lock=deno.lock src/main.ts
 
     - name: Run scraper for ${{ matrix.region }}
       run: |
