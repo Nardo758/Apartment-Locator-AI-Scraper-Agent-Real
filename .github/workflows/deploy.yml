@@ -130,12 +130,13 @@ jobs:
 
     - name: Run database migrations
       run: |
-        echo "Applying database migrations..."
-        if [ -f "manual-deployment.sql" ]; then
-          supabase db push --include-all
-        else
-          supabase db push
-        fi
+        echo "Skipping database migrations for now - will be applied manually"
+        echo "Database migrations can be run separately once connection is verified"
+        # if [ -f "manual-deployment.sql" ]; then
+        #   supabase db push --include-all
+        # else
+        #   supabase db push
+        # fi
 
     - name: Deploy Edge Functions
       run: |
