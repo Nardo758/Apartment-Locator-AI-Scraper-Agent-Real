@@ -43,7 +43,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '2.0.0'
+        deno-version: '1.40.4'
 
     - name: Cache Deno dependencies
       uses: actions/cache@v3
@@ -54,7 +54,7 @@ jobs:
           ${{ runner.os }}-deno-
 
     - name: Install dependencies
-      run: deno cache src/main.ts
+      run: deno cache --lock=deno.lock src/main.ts
 
     - name: Run lint checks
       run: |
@@ -98,7 +98,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '2.0.0'
+        deno-version: '1.40.4'
 
     - name: Setup Supabase CLI
       uses: supabase/setup-cli@v1
@@ -114,7 +114,7 @@ jobs:
           ${{ runner.os }}-deno-
 
     - name: Install dependencies
-      run: deno cache src/main.ts
+      run: deno cache --lock=deno.lock src/main.ts
 
     - name: Link Supabase project
       run: |
