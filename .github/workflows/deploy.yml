@@ -43,7 +43,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: v1.x
+        deno-version: '1.40.0'
 
     - name: Cache Deno dependencies
       uses: actions/cache@v3
@@ -98,7 +98,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: v1.x
+        deno-version: '1.40.0'
 
     - name: Setup Supabase CLI
       uses: supabase/setup-cli@v1
