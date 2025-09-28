@@ -29,6 +29,21 @@ Click **New repository secret** for each of the following:
 - **Where to find:** Supabase Dashboard → Project Settings → API
 - **⚠️ Warning:** This key has admin privileges - keep it secure!
 
+#### 🔑 **SUPABASE_ACCESS_TOKEN** (Required)
+- **Name:** `SUPABASE_ACCESS_TOKEN`
+- **Value:** Your Supabase CLI access token
+- **Where to find:** Generate via `supabase login` or Supabase Dashboard → Account → Access Tokens
+
+#### 🔐 **SUPABASE_DB_PASSWORD** (Required)
+- **Name:** `SUPABASE_DB_PASSWORD`
+- **Value:** Your database password
+- **Where to find:** Supabase Dashboard → Settings → Database → Connection string
+
+#### 🆔 **SUPABASE_PROJECT_ID** (Required)
+- **Name:** `SUPABASE_PROJECT_ID`
+- **Value:** Your Supabase project reference ID
+- **Where to find:** Supabase Dashboard → Project Settings → General → Reference ID
+
 #### 🤖 **ANTHROPIC_API_KEY** (Required)
 - **Name:** `ANTHROPIC_API_KEY`
 - **Value:** Your Claude API key
@@ -84,6 +99,9 @@ Required Secrets:
 □ SUPABASE_URL
 □ SUPABASE_ANON_KEY  
 □ SUPABASE_SERVICE_ROLE_KEY
+□ SUPABASE_ACCESS_TOKEN
+□ SUPABASE_DB_PASSWORD
+□ SUPABASE_PROJECT_ID
 □ ANTHROPIC_API_KEY
 
 Optional Secrets:
