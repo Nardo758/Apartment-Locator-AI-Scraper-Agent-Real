@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ScrapingJob } from './orchestrator';
+import { syncToFrontendSchema, type FrontendProperty } from './orchestrator';
+import { transformScrapedToFrontendFormat, type ScrapedPropertyData } from './data-transformer';
 import process from 'node:process';
 
 
@@ -34,8 +36,14 @@ async function dispatchToWorker(workerUrl: string, payload: Record<string, unkno
   throw lastErr;
 }
 
-export async function processBatchWithCostOptimization(supabase: SupabaseClient, batch: ScrapingJob[]) {
+export async function processBatchWithCostOptimization(
+  supabase: SupabaseClient, 
+  batch: ScrapingJob[],
+  options: { enableFrontendSync?: boolean; frontendTable?: string } = {}
+) {
   const results: Array<Record<string, unknown>> = [];
+  const frontendProperties: FrontendProperty[] = [];
+  const { enableFrontendSync = false, frontendTable = 'properties' } = options;
 
   for (const job of batch) {
     try {
@@ -90,6 +98,37 @@ export async function processBatchWithCostOptimization(supabase: SupabaseClient,
       const newStatus = workerResult.success ? 'completed' : 'failed';
       await supabase.from('scraping_queue').update({ status: newStatus, completed_at: new Date().toISOString() }).eq('external_id', job.external_id).eq('id', job.queue_id);
 
+      // If successful and frontend sync is enabled, prepare for transformation
+      if (workerResult.success && enableFrontendSync && workerResult.data) {
+        try {
+          const scrapedData: ScrapedPropertyData = {
+            external_id: job.external_id,
+            property_id: String(job.property_id || job.external_id.split('_')[0] || ''),
+            unit_number: String(job.unit_number || job.external_id.split('_')[1] || '1'),
+            source: String(job.source || 'unknown'),
+            name: String(workerResult.data.name || job.name || ''),
+            address: String(workerResult.data.address || job.address || ''),
+            city: String(workerResult.data.city || job.city || ''),
+            state: String(workerResult.data.state || job.state || ''),
+            current_price: Number(workerResult.data.current_price || job.current_price || 0),
+            bedrooms: Number(workerResult.data.bedrooms || job.bedrooms || 0),
+            bathrooms: Number(workerResult.data.bathrooms || job.bathrooms || 1),
+            square_feet: workerResult.data.square_feet ? Number(workerResult.data.square_feet) : undefined,
+            listing_url: String(job.listing_url || job.url || ''),
+            status: String(job.status || 'active'),
+            free_rent_concessions: workerResult.data.free_rent_concessions ? String(workerResult.data.free_rent_concessions) : undefined,
+            application_fee: workerResult.data.application_fee ? Number(workerResult.data.application_fee) : undefined,
+            admin_fee_waived: Boolean(workerResult.data.admin_fee_waived),
+            admin_fee_amount: workerResult.data.admin_fee_amount ? Number(workerResult.data.admin_fee_amount) : undefined,
+          };
+          
+          const frontendProperty = await transformScrapedToFrontendFormat(scrapedData);
+          frontendProperties.push(frontendProperty);
+        } catch (transformError) {
+          console.error(`Error transforming property ${job.external_id} for frontend:`, transformError);
+        }
+      }
+
       results.push({ success: workerResult.success === true, job, result: workerResult });
     } catch (err) {
       await supabase.rpc('update_scraping_metrics', {
@@ -101,6 +140,33 @@ export async function processBatchWithCostOptimization(supabase: SupabaseClient,
 
       const msg = (err && typeof err === 'object' && 'message' in (err as Record<string, unknown>)) ? String((err as Record<string, unknown>)['message']) : String(err);
       results.push({ success: false, job, error: msg });
+    }
+  }
+
+  // Sync to frontend schema if enabled and we have properties to sync
+  if (enableFrontendSync && frontendProperties.length > 0) {
+    try {
+      const syncResult = await syncToFrontendSchema(supabase, frontendProperties, frontendTable);
+      console.log(`Frontend sync completed: ${syncResult.success} success, ${syncResult.errors} errors`);
+      
+      // Add sync results to the overall results
+      results.push({
+        frontend_sync: {
+          enabled: true,
+          properties_synced: syncResult.success,
+          sync_errors: syncResult.errors,
+          details: syncResult.details
+        }
+      });
+    } catch (syncError) {
+      console.error('Error syncing to frontend schema:', syncError);
+      results.push({
+        frontend_sync: {
+          enabled: true,
+          error: syncError.message,
+          properties_attempted: frontendProperties.length
+        }
+      });
     }
   }
 
