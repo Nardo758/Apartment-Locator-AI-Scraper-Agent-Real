@@ -1,5 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getModelCost } from './costs';
+import { 
+  transformScrapedToFrontendFormat, 
+  batchTransformProperties,
+  saveTransformedProperties,
+  type ScrapedPropertyData,
+  type FrontendProperty 
+} from './data-transformer';
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;
@@ -88,6 +95,101 @@ export async function getCostOptimizedBatch(supabase: SupabaseClient, weeklyTarg
   })));
 
   return mapped;
+}
+
+// Enhanced batch processing with frontend data transformation
+export async function getScrapingBatchWithTransformation(
+  supabase: SupabaseClient, 
+  limit = 100,
+  enableFrontendSync = false
+): Promise<{ jobs: ScrapingJob[], frontendProperties?: FrontendProperty[] }> {
+  const jobs = await getScrapingBatch(supabase, limit);
+  
+  if (!enableFrontendSync) {
+    return { jobs };
+  }
+  
+  try {
+    // Transform scraped properties to frontend format
+    const scrapedProperties: ScrapedPropertyData[] = jobs.map(job => ({
+      external_id: job.external_id,
+      property_id: String(job.property_id || job.external_id.split('_')[0] || ''),
+      unit_number: String(job.unit_number || job.external_id.split('_')[1] || '1'),
+      source: String(job.source || 'unknown'),
+      name: String(job.name || job.title || ''),
+      address: String(job.address || ''),
+      city: String(job.city || ''),
+      state: String(job.state || ''),
+      current_price: Number(job.current_price || 0),
+      bedrooms: Number(job.bedrooms || 0),
+      bathrooms: Number(job.bathrooms || 1),
+      square_feet: job.square_feet ? Number(job.square_feet) : undefined,
+      listing_url: String(job.listing_url || job.url || ''),
+      status: String(job.status || 'active'),
+      
+      // Optional fields
+      free_rent_concessions: job.free_rent_concessions ? String(job.free_rent_concessions) : undefined,
+      application_fee: job.application_fee ? Number(job.application_fee) : undefined,
+      admin_fee_waived: Boolean(job.admin_fee_waived),
+      admin_fee_amount: job.admin_fee_amount ? Number(job.admin_fee_amount) : undefined,
+      security_deposit: job.security_deposit ? Number(job.security_deposit) : undefined,
+      amenities: Array.isArray(job.amenities) ? job.amenities.map(String) : undefined,
+      features: Array.isArray(job.features) ? job.features.map(String) : undefined,
+      pet_policy: job.pet_policy ? String(job.pet_policy) : undefined,
+      parking: job.parking ? String(job.parking) : undefined,
+      latitude: job.latitude ? Number(job.latitude) : undefined,
+      longitude: job.longitude ? Number(job.longitude) : undefined,
+      zip_code: job.zip_code ? String(job.zip_code) : undefined,
+      market_rent: job.market_rent ? Number(job.market_rent) : undefined,
+      rent_estimate_low: job.rent_estimate_low ? Number(job.rent_estimate_low) : undefined,
+      rent_estimate_high: job.rent_estimate_high ? Number(job.rent_estimate_high) : undefined,
+      days_on_market: job.days_on_market ? Number(job.days_on_market) : undefined,
+      price_changes: job.price_changes ? Number(job.price_changes) : undefined,
+      first_seen_at: job.first_seen_at ? String(job.first_seen_at) : undefined,
+      last_seen_at: job.last_seen_at ? String(job.last_seen_at) : undefined,
+      scraped_at: job.scraped_at ? String(job.scraped_at) : undefined,
+      created_at: job.created_at ? String(job.created_at) : undefined,
+      updated_at: job.updated_at ? String(job.updated_at) : undefined,
+    }));
+    
+    const frontendProperties = await batchTransformProperties(scrapedProperties);
+    
+    return { jobs, frontendProperties };
+  } catch (error) {
+    console.error('Error transforming properties for frontend:', error);
+    return { jobs };
+  }
+}
+
+// Sync scraped properties to frontend schema
+export async function syncToFrontendSchema(
+  supabase: SupabaseClient,
+  frontendProperties: FrontendProperty[],
+  targetTable = 'properties'
+): Promise<{ success: number; errors: number; details: string[] }> {
+  const details: string[] = [];
+  
+  try {
+    const result = await saveTransformedProperties(supabase, frontendProperties, targetTable);
+    
+    details.push(`Successfully synced ${result.success} properties to ${targetTable}`);
+    if (result.errors > 0) {
+      details.push(`Failed to sync ${result.errors} properties`);
+    }
+    
+    return {
+      success: result.success,
+      errors: result.errors,
+      details
+    };
+  } catch (error) {
+    details.push(`Error syncing to frontend schema: ${error.message}`);
+    return {
+      success: 0,
+      errors: frontendProperties.length,
+      details
+    };
+  }
 }
 
 export async function shouldScrapeProperty(property: ScrapingJob): Promise<boolean> {
