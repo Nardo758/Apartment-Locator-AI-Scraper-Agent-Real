@@ -1,0 +1,26 @@
+{
+  "scraping_enabled": true,
+  "claude_analysis_enabled": true,
+  "schedule": "0 0 * * 0",
+  "batch_size": 50,
+  "max_daily_properties": 1000,
+  "cost_limit_daily": 50,
+  "regions": ["atlanta", "new-york", "chicago"],
+  "auto_pause_on_errors": true,
+  "max_consecutive_failures": 5,
+  "quality_threshold": 70.0,
+  "intelligence_cache_hours": 168,
+  "rate_limit_delay_ms": 1000,
+  "environment": "production",
+  "monitoring": {
+    "slack_webhook": "",
+    "email_alerts": true,
+    "cost_alert_threshold": 40
+  },
+  "claude_settings": {
+    "model": "claude-3-5-sonnet-20241022",
+    "max_tokens": 4000,
+    "temperature": 0.1,
+    "confidence_threshold": 75
+  }
+}
