@@ -1,12 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { getModelCost } from './costs';
+import { getModelCost } from './costs.ts';
 import { 
   transformScrapedToFrontendFormat, 
   batchTransformProperties,
   saveTransformedProperties,
   type ScrapedPropertyData,
   type FrontendProperty 
-} from './data-transformer';
+} from './data-transformer.ts';
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;

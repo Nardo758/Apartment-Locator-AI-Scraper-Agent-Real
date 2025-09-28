@@ -1,4 +1,4 @@
-import { calculateStabilityScore } from './orchestrator';
+import { calculateStabilityScore } from './orchestrator.ts';
 
 export type PropertyLike = unknown;
 
