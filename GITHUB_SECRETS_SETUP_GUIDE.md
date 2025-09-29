@@ -15,11 +15,13 @@ You need to set up the following secrets in your GitHub repository:
   4. Copy the token
 
 ### 2. **SUPABASE_PROJECT_ID** 
-- **What**: Your Supabase project reference ID
+- **What**: Your Supabase project reference ID (used in URLs)
 - **How to get**:
   1. Go to your project in [Supabase Dashboard](https://supabase.com/dashboard)
   2. Go to Settings → General
   3. Copy the "Reference ID" (usually looks like `abcdefghijklmnop`)
+  4. **This is the same ID you see in your project URL**: `https://[this-id].supabase.co`
+- **Example**: If your project URL is `https://abcdefghijklmnop.supabase.co`, then `SUPABASE_PROJECT_ID` should be `abcdefghijklmnop`
 
 ### 3. **SUPABASE_DB_PASSWORD**
 - **What**: Your database password

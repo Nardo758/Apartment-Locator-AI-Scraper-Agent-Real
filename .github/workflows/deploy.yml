@@ -67,6 +67,8 @@ jobs:
         if: env.SUPABASE_ACCESS_TOKEN != ''
         run: |
           echo "Syncing runtime secrets to Supabase environment..."
+          echo "🔍 Debug: Project ID/Reference: $SUPABASE_PROJECT_ID"
+          echo "🔍 Debug: Expected URL: https://$SUPABASE_PROJECT_ID.supabase.co"
           supabase secrets set --env-file <(cat << 'EOF'
           ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
           SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co
