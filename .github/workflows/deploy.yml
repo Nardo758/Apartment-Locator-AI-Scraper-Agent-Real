@@ -2,12 +2,19 @@ name: Deploy to Supabase
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+env:
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+  SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
       
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
@@ -15,12 +22,16 @@ jobs:
           version: latest
       
       - name: Setup Supabase Auth
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: |
+          echo "Logging in to Supabase..."
           supabase login --token $SUPABASE_ACCESS_TOKEN
-          supabase link --project-ref $SUPABASE_PROJECT_ID
+          echo "Linking to project: $SUPABASE_PROJECT_ID"
+          # Try linking with password first, fallback to basic link
+          if ! supabase link --project-ref $SUPABASE_PROJECT_ID --password $SUPABASE_DB_PASSWORD; then
+            echo "Password-based linking failed, trying basic link..."
+            supabase link --project-ref $SUPABASE_PROJECT_ID
+          fi
+          echo "Successfully linked to Supabase project"
       
       - name: Set environment secrets in Supabase
         if: env.SUPABASE_ACCESS_TOKEN != ''
