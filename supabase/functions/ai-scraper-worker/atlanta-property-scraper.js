@@ -1,5 +1,6 @@
 // atlanta-property-scraper.js - Real Atlanta property scraping with Claude
-const fs = require('fs');
+import fs from "node:fs";
+import process from "node:process";
 
 // Real Atlanta apartment websites and search URLs
 const ATLANTA_SOURCES = [
@@ -273,8 +274,8 @@ async function extractWithClaude(propertyData) {
   await new Promise(resolve => setTimeout(resolve, Math.random() * 2000 + 500)); // 0.5-2.5s delay
   
   try {
-    const html = propertyData.html.toLowerCase();
-    let extractedData = {};
+    const _html = propertyData.html.toLowerCase();
+    const extractedData = {};
     
     // Extract name
     const nameMatch = propertyData.html.match(/<h[1-6][^>]*>([^<]+)<\/h[1-6]>|class="[^"]*(?:property-name|apartment-title|property-title)[^"]*"[^>]*>([^<]+)</i);
@@ -427,8 +428,8 @@ async function scrapeAtlantaProperties() {
   let totalCost = 0;
   let totalTime = 0;
   let successCount = 0;
-  let sourceStats = {};
-  let neighborhoodStats = {};
+  const sourceStats = {};
+  const neighborhoodStats = {};
   
   const overallStartTime = Date.now();
   

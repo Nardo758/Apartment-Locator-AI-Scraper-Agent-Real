@@ -7,6 +7,33 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+interface ScrapeLog {
+  status?: string;
+  confidence_score?: number;
+  response_time_ms?: number;
+  created_at?: string;
+  scrape_duration_ms?: number;
+}
+
+interface QueueMetric {
+  processed_count?: number;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface Source {
+  source: string;
+}
+
+interface QualityRecord {
+  [key: string]: unknown;
+}
+
+interface CostRecord {
+  estimated_cost?: number;
+}
+
 export interface SystemMetrics {
   performance: {
     avg_scrape_time: number;
@@ -264,33 +291,33 @@ export class Metrics {
       if (logs && logs.length > 0) {
         // Calculate average scrape time
         const scrapeTimes = logs
-          .filter((log: any) => log.scrape_duration_ms)
-          .map((log: any) => log.scrape_duration_ms);
+          .filter((log: ScrapeLog) => log.scrape_duration_ms)
+          .map((log: ScrapeLog) => log.scrape_duration_ms!);
         
         if (scrapeTimes.length > 0) {
           avgScrapeTime = scrapeTimes.reduce((sum: number, time: number) => sum + time, 0) / scrapeTimes.length;
         }
 
         // Calculate success rate
-        const successful = logs.filter((log: any) => log.status === 'success').length;
+        const successful = logs.filter((log: ScrapeLog) => log.status === 'success').length;
         successRate = successful / logs.length;
 
         // Calculate average response time
         const responseTimes = logs
-          .filter((log: any) => log.response_time_ms)
-          .map((log: any) => log.response_time_ms);
+          .filter((log: ScrapeLog) => log.response_time_ms)
+          .map((log: ScrapeLog) => log.response_time_ms!);
         
         if (responseTimes.length > 0) {
           avgResponseTime = responseTimes.reduce((sum: number, time: number) => sum + time, 0) / responseTimes.length;
         }
 
         // Calculate error rate
-        const errors = logs.filter((log: any) => log.status === 'error').length;
+        const errors = logs.filter((log: ScrapeLog) => log.status === 'error').length;
         errorRate = errors / logs.length;
       }
 
       // Calculate throughput (last hour)
-      const recentLogs = logs?.filter((log: any) => log.created_at >= oneHourAgo) || [];
+      const recentLogs = logs?.filter((log: ScrapeLog) => log.created_at && log.created_at >= oneHourAgo) || [];
       const throughputPerHour = recentLogs.length;
 
       // Calculate queue processing rate
@@ -301,7 +328,7 @@ export class Metrics {
 
       let queueProcessingRate = 0;
       if (queueMetrics && queueMetrics.length > 0) {
-        const processed = queueMetrics.filter((item: any) => 
+        const processed = queueMetrics.filter((item: QueueMetric) => 
           item.status === 'completed' || item.status === 'failed'
         ).length;
         queueProcessingRate = processed;
@@ -371,7 +398,7 @@ export class Metrics {
         .select('source')
         .eq('is_active', true);
 
-      const activeSources = sources ? new Set(sources.map((s: any) => s.source)).size : 0;
+      const activeSources = sources ? new Set(sources.map((s: Source) => s.source)).size : 0;
 
       // Calculate data quality score (percentage of complete records)
       const { data: qualityData } = await this.supabase
@@ -382,7 +409,7 @@ export class Metrics {
 
       let dataQualityScore = 0;
       if (qualityData && qualityData.length > 0) {
-        const completeRecords = qualityData.filter((record: any) => {
+        const completeRecords = qualityData.filter((record: QualityRecord) => {
           const requiredFields = ['title', 'address', 'city', 'state', 'rent_price'];
           return requiredFields.every(field => record[field] != null && record[field] !== '');
         }).length;
@@ -504,8 +531,8 @@ export class Metrics {
         .gte('date', monthAgo);
 
       const dailyCostAmount = dailyCost?.estimated_cost || 0;
-      const weeklyCostAmount = weeklyCosts?.reduce((sum: number, cost: any) => sum + (cost.estimated_cost || 0), 0) || 0;
-      const monthlyCostAmount = monthlyCosts?.reduce((sum: number, cost: any) => sum + (cost.estimated_cost || 0), 0) || 0;
+      const weeklyCostAmount = weeklyCosts?.reduce((sum: number, cost: CostRecord) => sum + (cost.estimated_cost || 0), 0) || 0;
+      const monthlyCostAmount = monthlyCosts?.reduce((sum: number, cost: CostRecord) => sum + (cost.estimated_cost || 0), 0) || 0;
 
       const propertiesScrapedToday = dailyCost?.properties_scraped || 0;
       const costPerProperty = propertiesScrapedToday > 0 ? dailyCostAmount / propertiesScrapedToday : 0;
@@ -582,8 +609,8 @@ export class Metrics {
       if (recentLogs && recentLogs.length > 0) {
         // Calculate average confidence
         const confidenceScores = recentLogs
-          .filter((log: any) => log.confidence_score != null)
-          .map((log: any) => log.confidence_score);
+          .filter((log: ScrapeLog) => log.confidence_score != null)
+          .map((log: ScrapeLog) => log.confidence_score!);
         
         if (confidenceScores.length > 0) {
           avgConfidence = confidenceScores.reduce((sum: number, score: number) => sum + score, 0) / confidenceScores.length;
@@ -591,8 +618,8 @@ export class Metrics {
 
         // Calculate average response speed
         const responseTimes = recentLogs
-          .filter((log: any) => log.response_time_ms != null)
-          .map((log: any) => log.response_time_ms);
+          .filter((log: ScrapeLog) => log.response_time_ms != null)
+          .map((log: ScrapeLog) => log.response_time_ms!);
         
         if (responseTimes.length > 0) {
           avgSpeed = responseTimes.reduce((sum: number, time: number) => sum + time, 0) / responseTimes.length;

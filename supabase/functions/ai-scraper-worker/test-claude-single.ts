@@ -51,7 +51,7 @@ async function testSinglePropertyWithClaude(): Promise<void> {
   try {
     const healthCheck = await fetch(FUNCTION_URL, { method: "GET" });
     console.log(`✅ Function server is running (Status: ${healthCheck.status})`);
-  } catch (error) {
+  } catch (_error) {
     console.error("❌ Function server is not running. Please start it with:");
     console.error("   supabase functions serve ai-scraper-worker --env-file .env.local");
     return;
@@ -180,7 +180,7 @@ async function testSinglePropertyWithClaude(): Promise<void> {
     console.log("🚀 Ready to run the full 100-property test with Claude.");
 
   } catch (error) {
-    console.error(`❌ Request failed: ${error.message}`);
+    console.error(`❌ Request failed: ${error instanceof Error ? error.message : String(error)}`);
     console.error("Check your network connection and function server status.");
   }
 }

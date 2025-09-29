@@ -4,10 +4,38 @@ import { createClient } from '@supabase/supabase-js';
 
 // Import concession services
 import { ConcessionDetector } from '../../../src/services/enhanced-concession-detector.ts';
-import { ConcessionTracker, calculateEffectiveRent } from '../../../src/services/concession-tracker.ts';
+import { calculateEffectiveRent } from '../../../src/services/concession-tracker.ts';
+
+// Define interfaces
+interface ScrapedPropertyData {
+  external_id?: string;
+  name?: string;
+  title?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  latitude?: number;
+  longitude?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  square_feet?: number;
+  current_price?: number;
+  amenities?: string[];
+  application_fee?: number;
+  admin_fee_amount?: number;
+  admin_fee_waived?: boolean;
+  security_deposit?: number;
+  free_rent_concessions?: string;
+  listing_url?: string;
+  url?: string;
+  source?: string;
+  first_seen_at?: string;
+  html?: string;
+}
 
 // Import data transformation functions
-async function transformScrapedToFrontendFormat(scrapedData: any) {
+async function transformScrapedToFrontendFormat(scrapedData: ScrapedPropertyData) {
   // Calculate AI price
   const aiPrice = await calculateAiPrice(scrapedData);
   
@@ -55,7 +83,7 @@ async function transformScrapedToFrontendFormat(scrapedData: any) {
 }
 
 // Helper functions
-async function calculateAiPrice(scrapedData: any): Promise<number> {
+async function calculateAiPrice(scrapedData: ScrapedPropertyData): Promise<number> {
   let adjustedPrice = scrapedData.current_price || 0;
   
   // Size premium
@@ -77,7 +105,7 @@ async function calculateAiPrice(scrapedData: any): Promise<number> {
   return Math.round(adjustedPrice);
 }
 
-async function calculateEffectivePriceWithConcessions(scrapedData: any): Promise<number> {
+async function calculateEffectivePriceWithConcessions(scrapedData: ScrapedPropertyData): Promise<number> {
   let effectivePrice = scrapedData.current_price || 0;
   
   // Enhanced concession calculation
@@ -120,11 +148,11 @@ function parseConcessionValue(concessionText: string): number {
   return 0;
 }
 
-async function extractAmenities(scrapedData: any): Promise<string[]> {
+async function extractAmenities(scrapedData: ScrapedPropertyData): Promise<string[]> {
   return scrapedData.amenities || [];
 }
 
-async function extractFeatures(scrapedData: any): Promise<string[]> {
+async function extractFeatures(scrapedData: ScrapedPropertyData): Promise<string[]> {
   const features = [];
   
   if (scrapedData.square_feet > 1200) features.push('Spacious');
@@ -135,19 +163,19 @@ async function extractFeatures(scrapedData: any): Promise<string[]> {
   return features;
 }
 
-async function extractPetPolicy(scrapedData: any): Promise<string> {
+async function extractPetPolicy(scrapedData: ScrapedPropertyData): Promise<string> {
   const amenities = scrapedData.amenities || [];
   const petFriendly = amenities.some((a: string) => a.toLowerCase().includes('pet'));
   return petFriendly ? 'Pets Allowed' : 'Pet Policy Unknown';
 }
 
-async function extractParkingInfo(scrapedData: any): Promise<string> {
+async function extractParkingInfo(scrapedData: ScrapedPropertyData): Promise<string> {
   const amenities = scrapedData.amenities || [];
   const hasParking = amenities.some((a: string) => a.toLowerCase().includes('parking'));
   return hasParking ? 'Parking Available' : 'Parking Information Unknown';
 }
 
-async function generateMarketIntelligence(scrapedData: any) {
+async function generateMarketIntelligence(scrapedData: ScrapedPropertyData) {
   const basePrice = scrapedData.current_price || 0;
   
   let marketPosition = 'at_market';

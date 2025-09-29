@@ -5,7 +5,7 @@
  * to all worker functions and services.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export interface SystemConfig {
   scrapingEnabled: boolean;
@@ -34,7 +34,7 @@ export interface SystemConfig {
 export class ConfigManager {
   private static instance: ConfigManager;
   private config: SystemConfig;
-  private supabase: any;
+  private supabase?: SupabaseClient;
 
   private constructor() {
     // Default configuration

@@ -220,7 +220,7 @@ function generateRealTestProperties(): TestProperty[] {
     const finalPrice = Math.round(basePrice * multiplier * (0.8 + Math.random() * 0.4)); // ±20% variation
 
     // Customize HTML with realistic variations
-    let customHtml = scenario.html
+    const customHtml = scenario.html
       .replace(/New York|Austin|Denver/g, city.city)
       .replace(/NY|TX|CO/g, city.state)
       .replace(/10022|78704|80202/g, city.zip)
@@ -358,7 +358,7 @@ async function runEnhancedRealTests(): Promise<void> {
   try {
     const healthCheck = await fetch(FUNCTION_URL, { method: "GET" });
     console.log(`✅ Function server is running (Status: ${healthCheck.status})`);
-  } catch (error) {
+  } catch (_error) {
     console.error("❌ Function server is not running. Please start it with:");
     console.error("   supabase functions serve ai-scraper-worker --env-file .env.local");
     return;

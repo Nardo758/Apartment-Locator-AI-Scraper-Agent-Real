@@ -1,9 +1,8 @@
 // test-schema-deployment.mjs
 // Comprehensive test suite for schema deployment and data integration (Node.js version)
 
-import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

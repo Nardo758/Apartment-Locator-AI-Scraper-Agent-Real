@@ -72,6 +72,27 @@ export interface RecentActivity {
   details?: Record<string, unknown>;
 }
 
+// Define interfaces
+interface SystemEvent {
+  created_at: string;
+  event_type: string;
+  event_data: Record<string, unknown>;
+}
+
+interface BatchJob {
+  end_time?: string;
+  start_time?: string;
+  status?: string;
+  processed_count?: number;
+}
+
+interface ScrapeLog {
+  status?: string;
+  confidence_score?: number;
+  response_time_ms?: number;
+  created_at?: string;
+}
+
 export class Dashboard {
   private static instance: Dashboard;
   private supabase?: SupabaseClient;
@@ -164,9 +185,9 @@ export class Dashboard {
           .limit(limit);
 
         if (!error && events) {
-          activities.push(...events.map((event: any) => ({
+          activities.push(...events.map((event: SystemEvent) => ({
             timestamp: event.created_at,
-            type: event.event_type,
+            type: this.mapEventTypeToActivityType(event.event_type),
             message: this.formatEventMessage(event.event_type, event.event_data),
             details: event.event_data
           })));
@@ -181,11 +202,11 @@ export class Dashboard {
 
         if (batches) {
           activities.push(...batches
-            .filter((batch: any) => batch.end_time)
-            .map((batch: any) => ({
-              timestamp: batch.end_time,
-              type: batch.status === 'completed' ? 'batch_completed' : 'error',
-              message: `Batch ${batch.batch_id} ${batch.status} (${batch.properties_processed} properties)`,
+            .filter((batch: BatchJob) => batch.end_time)
+            .map((batch: BatchJob) => ({
+              timestamp: batch.end_time!,
+              type: batch.status === 'completed' ? 'batch_completed' as const : 'error' as const,
+              message: `Batch ${batch.processed_count} properties processed`,
               details: batch
             })));
         }
@@ -310,7 +331,7 @@ export class Dashboard {
           .gte('created_at', yesterday);
 
         if (logs && logs.length > 0) {
-          const successful = logs.filter((log: any) => log.status === 'success').length;
+          const successful = logs.filter((log: ScrapeLog) => log.status === 'success').length;
           successRate = successful / logs.length;
         }
       } catch (error) {
@@ -383,8 +404,8 @@ export class Dashboard {
 
         if (recentLogs && recentLogs.length > 0) {
           const validScores = recentLogs
-            .filter((log: any) => log.confidence_score != null)
-            .map((log: any) => log.confidence_score);
+            .filter((log: ScrapeLog) => log.confidence_score != null)
+            .map((log: ScrapeLog) => log.confidence_score!);
           
           if (validScores.length > 0) {
             averageConfidence = validScores.reduce((sum: number, score: number) => sum + score, 0) / validScores.length;
@@ -425,19 +446,19 @@ export class Dashboard {
         if (recentLogs && recentLogs.length > 0) {
           // Calculate average response time
           const responseTimes = recentLogs
-            .filter((log: any) => log.response_time_ms != null)
-            .map((log: any) => log.response_time_ms);
+            .filter((log: ScrapeLog) => log.response_time_ms != null)
+            .map((log: ScrapeLog) => log.response_time_ms!);
           
           if (responseTimes.length > 0) {
             avgResponseTime = responseTimes.reduce((sum: number, time: number) => sum + time, 0) / responseTimes.length;
           }
 
           // Calculate hourly throughput
-          const recentHour = recentLogs.filter((log: any) => log.created_at >= oneHourAgo);
+          const recentHour = recentLogs.filter((log: ScrapeLog) => log.created_at && log.created_at >= oneHourAgo);
           throughputPerHour = recentHour.length;
 
           // Calculate error rate
-          const errors = recentLogs.filter((log: any) => log.status === 'error').length;
+          const errors = recentLogs.filter((log: ScrapeLog) => log.status === 'error').length;
           errorRate = errors / recentLogs.length;
         }
 
@@ -519,11 +540,11 @@ export class Dashboard {
   }
 
   private async performHealthCheck(): Promise<DashboardStatus['health']> {
-    const health = {
-      database: 'healthy' as const,
-      workers: 'healthy' as const,
-      apis: 'healthy' as const,
-      overall: 'healthy' as const
+    const health: DashboardStatus['health'] = {
+      database: 'healthy',
+      workers: 'healthy',
+      apis: 'healthy',
+      overall: 'healthy'
     };
 
     // Check database health
@@ -600,6 +621,21 @@ export class Dashboard {
         return 'Emergency stop activated';
       default:
         return `System event: ${eventType}`;
+    }
+  }
+
+  private mapEventTypeToActivityType(eventType: string): RecentActivity['type'] {
+    switch (eventType) {
+      case 'scraping_enabled':
+      case 'scraping_disabled':
+      case 'config_updated':
+        return 'config_changed';
+      case 'batch_started':
+        return 'batch_started';
+      case 'emergency_stop':
+        return 'error';
+      default:
+        return 'alert';
     }
   }
 
