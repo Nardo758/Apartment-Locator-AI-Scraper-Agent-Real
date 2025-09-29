@@ -10,7 +10,6 @@ ALTER TABLE public.scraped_properties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.price_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scraping_queue ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scraping_logs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.scraping_cache ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scraping_costs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.property_intelligence ENABLE ROW LEVEL SECURITY;
 
@@ -34,9 +33,6 @@ CREATE POLICY "Service role full access" ON public.scraping_queue
     FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.scraping_logs
-    FOR ALL USING (auth.role() = 'service_role');
-
-CREATE POLICY "Service role full access" ON public.scraping_cache
     FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.scraping_costs
@@ -101,95 +97,6 @@ AS $$
 BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
-END;
-$$;
-
--- Secure the get_next_scraping_batch function
-CREATE OR REPLACE FUNCTION public.get_next_scraping_batch(batch_size INTEGER DEFAULT 50)
-RETURNS TABLE(
-  id BIGINT,
-  external_id VARCHAR,
-  property_id VARCHAR,
-  unit_number VARCHAR,
-  url VARCHAR,
-  source VARCHAR,
-  priority INTEGER,
-  data JSONB
-)
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public, pg_temp
-AS $$
-BEGIN
-  RETURN QUERY
-  UPDATE public.scraping_queue 
-  SET status = 'processing', started_at = NOW()
-  WHERE id IN (
-    SELECT sq.id 
-    FROM public.scraping_queue sq
-    WHERE sq.status = 'pending'
-    ORDER BY sq.priority DESC, sq.created_at ASC
-    LIMIT batch_size
-    FOR UPDATE SKIP LOCKED
-  )
-  RETURNING 
-    scraping_queue.id,
-    scraping_queue.external_id,
-    scraping_queue.property_id,
-    scraping_queue.unit_number,
-    scraping_queue.url,
-    scraping_queue.source,
-    scraping_queue.priority,
-    scraping_queue.data;
-END;
-$$;
-
--- Secure the bulk upsert function
-CREATE OR REPLACE FUNCTION public.rpc_bulk_upsert_properties(properties_data JSONB)
-RETURNS TABLE(upserted_count INTEGER, error_message TEXT)
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public, pg_temp
-AS $$
-DECLARE
-  property_record JSONB;
-  upsert_count INTEGER := 0;
-BEGIN
-  FOR property_record IN SELECT jsonb_array_elements(properties_data)
-  LOOP
-    BEGIN
-      INSERT INTO public.scraped_properties (
-        external_id, source, name, address, city, state, current_price,
-        bedrooms, bathrooms, square_feet, listing_url, scraped_at
-      )
-      VALUES (
-        (property_record->>'external_id')::VARCHAR,
-        (property_record->>'source')::VARCHAR,
-        (property_record->>'name')::VARCHAR,
-        (property_record->>'address')::VARCHAR,
-        (property_record->>'city')::VARCHAR,
-        (property_record->>'state')::VARCHAR,
-        (property_record->>'current_price')::INTEGER,
-        (property_record->>'bedrooms')::INTEGER,
-        (property_record->>'bathrooms')::DECIMAL(2,1),
-        (property_record->>'square_feet')::INTEGER,
-        (property_record->>'listing_url')::VARCHAR,
-        NOW()
-      )
-      ON CONFLICT (external_id) DO UPDATE SET
-        current_price = EXCLUDED.current_price,
-        last_seen_at = NOW(),
-        scraped_at = NOW(),
-        updated_at = NOW();
-      
-      upsert_count := upsert_count + 1;
-    EXCEPTION WHEN OTHERS THEN
-      RETURN QUERY SELECT 0, SQLERRM;
-      RETURN;
-    END;
-  END LOOP;
-  
-  RETURN QUERY SELECT upsert_count, NULL::TEXT;
 END;
 $$;
 

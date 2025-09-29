@@ -1,4 +1,4 @@
-name: Enhanced Weekly Scraper Scheduler
+name: Weekly Scraper Scheduler
 
 on:
   schedule:
@@ -42,7 +42,7 @@ jobs:
     outputs:
       should_run: ${{ steps.cost_check.outputs.should_run }}
       estimated_cost: ${{ steps.cost_check.outputs.estimated_cost }}
-      
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -56,21 +56,21 @@ jobs:
       id: cost_check
       run: |
         echo "Checking daily cost limits..."
-        
+
         # Read cost control configuration
         if [ -f "deploy-control.json" ]; then
-          DAILY_LIMIT=$(cat deploy-control.json | grep -o '"dailyCostLimit":[^,}]*' | cut -d':' -f2 | tr -d ' "' || echo "50")
+          DAILY_LIMIT=$(cat deploy-control.json | grep -o '"cost_limit_daily":[^,}]*' | cut -d':' -f2 | tr -d ' ",' || echo "50")
         else
           DAILY_LIMIT=50
         fi
-        
+
         echo "Daily cost limit: $DAILY_LIMIT"
-        
+
         # Estimate current usage (this would typically call your cost tracking API)
         ESTIMATED_COST=25  # Placeholder - replace with actual cost check
-        
+
         echo "estimated_cost=$ESTIMATED_COST" >> $GITHUB_OUTPUT
-        
+
         if [ "${{ inputs.force_run }}" == "true" ]; then
           echo "Force run enabled, bypassing cost checks"
           echo "should_run=true" >> $GITHUB_OUTPUT
@@ -85,32 +85,29 @@ jobs:
     - name: Check system health
       run: |
         echo "Checking system health..."
-        
+
         # Check Supabase connectivity
-        if command -v curl &> /dev/null; then
-          if curl -f -s "$SUPABASE_URL/rest/v1/" -H "apikey: $SUPABASE_ANON_KEY" > /dev/null; then
-            echo "✅ Supabase connection healthy"
-          else
-            echo "❌ Supabase connection failed"
-            exit 1
-          fi
+        if curl -f -s "$SUPABASE_URL/rest/v1/" -H "apikey: $SUPABASE_ANON_KEY" > /dev/null; then
+          echo "✅ Supabase connection healthy"
+        else
+          echo "❌ Supabase connection failed"
+          exit 1
         fi
-        
-        # Check Anthropic API (simplified)
+
         echo "✅ System health checks passed"
 
-  run-scraper:
-    name: Run Enhanced Scraper
+  populate-queue:
+    name: Populate Scraping Queue
     runs-on: ubuntu-latest
     needs: pre-flight-checks
     if: needs.pre-flight-checks.outputs.should_run == 'true'
-    
+
     strategy:
       matrix:
         region: ${{ inputs.region == 'all' && fromJson('["atlanta", "austin", "dallas", "houston"]') || fromJson(format('["{0}"]', inputs.region)) }}
       fail-fast: false
       max-parallel: 2
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -128,50 +125,58 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-deno-
 
-    - name: Install dependencies
+    - name: Populate queue for ${{ matrix.region }}
       run: |
-        deno cache src/main.ts
+        echo "🚀 Populating scraping queue for region: ${{ matrix.region }}"
 
-    - name: Run scraper for ${{ matrix.region }}
-      run: |
-        echo "🚀 Starting enhanced scraper for region: ${{ matrix.region }}"
-        
         if [ "${{ inputs.dry_run }}" == "true" ]; then
           echo "🧪 Running in dry-run mode"
           export DRY_RUN=true
         fi
-        
+
         # Set region-specific configuration
         export TARGET_REGION="${{ matrix.region }}"
         export ENABLE_AI_PRICING=true
         export ENABLE_FRONTEND_SYNC=true
         export ENABLE_MARKET_INTELLIGENCE=true
         export BATCH_SIZE=50
-        
-        # Run the scraper
-        if [ -f "control-scraper.sh" ]; then
-          chmod +x control-scraper.sh
-          ./control-scraper.sh --region="${{ matrix.region }}" --enhanced
+
+        # Call command-station Edge Function to populate queue
+        # This will add scraping jobs to the queue for the specified region
+        RESPONSE=$(curl -s -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/command-station" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"action\": \"populate_queue\",
+            \"region\": \"${{ matrix.region }}\",
+            \"batch_size\": 50,
+            \"dry_run\": ${{ inputs.dry_run == 'true' && 'true' || 'false' }}
+          }")
+
+        # Check if the request was successful
+        if echo "$RESPONSE" | grep -q '"status":"success"'; then
+          echo "✅ Queue populated successfully for ${{ matrix.region }}"
+          echo "Response: $RESPONSE"
         else
-          # Fallback to direct Deno execution
-          deno run --allow-all src/main.ts --region="${{ matrix.region }}"
+          echo "❌ Failed to populate queue for ${{ matrix.region }}"
+          echo "Response: $RESPONSE"
+          exit 1
         fi
-        
-        echo "✅ Scraper completed for ${{ matrix.region }}"
 
     - name: Generate region report
       if: always()
       run: |
         echo "📊 Generating report for ${{ matrix.region }}..."
-        
-        # Create a simple report (replace with actual reporting logic)
+
+        # Create a simple report
         cat > region_report_${{ matrix.region }}.json << EOF
         {
           "region": "${{ matrix.region }}",
           "timestamp": "$(date -u -Iseconds)",
           "status": "${{ job.status }}",
           "dry_run": "${{ inputs.dry_run }}",
-          "estimated_cost": "${{ needs.pre-flight-checks.outputs.estimated_cost }}"
+          "estimated_cost": "${{ needs.pre-flight-checks.outputs.estimated_cost }}",
+          "queue_populated": ${{ job.status == 'success' && 'true' || 'false' }}
         }
         EOF
 
@@ -183,12 +188,46 @@ jobs:
         path: region_report_*.json
         retention-days: 30
 
+  trigger-processing:
+    name: Trigger Queue Processing
+    runs-on: ubuntu-latest
+    needs: [pre-flight-checks, populate-queue]
+    if: needs.pre-flight-checks.outputs.should_run == 'true' && !inputs.dry_run
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Trigger batch processing
+      run: |
+        echo "🔄 Triggering batch processing for queued jobs..."
+
+        # Call command-station to start processing the queue
+        RESPONSE=$(curl -s -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/command-station" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"action\": \"start_batch\",
+            \"batch_size\": 50,
+            \"regions\": ${{ inputs.region == 'all' && '[\"atlanta\", \"austin\", \"dallas\", \"houston\"]' || format('[\"{0}\"]', inputs.region) }}
+          }")
+
+        # Check if batch processing started
+        if echo "$RESPONSE" | grep -q '"status":"batch_started"'; then
+          echo "✅ Batch processing started successfully"
+          echo "Response: $RESPONSE"
+        else
+          echo "❌ Failed to start batch processing"
+          echo "Response: $RESPONSE"
+          exit 1
+        fi
+
   post-processing:
     name: Post-Processing & Reporting
     runs-on: ubuntu-latest
-    needs: [pre-flight-checks, run-scraper]
+    needs: [pre-flight-checks, populate-queue, trigger-processing]
     if: always()
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -203,12 +242,12 @@ jobs:
     - name: Generate summary report
       run: |
         echo "📋 Generating summary report..."
-        
+
         # Count successful and failed regions
         SUCCESS_COUNT=0
         FAILED_COUNT=0
         TOTAL_PROPERTIES=0
-        
+
         # Check if reports directory exists
         if [ -d "./reports" ] && [ "$(ls -A ./reports 2>/dev/null)" ]; then
           echo "Found reports directory with files"
@@ -217,7 +256,7 @@ jobs:
               echo "Processing report: $report"
               REGION=$(cat "$report" | grep -o '"region":"[^"]*' | cut -d'"' -f4 2>/dev/null || echo "unknown")
               STATUS=$(cat "$report" | grep -o '"status":"[^"]*' | cut -d'"' -f4 2>/dev/null || echo "unknown")
-              
+
               if [ "$STATUS" == "success" ]; then
                 SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
               else
@@ -226,11 +265,11 @@ jobs:
             fi
           done
         else
-          echo "⚠️ No reports found - scraper may have failed early or not generated reports"
+          echo "⚠️ No reports found - queue population may have failed early"
           # Check job outcomes from the workflow context
           FAILED_COUNT=1
         fi
-        
+
         echo "SUCCESS_COUNT=$SUCCESS_COUNT" >> $GITHUB_ENV
         echo "FAILED_COUNT=$FAILED_COUNT" >> $GITHUB_ENV
         echo "TOTAL_REGIONS=$((SUCCESS_COUNT + FAILED_COUNT))" >> $GITHUB_ENV
@@ -243,11 +282,11 @@ jobs:
         elif [ "${{ inputs.dry_run }}" == "true" ]; then
           MESSAGE="🧪 Weekly scraper dry run completed\nRegions processed: $TOTAL_REGIONS\nSuccessful: $SUCCESS_COUNT\nFailed: $FAILED_COUNT"
         elif [ "$TOTAL_REGIONS" -eq "0" ]; then
-          MESSAGE="⚠️ Weekly apartment scraper encountered issues\nNo region reports generated\nCheck workflow logs for details"
+          MESSAGE="⚠️ Weekly scraper encountered issues\nNo region reports generated\nCheck workflow logs for details"
         else
-          MESSAGE="🏠 Weekly apartment scraper completed!\nRegions processed: $TOTAL_REGIONS\nSuccessful: $SUCCESS_COUNT\nFailed: $FAILED_COUNT\nEstimated cost: \$\${{ needs.pre-flight-checks.outputs.estimated_cost }}"
+          MESSAGE="🏠 Weekly scraper queue populated!\nRegions processed: $TOTAL_REGIONS\nSuccessful: $SUCCESS_COUNT\nFailed: $FAILED_COUNT\nEstimated cost: \$\${{ needs.pre-flight-checks.outputs.estimated_cost }}"
         fi
-        
+
         if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
           curl -X POST -H 'Content-type: application/json' \
             --data "{\"text\":\"$MESSAGE\"}" \
@@ -264,7 +303,7 @@ jobs:
         echo "- Failed: $FAILED_COUNT"
         echo "- Estimated cost: ${{ needs.pre-flight-checks.outputs.estimated_cost }}"
         echo "- Dry run: ${{ inputs.dry_run }}"
-        
+
         if [ "$FAILED_COUNT" -gt 0 ]; then
           echo "⚠️  Some regions failed - check logs for details"
         else

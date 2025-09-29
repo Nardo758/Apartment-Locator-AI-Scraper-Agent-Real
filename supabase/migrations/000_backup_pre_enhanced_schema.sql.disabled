@@ -1,0 +1,32 @@
+-- 000_backup_pre_enhanced_schema.sql
+-- Create simple backups of current tables before applying the enhanced (destructive) schema
+
+BEGIN;
+
+-- Note: these create-if-not-exists backups to avoid overwriting existing backups
+-- Only backup tables that actually exist
+DO $$
+BEGIN
+  -- Check if scraped_properties table exists before backing up
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'scraped_properties' AND table_schema = 'public') THEN
+    IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'scraped_properties_backup_pre_enhanced') THEN
+      EXECUTE 'CREATE TABLE scraped_properties_backup_pre_enhanced AS TABLE scraped_properties';
+    END IF;
+  END IF;
+
+  -- Check if scraping_queue table exists before backing up
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'scraping_queue' AND table_schema = 'public') THEN
+    IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'scraping_queue_backup_pre_enhanced') THEN
+      EXECUTE 'CREATE TABLE scraping_queue_backup_pre_enhanced AS TABLE scraping_queue';
+    END IF;
+  END IF;
+
+  -- Check if price_history table exists before backing up
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'price_history' AND table_schema = 'public') THEN
+    IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'price_history_backup_pre_enhanced') THEN
+      EXECUTE 'CREATE TABLE price_history_backup_pre_enhanced AS TABLE price_history';
+    END IF;
+  END IF;
+END$$;
+
+COMMIT;

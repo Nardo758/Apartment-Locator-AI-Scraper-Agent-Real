@@ -1,11 +1,31 @@
 /**
- * System Controller for Real Estate Scraper Command Station
+ * Syexport interface BatchResult {
+  batchId: string;
+  status: 'started' | 'running' | 'completed' | 'failed';
+  propertiesProcessed: number;
+  estimatedDuration: string;
+  startTime: string;
+  endTime?: string;
+  errors?: string[];
+}
+
+export interface QueueItem {
+  status: 'pending' | 'processing' | 'failed' | 'completed';
+}
+
+export export interface CostItem {
+  estimated_cost: number;
+}
+
+export export interface SystemEventData {
+  [key: string]: unknown;
+}roller for Real Estate Scraper Command Station
  * 
  * Handles system-wide control operations including enabling/disabling scraping,
  * triggering immediate batches, and managing worker coordination.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { configManager, SystemConfig } from './config-manager.ts';
 
 export interface BatchResult {
@@ -45,7 +65,7 @@ export interface SystemStatus {
 
 export class Controller {
   private static instance: Controller;
-  private supabase: any;
+  private supabase: SupabaseClient | null = null;
 
   private constructor() {
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
@@ -185,7 +205,7 @@ export class Controller {
 
       // Create batch job
       const batchId = `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const batchResult = await this.createBatchJob(batchId, config.batchSize);
+      const _batchResult = await this.createBatchJob(batchId, config.batchSize);
 
       // Log system event
       await this.logSystemEvent('batch_started', {
@@ -391,7 +411,7 @@ export class Controller {
       if (error) throw error;
 
       const counts = { pending: 0, processing: 0, failed: 0 };
-      data?.forEach((item: any) => {
+      data?.forEach((item: QueueItem) => {
         counts[item.status as keyof typeof counts]++;
       });
 
@@ -457,8 +477,8 @@ export class Controller {
 
       return {
         today: todayData?.estimated_cost || 0,
-        thisWeek: weekData?.reduce((sum: number, item: any) => sum + (item.estimated_cost || 0), 0) || 0,
-        thisMonth: monthData?.reduce((sum: number, item: any) => sum + (item.estimated_cost || 0), 0) || 0,
+        thisWeek: weekData?.reduce((sum: number, item: CostItem) => sum + (item.estimated_cost || 0), 0) || 0,
+        thisMonth: monthData?.reduce((sum: number, item: CostItem) => sum + (item.estimated_cost || 0), 0) || 0,
         limit: config.dailyCostLimit
       };
 
@@ -472,7 +492,7 @@ export class Controller {
     if (!this.supabase) return undefined;
 
     try {
-      const { data, error } = await this.supabase
+      const { data } = await this.supabase
         .from('batch_jobs')
         .select('end_time')
         .eq('status', 'completed')
@@ -563,7 +583,7 @@ export class Controller {
     if (!this.supabase) return 0;
 
     try {
-      const { data, error } = await this.supabase
+      const { data } = await this.supabase
         .from('scraping_queue')
         .update({ status: 'cancelled' })
         .eq('status', 'pending')
@@ -580,7 +600,7 @@ export class Controller {
     if (!this.supabase) return 0;
 
     try {
-      const { data, error } = await this.supabase
+      const { data } = await this.supabase
         .from('scraping_queue')
         .update({ status: 'cancelled' })
         .in('status', ['pending', 'processing'])
@@ -593,7 +613,7 @@ export class Controller {
     }
   }
 
-  private async logSystemEvent(eventType: string, eventData: any): Promise<void> {
+  private async logSystemEvent(eventType: string, eventData: SystemEventData): Promise<void> {
     if (!this.supabase) return;
 
     try {

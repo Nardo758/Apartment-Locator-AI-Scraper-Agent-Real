@@ -372,14 +372,14 @@ Return valid JSON. Use null for missing fields. If concessions are found ANYWHER
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Enhanced apartment data with concession support
-        const concessions = result.concessions || [];
+        const concessions = Array.isArray(result.concessions) ? result.concessions : [];
         const hasConcessions = concessions.length > 0 || result.free_rent_concessions;
         
         // Calculate effective rent
         const baseRent = result.base_rent || result.current_price;
         let effectiveRent = baseRent;
-        if (hasConcessions && result.free_rent_concessions) {
-          effectiveRent = calculateEffectiveRent(baseRent, [result.free_rent_concessions]);
+        if (hasConcessions && typeof result.free_rent_concessions === 'number') {
+          effectiveRent = calculateEffectiveRent(baseRent as number, [result.free_rent_concessions.toString()]);
         }
 
         const apartmentData = {
@@ -509,7 +509,7 @@ Return valid JSON. Use null for missing fields. If concessions are found ANYWHER
       quick_scan_results: quickConcessions,
       concession_context: concessionContext,
       has_free_rent: result.free_rent_concessions ? true : false,
-      has_concessions_array: result.concessions && result.concessions.length > 0,
+      has_concessions_array: Array.isArray(result.concessions) && result.concessions.length > 0,
       effective_rent_calculated: result.effective_rent !== result.current_price
     };
 

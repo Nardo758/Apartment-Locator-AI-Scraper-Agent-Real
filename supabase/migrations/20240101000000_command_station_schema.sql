@@ -184,22 +184,31 @@ BEGIN
   cutoff_date := NOW() - (days_to_keep || ' days')::INTERVAL;
   
   -- Clean old system events
-  DELETE FROM system_events WHERE created_at < cutoff_date;
-  GET DIAGNOSTICS deleted_count = ROW_COUNT;
+  WITH deleted AS (
+    DELETE FROM system_events WHERE created_at < cutoff_date RETURNING 1
+  )
+  SELECT deleted_count + COUNT(*) INTO deleted_count FROM deleted;
   
   -- Clean old scraping logs
-  DELETE FROM scraping_logs WHERE created_at < cutoff_date;
-  GET DIAGNOSTICS deleted_count = deleted_count + ROW_COUNT;
+  WITH deleted AS (
+    DELETE FROM scraping_logs WHERE created_at < cutoff_date RETURNING 1
+  )
+  SELECT deleted_count + COUNT(*) INTO deleted_count FROM deleted;
   
   -- Clean old performance snapshots
-  DELETE FROM performance_snapshots WHERE snapshot_time < cutoff_date;
-  GET DIAGNOSTICS deleted_count = deleted_count + ROW_COUNT;
+  WITH deleted AS (
+    DELETE FROM performance_snapshots WHERE snapshot_time < cutoff_date RETURNING 1
+  )
+  SELECT deleted_count + COUNT(*) INTO deleted_count FROM deleted;
   
   -- Clean completed queue items older than cutoff
-  DELETE FROM scraping_queue 
-  WHERE status IN ('completed', 'failed') 
-    AND processed_at < cutoff_date;
-  GET DIAGNOSTICS deleted_count = deleted_count + ROW_COUNT;
+  WITH deleted AS (
+    DELETE FROM scraping_queue 
+    WHERE status IN ('completed', 'failed') 
+      AND processed_at < cutoff_date 
+    RETURNING 1
+  )
+  SELECT deleted_count + COUNT(*) INTO deleted_count FROM deleted;
   
   RETURN deleted_count;
 END;
