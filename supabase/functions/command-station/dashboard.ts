@@ -284,7 +284,7 @@ export class Dashboard {
 
   // Private helper methods
 
-  private async getSystemInfo(): Promise<DashboardStatus['system']> {
+  private getSystemInfo(): DashboardStatus['system'] {
     const uptime = Math.floor((Date.now() - this.startTime.getTime()) / 1000);
     const environment = Deno.env.get('ENVIRONMENT') || 'development';
 
@@ -603,23 +603,23 @@ export class Dashboard {
     }
   }
 
-  private async getCostTrendData(startTime: Date, endTime: Date, interval: string): Promise<Array<{timestamp: string, value: number}>> {
+  private getCostTrendData(_startTime: Date, _endTime: Date, _interval: string): Array<{timestamp: string, value: number}> {
     // Implementation would depend on your specific database schema and requirements
     // This is a placeholder that returns sample data
     return [];
   }
 
-  private async getThroughputTrendData(startTime: Date, endTime: Date, interval: string): Promise<Array<{timestamp: string, value: number}>> {
+  private getThroughputTrendData(_startTime: Date, _endTime: Date, _interval: string): Array<{timestamp: string, value: number}> {
     // Implementation would depend on your specific database schema and requirements
     return [];
   }
 
-  private async getErrorTrendData(startTime: Date, endTime: Date, interval: string): Promise<Array<{timestamp: string, value: number}>> {
+  private getErrorTrendData(_startTime: Date, _endTime: Date, _interval: string): Array<{timestamp: string, value: number}> {
     // Implementation would depend on your specific database schema and requirements
     return [];
   }
 
-  private async getQueueTrendData(startTime: Date, endTime: Date, interval: string): Promise<Array<{timestamp: string, value: number}>> {
+  private getQueueTrendData(_startTime: Date, _endTime: Date, _interval: string): Array<{timestamp: string, value: number}> {
     // Implementation would depend on your specific database schema and requirements
     return [];
   }

@@ -255,7 +255,7 @@ serve(async (req: Request) => {
   }
 });
 
-async function getDeploymentConfig(): Promise<DeploymentConfig> {
+function getDeploymentConfig(): DeploymentConfig {
   // In production, this could be from database, environment, or config service
   return {
     scraping_enabled: Deno.env.get('SCRAPING_ENABLED') !== 'false',
@@ -425,7 +425,7 @@ async function recordScrapingCost(
   }
 }
 
-async function disableScraping(supabase: any): Promise<void> {
+function disableScraping(_supabase: unknown): void {
   // This would update a configuration table or send an alert
   console.log('🚫 Auto-disabling scraping due to cost limits');
   // Implementation depends on how configuration is stored

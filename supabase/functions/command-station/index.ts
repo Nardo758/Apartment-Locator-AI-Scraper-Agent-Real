@@ -242,7 +242,7 @@ async function handleHealthCheck(): Promise<Response> {
 /**
  * Get current configuration
  */
-async function handleGetConfig(): Promise<Response> {
+function handleGetConfig(): Response {
   try {
     const config = configManager.getConfig();
     return new Response(JSON.stringify({
@@ -301,7 +301,7 @@ async function handleBatchStatus(batchId: string): Promise<Response> {
 /**
  * Help endpoint with API documentation
  */
-async function handleHelp(): Promise<Response> {
+function handleHelp(): Response {
   const help = {
     title: '🎯 Real Estate Scraper Command Station',
     version: '1.0.0',
@@ -367,7 +367,7 @@ async function handleHelp(): Promise<Response> {
 /**
  * Version information
  */
-async function handleVersion(): Promise<Response> {
+function handleVersion(): Response {
   const version = {
     command_station: '1.0.0',
     api_version: 'v1',
@@ -397,7 +397,7 @@ async function handleVersion(): Promise<Response> {
 /**
  * Restart workers (placeholder)
  */
-async function handleRestartWorkers(): Promise<Response> {
+function handleRestartWorkers(): Response {
   // In a production system, this would restart worker functions
   return new Response(JSON.stringify({
     message: 'Worker restart initiated',
@@ -412,7 +412,7 @@ async function handleRestartWorkers(): Promise<Response> {
 /**
  * Clear processing queue (placeholder)
  */
-async function handleClearQueue(): Promise<Response> {
+function handleClearQueue(): Response {
   // In a production system, this would clear the processing queue
   return new Response(JSON.stringify({
     message: 'Queue clear initiated',
@@ -427,7 +427,7 @@ async function handleClearQueue(): Promise<Response> {
 /**
  * Export configuration
  */
-async function handleExportConfig(): Promise<Response> {
+function handleExportConfig(): Response {
   try {
     const configExport = configManager.exportConfig();
     
@@ -479,7 +479,7 @@ async function handleImportConfig(req: Request): Promise<Response> {
  * Get list of available endpoints
  * Updated: Fixed syntax errors for deployment
  */
-async function getAvailableEndpoints(): Promise<string[]> {
+function getAvailableEndpoints(): string[] {
   return [
     'GET /status', 'GET /metrics', 'GET /health', 'GET /activity',
     'POST /enable-scraping', 'POST /disable-scraping', 'POST /run-now', 'POST /emergency-stop',

@@ -634,7 +634,7 @@ export class Metrics {
     }
   }
 
-  private async generateMetricAlerts(metrics: SystemMetrics): Promise<MetricAlert[]> {
+  private generateMetricAlerts(metrics: SystemMetrics): MetricAlert[] {
     const alerts: MetricAlert[] = [];
     const timestamp = new Date().toISOString();
 
@@ -724,7 +724,7 @@ export class Metrics {
     return summary.join(' | ');
   }
 
-  private async fetchTrendData(metric: string, startTime: Date, endTime: Date, granularity: string): Promise<TrendData[]> {
+  private fetchTrendData(_metric: string, _startTime: Date, _endTime: Date, _granularity: string): TrendData[] {
     // This would implement actual trend data fetching based on the metric type
     // For now, returning empty array as placeholder
     return [];
@@ -742,13 +742,13 @@ export class Metrics {
     return { avg, min, max, count: values.length };
   }
 
-  private async calculatePerformanceBenchmarks(): Promise<any> {
+  private calculatePerformanceBenchmarks(): Record<string, unknown> {
     // Implementation would calculate performance benchmarks
     // against historical data or industry standards
     return {};
   }
 
-  private generatePerformanceRecommendations(benchmarks: any): string[] {
+  private generatePerformanceRecommendations(_benchmarks: Record<string, unknown>): string[] {
     // Implementation would generate actionable performance recommendations
     return [];
   }
