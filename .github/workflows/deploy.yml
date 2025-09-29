@@ -25,6 +25,8 @@ env:
   SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
   SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   ENABLE_AI_PRICING: true
   ENABLE_FRONTEND_SYNC: true
@@ -43,7 +45,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '1.40.4'
+        deno-version: 'v1.48.0'
 
     - name: Cache Deno dependencies
       uses: actions/cache@v4
@@ -55,7 +57,24 @@ jobs:
 
     - name: Install dependencies
       run: |
-        deno cache src/main.ts
+        # Cache dependencies and check for Edge Functions
+        if [ -f "src/main.ts" ]; then
+          deno cache src/main.ts
+        fi
+        
+        # Check if supabase functions exist
+        if [ -d "supabase/functions" ]; then
+          echo "Edge Functions directory found"
+          # Cache function dependencies
+          for func_dir in supabase/functions/*/; do
+            if [ -f "${func_dir}index.ts" ]; then
+              echo "Caching dependencies for $(basename "$func_dir")"
+              deno cache "${func_dir}index.ts" || echo "Failed to cache $(basename "$func_dir") dependencies"
+            fi
+          done
+        else
+          echo "No Edge Functions directory found"
+        fi
 
     - name: Run lint checks
       run: |
@@ -97,7 +116,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '1.40.4'
+        deno-version: 'v1.48.0'
 
     - name: Setup Supabase CLI
       uses: supabase/setup-cli@v1
@@ -114,7 +133,24 @@ jobs:
 
     - name: Install dependencies
       run: |
-        deno cache src/main.ts
+        # Cache dependencies and check for Edge Functions
+        if [ -f "src/main.ts" ]; then
+          deno cache src/main.ts
+        fi
+        
+        # Check if supabase functions exist
+        if [ -d "supabase/functions" ]; then
+          echo "Edge Functions directory found"
+          # Cache function dependencies
+          for func_dir in supabase/functions/*/; do
+            if [ -f "${func_dir}index.ts" ]; then
+              echo "Caching dependencies for $(basename "$func_dir")"
+              deno cache "${func_dir}index.ts" || echo "Failed to cache $(basename "$func_dir") dependencies"
+            fi
+          done
+        else
+          echo "No Edge Functions directory found"
+        fi
 
     - name: Link Supabase project
       run: |
@@ -124,7 +160,9 @@ jobs:
     - name: Set environment secrets
       run: |
         echo "Setting up environment secrets..."
-        supabase secrets set --env-file <(cat << EOF
+        
+        # Create temporary env file
+        cat > .env.temp << EOF
         ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
         ENABLE_AI_PRICING=true
         ENABLE_FRONTEND_SYNC=true
@@ -138,7 +176,12 @@ jobs:
         SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
         SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         EOF
-        )
+        
+        # Set secrets using the temporary file
+        supabase secrets set --env-file .env.temp
+        
+        # Clean up
+        rm .env.temp
 
     - name: Deploy Edge Functions
       run: |

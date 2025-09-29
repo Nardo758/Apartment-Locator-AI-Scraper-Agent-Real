@@ -50,7 +50,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '1.40.4'
+        deno-version: 'v1.48.0'
 
     - name: Check cost limits
       id: cost_check
@@ -115,7 +115,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '1.40.4'
+        deno-version: 'v1.48.0'
 
     - name: Cache dependencies
       uses: actions/cache@v4
@@ -184,7 +184,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: scraper-reports
+        name: scraper-report-${{ matrix.region }}
         path: region_report_*.json
         retention-days: 30
 
@@ -235,8 +235,9 @@ jobs:
     - name: Download reports
       uses: actions/download-artifact@v4
       with:
-        name: scraper-reports
+        pattern: scraper-report-*
         path: ./reports/
+        merge-multiple: true
       continue-on-error: true
 
     - name: Generate summary report
