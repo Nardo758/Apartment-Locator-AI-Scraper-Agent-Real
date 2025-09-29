@@ -22,8 +22,39 @@ jobs:
           supabase login --token $SUPABASE_ACCESS_TOKEN
           supabase link --project-ref $SUPABASE_PROJECT_ID
       
+      - name: Set environment secrets in Supabase
+        if: env.SUPABASE_ACCESS_TOKEN != ''
+        run: |
+          echo "Syncing runtime secrets to Supabase environment..."
+          supabase secrets set --env-file <(cat << 'EOF'
+          ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ENABLE_AI_PRICING=true
+          ENABLE_FRONTEND_SYNC=true
+          ENABLE_MARKET_INTELLIGENCE=true
+          EOF
+          )
+      
       - name: Push DB
         run: supabase db push --include-all
         
       - name: Deploy Functions
-        run: supabase functions deploy --no-verify-jwt
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d "supabase/functions" ]; then
+            for dir in supabase/functions/*; do
+              [ -d "$dir" ] || continue
+              fn=$(basename "$dir")
+              echo "Deploying function: $fn"
+              supabase functions deploy "$fn" --no-verify-jwt | cat
+            done
+          else
+            echo "supabase/functions directory not found" >&2
+            exit 1
+          fi
+      
+      - name: Verify deployed functions
+        run: supabase functions list | cat

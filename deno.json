@@ -20,5 +20,6 @@
             "type": "run"
         }
     },
+    "unstable": ["sloppy-imports"],
     "importMap": "./import_map.json"
 }
