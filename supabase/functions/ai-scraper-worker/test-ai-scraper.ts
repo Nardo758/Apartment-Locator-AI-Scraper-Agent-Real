@@ -22,6 +22,19 @@ interface TestProperty {
   scraping_job_id: number;
 }
 
+interface ApiResponse {
+  data?: {
+    name?: string;
+    city?: string;
+    state?: string;
+    current_price?: number;
+  };
+  usage?: {
+    total_tokens?: number;
+    estimated_cost?: number;
+  };
+}
+
 // Sample apartment HTML data for testing
 const generateTestProperties = (): TestProperty[] => {
   const sampleHtmlTemplates = [
@@ -96,7 +109,7 @@ const generateTestProperties = (): TestProperty[] => {
     const price = priceVariations[i % priceVariations.length];
     
     // Customize HTML with variations
-    let customHtml = template.html
+    const customHtml = template.html
       .replace(/Austin|Denver|Seattle/g, location.city)
       .replace(/TX|CO|WA/g, location.state)
       .replace(/78701|80202|98101/g, location.zip)
@@ -122,7 +135,7 @@ const FUNCTION_URL = "http://localhost:54321/functions/v1/ai-scraper-worker";
 const TEST_BATCH_SIZE = 5; // Process in smaller batches to avoid overwhelming the API
 const DELAY_BETWEEN_REQUESTS = 1000; // 1 second delay between requests
 
-async function testSingleProperty(property: TestProperty): Promise<{ success: boolean; result?: any; error?: string }> {
+async function testSingleProperty(property: TestProperty): Promise<{ success: boolean; result?: ApiResponse; error?: string }> {
   try {
     console.log(`Testing property ${property.id}: ${property.source}`);
     
@@ -161,7 +174,7 @@ async function testSingleProperty(property: TestProperty): Promise<{ success: bo
   }
 }
 
-async function delay(ms: number): Promise<void> {
+function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -173,7 +186,7 @@ async function runTests(): Promise<void> {
   try {
     const healthCheck = await fetch(FUNCTION_URL, { method: "GET" });
     console.log(`✅ Function server is running (Status: ${healthCheck.status})`);
-  } catch (error) {
+  } catch (_error) {
     console.error("❌ Function server is not running. Please start it with:");
     console.error("   supabase functions serve ai-scraper-worker --env-file .env.local");
     return;

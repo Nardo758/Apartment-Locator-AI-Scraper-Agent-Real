@@ -100,9 +100,10 @@ async function routeRequest(path: string, method: string, req: Request): Promise
     case 'GET:health':
       return await handleHealthCheck();
       
-    case 'GET:activity':
+    case 'GET:activity': {
       const limit = parseInt(new URL(req.url).searchParams.get('limit') || '20');
       return await dashboard.getRecentActivity(limit);
+    }
 
     // === SYSTEM CONTROL ===
     
@@ -123,13 +124,14 @@ async function routeRequest(path: string, method: string, req: Request): Promise
     case 'GET:config':
       return await handleGetConfig();
       
-    case 'POST:config':
+    case 'POST:config': {
       const updates = await req.json().catch(() => ({}));
       return await controller.updateConfig(updates);
+    }
 
     // === METRICS & TRENDS ===
     
-    case 'GET:trends':
+    case 'GET:trends': {
       const metric = segments[1];
       if (!metric) {
         return new Response(JSON.stringify({
@@ -146,8 +148,9 @@ async function routeRequest(path: string, method: string, req: Request): Promise
       const granularity = urlParams.get('granularity') as '5m' | '1h' | '6h' | '1d' || '1h';
       
       return await metrics.getTrendData(metric, timeRange, granularity);
+    }
 
-    case 'GET:batch':
+    case 'GET:batch': {
       const batchId = segments[1];
       if (!batchId) {
         return new Response(JSON.stringify({
@@ -160,6 +163,7 @@ async function routeRequest(path: string, method: string, req: Request): Promise
       }
       
       return await handleBatchStatus(batchId);
+    }
 
     // === UTILITY ENDPOINTS ===
     
@@ -207,7 +211,7 @@ async function handleHealthCheck(): Promise<Response> {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
-    uptime: process.uptime?.() || 0,
+    uptime: 0, // Uptime tracking not available in Deno Edge Functions
     components: {
       config_manager: 'healthy',
       controller: 'healthy',

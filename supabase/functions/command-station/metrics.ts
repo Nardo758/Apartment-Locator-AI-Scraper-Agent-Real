@@ -5,7 +5,7 @@
  * and system monitoring capabilities.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export interface SystemMetrics {
   performance: {
@@ -55,7 +55,7 @@ export interface SystemMetrics {
 export interface TrendData {
   timestamp: string;
   value: number;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export interface MetricAlert {
@@ -69,7 +69,7 @@ export interface MetricAlert {
 
 export class Metrics {
   private static instance: Metrics;
-  private supabase: any;
+  private supabase?: SupabaseClient;
   private alertThresholds: Record<string, { warning: number; critical: number }>;
 
   private constructor() {
@@ -343,7 +343,7 @@ export class Metrics {
 
     try {
       const today = new Date().toISOString().slice(0, 10);
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      const _yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
       // Get total properties monitored
       const { count: propertiesMonitored } = await this.supabase
@@ -730,8 +730,8 @@ export class Metrics {
     return [];
   }
 
-  private calculateTrendStatistics(data: TrendData[]): any {
-    if (data.length === 0) return {};
+  private calculateTrendStatistics(data: TrendData[]): { avg: number; min: number; max: number; count: number } {
+    if (data.length === 0) return { avg: 0, min: 0, max: 0, count: 0 };
 
     const values = data.map(d => d.value);
     const sum = values.reduce((a, b) => a + b, 0);

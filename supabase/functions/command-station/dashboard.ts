@@ -5,7 +5,7 @@
  * and real-time alerts for the scraping system.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { configManager } from './config-manager.ts';
 import { controller } from './controller.ts';
 
@@ -69,12 +69,12 @@ export interface RecentActivity {
   timestamp: string;
   type: 'batch_started' | 'batch_completed' | 'config_changed' | 'error' | 'alert';
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export class Dashboard {
   private static instance: Dashboard;
-  private supabase: any;
+  private supabase?: SupabaseClient;
   private startTime: Date;
 
   private constructor() {
@@ -350,7 +350,7 @@ export class Dashboard {
     const config = configManager.getConfig();
     let requestsToday = 0;
     let averageConfidence = 0;
-    let tokenUsage = { input: 0, output: 0, total: 0 };
+    const tokenUsage = { input: 0, output: 0, total: 0 };
 
     if (this.supabase) {
       try {
@@ -567,7 +567,7 @@ export class Dashboard {
           })
         });
 
-        if (!response.ok && response.status !== 401) { // 401 is expected for invalid key
+        if (!testResponse.ok && testResponse.status !== 401) { // 401 is expected for invalid key
           health.apis = 'degraded';
         }
       } catch {
@@ -586,7 +586,7 @@ export class Dashboard {
     return health;
   }
 
-  private formatEventMessage(eventType: string, eventData: any): string {
+  private formatEventMessage(eventType: string, eventData: Record<string, unknown>): string {
     switch (eventType) {
       case 'scraping_enabled':
         return 'Scraping system enabled';

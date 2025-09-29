@@ -222,12 +222,12 @@ function generateTestProperties(count = 100) {
 function simulateClaudeExtraction(property) {
   const startTime = Date.now();
   
-  let extractedData = {};
+  const extractedData = {};
   let success = true;
   let error = null;
   
   try {
-    const html = property.html.toLowerCase();
+    const _html = property.html.toLowerCase();
     
     // Extract name with better patterns
     const namePatterns = [
@@ -432,7 +432,7 @@ async function runComprehensiveTest() {
   let totalCost = 0;
   let totalTime = 0;
   let successCount = 0;
-  let scenarioStats = {};
+  const scenarioStats = {};
 
   const startTime = Date.now();
 
