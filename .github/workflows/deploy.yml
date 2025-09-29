@@ -17,9 +17,16 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
+        uses: supabase/setup-cli@v2
         with:
           version: latest
+      
+      - name: Verify Supabase CLI
+        run: |
+          echo "Supabase CLI version:"
+          supabase --version
+          echo "Supabase CLI info:"
+          supabase --help | head -10
       
       - name: Setup Supabase Auth
         run: |
