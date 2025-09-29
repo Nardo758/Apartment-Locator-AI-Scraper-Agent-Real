@@ -215,7 +215,7 @@ jobs:
           -d "{
             \"action\": \"start_batch\",
             \"batch_size\": 50,
-            \"regions\": ${{ inputs.region == 'all' && '[\"atlanta\", \"austin\", \"dallas\", \"houston\"]' || format('[\"{0}\"]', inputs.region) }}
+            \"regions\": [\"atlanta\", \"austin\", \"dallas\", \"houston\"]
           }")
 
         # Check if batch processing started
