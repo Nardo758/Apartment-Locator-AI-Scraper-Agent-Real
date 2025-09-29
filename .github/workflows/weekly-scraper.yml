@@ -50,7 +50,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '1.40.4'
+        deno-version: '2.x'
 
     - name: Check cost limits
       id: cost_check
@@ -115,7 +115,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
       with:
-        deno-version: '1.40.4'
+        deno-version: '2.x'
 
     - name: Cache dependencies
       uses: actions/cache@v4
