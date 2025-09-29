@@ -1,211 +1,254 @@
-name: Deploy to Supabase
+name: Migrate and Deploy (Supabase)
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: 'Target environment'
         required: true
         default: 'production'
         type: choice
-        options:
-        - production
-        - staging
-      skip_tests:
-        description: 'Skip test suite'
-        required: false
-        default: false
-        type: boolean
+        options: [ 'production', 'staging' ]
 
 env:
   SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-  SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
   SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-  ENABLE_AI_PRICING: true
-  ENABLE_FRONTEND_SYNC: true
-  ENABLE_MARKET_INTELLIGENCE: true
+  SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
 jobs:
-  test:
-    name: Run Tests
+  validate-local-migrations:
+    name: Validate migrations locally
     runs-on: ubuntu-latest
-    if: ${{ !inputs.skip_tests }}
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Deno
-      uses: denoland/setup-deno@v1
-      with:
-        deno-version: '1.40.4'
-
-    - name: Cache Deno dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/deno
-        key: ${{ runner.os }}-deno-${{ hashFiles('**/import_map.json', '**/deno.json') }}
-        restore-keys: |
-          ${{ runner.os }}-deno-
-
-    - name: Install dependencies
-      run: |
-        deno cache src/main.ts
-
-    - name: Run lint checks
-      run: |
-        echo "Running lint checks..."
-        deno lint --ignore=src/ || echo "Lint issues found but continuing deployment"
-
-    - name: Run type checks
-      run: |
-        echo "Running TypeScript type checks..."
-        # Skip type checking for now to focus on deployment
-        echo "Type checking temporarily disabled - focusing on deployment"
-
-    - name: Validate configuration
-      run: |
-        echo "Validating configuration..."
-        if [ -f "deploy-control.json" ]; then
-          echo "Configuration file exists"
-          # Basic JSON validation
-          deno run --allow-read --allow-env -e "
-            const config = JSON.parse(Deno.readTextFileSync('deploy-control.json'));
-            console.log('Scraping enabled:', config.scraping_enabled);
-            console.log('Batch size:', config.batch_size);
-            console.log('Daily cost limit:', config.cost_limit_daily);
-          "
-        else
-          echo "deploy-control.json not found"
-        fi
-
-  deploy:
-    name: Deploy to Supabase
-    runs-on: ubuntu-latest
-    needs: test
-    if: always() && (needs.test.result == 'success' || inputs.skip_tests)
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Deno
-      uses: denoland/setup-deno@v1
-      with:
-        deno-version: '1.40.4'
-
-    - name: Setup Supabase CLI
+    - name: Install Supabase CLI
       uses: supabase/setup-cli@v1
       with:
         version: latest
 
-    - name: Cache Deno dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/deno
-        key: ${{ runner.os }}-deno-${{ hashFiles('**/import_map.json', '**/deno.json') }}
-        restore-keys: |
-          ${{ runner.os }}-deno-
+    - name: Start local Supabase
+      run: supabase start | cat
 
-    - name: Install dependencies
+    - name: Apply migrations (local reset)
+      run: supabase db reset --force | cat
+
+    - name: Generate types (local)
       run: |
-        deno cache src/main.ts
+        mkdir -p types
+        supabase gen types typescript --local > types/supabase.ts
+
+    - name: Upload local artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: local-validation
+        path: |
+          types/supabase.ts
+        retention-days: 7
+
+  apply-remote-migrations:
+    name: Apply migrations to remote
+    runs-on: ubuntu-latest
+    needs: validate-local-migrations
+    environment: ${{ inputs.environment || 'production' }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Supabase CLI
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+
+    - name: Select environment
+      id: select-env
+      shell: bash
+      run: |
+        if [ "${{ inputs.environment || 'production' }}" = "staging" ]; then
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}" >> $GITHUB_ENV
+        else
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }}" >> $GITHUB_ENV
+        fi
 
     - name: Link Supabase project
-      run: |
-        echo "Linking to Supabase project..."
-        supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} || echo "Link failed, but continuing with deployment"
+      run: supabase link --project-ref "$PROJECT_REF"
 
-    - name: Set environment secrets
+    - name: Compute DB URL (for backup)
+      id: dburl
+      shell: bash
       run: |
-        echo "Setting up environment secrets..."
-        supabase secrets set --env-file <(cat << EOF
+        if [ -n "${DB_PASSWORD}" ] && [ -n "${PROJECT_REF}" ]; then
+          echo "db_url=postgresql://postgres:${DB_PASSWORD}@db.${PROJECT_REF}.supabase.co:5432/postgres?sslmode=require" >> $GITHUB_OUTPUT
+        else
+          echo "db_url=" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Install PostgreSQL client
+      if: steps.dburl.outputs.db_url != ''
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y postgresql-client
+
+    - name: Pre-deploy backup (pg_dump)
+      if: steps.dburl.outputs.db_url != ''
+      env:
+        DB_URL: ${{ steps.dburl.outputs.db_url }}
+      run: |
+        echo "Creating logical backup before migration..."
+        pg_dump --no-owner --no-privileges --format=custom "$DB_URL" -f predeploy.backup
+        tar -czf predeploy.backup.tar.gz predeploy.backup
+
+    - name: Upload backup artifact
+      if: steps.dburl.outputs.db_url != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: predeploy-backup
+        path: predeploy.backup.tar.gz
+        retention-days: 14
+
+    - name: Apply migrations (remote)
+      env:
+        DB_URL: ${{ steps.dburl.outputs.db_url }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "Applying remote migrations..."
+        if supabase db push --non-interactive | cat; then
+          echo "Remote migrations applied successfully."
+        else
+          echo "Migration failed. Attempting rollback from backup..." >&2
+          if [ -f predeploy.backup ]; then
+            pg_restore --clean --if-exists --no-owner --no-privileges -d "$DB_URL" predeploy.backup || true
+          fi
+          exit 1
+        fi
+
+  deploy-edge-functions:
+    name: Deploy Edge Functions
+    runs-on: ubuntu-latest
+    needs: apply-remote-migrations
+    environment: ${{ inputs.environment || 'production' }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Supabase CLI
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+
+    - name: Select environment
+      shell: bash
+      run: |
+        if [ "${{ inputs.environment || 'production' }}" = "staging" ]; then
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
+        else
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
+        fi
+
+    - name: Link Supabase project
+      run: supabase link --project-ref "$PROJECT_REF"
+
+    - name: Set environment secrets in Supabase
+      if: env.SUPABASE_ACCESS_TOKEN != ''
+      run: |
+        echo "Syncing runtime secrets to Supabase environment..."
+        supabase secrets set --env-file <(cat << 'EOF'
         ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+        SUPABASE_URL=https://${PROJECT_REF}.supabase.co
+        SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         ENABLE_AI_PRICING=true
         ENABLE_FRONTEND_SYNC=true
         ENABLE_MARKET_INTELLIGENCE=true
-        BATCH_SIZE=50
-        DAILY_COST_LIMIT=50
-        DEFAULT_SEARCH_RADIUS_MILES=10
-        MAX_CONCURRENT_TRANSFORMATIONS=10
-        TRANSFORMATION_TIMEOUT_MS=30000
-        SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co
-        SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-        SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         EOF
         )
 
-    - name: Deploy Edge Functions
+    - name: Deploy all functions
+      shell: bash
       run: |
-        echo "Deploying Edge Functions..."
-
-        # Deploy all functions
+        set -euo pipefail
         if [ -d "supabase/functions" ]; then
-          supabase functions deploy --no-verify-jwt
+          for dir in supabase/functions/*; do
+            [ -d "$dir" ] || continue
+            fn=$(basename "$dir")
+            echo "Deploying function: $fn"
+            supabase functions deploy "$fn" --no-verify-jwt | cat
+          done
         else
-          echo "No functions directory found, skipping function deployment"
+          echo "supabase/functions directory not found" >&2
           exit 1
         fi
 
-    - name: Verify deployment
+    - name: Verify deployed functions
+      run: supabase functions list | cat
+
+  generate-and-commit-types:
+    name: Generate and commit TypeScript types
+    runs-on: ubuntu-latest
+    needs: apply-remote-migrations
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install Supabase CLI
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+
+    - name: Select environment
+      shell: bash
       run: |
-        echo "Verifying deployment..."
-
-        # Check if functions are deployed
-        supabase functions list
-
-        # Test command-station function if it exists
-        if supabase functions list | grep -q "command-station"; then
-          echo "✅ command-station function deployed"
+        if [ "${{ inputs.environment || 'production' }}" = "staging" ]; then
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
         else
-          echo "❌ command-station function not found"
-          exit 1
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
         fi
 
-        # Test ai-scraper-worker function if it exists
-        if supabase functions list | grep -q "ai-scraper-worker"; then
-          echo "✅ ai-scraper-worker function deployed"
-        else
-          echo "❌ ai-scraper-worker function not found"
-          exit 1
-        fi
+    - name: Link Supabase project
+      run: supabase link --project-ref "$PROJECT_REF"
 
-    - name: Update deployment status
-      if: success()
+    - name: Generate types (remote)
       run: |
-        echo "✅ Deployment successful!"
-        echo "Timestamp: $(date -u)"
-        echo "Environment: ${{ inputs.environment || 'production' }}"
-        echo "Commit: ${{ github.sha }}"
+        mkdir -p types
+        supabase gen types typescript --project-id "${{ env.SUPABASE_PROJECT_ID }}" > types/supabase.ts
+
+    - name: Commit types if changed
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "chore(types): update Supabase generated types [skip ci]"
+        file_pattern: |
+          types/supabase.ts
 
   notify:
-    name: Notify Deployment Status
+    name: Notify status
     runs-on: ubuntu-latest
-    needs: [test, deploy]
+    needs: [validate-local-migrations, apply-remote-migrations, deploy-edge-functions, generate-and-commit-types]
     if: always()
 
     steps:
-    - name: Notify success
-      if: needs.deploy.result == 'success'
+    - name: Report
       run: |
-        echo "🎉 Deployment completed successfully!"
+        echo "validate-local-migrations: ${{ needs.validate-local-migrations.result }}"
+        echo "apply-remote-migrations: ${{ needs.apply-remote-migrations.result }}"
+        echo "deploy-edge-functions: ${{ needs.deploy-edge-functions.result }}"
+        echo "generate-and-commit-types: ${{ needs.generate-and-commit-types.result }}"
         if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+          STATUS="Migrations(local:${{ needs.validate-local-migrations.result }}, remote:${{ needs.apply-remote-migrations.result }}) | Functions:${{ needs.deploy-edge-functions.result }} | Types:${{ needs.generate-and-commit-types.result }}"
           curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"✅ Apartment Locator AI Scraper deployed successfully to Supabase\nCommit: ${{ github.sha }}\nBranch: ${{ github.ref_name }}"}' \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
-        fi
-
-    - name: Notify failure
-      if: needs.deploy.result == 'failure' || needs.test.result == 'failure'
-      run: |
-        echo "❌ Deployment failed!"
-        if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
-          curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"❌ Apartment Locator AI Scraper deployment failed\nCommit: ${{ github.sha }}\nBranch: ${{ github.ref_name }}\nCheck: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+            --data "{\"text\":\"Supabase deploy: ${STATUS} (commit ${{ github.sha }})\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
         fi

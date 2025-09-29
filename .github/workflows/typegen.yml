@@ -1,0 +1,46 @@
+name: Supabase Type Generation
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/config.toml'
+      - '.github/workflows/typegen.yml'
+
+permissions:
+  contents: write
+
+env:
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+jobs:
+  generate-types:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install Supabase CLI
+      uses: supabase/setup-cli@v1
+      with:
+        version: latest
+
+    - name: Link project
+      run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
+
+    - name: Generate types from remote schema
+      run: |
+        mkdir -p types
+        supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" > types/supabase.ts
+
+    - name: Commit updated types
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "chore(types): update Supabase generated types [skip ci]"
+        file_pattern: |
+          types/supabase.ts
