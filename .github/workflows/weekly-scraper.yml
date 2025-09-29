@@ -198,6 +198,7 @@ jobs:
       with:
         name: scraper-reports
         path: ./reports/
+      continue-on-error: true
 
     - name: Generate summary report
       run: |
@@ -208,37 +209,52 @@ jobs:
         FAILED_COUNT=0
         TOTAL_PROPERTIES=0
         
-        for report in ./reports/region_report_*.json; do
-          if [ -f "$report" ]; then
-            REGION=$(cat "$report" | grep -o '"region":"[^"]*' | cut -d'"' -f4)
-            STATUS=$(cat "$report" | grep -o '"status":"[^"]*' | cut -d'"' -f4)
-            
-            if [ "$STATUS" == "success" ]; then
-              SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-            else
-              FAILED_COUNT=$((FAILED_COUNT + 1))
+        # Check if reports directory exists
+        if [ -d "./reports" ] && [ "$(ls -A ./reports 2>/dev/null)" ]; then
+          echo "Found reports directory with files"
+          for report in ./reports/region_report_*.json; do
+            if [ -f "$report" ]; then
+              echo "Processing report: $report"
+              REGION=$(cat "$report" | grep -o '"region":"[^"]*' | cut -d'"' -f4 2>/dev/null || echo "unknown")
+              STATUS=$(cat "$report" | grep -o '"status":"[^"]*' | cut -d'"' -f4 2>/dev/null || echo "unknown")
+              
+              if [ "$STATUS" == "success" ]; then
+                SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+              else
+                FAILED_COUNT=$((FAILED_COUNT + 1))
+              fi
             fi
-          fi
-        done
+          done
+        else
+          echo "⚠️ No reports found - scraper may have failed early or not generated reports"
+          # Check job outcomes from the workflow context
+          FAILED_COUNT=1
+        fi
         
         echo "SUCCESS_COUNT=$SUCCESS_COUNT" >> $GITHUB_ENV
         echo "FAILED_COUNT=$FAILED_COUNT" >> $GITHUB_ENV
         echo "TOTAL_REGIONS=$((SUCCESS_COUNT + FAILED_COUNT))" >> $GITHUB_ENV
 
     - name: Send Slack notification
-      if: always() && env.SLACK_WEBHOOK_URL
+      if: always() && secrets.SLACK_WEBHOOK_URL
       run: |
         if [ "${{ needs.pre-flight-checks.outputs.should_run }}" == "false" ]; then
           MESSAGE="⏸️ Weekly scraper skipped due to cost limits\nEstimated cost: \$\${{ needs.pre-flight-checks.outputs.estimated_cost }}"
         elif [ "${{ inputs.dry_run }}" == "true" ]; then
           MESSAGE="🧪 Weekly scraper dry run completed\nRegions processed: $TOTAL_REGIONS\nSuccessful: $SUCCESS_COUNT\nFailed: $FAILED_COUNT"
+        elif [ "$TOTAL_REGIONS" -eq "0" ]; then
+          MESSAGE="⚠️ Weekly apartment scraper encountered issues\nNo region reports generated\nCheck workflow logs for details"
         else
           MESSAGE="🏠 Weekly apartment scraper completed!\nRegions processed: $TOTAL_REGIONS\nSuccessful: $SUCCESS_COUNT\nFailed: $FAILED_COUNT\nEstimated cost: \$\${{ needs.pre-flight-checks.outputs.estimated_cost }}"
         fi
         
-        curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\":\"$MESSAGE\"}" \
-          $SLACK_WEBHOOK_URL
+        if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"$MESSAGE\"}" \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+        else
+          echo "Slack notification: $MESSAGE"
+        fi
 
     - name: Update deployment status
       run: |
