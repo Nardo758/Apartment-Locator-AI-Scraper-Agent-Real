@@ -69,7 +69,7 @@ jobs:
       id: select-env
       shell: bash
       run: |
-        if [ "${{ inputs.environment || 'production' }}" = "staging" ]; then
+        if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
           echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
           echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}" >> $GITHUB_ENV
         else
@@ -148,7 +148,7 @@ jobs:
     - name: Select environment
       shell: bash
       run: |
-        if [ "${{ inputs.environment || 'production' }}" = "staging" ]; then
+        if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
           echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
         else
           echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
@@ -212,7 +212,7 @@ jobs:
     - name: Select environment
       shell: bash
       run: |
-        if [ "${{ inputs.environment || 'production' }}" = "staging" ]; then
+        if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
           echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
         else
           echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
