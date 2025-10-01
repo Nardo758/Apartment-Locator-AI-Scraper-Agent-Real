@@ -63,19 +63,60 @@ serve(async (req: Request) => {
     }
 
     // Build Claude-compatible messages
-    const systemPrompt = `You are an expert web scraper for apartment rental data.
-Extract the following fields from HTML and return ONLY valid JSON:
-- name, address, city, state (2 letters)
-- current_price (number only, no symbols)
-- bedrooms, bathrooms (numbers)
-- free_rent_concessions (text description)
+    const systemPrompt = `You are an expert web scraper for apartment rental data. You will receive HTML from multiple pages of an apartment property website.
+
+EXTRACT APARTMENT DATA FROM MULTIPLE PAGES:
+
+KEY PAGES AND WHAT TO FIND:
+1. FLOOR PLANS PAGE (/floorplans/):
+   - Unit types (Studio, 1 bed, 2 bed, etc.)
+   - Square footage ranges
+   - Pricing (monthly rent)
+   - Availability status
+   - Deposit requirements
+
+2. AMENITIES PAGE (/amenities/):
+   - Community amenities (pool, gym, parking, laundry)
+   - Unit features (appliances, flooring, balcony)
+   - Pet policies
+   - Utility inclusions
+
+3. HOME/GENERAL PAGE:
+   - Property name
+   - Address
+   - Contact information
+   - General descriptions
+
+4. GALLERY/NEIGHBORHOOD PAGES:
+   - Additional photos/features
+   - Location details
+   - Nearby amenities
+
+LOOK FOR THESE SPECIFIC PATTERNS:
+- Pricing: "$", "rent", "monthly", "from $X", "starting at"
+- Unit specs: "bed", "bath", "sq ft", "square feet", "studio"
+- Amenities: lists of features, icons with text, bullet points
+- Floor plans: tables, cards, grids with unit details
+- Fees: "application fee", "admin fee", "deposit", "pet fee"
+
+Extract the following fields and return ONLY valid JSON:
+- name (property name)
+- address (street address)
+- city, state (2 letters), zip_code
+- current_price (number only, no symbols - use lowest price if range)
+- bedrooms, bathrooms (numbers - use lowest if range)
+- square_feet (number - use lowest if range)
+- amenities (array of strings)
 - application_fee (number or null)
 - admin_fee_waived (boolean)
 - admin_fee_amount (number or null)
+- security_deposit (number or null)
+- free_rent_concessions (text description or null)
 
-Return valid JSON. Use null for missing fields.`;
+If you find multiple units, extract the most common/representative unit or the one with the lowest price.
+Return valid JSON. Use null for missing fields. Be thorough in searching all page sections.`;
 
-    const userMessage = `Extract apartment data from this ${source} page HTML:\n\n${htmlContent}`;
+    const userMessage = `Extract apartment data from this multi-page HTML content from ${source}. The HTML contains multiple pages marked with <!-- PAGE: URL --> comments. Search through all pages for the most complete and accurate apartment information:\n\n${htmlContent}`;
 
     // Call Claude API
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
@@ -90,7 +131,7 @@ Return valid JSON. Use null for missing fields.`;
     
     const claudeBody = {
       model: claudeModel,
-      max_tokens: 2000,
+      max_tokens: 1000, // Reduced from 2000 to help with rate limits
       temperature: 0.1,
       system: systemPrompt,
       messages: [

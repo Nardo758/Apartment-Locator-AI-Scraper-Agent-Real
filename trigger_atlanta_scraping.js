@@ -1,28 +1,28 @@
-const { Client } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
+
+// Production Supabase credentials
+const SUPABASE_URL = 'https://jdymvpasjsdbryatscux.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkeW12cGFzanNkYnJ5YXRzY3V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1ODc1NTgsImV4cCI6MjA3NDE2MzU1OH0.Y88-nn2LDE6qZ4p69rFuOCjM6ES027WXs-T_4g7DTso';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function triggerAtlantaScraping() {
-  const client = new Client({
-    host: '127.0.0.1',
-    port: 54322,
-    user: 'postgres',
-    password: 'postgres',
-    database: 'postgres'
-  });
-
   try {
-    await client.connect();
-    console.log('🔍 Connected to database');
+    console.log('🔍 Connected to Supabase database');
 
     // Get pending Atlanta jobs (limit to 100 for this test)
-    const queueResult = await client.query(`
-      SELECT id, external_id, property_id, unit_number, url, source, priority
-      FROM scraping_queue
-      WHERE status = 'pending'
-      ORDER BY priority DESC, created_at ASC
-      LIMIT 100
-    `);
+    const { data: jobs, error: queueError } = await supabase
+      .from('scraping_queue')
+      .select('id, external_id, property_id, unit_number, url, source, priority')
+      .eq('status', 'pending')
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: true })
+      .limit(100);
 
-    const jobs = queueResult.rows;
+    if (queueError) {
+      throw new Error(`Failed to fetch jobs: ${queueError.message}`);
+    }
+
     console.log(`📋 Found ${jobs.length} pending jobs to process`);
 
     if (jobs.length === 0) {
@@ -30,76 +30,77 @@ async function triggerAtlantaScraping() {
       return;
     }
 
-    // Process jobs in batches to avoid overwhelming the system
-    const batchSize = 5; // Process 5 at a time
+    // Process jobs SEQUENTIALLY to avoid rate limits (not in batches)
     let processedCount = 0;
     let successCount = 0;
     let errorCount = 0;
 
-    console.log('🚀 Starting Atlanta property scraping...');
+    console.log('🚀 Starting Atlanta property scraping (sequential processing to avoid rate limits)...');
 
-    for (let i = 0; i < jobs.length; i += batchSize) {
-      const batch = jobs.slice(i, i + batchSize);
-      console.log(`\n📦 Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(jobs.length/batchSize)} (${batch.length} jobs)`);
+    for (let i = 0; i < jobs.length; i++) {
+      const job = jobs[i];
+      console.log(`\n📦 Processing job ${i + 1}/${jobs.length}: ${job.url}`);
 
-      // Process batch concurrently
-      const batchPromises = batch.map(async (job, index) => {
-        try {
-          console.log(`  🔄 [${i + index + 1}/${jobs.length}] Scraping: ${job.url}`);
+      try {
+        // Update job status to processing
+        const { error: processingError } = await supabase
+          .from('scraping_queue')
+          .update({ status: 'processing', started_at: new Date().toISOString() })
+          .eq('id', job.id);
 
-          // Update job status to processing
-          await client.query(
-            'UPDATE scraping_queue SET status = $1, started_at = NOW() WHERE id = $2',
-            ['processing', job.id]
-          );
-
-          // Call the Edge Function to scrape this property
-          const scrapeResult = await scrapeProperty(job);
-
-          if (scrapeResult.success) {
-            // Update job status to completed
-            await client.query(
-              'UPDATE scraping_queue SET status = $1, completed_at = NOW() WHERE id = $2',
-              ['completed', job.id]
-            );
-            console.log(`  ✅ [${i + index + 1}/${jobs.length}] Completed: ${job.property_id}`);
-            return { success: true, job: job };
-          } else {
-            // Update job status to failed
-            await client.query(
-              'UPDATE scraping_queue SET status = $1, error = $2 WHERE id = $3',
-              ['failed', scrapeResult.error, job.id]
-            );
-            console.log(`  ❌ [${i + index + 1}/${jobs.length}] Failed: ${job.property_id} - ${scrapeResult.error}`);
-            return { success: false, job: job, error: scrapeResult.error };
-          }
-
-        } catch (error) {
-          console.error(`  💥 [${i + index + 1}/${jobs.length}] Error processing ${job.property_id}:`, error.message);
-          // Update job status to failed
-          await client.query(
-            'UPDATE scraping_queue SET status = $1, error = $2 WHERE id = $3',
-            ['failed', error.message, job.id]
-          );
-          return { success: false, job: job, error: error.message };
+        if (processingError) {
+          throw new Error(`Failed to update job status to processing: ${processingError.message}`);
         }
-      });
 
-      // Wait for batch to complete
-      const batchResults = await Promise.all(batchPromises);
-      const batchSuccess = batchResults.filter(r => r.success).length;
-      const batchErrors = batchResults.filter(r => !r.success).length;
+        // Call the Edge Function to scrape this property
+        const scrapeResult = await scrapeProperty(job);
 
-      processedCount += batch.length;
-      successCount += batchSuccess;
-      errorCount += batchErrors;
+        if (scrapeResult.success) {
+          // Update job status to completed
+          const { error: completedError } = await supabase
+            .from('scraping_queue')
+            .update({ status: 'completed', completed_at: new Date().toISOString() })
+            .eq('id', job.id);
 
-      console.log(`  📊 Batch complete: ${batchSuccess} success, ${batchErrors} errors`);
+          if (completedError) {
+            console.error(`Failed to update job status to completed: ${completedError.message}`);
+          }
+          console.log(`  ✅ Completed: ${job.property_id}`);
+          successCount++;
+        } else {
+          // Update job status to failed
+          const { error: failedError } = await supabase
+            .from('scraping_queue')
+            .update({ status: 'failed', error: scrapeResult.error })
+            .eq('id', job.id);
 
-      // Small delay between batches to avoid overwhelming
-      if (i + batchSize < jobs.length) {
-        console.log('⏳ Waiting 2 seconds before next batch...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
+          if (failedError) {
+            console.error(`Failed to update job status to failed: ${failedError.message}`);
+          }
+          console.log(`  ❌ Failed: ${job.property_id} - ${scrapeResult.error}`);
+          errorCount++;
+        }
+
+      } catch (error) {
+        console.error(`  💥 Error processing ${job.property_id}:`, error.message);
+        // Update job status to failed
+        const { error: catchError } = await supabase
+          .from('scraping_queue')
+          .update({ status: 'failed', error: error.message })
+          .eq('id', job.id);
+
+        if (catchError) {
+          console.error(`Failed to update job status in catch block: ${catchError.message}`);
+        }
+        errorCount++;
+      }
+
+      processedCount++;
+
+      // Long delay between jobs to respect rate limits (45 seconds)
+      if (i < jobs.length - 1) {
+        console.log('⏳ Waiting 45 seconds before next job to respect Claude rate limits...');
+        await new Promise(resolve => setTimeout(resolve, 45000));
       }
     }
 
@@ -111,195 +112,158 @@ async function triggerAtlantaScraping() {
     console.log(`📈 Success rate: ${((successCount / processedCount) * 100).toFixed(1)}%`);
 
     // Check final database state
-    const finalStats = await client.query(`
-      SELECT status, COUNT(*) as count
-      FROM scraping_queue
-      WHERE id IN (${jobs.map(j => j.id).join(',')})
-      GROUP BY status
-    `);
+    const jobIds = jobs.map(j => j.id);
+    const { data: finalStats, error: statsError } = await supabase
+      .from('scraping_queue')
+      .select('status')
+      .in('id', jobIds);
 
-    console.log('\n📊 Final queue status:');
-    finalStats.rows.forEach(row => {
-      console.log(`  ${row.status}: ${row.count}`);
-    });
+    if (!statsError && finalStats) {
+      const statusCounts = finalStats.reduce((acc, row) => {
+        acc[row.status] = (acc[row.status] || 0) + 1;
+        return acc;
+      }, {});
+
+      console.log('\n📊 Final queue status:');
+      Object.entries(statusCounts).forEach(([status, count]) => {
+        console.log(`  ${status}: ${count}`);
+      });
+    }
 
     // Check scraped properties count
-    const scrapedCount = await client.query('SELECT COUNT(*) as count FROM scraped_properties');
-    console.log(`🏠 Total properties in database: ${scrapedCount.rows[0].count}`);
+    const { count: scrapedCount, error: countError } = await supabase
+      .from('apartments')
+      .select('*', { count: 'exact', head: true });
+
+    if (!countError) {
+      console.log(`🏠 Total properties in database: ${scrapedCount}`);
+    }
 
   } catch (error) {
     console.error('❌ Error:', error);
-  } finally {
-    await client.end();
   }
 }
 
 async function scrapeProperty(job) {
   try {
-    // For local development, we'll simulate the scraping process
-    // In production, this would call the actual Edge Function
-    console.log(`    🌐 Fetching HTML from: ${job.url}`);
+    console.log(`    🌐 Multi-page scraping for: ${job.url}`);
 
-    // Simulate fetching HTML (in real implementation, this would be done by the Edge Function)
-    let htmlContent = '';
-    try {
-      const response = await fetch(job.url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        },
-        timeout: 10000 // 10 second timeout
-      });
+    // Extract base URL for constructing additional page URLs
+    const urlObj = new URL(job.url);
+    const baseUrl = urlObj.origin;
+    const basePath = urlObj.pathname.replace(/\/$/, ''); // Remove trailing slash
 
-      if (response.ok) {
-        htmlContent = await response.text();
-        console.log(`    📄 Fetched ${htmlContent.length} characters of HTML`);
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    // Target pages to scrape for comprehensive data (prioritized)
+    const targetPages = [
+      job.url, // Homepage for basic info - always first
+      `${baseUrl}/floorplans/`, // Most important for pricing/unit details
+      `${baseUrl}/apartments/floor-plans`, // Alternative floor plans path
+      `${baseUrl}/floor-plans`, // Another common path
+      `${baseUrl}/amenities/`, // Community amenities
+      `${baseUrl}/features/` // Alternative amenities path
+    ];
+
+    let combinedHtml = '';
+    let pagesFetched = 0;
+    const maxHtmlLength = 500000; // Limit to ~500KB to avoid rate limits
+
+    // Fetch pages in priority order, stopping if we hit size limit
+    for (const pageUrl of targetPages) {
+      if (combinedHtml.length > maxHtmlLength) {
+        console.log(`        📏 Stopping at ${combinedHtml.length} chars to avoid rate limits`);
+        break;
       }
-    } catch (fetchError) {
-      console.log(`    ⚠️  Fetch failed, using mock data: ${fetchError.message}`);
-      // For demo purposes, create mock data when fetch fails
-      htmlContent = generateMockHTML(job);
+
+      try {
+        console.log(`      📄 Fetching: ${pageUrl}`);
+
+        const response = await fetch(pageUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+          },
+          timeout: 10000 // 10 second timeout per page
+        });
+
+        if (response.ok) {
+          const pageHtml = await response.text();
+
+          // Truncate very large pages to essential content
+          let truncatedHtml = pageHtml;
+          if (pageHtml.length > 100000) {
+            // Keep the first 50KB and last 50KB of large pages (often headers/footers have key info)
+            const firstPart = pageHtml.substring(0, 50000);
+            const lastPart = pageHtml.substring(pageHtml.length - 50000);
+            truncatedHtml = firstPart + '\n<!-- CONTENT TRUNCATED -->\n' + lastPart;
+            console.log(`        ✂️  Truncated page from ${pageHtml.length} to ${truncatedHtml.length} chars`);
+          }
+
+          combinedHtml += `\n<!-- PAGE: ${pageUrl} -->\n${truncatedHtml}\n<!-- END PAGE: ${pageUrl} -->\n`;
+          pagesFetched++;
+          console.log(`        ✅ Added ${truncatedHtml.length} chars from ${pageUrl.split('/').pop() || 'homepage'}`);
+        } else {
+          console.log(`        ⚠️  Page not found (${response.status}): ${pageUrl}`);
+        }
+      } catch (fetchError) {
+        console.log(`        ⚠️  Fetch failed for ${pageUrl}: ${fetchError.message}`);
+      }
+
+      // Small delay between page requests to be respectful
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
 
-    // Simulate Claude AI processing (in real implementation, this calls the Edge Function)
-    console.log(`    🤖 Processing with Claude AI...`);
-    const mockResult = await simulateClaudeProcessing(htmlContent, job);
+    if (pagesFetched === 0) {
+      throw new Error('Failed to fetch any pages from the property website');
+    }
 
-    // Store result in database
-    await storeScrapedData(mockResult, job);
+    console.log(`    📋 Combined ${pagesFetched} pages into ${combinedHtml.length} characters of HTML`);
 
+    // Call the production Edge Function with the combined HTML
+    console.log(`    🤖 Calling production scraper with multi-page HTML`);
+    const response = await fetch('https://jdymvpasjsdbryatscux.supabase.co/functions/v1/ai-scraper-worker', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        cleanHtml: combinedHtml,
+        url: job.url,
+        source: job.source,
+        external_id: job.external_id,
+        test_mode: true,
+        multi_page: true,
+        pages_fetched: pagesFetched
+      })
+    });
+
+    if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorBody = await response.text();
+        console.log(`    ❌ Error response body: ${errorBody}`);
+        errorMessage += ` - ${errorBody}`;
+      } catch (e) {
+        console.log(`    ❌ Could not read error response body`);
+      }
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+    console.log(`    📄 Received response from scraper`);
+
+    // The Edge Function should handle storing the data in the database
+    // We just need to return success/failure
     return { success: true };
 
   } catch (error) {
+    console.error(`    ❌ Scraper error: ${error.message}`);
     return { success: false, error: error.message };
-  }
-}
-
-function generateMockHTML(job) {
-  // Generate realistic mock HTML for testing
-  const propertyName = job.url.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  const basePrice = Math.floor(Math.random() * 1000) + 1500; // $1500-$2500
-
-  return `
-    <html>
-      <head><title>${propertyName} | Luxury Apartments</title></head>
-      <body>
-        <h1>${propertyName}</h1>
-        <div class="pricing">
-          <span class="price">$${basePrice}</span>
-          <span class="concession">1 Month Free Rent!</span>
-        </div>
-        <div class="details">
-          <span>2 Bedrooms</span>
-          <span>2 Bathrooms</span>
-          <span>1,200 Sq Ft</span>
-        </div>
-        <div class="amenities">
-          Pool, Gym, Parking, Pet Friendly
-        </div>
-        <div class="address">123 Main St, Atlanta, GA 30301</div>
-      </body>
-    </html>
-  `;
-}
-
-async function simulateClaudeProcessing(htmlContent, job) {
-  // Simulate Claude AI processing delay
-  await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-
-  // Extract mock data from HTML
-  const priceMatch = htmlContent.match(/\$([0-9,]+)/);
-  const price = priceMatch ? parseInt(priceMatch[1].replace(/,/g, '')) : 1500;
-
-  const bedroomMatch = htmlContent.match(/([0-9]+)\s*Bedrooms?/i);
-  const bedrooms = bedroomMatch ? parseInt(bedroomMatch[1]) : 2;
-
-  const bathroomMatch = htmlContent.match(/([0-9]+)\s*Bathrooms?/i);
-  const bathrooms = bathroomMatch ? parseFloat(bathroomMatch[1]) : 2.0;
-
-  const sqftMatch = htmlContent.match(/([0-9,]+)\s*Sq\s*Ft/i);
-  const sqft = sqftMatch ? parseInt(sqftMatch[1].replace(/,/g, '')) : 1200;
-
-  const addressMatch = htmlContent.match(/([0-9]+\s+[A-Za-z0-9\s]+,\s*[A-Za-z\s]+,\s*[A-Z]{2}\s*[0-9]{5})/);
-  const address = addressMatch ? addressMatch[1].split(',')[0].trim() : '123 Main St';
-  const city = addressMatch ? addressMatch[1].split(',')[1].trim() : 'Atlanta';
-  const state = addressMatch ? addressMatch[1].split(',')[2].trim().split(' ')[0] : 'GA';
-
-  const nameMatch = htmlContent.match(/<h1>([^<]+)<\/h1>/);
-  const name = nameMatch ? nameMatch[1].trim() : job.url.split('/').pop().replace(/-/g, ' ');
-
-  const concessionMatch = htmlContent.match(/(1\s*month\s*free|free\s*rent)/i);
-  const freeRentConcessions = concessionMatch ? concessionMatch[0] : null;
-
-  return {
-    external_id: job.external_id,
-    name: name,
-    address: address,
-    city: city,
-    state: state,
-    current_price: price,
-    bedrooms: bedrooms,
-    bathrooms: bathrooms,
-    square_feet: sqft,
-    free_rent_concessions: freeRentConcessions,
-    amenities: ['Pool', 'Gym', 'Parking'],
-    listing_url: job.url,
-    source: job.source,
-    concessions: freeRentConcessions ? [freeRentConcessions] : []
-  };
-}
-
-async function storeScrapedData(data, job) {
-  const client = new Client({
-    host: '127.0.0.1',
-    port: 54322,
-    user: 'postgres',
-    password: 'postgres',
-    database: 'postgres'
-  });
-
-  try {
-    await client.connect();
-
-    // Insert into scraped_properties
-    const insertQuery = `INSERT INTO scraped_properties (
-      property_id, unit_number, source, name, address, city, state,
-      current_price, bedrooms, bathrooms, square_feet, free_rent_concessions,
-      listing_url, amenities, scraped_at
-    ) VALUES (
-      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW()
-    )`;
-
-    await client.query(insertQuery, [
-      job.property_id,
-      job.unit_number,
-      data.source,
-      data.name,
-      data.address,
-      data.city,
-      data.state,
-      data.current_price,
-      data.bedrooms,
-      data.bathrooms,
-      data.square_feet,
-      data.free_rent_concessions,
-      data.listing_url,
-      JSON.stringify(data.amenities || [])
-    ]);
-
-    // Update scraping costs
-    await client.query(`
-      INSERT INTO scraping_costs (date, properties_scraped, ai_requests, estimated_cost)
-      VALUES (CURRENT_DATE, 1, 1, 0.001)
-      ON CONFLICT (date) DO UPDATE SET
-        properties_scraped = scraping_costs.properties_scraped + 1,
-        ai_requests = scraping_costs.ai_requests + 1,
-        estimated_cost = scraping_costs.estimated_cost + 0.001
-    `);
-
-  } finally {
-    await client.end();
   }
 }
 

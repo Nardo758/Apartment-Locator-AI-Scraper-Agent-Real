@@ -23,7 +23,7 @@ enabled = false
 
 [db]
 # Port to use for the local database URL.
-port = 54322
+port = 54330
 # Port used by db diff command to initialize the shadow database.
 shadow_port = 54320
 # The database major version to use. This has to be the same as your remote database's. Run `SHOW
@@ -98,7 +98,7 @@ port = 54324
 # sender_name = "Admin"
 
 [storage]
-enabled = true
+enabled = false
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
@@ -317,7 +317,7 @@ deno_version = 2
 
 [analytics]
 enabled = true
-port = 54327
+port = 54340
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
 

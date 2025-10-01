@@ -1,18 +1,15 @@
-const { Client } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 
-async function populateAtlantaScrapingQueue() {
-  const client = new Client({
-    host: '127.0.0.1',
-    port: 54322,
-    user: 'postgres',
-    password: 'postgres',
-    database: 'postgres'
-  });
+// Production Supabase credentials
+const SUPABASE_URL = 'https://jdymvpasjsdbryatscux.supabase.co';
+const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkeW12cGFzanNkYnJ5YXRzY3V4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODU4NzU1OCwiZXhwIjoyMDc0MTYzNTU4fQ.riR6SZMQHVzPoX87ZOGeLaK3aqPR8gPIdlZvQn_1qs4';
 
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+async function populateAtlantaScrapingQueue() {
   try {
-    await client.connect();
-    console.log('🔍 Connected to database');
+    console.log('🔍 Connected to Supabase database');
 
     // Read sources.json file
     const sourcesData = JSON.parse(fs.readFileSync('./data/sources.json', 'utf8'));
@@ -40,10 +37,16 @@ async function populateAtlantaScrapingQueue() {
     console.log(`📋 Will populate queue with ${propertiesToScrape.length} properties`);
 
     // Check existing queue entries to avoid duplicates
-    const existingUrls = new Set();
-    const existingResult = await client.query('SELECT url FROM scraping_queue WHERE status IN (\'pending\', \'processing\')');
-    existingResult.rows.forEach(row => existingUrls.add(row.url));
+    const { data: existingJobs, error: existingError } = await supabase
+      .from('scraping_queue')
+      .select('url')
+      .in('status', ['pending', 'processing']);
 
+    if (existingError) {
+      throw new Error(`Failed to check existing jobs: ${existingError.message}`);
+    }
+
+    const existingUrls = new Set(existingJobs.map(job => job.url));
     console.log(`🔄 Found ${existingUrls.size} existing pending/processing jobs`);
 
     // Prepare new jobs
@@ -85,25 +88,34 @@ async function populateAtlantaScrapingQueue() {
     for (let i = 0; i < newJobs.length; i += batchSize) {
       const batch = newJobs.slice(i, i + batchSize);
 
-      const values = batch.map(job =>
-        `('${job.external_id}', '${job.property_id}', '${job.unit_number}', '${job.url.replace(/'/g, "''")}', '${job.source}', '${job.status}', ${job.priority}, '${job.created_at}')`
-      ).join(', ');
-
-      const query = `INSERT INTO scraping_queue (external_id, property_id, unit_number, url, source, status, priority, created_at)
-        VALUES ${values}`;
-
       try {
-        const result = await client.query(query);
-        insertedCount += result.rowCount;
-        console.log(`✅ Inserted batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(newJobs.length/batchSize)} (${result.rowCount} jobs)`);
+        const { data, error } = await supabase
+          .from('scraping_queue')
+          .insert(batch);
+
+        if (error) {
+          console.error(`❌ Error inserting batch ${Math.floor(i/batchSize) + 1}:`, error.message);
+        } else {
+          insertedCount += batch.length;
+          console.log(`✅ Inserted batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(newJobs.length/batchSize)} (${batch.length} jobs)`);
+        }
       } catch (error) {
         console.error(`❌ Error inserting batch ${Math.floor(i/batchSize) + 1}:`, error.message);
       }
     }
 
     // Get final queue count
-    const finalCountResult = await client.query('SELECT COUNT(*) as total FROM scraping_queue WHERE status = \'pending\'');
-    const finalCount = parseInt(finalCountResult.rows[0].total);
+    const { data: finalCountData, error: countError } = await supabase
+      .from('scraping_queue')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'pending');
+
+    if (countError) {
+      console.error('❌ Error getting final count:', countError.message);
+      return;
+    }
+
+    const finalCount = finalCountData || 0;
 
     console.log('\n🎉 ATLANTA SCRAPING QUEUE POPULATION COMPLETE!');
     console.log(`✅ Successfully added ${insertedCount} new jobs`);
@@ -112,8 +124,6 @@ async function populateAtlantaScrapingQueue() {
 
   } catch (error) {
     console.error('❌ Error:', error);
-  } finally {
-    await client.end();
   }
 }
 
