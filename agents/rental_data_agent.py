@@ -11,6 +11,11 @@ from dataclasses import dataclass
 from datetime import datetime
 import logging
 
+# Template system imports
+from template_manager import TemplateManager
+from smart_scraper import SmartScraper
+from website_templates import update_template_success
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -93,6 +98,11 @@ class RentalDataAgent:
             self.supabase = None
             logger.warning("Supabase credentials not provided - database operations will be skipped")
 
+        # Initialize template-based scraping system
+        self.template_manager = TemplateManager()
+        self.smart_scraper = SmartScraper(self.template_manager)
+        self.use_template_system = True  # Enable template-based scraping by default
+
         # Vision model configuration - using OpenAI GPT-4o (Deepseek doesn't support vision)
         self.vision_model = "gpt-4o"  # OpenAI GPT-4V (vision-capable)
         self.vision_max_tokens = 2000
@@ -160,8 +170,42 @@ class RentalDataAgent:
             }
         }
 
-        # Cookie handling state tracking
-        self._cookies_handled = False  # Track if cookies have been handled for current page
+        # Cookie consent database for known sites
+        self.cookie_consent_patterns = {
+            'altaporter.com': {
+                'accept_selector': 'button[onclick*="accept"]',
+                'reject_selector': 'button[class*="reject"]',
+                'storage_key': 'cookiePrefs',
+                'local_storage': {'cookieConsent': 'true', 'privacySettings': '{"necessary":true}'}
+            },
+            'bellmorningside.com': {
+                'accept_selector': 'button[data-action="accept"]',
+                'reject_selector': 'button[data-action="reject"]',
+                'storage_key': 'gdpr_consent',
+                'local_storage': {'gdprAccepted': 'true'}
+            },
+            'thecollectiveuws.com': {
+                'accept_selector': '.cookie-accept',
+                'reject_selector': '.cookie-reject',
+                'storage_key': 'cookie_consent',
+                'local_storage': {'cookie_consent': 'accepted'}
+            },
+            'novelwestmidtown.com': {
+                'accept_selector': '#accept-cookies',
+                'reject_selector': '#reject-cookies',
+                'storage_key': 'cookieSettings',
+                'local_storage': {'cookieSettings': '{"analytics":false,"marketing":false}'}
+            }
+        }
+
+        # Human-like behavior configuration
+        self.human_behavior = {
+            'mouse_movements': True,
+            'random_delays': True,
+            'scroll_behavior': True,
+            'realistic_viewport': True,
+            'stealth_mode': True
+        }
 
         # Hybrid agent routing configuration
         self.hybrid_routing = {
@@ -195,36 +239,180 @@ class RentalDataAgent:
         await self._cleanup_browser()
 
     async def _init_browser(self):
-        """Initialize Playwright browser"""
+        """Initialize Playwright browser with advanced stealth and human-like features"""
         try:
             from playwright.async_api import async_playwright
 
             self.playwright = await async_playwright().start()
+
+            # Enhanced browser launch with stealth features
+            browser_args = [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process',
+                '--disable-gpu',
+                '--disable-blink-features=AutomationControlled',  # Remove automation indicator
+                '--disable-web-security',  # Allow cross-origin requests
+                '--disable-features=VizDisplayCompositor'  # Reduce resource usage
+            ]
+
+            # Add stealth mode if enabled
+            if self.human_behavior.get('stealth_mode', False):
+                browser_args.extend([
+                    '--disable-extensions',
+                    '--disable-plugins',
+                    '--disable-images',  # Optional: speed up loading
+                    '--disable-javascript',  # Optional: for very stealthy mode
+                ])
+
             self.browser = await self.playwright.chromium.launch(
-                headless=True,  # Run in background
-                args=[
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-accelerated-2d-canvas',
-                    '--no-first-run',
-                    '--no-zygote',
-                    '--single-process',  # Helps with Windows
-                    '--disable-gpu'
-                ]
+                headless=True,  # Keep headless for production
+                args=browser_args
             )
 
-            self.context = await self.browser.new_context(
-                viewport={'width': 1920, 'height': 1080},
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            )
+            # Create context with realistic browser fingerprint
+            context_options = {
+                'viewport': {'width': 1920, 'height': 1080} if self.human_behavior.get('realistic_viewport', True) else {'width': 1920, 'height': 1080},
+                'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'locale': 'en-US',
+                'timezone_id': 'America/New_York',
+                'geolocation': {'latitude': 33.7490, 'longitude': -84.3880},  # Atlanta coordinates
+                'permissions': ['geolocation'],
+                'extra_http_headers': {
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'DNT': '1',
+                    'Connection': 'keep-alive',
+                    'Upgrade-Insecure-Requests': '1',
+                }
+            }
 
+            self.context = await self.browser.new_context(**context_options)
             self.page = await self.context.new_page()
-            logger.info("Browser initialized successfully")
+
+            # Apply stealth evasion scripts
+            await self._apply_stealth_evasion()
+
+            # Set up human-like behavior monitoring
+            await self._setup_human_behavior()
+
+            logger.info("Browser initialized with advanced stealth features")
 
         except Exception as e:
             logger.error(f"Failed to initialize browser: {str(e)}")
             raise
+
+    async def _apply_stealth_evasion(self):
+        """Apply stealth evasion techniques to avoid detection"""
+        stealth_script = """
+        // Remove webdriver property
+        delete Object.getPrototypeOf(navigator).webdriver;
+
+        // Mock chrome runtime
+        window.chrome = { runtime: {} };
+
+        // Mock plugins
+        Object.defineProperty(navigator, 'plugins', {
+            get: () => [
+                { name: 'Chrome PDF Plugin', description: 'Portable Document Format', filename: 'internal-pdf-viewer' },
+                { name: 'Chrome PDF Viewer', description: '', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' },
+                { name: 'Native Client', description: '', filename: 'internal-nacl-plugin' }
+            ]
+        });
+
+        // Mock languages
+        Object.defineProperty(navigator, 'languages', {
+            get: () => ['en-US', 'en']
+        });
+
+        // Mock permissions
+        const originalQuery = window.navigator.permissions.query;
+        window.navigator.permissions.query = (parameters) => (
+            parameters.name === 'notifications' ?
+                Promise.resolve({ state: Notification.permission }) :
+                originalQuery(parameters)
+        );
+
+        // Mock hardware concurrency
+        Object.defineProperty(navigator, 'hardwareConcurrency', {
+            get: () => 8
+        });
+
+        // Mock device memory
+        Object.defineProperty(navigator, 'deviceMemory', {
+            get: () => 8
+        });
+        """
+
+        await self.page.add_init_script(stealth_script)
+
+    async def _setup_human_behavior(self):
+        """Set up human-like behavior patterns"""
+        # Add random mouse movements and scrolling
+        if self.human_behavior.get('mouse_movements', True):
+            await self.page.add_init_script("""
+            // Random mouse movements
+            let mouseX = Math.random() * window.innerWidth;
+            let mouseY = Math.random() * window.innerHeight;
+
+            setInterval(() => {
+                mouseX += (Math.random() - 0.5) * 20;
+                mouseY += (Math.random() - 0.5) * 20;
+                mouseX = Math.max(0, Math.min(window.innerWidth, mouseX));
+                mouseY = Math.max(0, Math.min(window.innerHeight, mouseY));
+            }, 1000);
+            """)
+
+    async def _preemptive_cookie_handling(self, domain: str):
+        """Set cookies and local storage before visiting a site"""
+        if domain in self.cookie_consent_patterns:
+            pattern = self.cookie_consent_patterns[domain]
+
+            # Set local storage preferences
+            if 'local_storage' in pattern:
+                for key, value in pattern['local_storage'].items():
+                    await self.page.add_init_script(f"""
+                    localStorage.setItem('{key}', '{value}');
+                    """)
+
+            # Set cookies
+            cookies = [
+                {
+                    'name': 'cookie_consent',
+                    'value': 'accepted',
+                    'domain': domain,
+                    'path': '/'
+                },
+                {
+                    'name': pattern.get('storage_key', 'gdpr_consent'),
+                    'value': 'true',
+                    'domain': domain,
+                    'path': '/'
+                }
+            ]
+
+            await self.context.add_cookies(cookies)
+            logger.info(f"🍪 Pre-emptive cookie handling applied for {domain}")
+
+    async def _build_browsing_history(self, domain: str):
+        """Build realistic browsing history by visiting internal pages first"""
+        if domain in ['altaporter.com', 'bellmorningside.com', 'thecollectiveuws.com', 'novelwestmidtown.com']:
+            internal_pages = ['/about', '/contact', '/privacy', '/terms']
+
+            for path in internal_pages[:2]:  # Visit just 2 pages to not waste time
+                try:
+                    url = f'https://{domain}{path}'
+                    await self.page.goto(url, timeout=5000, wait_until='domcontentloaded')
+                    await self.human_delay("page_load")
+                    logger.debug(f"Built browsing history: visited {url}")
+                except Exception as e:
+                    logger.debug(f"Failed to visit {path}: {str(e)}")
+                    continue
 
     async def _cleanup_browser(self):
         """Clean up browser resources"""
@@ -314,6 +502,174 @@ class RentalDataAgent:
         # All retries exhausted
         logger.error(f"Failed to extract data from {property_url} after {self.max_retries} attempts")
         return []
+
+    async def extract_rental_data(self, property_url: str, property_id: int = None) -> List[RentalData]:
+        """
+        Main method to extract rental data from a property URL.
+        Uses template-based scraping system for efficient and reliable extraction.
+
+        Args:
+            property_url: URL of the apartment property to scrape
+            property_id: ID from properties_basic table (optional)
+
+        Returns:
+            List of RentalData objects with pricing information
+        """
+        logger.info(f"🏠 Starting rental data extraction for: {property_url}")
+
+        rental_data = []
+
+        try:
+            # ===== TEMPLATE-BASED EXTRACTION (PRIMARY METHOD) =====
+            if self.use_template_system:
+                logger.info("🎯 Attempting template-based extraction...")
+                template_result = await self._extract_with_template_system(property_url)
+                if template_result and len(template_result.get("units", [])) > 0:
+                    logger.info(f"✅ Template extraction successful: {len(template_result['units'])} units found")
+
+                    # Convert template results to RentalData objects
+                    for unit in template_result["units"]:
+                        rental_info = RentalData(
+                            floorplan_name=unit.get('floorplan_name', 'Template Extracted'),
+                            bedrooms=unit.get('bedrooms', 1),
+                            bathrooms=unit.get('bathrooms', 1.0),
+                            sqft=unit.get('sqft'),
+                            monthly_rent=unit.get('monthly_rent', 0.0),
+                            lease_term_months=unit.get('lease_term_months', 12),
+                            lease_term=unit.get('lease_term'),
+                            concessions=unit.get('concessions'),
+                            availability_date=unit.get('availability_date'),
+                            availability_status=unit.get('availability_status', 'available'),
+                            confidence_score=unit.get('confidence_score', 0.8),
+                            data_source='template_agent',
+                            raw_data=unit
+                        )
+                        rental_data.append(rental_info)
+
+                    # Update template success metrics
+                    template_type = template_result.get("scrape_metadata", {}).get("template_type", "unknown")
+                    if template_type != "unknown":
+                        update_template_success(template_type, True)
+
+                    return rental_data
+
+                else:
+                    logger.info("⚠️ Template extraction failed or returned no data, falling back to traditional method")
+                    # Update template failure metrics
+                    template_type = template_result.get("scrape_metadata", {}).get("template_type", "unknown") if template_result else "unknown"
+                    if template_type != "unknown":
+                        update_template_success(template_type, False)
+
+            # ===== TRADITIONAL EXTRACTION (FALLBACK METHOD) =====
+            logger.info("🔄 Falling back to traditional extraction method...")
+
+            # Load page safely with human-like behavior
+            if not await self.load_page_safely(property_url):
+                logger.error("❌ Failed to load page safely")
+                return []
+
+            # Extract concessions first
+            concessions = await self._extract_concessions()
+            if not concessions and "thecollectiveuws.com" in property_url:
+                # Try site-specific extraction for The Collective UWS
+                concessions = await self._extract_concessions_site_specific(property_url)
+            logger.info(f"Found concessions: {concessions}")
+
+            # Step 2: Site-specific navigation (for known problematic sites)
+            site_nav_success = await self._site_specific_navigation(property_url)
+            if site_nav_success:
+                logger.info("Site-specific navigation successful")
+
+            # Step 3: Pre-navigation - try to access pricing/floor plans content
+            await self._pre_navigate_to_content()
+
+            # Step 4: Navigate to floor plans/pricing section if needed
+            await self._navigate_to_floor_plans()
+
+            # Step 5: Extract available units and pricing
+            units_data = await self._extract_unit_pricing()
+            logger.info(f"Extracted {len(units_data)} unit configurations")
+
+            # Step 6: Navigate to application/pricing page if needed
+            if not units_data:
+                await self._navigate_to_pricing_page()
+                units_data = await self._extract_unit_pricing()
+
+            # Step 7: Process and structure the data
+            for unit in units_data:
+                rental_info = RentalData(
+                    floorplan_name=unit.get('floorplan_name', 'Unknown'),
+                    bedrooms=unit.get('bedrooms', 0),
+                    bathrooms=unit.get('bathrooms', 1.0),
+                    sqft=unit.get('sqft'),
+                    monthly_rent=unit.get('monthly_rent', 0.0),
+                    lease_term_months=unit.get('lease_term_months', 12),
+                    lease_term=unit.get('lease_term') or f"{unit.get('lease_term_months', 12)} months",  # Descriptive lease term
+                    concessions=concessions or unit.get('concessions'),
+                    availability_date=unit.get('availability_date'),
+                    availability_status=unit.get('availability_status', 'available'),
+                    confidence_score=unit.get('confidence_score', 0.5),
+                    data_source='vision_agent',
+                    raw_data=unit
+                )
+                rental_data.append(rental_info)
+
+            # ===== MULTI-STEP NAVIGATION FALLBACK =====
+            # If standard extraction found very limited data (< 3 units), try multi-step navigation
+            if len(rental_data) < 3 and self._is_complex_site(property_url):
+                logger.info(f"Limited data found ({len(rental_data)} units), trying multi-step navigation")
+                multi_step_data = await self.navigate_floor_plan_flow(property_url)
+                if multi_step_data:
+                    # Convert multi-step data to RentalData objects
+                    for item in multi_step_data:
+                        rental_info = RentalData(
+                            floorplan_name=item.get('unit_type', 'Multi-Step Extracted'),
+                            bedrooms=1,  # Default, could be enhanced with vision
+                            bathrooms=1.0,
+                            sqft=None,
+                            monthly_rent=item.get('monthly_rent', 0.0),
+                            lease_term_months=item.get('lease_term_months', 12),
+                            lease_term=item.get('lease_term') or f"{item.get('lease_term_months', 12)} months",  # Descriptive lease term
+                            concessions=item.get('special_pricing'),
+                            availability_date=item.get('available_date'),
+                            availability_status='available',
+                            confidence_score=0.8,
+                            data_source='multi_step_agent',
+                            raw_data=item
+                        )
+                        rental_data.append(rental_info)
+                    logger.info(f"Multi-step navigation added {len(multi_step_data)} additional records")
+
+            logger.info(f"Successfully extracted {len(rental_data)} rental records")
+            return rental_data
+
+        except Exception as e:
+            logger.error(f"Error extracting rental data from {property_url}: {str(e)}")
+            return []
+
+    async def _extract_with_template_system(self, property_url: str) -> Optional[Dict[str, Any]]:
+        """
+        Extract rental data using the template-based scraping system.
+
+        Args:
+            property_url: URL to scrape
+
+        Returns:
+            Dictionary with extraction results and metadata, or None if failed
+        """
+        try:
+            # Use the smart scraper for template-based extraction
+            result = await self.smart_scraper.scrape_property(property_url)
+
+            if result and isinstance(result, dict):
+                return result
+            else:
+                logger.warning("Template system returned invalid result")
+                return None
+
+        except Exception as e:
+            logger.error(f"Template-based extraction failed: {str(e)}")
+            return None
 
     def _get_site_config(self, property_url: str) -> Optional[Dict]:
         """Get site-specific configuration for known problematic websites"""
@@ -527,6 +883,14 @@ class RentalDataAgent:
             "scrolling": random.uniform(*self.human_timing["scroll_behavior"]),
             "page_navigation": random.uniform(*self.human_timing["multi_page_delay"]),
             "element_hover": random.uniform(*self.human_timing["element_hover"]),
+            # New delay types for advanced cookie handling
+            "navigation_start": random.uniform(0.5, 2.0),  # Delay before navigation
+            "page_load_observation": random.uniform(*self.human_timing["page_load_observation"]),  # Time to "observe" loaded page
+            "reading_speed": random.uniform(*self.human_timing["reading_speed"]),  # Time to "read" elements
+            "decision_pause": random.uniform(*self.human_timing["decision_pause"]),  # Thinking time before action
+            "mouse_movements": random.uniform(*self.human_timing["mouse_movements"]),  # Mouse movement time
+            "scroll_behavior": random.uniform(*self.human_timing["scroll_behavior"]),  # Natural scrolling
+            "typing_speed": random.uniform(*self.human_timing["typing_speed"]),  # If typing is needed
         }
 
         delay = delays.get(action_type, 1.0)
@@ -887,34 +1251,57 @@ class RentalDataAgent:
         return False
 
     async def load_page_safely(self, url: str) -> bool:
-        """Enhanced page loading with better cookie handling"""
+        """Enhanced page loading with advanced cookie handling and human-like behavior"""
 
         try:
+            # Extract domain for pre-emptive handling
+            from urllib.parse import urlparse
+            domain = urlparse(url).netloc.replace('www.', '')
+
             # Reset cookie handling state for new page
             self._cookies_handled = False
 
-            # Set viewport to ensure content is visible
-            await self.page.set_viewport_size({"width": 1280, "height": 800})
+            # PRE-EMPTIVE COOKIE HANDLING: Set cookies and local storage before visiting
+            await self._preemptive_cookie_handling(domain)
 
-            # Navigate to page
+            # BUILD BROWSING HISTORY: Visit internal pages first to appear like a returning user
+            if self.human_behavior.get('build_history', True):
+                await self._build_browsing_history(domain)
+
+            # Set realistic viewport
+            viewport_size = {"width": 1920, "height": 1080} if self.human_behavior.get('realistic_viewport', True) else {"width": 1280, "height": 800}
+            await self.page.set_viewport_size(viewport_size)
+
+            # HUMAN-LIKE NAVIGATION: Add random delay before navigation
+            if self.human_behavior.get('random_delays', True):
+                await self.human_delay("navigation_start")
+
+            # Navigate to page with realistic timing
             await self.page.goto(url, wait_until="domcontentloaded", timeout=30000)
-            await self.human_delay("page_load")
 
-            # Initial cookie handling
-            initial_handled = await self.handle_cookie_popups()
+            # HUMAN-LIKE BEHAVIOR: Realistic page reading time
+            await self.human_delay("page_load_observation")
+
+            # Initial cookie handling with human-like interaction
+            initial_handled = await self.human_cookie_handling()
             if initial_handled:
                 await self.human_delay("between_clicks")
 
-            # Wait a bit for any delayed popups
-            await asyncio.sleep(2)
+            # Wait for delayed popups with human-like patience
+            await self.human_delay("decision_pause")
 
-            # Secondary cookie check - only if cookies weren't already handled
+            # Secondary cookie check with multi-step interaction
             if not self._cookies_handled:
-                await self.handle_cookie_popups()
+                await self.human_cookie_handling()
+
+            # HUMAN-LIKE SCROLLING: Natural content discovery
+            if self.human_behavior.get('scroll_behavior', True):
+                await self.page.evaluate("window.scrollBy(0, 200)")
+                await self.human_delay("scroll_behavior")
 
             # Check if content is visible with multiple strategies
             if await self.is_content_visible():
-                logger.info("✅ Content is visible after cookie handling")
+                logger.info("✅ Content is visible after advanced cookie handling")
                 return True
             else:
                 logger.warning("⚠️ Content not immediately visible, trying aggressive approaches...")
@@ -934,6 +1321,133 @@ class RentalDataAgent:
         except Exception as e:
             logger.error(f"❌ Page load failed: {str(e)}")
             return False
+
+    async def human_cookie_handling(self) -> bool:
+        """Advanced human-like cookie popup handling with multi-step interaction"""
+        logger.info("🍪 Starting advanced human cookie handling...")
+
+        # Step 1: Wait for page to settle (human-like observation)
+        await self.human_delay("decision_pause")
+
+        # Step 2: Try multiple close strategies with human-like precision
+        close_selectors = [
+            'button[class*="close"]',
+            'text=X',
+            '[aria-label*="close" i]',
+            '.modal-close',
+            'button:has-text("Close")',
+            '.cookie-banner .close',
+            '[data-close*="cookie"]',
+            '.cookie-modal .close',
+            '.onetrust-close-btn-handler',
+            'button[aria-label*="close"]',
+            '.close-cookies',
+            '.popup-close',
+            '[data-dismiss="modal"]',
+            '.close-button'
+        ]
+
+        for selector in close_selectors:
+            try:
+                # Human-like delay before checking
+                await self.human_delay("reading_speed")
+
+                # Check if element exists and is visible
+                if await self.page.is_visible(selector):
+                    # Scroll into view naturally
+                    await self.page.evaluate(f'document.querySelector("{selector}")?.scrollIntoView()')
+                    await self.human_delay("element_hover")
+
+                    # Move mouse realistically before clicking
+                    if self.human_behavior.get('mouse_movements', True):
+                        box = await self.page.query_selector(selector)
+                        if box:
+                            bbox = await box.bounding_box()
+                            if bbox:
+                                await self.page.mouse.move(
+                                    bbox['x'] + bbox['width'] / 2,
+                                    bbox['y'] + bbox['height'] / 2
+                                )
+                                await self.human_delay("mouse_movements")
+
+                    # Click with human-like precision and timing
+                    await self.page.click(selector, delay=random.randint(50, 150))
+                    logger.info(f"✅ Closed popup using human-like interaction: {selector}")
+
+                    # Mark as handled
+                    self._cookies_handled = True
+                    return True
+
+            except Exception as e:
+                logger.debug(f"Human close selector {selector} failed: {str(e)}")
+                continue
+
+        # Step 3: If close didn't work, try reject buttons with human-like interaction
+        reject_selectors = [
+            "text=Reject All",
+            "text=Decline",
+            "text=Decline All",
+            "text=No Thanks",
+            "button[data-action='reject-all']",
+            "[data-testid='uc-reject-all-button']",
+            ".cookie-reject",
+            "#onetrust-reject-all-handler",
+            "button[class*='reject']",
+            "button[class*='decline']"
+        ]
+
+        for selector in reject_selectors:
+            try:
+                await self.human_delay("reading_speed")
+
+                if await self.page.is_visible(selector):
+                    # Human-like interaction sequence
+                    await self.page.evaluate(f'document.querySelector("{selector}")?.scrollIntoView()')
+                    await self.human_delay("element_hover")
+
+                    if self.human_behavior.get('mouse_movements', True):
+                        box = await self.page.query_selector(selector)
+                        if box:
+                            bbox = await box.bounding_box()
+                            if bbox:
+                                await self.page.mouse.move(
+                                    bbox['x'] + bbox['width'] / 2,
+                                    bbox['y'] + bbox['height'] / 2
+                                )
+                                await self.human_delay("mouse_movements")
+
+                    await self.page.click(selector, delay=random.randint(50, 150))
+                    logger.info(f"✅ Rejected cookies using human-like interaction: {selector}")
+
+                    self._cookies_handled = True
+                    return True
+
+            except Exception as e:
+                logger.debug(f"Human reject selector {selector} failed: {str(e)}")
+                continue
+
+        # Step 4: Multi-step interaction - click body first, then try again
+        try:
+            # Click somewhere neutral on the page
+            await self.page.click('body', delay=random.randint(50, 150))
+            await self.human_delay("between_clicks")
+
+            # Tab to focus
+            await self.page.keyboard.press('Tab')
+            await self.human_delay("reading_speed")
+
+            # Try close again
+            if await self.page.is_visible('button[class*="close"]'):
+                await self.page.keyboard.press('Enter')
+                logger.info("✅ Closed popup using keyboard interaction")
+                self._cookies_handled = True
+                return True
+
+        except Exception as e:
+            logger.debug(f"Multi-step interaction failed: {str(e)}")
+
+        logger.info("🍪 No cookie popups found or all handling attempts failed")
+        return False
 
     async def is_content_visible(self) -> bool:
         """More robust content detection that handles cookie overlays"""
@@ -1240,2012 +1754,18 @@ class RentalDataAgent:
                 for overlay in overlay_selectors:
                     try:
                         element = await self.page.query_selector(overlay)
-                        if element:
-                            # Click in the center of the overlay
-                            box = await element.bounding_box()
-                            if box:
-                                await self.page.mouse.click(
-                                    box['x'] + box['width'] / 2,
-                                    box['y'] + box['height'] / 2
-                                )
-                                await self.human_delay("between_clicks")
-                                if await self.is_content_visible():
-                                    logger.info(f"🔒 OneTrust overlay dismissed by clicking {overlay}")
-                                    return True
-                    except:
-                        continue
-            except:
-                pass
-
-            # Method 4: Try to execute JavaScript to hide the overlay
-            try:
-                await self.page.evaluate("""
-                    try {
-                        // Remove OneTrust overlay completely
-                        const onetrust = document.querySelector('#onetrust-consent-sdk');
-                        if (onetrust) onetrust.remove();
-                        
-                        // Remove dark filter that's blocking clicks
-                        const filters = document.querySelectorAll('.onetrust-pc-dark-filter, .ot-fade-in');
-                        filters.forEach(f => f.remove());
-                        
-                        // Remove banner
-                        const banners = document.querySelectorAll('#onetrust-banner-sdk, .onetrust-banner-container');
-                        banners.forEach(b => b.remove());
-                        
-                        // Remove button group overlay
-                        const buttonGroups = document.querySelectorAll('#onetrust-button-group');
-                        buttonGroups.forEach(bg => bg.remove());
-                        
-                        // Remove any remaining overlays
-                        const overlays = document.querySelectorAll('[data-nosnippet="true"]');
-                        overlays.forEach(o => {
-                            if (o.id.includes('onetrust') || o.className.includes('onetrust')) {
-                                o.remove();
-                            }
-                        });
-                        
-                        // Force enable scrolling and interactions
-                        document.body.style.overflow = 'auto';
-                        document.documentElement.style.overflow = 'auto';
-                        document.body.style.pointerEvents = 'auto';
-                        
-                        // Try to accept cookies programmatically
-                        if (window.OneTrust && window.OneTrust.AcceptAll) {
-                            window.OneTrust.AcceptAll();
-                        }
-                        if (window.Optanon && window.Optanon.AcceptAll) {
-                            window.Optanon.AcceptAll();
-                        }
-                        
-                        console.log('OneTrust overlay removal completed');
-                        return true;
-                    } catch (e) {
-                        console.error('OneTrust removal failed:', e);
-                        return false;
-                    }
-                """)
-                await self.human_delay("page_navigation")
-                if await self.is_content_visible():
-                    logger.info("🔒 OneTrust overlay hidden with JavaScript")
-                    return True
-            except Exception as e:
-                logger.debug(f"JavaScript overlay removal failed: {str(e)}")
-
-        except Exception as e:
-            logger.error(f"🔒 OneTrust overlay handling failed: {str(e)}")
-
-        return False
-
-    async def smart_navigation(self, target_selector: str) -> bool:
-        """Navigate with cookie popup awareness"""
-        logger.info(f"🧠 Smart navigation to: {target_selector}")
-
-        # First, check for and dismiss cookie popups
-        cookie_handled = await self.handle_cookie_popups()
-        if cookie_handled:
-            await self.human_delay("page_navigation")
-
-        # Now attempt the actual navigation
-        try:
-            await self.human_like_click(target_selector)
-            await self.human_delay("page_navigation")
-
-            # Check for cookies again after navigation
-            cookie_handled_2 = await self.handle_cookie_popups()
-            if cookie_handled_2:
-                await self.human_delay("page_navigation")
-
-            return True
-
-        except Exception as e:
-            logger.error(f"Smart navigation failed: {str(e)}")
-            return False
-
-    async def robust_element_click(self, selector: str, max_retries: int = 3) -> bool:
-        """Click element with cookie interference retry logic"""
-        logger.info(f"🎯 Robust click attempt on: {selector}")
-
-        for attempt in range(max_retries):
-            try:
-                # Check for cookies before each click
-                await self.handle_cookie_popups()
-
-                element = await self.page.query_selector(selector)
-                if element and await self.is_visible(element):
-                    await self.human_like_click(selector)
-                    logger.info(f"✅ Robust click successful on attempt {attempt + 1}")
-                    return True
-                else:
-                    logger.debug(f"Element not found/visible: {selector}")
-
-            except Exception as e:
-                logger.warning(f"Click attempt {attempt + 1} failed: {str(e)}")
-                await self.human_delay("between_clicks")
-
-        logger.error(f"❌ All {max_retries} robust click attempts failed")
-        return False
-
-    async def extract_12_month_rates(self, property_url: str) -> Dict[str, Any]:
-        """Complete flow: Property → Floor Plans → Available Unit → Lease Now → 12-month Rate (Cookie-Safe)"""
-        logger.info(f"🍪 Starting cookie-safe enhanced lease flow extraction for: {property_url}")
-
-        try:
-            # Check if we're already on the correct page (avoid reloading)
-            current_url = self.page.url if self.page else ""
-            if not current_url or property_url not in current_url:
-                # Step 0: Load page safely with cookie handling
-                page_loaded = await self.load_page_safely(property_url)
-                if not page_loaded:
-                    return {"error": "Could not load page safely (cookies/content blocked)", "success": False}
-            else:
-                logger.info("🍪 Already on correct page, skipping reload")
-
-            await self.simulate_reading_behavior()
-
-            # Step 1: Navigate using site-specific flow for complex websites
-            if "thecollectiveuws.com" in property_url:
-                logger.info("🏢 Using multi-step floor plan navigation for The Collective UWS")
-                # Use the new multi-step navigation for complex sites
-                rental_data = await self.navigate_floor_plan_flow(property_url)
-                if not rental_data:
-                    return {"error": "Multi-step floor plan navigation failed for The Collective UWS", "success": False}
-
-                # Extract the best pricing from the rental data
-                monthly_rate = self._extract_best_monthly_rate(rental_data)
-                return {
-                    "success": True,
-                    "rental_data": rental_data,
-                    "12_month_rate": monthly_rate,
-                    "extraction_method": "multi_step_floor_plan"
-                }
-            else:
-                # Use standard navigation for other sites
-                floor_plans_success = await self.navigate_to_floor_plans_cookie_safe()
-                if not floor_plans_success:
-                    return {"error": "Could not navigate to floor plans (cookie interference)", "success": False}
-
-            # Step 2: Find and click an available unit (cookie-aware)
-            available_unit = await self.find_available_unit()
-            if not available_unit:
-                return {"error": "No available units found", "success": False}
-
-            click_success = await self.smart_navigation(available_unit)
-            if not click_success:
-                return {"error": "Could not click available unit (cookie interference)", "success": False}
-
-            if self.stealth_mode:
-                await self.human_delay("page_navigation")
-                await self.simulate_reading_behavior()
-
-            # Step 3: Click "Lease Now" or "Rent Now" (cookie-aware)
-            lease_button = await self.find_lease_button()
-            if not lease_button:
-                return {"error": "Lease now button not found", "success": False}
-
-            click_success_2 = await self.smart_navigation(lease_button)
-            if not click_success_2:
-                return {"error": "Could not click lease button (cookie interference)", "success": False}
-
-            if self.stealth_mode:
-                await self.human_delay("page_navigation")
-                await self.simulate_reading_behavior()
-
-            # Step 4: Extract 12-month leasing rate
-            monthly_rate = await self.extract_12_month_rate()
-
-            return {
-                "success": True,
-                "available_unit": "Found and clicked (cookie-safe)",
-                "12_month_rate": monthly_rate,
-                "extraction_method": "full_lease_flow_cookie_safe"
-            }
-
-        except Exception as e:
-            logger.error(f"🍪 Cookie-safe lease flow extraction failed: {str(e)}")
-            return {"error": f"Cookie-safe lease flow failed: {str(e)}", "success": False}
-
-    async def navigate_to_floor_plans_cookie_safe(self) -> bool:
-        """Enhanced navigation to floor plans with cookie protection"""
-        logger.info("🍪 Navigating to floor plans (cookie-safe)...")
-
-        # Strategy 1: Use existing common navigation with cookie checks
-        nav_success = await self._try_common_navigation_cookie_safe()
-        if nav_success:
-            return True
-
-        # Strategy 2: Vision-guided navigation with cookie awareness
-        vision_success = await self._try_vision_navigation_cookie_safe()
-        if vision_success:
-            return True
-
-        # Strategy 3: Direct URL manipulation (if we can detect floor plans URL)
-        current_url = self.page.url
-        floor_plan_urls = [
-            current_url + "/floor-plans",
-            current_url + "/floorplans",
-            current_url + "/units",
-            current_url + "/apartments"
-        ]
-
-        for url in floor_plan_urls:
-            try:
-                if self.stealth_mode:
-                    await self.human_like_page_load(url)
-                else:
-                    await self.page.goto(url, wait_until='networkidle', timeout=self.page_timeout)
-                    await asyncio.sleep(3)
-
-                # Handle any cookies that appeared after navigation
-                await self.handle_cookie_popups()
-                await self.human_delay("page_navigation")
-
-                return True
-            except:
-                continue
-
-        return False
-
-    async def _try_common_navigation_cookie_safe(self) -> bool:
-        """Try common navigation patterns with cookie protection"""
-        logger.info("🍪 Trying common navigation patterns (cookie-safe)...")
-
-        common_selectors = [
-            "a[href*='floor-plan']",
-            "a[href*='floorplans']",
-            "a[href*='units']",
-            "a[href*='apartments']",
-            "text=Floor Plans",
-            "text=Floorplans",
-            "text=Units",
-            "text=Apartments"
-        ]
-
-        for selector in common_selectors:
-            try:
-                element = await self.page.query_selector(selector)
-                if element and await self.is_visible(element):
-                    logger.info(f"🍪 Found floor plans link: {selector}")
-                    # Use smart navigation with cookie handling
-                    success = await self.smart_navigation(selector)
-                    if success:
-                        await self.simulate_reading_behavior()
-                        return True
-            except Exception as e:
-                logger.debug(f"Common navigation selector {selector} failed: {str(e)}")
-                continue
-
-        return False
-
-    async def _try_vision_navigation_cookie_safe(self) -> bool:
-        """Vision-guided navigation with cookie awareness"""
-        logger.info("🍪 Trying vision-guided navigation (cookie-safe)...")
-
-        try:
-            screenshot = await self.page.screenshot()
-
-            analysis_prompt = """
-            Look at this apartment website screenshot. Find clickable elements that lead to floor plans, units, or apartment listings.
-            Look for:
-            - "Floor Plans" links or buttons
-            - "Units" or "Apartments" navigation
-            - "Available Rentals" sections
-            - Any menu items that would show apartment listings
-
-            Return the CSS selector or text content of the most likely element to click to see floor plans.
-            If you see a cookie popup blocking content, ignore it and focus on the actual navigation elements.
-
-            Return format: Just the selector like "text=Floor Plans" or "a[href*='floor-plans']"
-            """
-
-            response = await self._vision_extract_pricing_single(screenshot, analysis_prompt)
-            if response and isinstance(response, str) and len(response.strip()) > 0:
-                suggested_selector = response.strip()
-                logger.info(f"🍪 Vision suggested selector: {suggested_selector}")
-
-                # Try the suggested selector with robust clicking
-                success = await self.robust_element_click(suggested_selector)
-                if success:
-                    await self.handle_cookie_popups()  # Handle any post-click cookies
-                    await self.simulate_reading_behavior()
-                    return True
-
-        except Exception as e:
-            logger.error(f"🍪 Vision-guided navigation failed: {str(e)}")
-
-        return False
-
-    async def _navigate_collective_flow(self) -> bool:
-        """Navigate The Collective UWS specific flow: Floor Plans → Availability → Lease Now"""
-        logger.info("🏢 Navigating The Collective UWS flow: Floor Plans → Availability → Lease Now")
-
-        try:
-            # Step 1: Click "Floor Plans" or "Apartments"
-            floor_plans_selectors = [
-                "text=Floor Plans",
-                "text=Apartments",
-                "a[href*='floor-plan']",
-                "a[href*='apartments']",
-                "[data-section='floor-plans']",
-                ".floor-plans-link"
-            ]
-
-            floor_plans_clicked = False
-            for selector in floor_plans_selectors:
-                if await self.robust_element_click(selector, max_retries=2):
-                    logger.info(f"🏢 Clicked Floor Plans: {selector}")
-                    floor_plans_clicked = True
-                    await self.human_delay("page_navigation")
-                    await self.simulate_reading_behavior()
-                    break
-
-            if not floor_plans_clicked:
-                logger.warning("🏢 Could not find Floor Plans link")
-                return False
-
-            # Step 2: Look for "Availability" or "Check Availability"
-            availability_selectors = [
-                "text=Availability",
-                "text=Check Availability",
-                "text=View Availability",
-                "button[data-action='availability']",
-                ".availability-button",
-                "[href*='availability']"
-            ]
-
-            availability_clicked = False
-            for selector in availability_selectors:
-                if await self.robust_element_click(selector, max_retries=2):
-                    logger.info(f"🏢 Clicked Availability: {selector}")
-                    availability_clicked = True
-                    await self.human_delay("page_navigation")
-                    await self.simulate_reading_behavior()
-                    break
-
-            if not availability_clicked:
-                logger.warning("🏢 Could not find Availability button, continuing to Lease Now...")
-
-            # Step 3: Click "Lease Now" or similar
-            lease_selectors = [
-                "text=Lease Now",
-                "text=Rent Now",
-                "text=Apply Now",
-                "button[data-action='lease']",
-                ".lease-button",
-                "[href*='lease']"
-            ]
-
-            lease_clicked = False
-            for selector in lease_selectors:
-                if await self.robust_element_click(selector, max_retries=2):
-                    logger.info(f"🏢 Clicked Lease Now: {selector}")
-                    lease_clicked = True
-                    await self.human_delay("page_navigation")
-                    await self.simulate_reading_behavior()
-                    break
-
-            if not lease_clicked:
-                logger.error("🏢 Could not find Lease Now button")
-                return False
-
-            logger.info("🏢 Successfully completed The Collective UWS flow")
-            return True
-
-        except Exception as e:
-            logger.error(f"🏢 The Collective UWS flow failed: {str(e)}")
-            return False
-
-    async def find_available_unit(self) -> Optional[str]:
-        """Find and return selector for an available unit using comprehensive strategies"""
-
-        # Strategy 1: Look for "Available" badges/text
-        available_indicators = [
-            "//*[contains(text(), 'Available')]",
-            "//*[contains(text(), 'Available Now')]",
-            "//*[contains(text(), 'Apply Now')]",
-            ".available-unit",
-            "[data-status='available']",
-            ".unit-available"
-        ]
-
-        for indicator in available_indicators:
-            try:
-                element = await self.page.query_selector(indicator)
-                if element:
-                    # Get the parent unit card or clickable element
-                    unit_selector = await self.find_clickable_parent_selector(element)
-                    if unit_selector:
-                        return unit_selector
-            except:
-                continue
-
-        # Strategy 2: Look for unit listings and check availability
-        unit_selectors = [
-            ".unit-card",
-            ".floorplan-item",
-            ".available-unit",
-            "[data-unit]",
-            ".apartment-unit"
-        ]
-
-        for selector in unit_selectors:
-            try:
-                units = await self.page.query_selector_all(selector)
-                for i, unit in enumerate(units[:3]):  # Check first 3 units
-                    unit_text = await self.page.evaluate("el => el.textContent", unit)
-                    if any(term in unit_text.lower() for term in ['available', 'apply', 'lease now', 'rent now']):
-                        return f"{selector}:nth-of-type({i+1})"
-            except:
-                continue
-
-        return None
-
-    async def find_lease_button(self) -> Optional[str]:
-        """Find Lease Now/Rent Now button using multiple strategies and return selector"""
-
-        lease_button_texts = [
-            "Lease Now", "Rent Now", "Apply Now", "Check Availability",
-            "Schedule Tour", "Reserve Now", "Get Pricing", "See Pricing"
-        ]
-
-        # Try exact text matches first
-        for button_text in lease_button_texts:
-            try:
-                # Use XPath to find button by text content
-                xpath = f"//*[text()='{button_text}']"
-                element = await self.page.query_selector(f"xpath={xpath}")
-                if element and await self.is_visible(element):
-                    return f"xpath={xpath}"
-            except:
-                continue
-
-        # Try case-insensitive and partial matches
-        for button_text in lease_button_texts:
-            try:
-                xpath = f"//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '{button_text.lower()}')]"
-                elements = await self.page.query_selector_all(f"xpath={xpath}")
-                for element in elements:
-                    if await self.is_visible(element):
-                        return f"xpath={xpath}"
-            except:
-                continue
-
-        return None
-
-    async def extract_12_month_rate(self) -> Optional[float]:
-        """Extract the 12-month lease rate from pricing page"""
-
-        try:
-            # Take screenshot for GPT-4o analysis
-            screenshot = await self.page.screenshot()
-
-            analysis_prompt = """
-            You are on the final pricing page of an apartment leasing flow.
-            Find the 12-month lease rate specifically.
-
-            Look for:
-            - "12 Month" lease term with associated price
-            - Lease term dropdowns with 12 months selected
-            - Pricing tables showing 12-month rates
-            - "1 Bed/1 Bath" or similar with 12-month pricing
-            - Monthly rent for 12-month commitment
-
-            Return ONLY the monthly rent number for 12 months, or null if not found.
-            Format: Just the number, like "1850.00" or "null"
-            """
-
-            monthly_rate = await self._vision_extract_pricing_single(screenshot, analysis_prompt)
-            return monthly_rate
-
-        except Exception as e:
-            logger.error(f"12-month rate extraction failed: {str(e)}")
-            return None
-
-    async def extract_optimal_lease_rate(self, property_url: str) -> Dict[str, Any]:
-        """Extract best available lease term when 12-month isn't available"""
-
-        try:
-            # Navigate to pricing page first
-            await self.navigate_to_pricing_page(property_url)
-
-            # Extract ALL available lease terms
-            lease_terms = await self.extract_all_lease_terms()
-
-            if not lease_terms:
-                return {"error": "No lease terms found", "success": False}
-
-            # Find optimal lease term
-            optimal_term = self.select_optimal_lease_term(lease_terms)
-
-            # Extract additional fees and total monthly payment
-            fees = await self.extract_additional_fees()
-            total_monthly = await self.extract_total_monthly_payment()
-
-            return {
-                "success": True,
-                "available_lease_terms": lease_terms,
-                "selected_lease_term": optimal_term,
-                "additional_fees": fees,
-                "total_monthly_payment": total_monthly,
-                "selection_reason": optimal_term.get("selection_reason", "") if optimal_term else ""
-            }
-
-        except Exception as e:
-            logger.error(f"Optimal lease rate extraction failed: {str(e)}")
-            return {"error": f"Lease extraction failed: {str(e)}", "success": False}
-
-    async def navigate_to_pricing_page(self, property_url: str) -> bool:
-        """Navigate through the full flow to reach pricing page"""
-        result = await self.extract_12_month_rates(property_url)
-        return result.get("success", False)
-
-    async def extract_all_lease_terms(self) -> List[Dict]:
-        """Extract ALL available lease terms and prices"""
-
-        try:
-            # Take screenshot for comprehensive analysis
-            screenshot = await self.page.screenshot()
-
-            analysis_prompt = """
-            You are on an apartment leasing pricing page. Extract ALL available lease terms and their monthly prices.
-
-            CRITICAL: Capture EVERY lease term option shown, including:
-            - Lease duration (6 months, 12 months, 15 months, 18 months, etc.)
-            - Monthly price for each term
-            - Any asterisks or notes about pricing
-
-            Also capture:
-            - Additional monthly services/fees (parking, trash, technology fees, etc.)
-            - Total monthly payment amount
-            - Move-in date if shown
-
-            Return JSON format:
-            {
-                "lease_terms": [
-                    {"months": 12, "monthly_price": 1850.00, "notes": "price subject to change"},
-                    {"months": 18, "monthly_price": 1750.00, "notes": "price subject to change"}
-                ],
-                "additional_fees": [
-                    {"name": "Parking", "amount": 30.00},
-                    {"name": "Technology Fee", "amount": 65.00}
-                ],
-                "total_monthly_payment": 1945.00,
-                "move_in_date": "October 08, 2025"
-            }
-            """
-
-            response = await self._vision_extract_pricing_single(screenshot, analysis_prompt)
-            if response and isinstance(response, dict):
-                return response.get("lease_terms", [])
-            else:
-                # Fallback to HTML parsing
-                return await self.extract_lease_terms_html_fallback()
-
-        except Exception as e:
-            logger.error(f"Lease terms extraction failed: {str(e)}")
-            return await self.extract_lease_terms_html_fallback()
-
-    def select_optimal_lease_term(self, lease_terms_data: List[Dict]) -> Optional[Dict]:
-        """Intelligently select the best available lease term"""
-
-        if not lease_terms_data:
-            return None
-
-        # Strategy 1: Find exact 12-month lease
-        twelve_month = next((term for term in lease_terms_data if term.get("months") == 12), None)
-        if twelve_month:
-            twelve_month["selection_reason"] = "Exact 12-month term available"
-            return twelve_month
-
-        # Strategy 2: Find closest alternative to 12 months
-        optimal_term = self.find_closest_lease_term(lease_terms_data, target_months=12)
-
-        # Strategy 3: If no close terms, find cheapest per month
-        if not optimal_term:
-            optimal_term = min(lease_terms_data, key=lambda x: x.get("monthly_price", float('inf')))
-            optimal_term["selection_reason"] = "Cheapest available option (no close term to 12 months)"
-        else:
-            optimal_term["selection_reason"] = f"Closest to 12 months (available: {optimal_term['months']} months)"
-
-        return optimal_term
-
-    def find_closest_lease_term(self, lease_terms: List[Dict], target_months: int = 12) -> Optional[Dict]:
-        """Find lease term closest to target duration"""
-        if not lease_terms:
-            return None
-
-        # Filter reasonable terms (3-24 months typically)
-        reasonable_terms = [term for term in lease_terms if 3 <= term.get("months", 0) <= 24]
-        if not reasonable_terms:
-            return None
-
-        # Find term with minimum absolute difference from target
-        closest_term = min(
-            reasonable_terms,
-            key=lambda term: abs(term.get("months", 0) - target_months)
-        )
-
-        # Only return if reasonably close (within 6 months)
-        if abs(closest_term.get("months", 0) - target_months) <= 6:
-            return closest_term
-
-        return None
-
-    async def extract_lease_terms_html_fallback(self) -> List[Dict]:
-        """Fallback method to extract lease terms from HTML"""
-
-        lease_terms = []
-
-        try:
-            # Strategy 1: Look for lease term dropdown options
-            dropdown_selectors = [
-                "select[name*='lease']",
-                "select[id*='lease']",
-                ".lease-term-select",
-                "[data-lease-terms]"
-            ]
-
-            for selector in dropdown_selectors:
-                dropdown = await self.page.query_selector(selector)
-                if dropdown:
-                    options = await dropdown.query_selector_all("option")
-                    for option in options:
-                        option_text = await option.evaluate("el => el.textContent")
-                        price_match = re.search(r'(\d+)\s*months?\s*[\$]?(\d+[,.]?\d*)', option_text)
-                        if price_match:
-                            months = int(price_match.group(1))
-                            price = float(price_match.group(2).replace(',', ''))
-                            lease_terms.append({"months": months, "monthly_price": price})
-
-            # Strategy 2: Look for lease term tables/lists
-            table_selectors = [
-                ".lease-terms",
-                ".pricing-table",
-                "[data-testid*='lease']",
-                "//*[contains(text(), 'Lease Terms')]/following-sibling::div"
-            ]
-
-            for selector in table_selectors:
-                elements = await self.page.query_selector_all(selector)
-                for element in elements:
-                    text = await element.evaluate("el => el.textContent")
-                    # Look for patterns like "12 months $1,850"
-                    matches = re.findall(r'(\d+)\s*months?\s*[\$]?(\d+[,.]?\d*)', text)
-                    for months, price in matches:
-                        lease_terms.append({
-                            "months": int(months),
-                            "monthly_price": float(price.replace(',', ''))
-                        })
-
-        except Exception as e:
-            logger.error(f"HTML fallback extraction failed: {str(e)}")
-
-        return lease_terms
-
-    async def extract_additional_fees(self) -> List[Dict]:
-        """Extract additional monthly fees and services"""
-
-        try:
-            screenshot = await self.page.screenshot()
-
-            analysis_prompt = """
-            Extract all additional monthly fees and services from this apartment pricing page.
-            Look for:
-            - Parking fees (reserved, covered, garage)
-            - Technology/internet fees
-            - Trash/recycling fees
-            - Pest control fees
-            - Pet fees (monthly)
-            - Storage fees
-            - Any other recurring monthly charges
-
-            Return as JSON list:
-            {
-                "additional_fees": [
-                    {"name": "Parking", "amount": 50.00},
-                    {"name": "Internet", "amount": 75.00}
-                ]
-            }
-            """
-
-            response = await self._vision_extract_pricing_single(screenshot, analysis_prompt)
-            if response and isinstance(response, dict):
-                return response.get("additional_fees", [])
-            return []
-
-        except Exception as e:
-            logger.error(f"Additional fees extraction failed: {str(e)}")
-            return []
-
-    async def extract_total_monthly_payment(self) -> Optional[float]:
-        """Extract the total monthly payment amount"""
-
-        try:
-            # Look for total payment indicators
-            total_selectors = [
-                "//*[contains(text(), 'Total Monthly')]",
-                "//*[contains(text(), 'Monthly Payment')]",
-                "//*[contains(text(), 'Total Payment')]",
-                ".total-payment",
-                ".monthly-total"
-            ]
-
-            for selector in total_selectors:
-                element = await self.page.query_selector(selector)
-                if element:
-                    text = await element.evaluate("el => el.textContent")
-                    # Extract dollar amount
-                    money_match = re.search(r'[\$]?(\d+[,.]?\d*\.?\d+)', text)
-                    if money_match:
-                        return float(money_match.group(1).replace(',', ''))
-
-            return None
-
-        except Exception as e:
-            logger.error(f"Total monthly payment extraction failed: {str(e)}")
-            return None
-
-    async def find_clickable_parent_selector(self, element) -> Optional[str]:
-        """Find the parent clickable element selector (unit card, button, etc.)"""
-        try:
-            parent = element
-            for i in range(5):  # Check up to 5 parents up
-                parent = await parent.query_selector("xpath=..")
-                if not parent:
-                    break
-
-                # Check if parent is clickable (button, link, or has click handler)
-                tag_name = await parent.evaluate("el => el.tagName.toLowerCase()")
-                if tag_name in ['a', 'button', 'div', 'li']:
-                    onclick = await parent.evaluate("el => el.onclick")
-                    if onclick or tag_name in ['a', 'button']:
-                        # Create a unique selector for this element
-                        class_attr = await parent.evaluate("el => el.className")
-                        id_attr = await parent.evaluate("el => el.id")
-                        if id_attr:
-                            return f"#{id_attr}"
-                        elif class_attr:
-                            # Use the first class as selector
-                            first_class = class_attr.split()[0]
-                            return f".{first_class}"
-                        else:
-                            # Fallback to tag name with index
-                            return tag_name
-
-            return None  # Return None if no better parent found
-
-        except Exception as e:
-            logger.error(f"Clickable parent selector search failed: {str(e)}")
-            return None
-
-    async def is_visible(self, element) -> bool:
-        """Check if element is visible on page"""
-        try:
-            return await element.is_visible()
-        except:
-            return False
-
-    async def _vision_extract_pricing_single(self, screenshot: bytes, prompt: str) -> Any:
-        """Extract pricing information using vision analysis with custom prompt"""
-        try:
-            # Convert screenshot to base64
-            base64_image = base64.b64encode(screenshot).decode('utf-8')
-
-            # Use OpenAI GPT-4o
-            import openai
-            client = openai.OpenAI(api_key=self.openai_api_key)
-
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "text", "text": prompt},
-                            {
-                                "type": "image_url",
-                                "image_url": {"url": f"data:image/png;base64,{base64_image}"}
-                            }
-                        ]
-                    }
-                ],
-                max_tokens=1000,
-                temperature=0.1
-            )
-
-            result_text = response.choices[0].message.content.strip()
-            logger.info(f"Vision analysis result: {result_text[:200]}...")
-
-            # Try to parse as JSON first
-            try:
-                return json.loads(result_text)
-            except json.JSONDecodeError:
-                # Try to extract number if it's a simple response
-                money_match = re.search(r'[\$]?(\d+[,.]?\d*\.?\d+)', result_text)
-                if money_match:
-                    return float(money_match.group(1).replace(',', ''))
-                return result_text
-
-        except Exception as e:
-            logger.error(f"Vision pricing extraction failed: {str(e)}")
-            return None
-
-    async def extract_rental_data(self, property_url: str, property_id: int = None) -> List[RentalData]:
-        """
-        Main method to extract rental data from a property website
-
-        Args:
-            property_url: URL of the apartment property website
-            property_id: ID from properties_basic table (optional)
-
-        Returns:
-            List of RentalData objects with pricing information
-        """
-        logger.info(f"Starting rental data extraction for: {property_url}")
-
-        if not self.page:
-            raise RuntimeError("Browser not initialized. Use async context manager.")
-
-        try:
-            # Use cookie-safe page loading
-            page_loaded = await self.load_page_safely(property_url)
-            if not page_loaded:
-                logger.error(f"❌ Could not load page safely: {property_url}")
-                return []
-
-            rental_data = []
-
-            # ===== ENHANCED LEASE FLOW INTEGRATION =====
-
-            # Try enhanced lease flow extraction first (for complete pricing)
-            lease_flow_result = await self.extract_12_month_rates(property_url)
-            if lease_flow_result.get("success"):
-                logger.info("Enhanced lease flow extraction successful")
-                # Create rental data from lease flow result
-                rental_info = RentalData(
-                    floorplan_name="Lease Flow Extracted",
-                    bedrooms=1,  # Default, will be updated if more specific data available
-                    bathrooms=1.0,
-                    sqft=None,
-                    monthly_rent=lease_flow_result.get("12_month_rate", 0.0),
-                    lease_term_months=12,
-                    lease_term="12 months",  # Descriptive lease term
-                    concessions=None,
-                    availability_date=None,
-                    availability_status='available',
-                    confidence_score=0.9,  # High confidence for full flow extraction
-                    data_source='lease_flow_agent',
-                    raw_data={
-                        "lease_flow_extracted": True,
-                        "extraction_method": "full_lease_flow",
-                        "available_unit": lease_flow_result.get("available_unit"),
-                        "12_month_rate": lease_flow_result.get("12_month_rate")
-                    }
-                )
-                rental_data.append(rental_info)
-                logger.info(f"Successfully extracted 1 rental record via lease flow")
-                return rental_data
-            else:
-                logger.info("Lease flow extraction failed, falling back to standard extraction")
-
-                # Fallback: Try optimal lease term extraction
-                optimal_lease = await self.extract_optimal_lease_rate(property_url)
-                if optimal_lease.get("success"):
-                    selected_term = optimal_lease.get("selected_lease_term", {})
-                    rental_info = RentalData(
-                        floorplan_name="Optimal Lease Term",
-                        bedrooms=1,
-                        bathrooms=1.0,
-                        sqft=None,
-                        monthly_rent=selected_term.get("monthly_price", 0.0),
-                        lease_term_months=selected_term.get("months", 12),
-                        lease_term=f"{selected_term.get('months', 12)} months",  # Descriptive lease term
-                        concessions=None,
-                        availability_date=None,
-                        availability_status='available',
-                        confidence_score=0.8,
-                        data_source='optimal_lease_agent',
-                        raw_data={
-                            "optimal_lease_term": selected_term,
-                            "all_lease_terms": optimal_lease.get("available_lease_terms", []),
-                            "additional_fees": optimal_lease.get("additional_fees", []),
-                            "total_monthly_payment": optimal_lease.get("total_monthly_payment"),
-                            "selection_reason": selected_term.get("selection_reason", "")
-                        }
-                    )
-                    rental_data.append(rental_info)
-                    logger.info(f"Successfully extracted 1 rental record via optimal lease term")
-                    return rental_data
-
-            # ===== STANDARD EXTRACTION (if lease flow didn't work) =====
-
-            # Step 1: Extract concessions from main page
-            concessions = await self._extract_concessions()
-            if not concessions and "thecollectiveuws.com" in property_url:
-                # Try site-specific extraction for The Collective UWS
-                concessions = await self._extract_concessions_site_specific(property_url)
-            logger.info(f"Found concessions: {concessions}")
-
-            # Step 2: Site-specific navigation (for known problematic sites)
-            site_nav_success = await self._site_specific_navigation(property_url)
-            if site_nav_success:
-                logger.info("Site-specific navigation successful")
-
-            # Step 3: Pre-navigation - try to access pricing/floor plans content
-            await self._pre_navigate_to_content()
-
-            # Step 4: Navigate to floor plans/pricing section if needed
-            await self._navigate_to_floor_plans()
-
-            # Step 5: Extract available units and pricing
-            units_data = await self._extract_unit_pricing()
-            logger.info(f"Extracted {len(units_data)} unit configurations")
-
-            # Step 6: Navigate to application/pricing page if needed
-            if not units_data:
-                await self._navigate_to_pricing_page()
-                units_data = await self._extract_unit_pricing()
-
-            # Step 7: Process and structure the data
-            for unit in units_data:
-                rental_info = RentalData(
-                    floorplan_name=unit.get('floorplan_name', 'Unknown'),
-                    bedrooms=unit.get('bedrooms', 0),
-                    bathrooms=unit.get('bathrooms', 1.0),
-                    sqft=unit.get('sqft'),
-                    monthly_rent=unit.get('monthly_rent', 0.0),
-                    lease_term_months=unit.get('lease_term_months', 12),
-                    lease_term=unit.get('lease_term') or f"{unit.get('lease_term_months', 12)} months",  # Descriptive lease term
-                    concessions=concessions or unit.get('concessions'),
-                    availability_date=unit.get('availability_date'),
-                    availability_status=unit.get('availability_status', 'available'),
-                    confidence_score=unit.get('confidence_score', 0.5),
-                    data_source='vision_agent',
-                    raw_data=unit
-                )
-                rental_data.append(rental_info)
-
-            # ===== MULTI-STEP NAVIGATION FALLBACK =====
-            # If standard extraction found very limited data (< 3 units), try multi-step navigation
-            if len(rental_data) < 3 and self._is_complex_site(property_url):
-                logger.info(f"Limited data found ({len(rental_data)} units), trying multi-step navigation")
-                multi_step_data = await self.navigate_floor_plan_flow(property_url)
-                if multi_step_data:
-                    # Convert multi-step data to RentalData objects
-                    for item in multi_step_data:
-                        rental_info = RentalData(
-                            floorplan_name=item.get('unit_type', 'Multi-Step Extracted'),
-                            bedrooms=1,  # Default, could be enhanced with vision
-                            bathrooms=1.0,
-                            sqft=None,
-                            monthly_rent=item.get('monthly_rent', 0.0),
-                            lease_term_months=item.get('lease_term_months', 12),
-                            lease_term=item.get('lease_term') or f"{item.get('lease_term_months', 12)} months",  # Descriptive lease term
-                            concessions=item.get('special_pricing'),
-                            availability_date=item.get('available_date'),
-                            availability_status='available',
-                            confidence_score=0.8,
-                            data_source='multi_step_agent',
-                            raw_data=item
-                        )
-                        rental_data.append(rental_info)
-                    logger.info(f"Multi-step navigation added {len(multi_step_data)} additional records")
-
-            logger.info(f"Successfully extracted {len(rental_data)} rental records")
-            return rental_data
-
-        except Exception as e:
-            logger.error(f"Error extracting rental data from {property_url}: {str(e)}")
-            return []
-
-    async def _extract_concessions(self) -> Optional[str]:
-        """Extract concession information from the current page"""
-        try:
-            # Take screenshot for vision analysis (full page)
-            screenshot = await self.page.screenshot(full_page=True)
-
-            # Use vision model to find concessions
-            concessions = await self._vision_find_concessions(screenshot)
-            return concessions
-
-        except Exception as e:
-            logger.error(f"Error extracting concessions: {str(e)}")
-            return None
-
-    async def _extract_concessions_site_specific(self, site_url: str) -> Optional[str]:
-        """Site-specific concession extraction for known websites"""
-        try:
-            if "thecollectiveuws.com" in site_url:
-                # For The Collective UWS, concessions are labeled as "Leasing Specials" on homepage
-                leasing_specials_selectors = [
-                    "//*[contains(text(), 'Leasing Specials')]/following-sibling::*",
-                    "//*[contains(text(), 'Leasing Specials')]/..",
-                    ".leasing-specials",
-                    "[data-section*='specials']",
-                    ".specials-section"
-                ]
-
-                for selector in leasing_specials_selectors:
-                    try:
-                        element = await self.page.query_selector(selector)
-                        if element:
-                            text = await element.evaluate("el => el.textContent")
-                            if text and len(text.strip()) > 10:  # Has meaningful content
-                                logger.info(f"Found Leasing Specials content: {text[:100]}...")
-                                return text.strip()
+                        if element and await self.is_visible(element):
+                            await self.human_like_click(overlay)
+                            logger.info("🔒 OneTrust overlay dismissed by clicking on backdrop")
+                            return True
                     except:
                         continue
 
-                # Fallback: Look for any element containing "special" or "leasing"
-                fallback_selectors = [
-                    "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'leasing special')]",
-                    "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'special offer')]"
-                ]
-
-                for selector in fallback_selectors:
-                    try:
-                        elements = await self.page.query_selector_all(f"xpath={selector}")
-                        for element in elements:
-                            text = await element.evaluate("el => el.textContent")
-                            if text and len(text.strip()) > 10:
-                                return text.strip()
-                    except:
-                        continue
-
-        except Exception as e:
-            logger.error(f"Site-specific concession extraction failed: {str(e)}")
-
-        return None
-
-    async def _pre_navigate_to_content(self) -> bool:
-        """Pre-navigation: Try to access pricing/floor plans content before extraction"""
-        try:
-            logger.info("Starting pre-navigation to access pricing content...")
-
-            # Strategy 1: Try common navigation patterns
-            nav_success = await self._try_common_navigation()
-            if nav_success:
-                logger.info("Pre-navigation successful with common patterns")
-                return True
-
-            # Strategy 2: Vision-guided navigation for complex sites
-            vision_success = await self._try_vision_navigation()
-            if vision_success:
-                logger.info("Pre-navigation successful with vision guidance")
-                return True
-
-            # Strategy 3: Scroll and wait for dynamic content
-            await self._scroll_and_wait()
-            logger.info("Pre-navigation completed with scrolling strategy")
-            return True
-
-        except Exception as e:
-            logger.error(f"Error in pre-navigation: {str(e)}")
-            return False
-
-    async def _try_common_navigation(self) -> bool:
-        """Try common navigation patterns to access pricing content"""
-        common_patterns = [
-            # Direct links
-            'a[href*="floor-plan"]', 'a[href*="floorplan"]', 'a[href*="pricing"]',
-            'a[href*="rent"]', 'a[href*="rates"]', 'a[href*="units"]',
-
-            # Button text matches
-            'button:has-text("Floor Plans")', 'a:has-text("Floor Plans")',
-            'button:has-text("Pricing")', 'a:has-text("Pricing")',
-            'button:has-text("Units")', 'a:has-text("Units")',
-            'button:has-text("Rentals")', 'a:has-text("Rentals")',
-
-            # Common class/ID patterns
-            '.floor-plans', '#floor-plans', '.pricing', '#pricing',
-            '.units', '#units', '.rentals', '#rentals',
-
-            # Navigation menu items
-            'nav a[href*="floor"]', 'nav a[href*="pricing"]', 'nav a[href*="rent"]',
-
-            # Tab/navigation elements
-            '[role="tab"]:has-text("Floor Plans")', '[role="tab"]:has-text("Pricing")',
-            '.tab:has-text("Floor Plans")', '.tab:has-text("Pricing")'
-        ]
-
-        for pattern in common_patterns:
-            try:
-                # Check if element exists first
-                element_count = await self.page.locator(pattern).count()
-                if element_count > 0:
-                    logger.info(f"Found {element_count} elements matching: {pattern}")
-                    # Click the first matching element
-                    await self.page.locator(pattern).first.click(timeout=2000)
-                    await asyncio.sleep(3)  # Wait for content to load
-                    return True
             except Exception as e:
-                # Continue to next pattern
-                continue
+                logger.debug(f"OneTrust overlay handling failed: {str(e)}")
 
+        except Exception as e:
+            logger.error(f"Error handling OneTrust overlay: {str(e)}")
+
+        logger.warning("Failed to handle OneTrust overlay")
         return False
-
-    async def _try_vision_navigation(self) -> bool:
-        """Use vision AI to find and click navigation elements"""
-        try:
-            screenshot = await self.page.screenshot(full_page=True)
-
-            # Ask vision model to identify clickable elements for pricing/floor plans
-            prompt = """
-            Look for buttons, links, or tabs that would lead to floor plans, pricing, or rental units.
-            Common labels include: "Floor Plans", "Pricing", "Units", "Rentals", "Availability".
-
-            Return ONLY a valid CSS selector for the most prominent navigation element.
-            Examples: 'a[href*="floor-plans"]', 'button.floor-plans-btn', '.nav-pricing'
-
-            If you find a clear navigation element, return its CSS selector.
-            If no clear navigation element is visible, return 'none'.
-            """
-
-            result = await self._vision_analyze_image(screenshot, prompt)
-
-            if result and result.lower().strip() not in ['none', 'no', 'n/a', '']:
-                # Clean and try the selector
-                selector = result.strip('`"\'')
-                try:
-                    await self.page.click(selector, timeout=3000)
-                    await asyncio.sleep(3)
-                    logger.info(f"Vision-guided navigation successful with selector: {selector}")
-                    return True
-                except Exception as e:
-                    logger.warning(f"Vision selector failed: {selector} - {str(e)}")
-
-        except Exception as e:
-            logger.error(f"Vision navigation failed: {str(e)}")
-
-        return False
-
-    async def _scroll_and_wait(self):
-        """Scroll through page to trigger dynamic content loading"""
-        try:
-            # Scroll down in steps to trigger lazy loading
-            for i in range(3):
-                await self.page.evaluate(f"window.scrollTo(0, {i * 1000})")
-                await asyncio.sleep(1)
-
-            # Scroll back to top
-            await self.page.evaluate("window.scrollTo(0, 0)")
-            await asyncio.sleep(2)
-
-            logger.info("Completed scroll and wait strategy")
-        except Exception as e:
-            logger.error(f"Scroll strategy failed: {str(e)}")
-
-    async def _navigate_to_floor_plans(self) -> bool:
-        """Navigate to floor plans section using vision guidance"""
-        try:
-            # Take screenshot of current page
-            screenshot = await self.page.screenshot(full_page=True)
-
-            # Ask vision model where to click for floor plans
-            click_target = await self._vision_find_floor_plans_button(screenshot)
-
-            if click_target:
-                # Click the identified element
-                await self.page.click(click_target, timeout=self.element_timeout)
-                await asyncio.sleep(3)  # Wait for page to load
-                return True
-
-            # Fallback: try common selectors
-            common_selectors = [
-                'a[href*="floor-plan"]', 'a[href*="floorplan"]',
-                'button:has-text("Floor Plans")', 'a:has-text("Floor Plans")',
-                '.floor-plans', '#floor-plans'
-            ]
-
-            for selector in common_selectors:
-                try:
-                    await self.page.click(selector, timeout=2000)
-                    await asyncio.sleep(2)
-                    return True
-                except:
-                    continue
-
-            return False
-
-        except Exception as e:
-            logger.error(f"Error navigating to floor plans: {str(e)}")
-            return False
-
-    async def _navigate_to_pricing_page(self) -> bool:
-        """Navigate to pricing/application page"""
-        try:
-            # Try common pricing page links
-            pricing_selectors = [
-                'a[href*="pricing"]', 'a[href*="rent"]', 'a[href*="rates"]',
-                'button:has-text("Pricing")', 'a:has-text("View Pricing")',
-                'a[href*="apply"]', 'button:has-text("Apply Now")'
-            ]
-
-            for selector in pricing_selectors:
-                try:
-                    await self.page.click(selector, timeout=2000)
-                    await asyncio.sleep(3)
-                    return True
-                except:
-                    continue
-
-            return False
-
-        except Exception as e:
-            logger.error(f"Error navigating to pricing page: {str(e)}")
-            return False
-
-    async def _extract_unit_pricing(self) -> List[Dict]:
-        """Extract unit pricing information from current page"""
-        try:
-            # Take screenshot for vision analysis
-            screenshot = await self.page.screenshot(full_page=True)
-
-            # Use vision model to extract pricing data
-            pricing_data = await self._vision_extract_pricing(screenshot)
-            return pricing_data
-
-        except Exception as e:
-            logger.error(f"Error extracting unit pricing: {str(e)}")
-            return []
-
-    async def _vision_find_concessions(self, screenshot: bytes) -> Optional[str]:
-        """Use vision model to find concession information in screenshot"""
-        return await self._vision_analyze_image(
-            screenshot,
-            "Look for any concession or special offer information on this apartment website. "
-            "Extract the full text of any concessions, discounts, or special offers mentioned. "
-            "Return only the concession text, or 'none' if no concessions are visible."
-        )
-
-    async def _vision_find_floor_plans_button(self, screenshot: bytes) -> Optional[str]:
-        """Use vision model to locate floor plans button"""
-        result = await self._vision_analyze_image(
-            screenshot,
-            "Find the button or link for 'Floor Plans', 'Floorplans', 'Units', or 'Pricing'. "
-            "Return ONLY a valid CSS selector (no explanations, no markdown, no quotes). "
-            "Examples: 'a[href*=\"floor-plans\"]', 'button.floor-plans', '.nav-floorplans' "
-            "If no clear button/link found, return exactly 'none'."
-        )
-
-        if result and result.lower().strip() not in ['none', 'no', 'n/a', '']:
-            # Clean up the result - extract just the CSS selector
-            result = result.strip()
-            # Remove any markdown code blocks
-            if '```' in result:
-                # Extract content between ```css and ```
-                import re
-                css_match = re.search(r'```css?\s*(.*?)\s*```', result, re.DOTALL)
-                if css_match:
-                    result = css_match.group(1).strip()
-            # Remove quotes if present
-            result = result.strip('`"\'')
-            return result
-        return None
-
-    async def _vision_extract_pricing(self, screenshot: bytes) -> List[Dict]:
-        """Use vision model to extract pricing information"""
-        result = await self._vision_analyze_image(
-            screenshot,
-            "Extract all visible apartment unit pricing information. "
-            "For each unit/floorplan, identify: "
-            "- Floorplan name (e.g., '1BR/1BA', '2 Bedroom Deluxe') "
-            "- Number of bedrooms "
-            "- Number of bathrooms "
-            "- Square footage (if visible) "
-            "- Monthly rent price "
-            "- Any lease term information "
-            "- Availability status "
-            "Return as a JSON array of objects with these fields."
-        )
-
-        logger.info(f"Vision pricing extraction result: {result[:500]}...")  # Debug log
-
-        try:
-            # Clean the result - remove markdown code blocks if present
-            if result.startswith('```') and '```' in result:
-                # Extract content between ```json and ```
-                import re
-                json_match = re.search(r'```(?:json)?\s*(.*?)\s*```', result, re.DOTALL)
-                if json_match:
-                    result = json_match.group(1).strip()
-
-            # Try to parse JSON from the cleaned result
-            if result.startswith('[') and result.endswith(']'):
-                return json.loads(result)
-            else:
-                # Fallback: try to extract structured data from text
-                return self._parse_pricing_text(result)
-        except Exception as e:
-            logger.warning(f"Could not parse vision result as JSON: {str(e)} - Result: {result[:200]}...")
-            return []
-            return []
-
-    async def _vision_analyze_image(self, screenshot: bytes, prompt: str) -> str:
-        """Analyze image using vision model (OpenAI GPT-4V)"""
-        if not self.openai_api_key:
-            logger.warning("OpenAI API key not available for vision analysis")
-            return "none"
-
-        try:
-            import openai
-
-            client = openai.OpenAI(api_key=self.openai_api_key)
-
-            # Convert screenshot to base64
-            image_b64 = base64.b64encode(screenshot).decode('utf-8')
-
-            response = client.chat.completions.create(
-                model=self.vision_model,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "text", "text": prompt},
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": f"data:image/png;base64,{image_b64}",
-                                    "detail": "high"
-                                }
-                            }
-                        ]
-                    }
-                ],
-                max_tokens=self.vision_max_tokens,
-                temperature=self.vision_temperature
-            )
-
-            result = response.choices[0].message.content.strip()
-            return result
-
-        except Exception as e:
-            logger.error(f"Vision analysis error: {str(e)}")
-            return "none"
-
-    def _parse_pricing_text(self, text: str) -> List[Dict]:
-        """Fallback parser for pricing text when JSON parsing fails"""
-        # This is a simple fallback - in production you'd want more sophisticated parsing
-        units = []
-
-        # Look for patterns like "1BR/1BA $1500" or "2 Bedroom $2000"
-        import re
-
-        # Simple regex patterns for common formats
-        patterns = [
-            r'(\d+)\s*(?:BR|Bedroom|bedroom).*?\$?(\d{3,5})',
-            r'(\w+)\s*(?:BR|Bedroom|bedroom).*?\$?(\d{3,5})',
-        ]
-
-        for pattern in patterns:
-            matches = re.findall(pattern, text, re.IGNORECASE)
-            for match in matches:
-                try:
-                    bedrooms = int(match[0]) if match[0].isdigit() else 1
-                    rent = int(match[1])
-
-                    units.append({
-                        'floorplan_name': f"{bedrooms}BR",
-                        'bedrooms': bedrooms,
-                        'bathrooms': 1.0,
-                        'monthly_rent': rent,
-                        'confidence_score': 0.3  # Low confidence for fallback parsing
-                    })
-                except:
-                    continue
-
-        return units
-
-    async def store_rental_data(self, property_id: int, rental_data: List[RentalData]) -> int:
-        """
-        Store extracted rental data in the database
-
-        Args:
-            property_id: ID from properties_basic table
-            rental_data: List of RentalData objects to store
-
-        Returns:
-            Number of records successfully stored
-        """
-        if not self.supabase:
-            logger.warning("Supabase client not available - skipping database storage")
-            return 0
-
-        stored_count = 0
-
-        for rental in rental_data:
-            try:
-                # Convert to database format
-                db_data = {
-                    'property_id': property_id,
-                    'floorplan_name': rental.floorplan_name,
-                    'bedrooms': rental.bedrooms,
-                    'bathrooms': rental.bathrooms,
-                    'sqft': rental.sqft,
-                    'monthly_rent': rental.monthly_rent,
-                    'lease_term_months': rental.lease_term_months,
-                    'lease_term': rental.lease_term,  # Descriptive lease term
-                    'concessions': rental.concessions,
-                    'availability_date': rental.availability_date,
-                    'availability_status': rental.availability_status,
-                    'extracted_at': datetime.now(),
-                    'data_source': rental.data_source,
-                    'confidence_score': rental.confidence_score,
-                    'raw_data': rental.raw_data or {}
-                }
-
-                # Insert into rental_prices table
-                result = self.supabase.table('rental_prices').insert(db_data).execute()
-
-                if result.data:
-                    stored_count += 1
-                    logger.info(f"Stored rental data: {rental.floorplan_name} - ${rental.monthly_rent}")
-                else:
-                    logger.warning(f"Failed to store rental data: {rental.floorplan_name}")
-
-            except Exception as e:
-                logger.error(f"Database error storing rental data: {str(e)}")
-                continue
-
-        logger.info(f"Successfully stored {stored_count}/{len(rental_data)} rental records")
-        return stored_count
-
-    async def run_extraction_pipeline(self, property_url: str, property_id: int = None) -> Dict:
-        """
-        Run the complete rental data extraction pipeline
-
-        Args:
-            property_url: URL of the property to extract data from
-            property_id: Property ID from database (optional)
-
-        Returns:
-            Summary of the extraction process
-        """
-        start_time = datetime.now()
-
-        # Extract rental data with enhanced debugging
-        rental_data = await self.extract_rental_data_with_debug(property_url, property_id)
-
-        # Store in database if property_id provided
-        stored_count = 0
-        if property_id and rental_data:
-            stored_count = await self.store_rental_data(property_id, rental_data)
-
-        end_time = datetime.now()
-        duration = (end_time - start_time).total_seconds()
-
-        summary = {
-            'property_url': property_url,
-            'property_id': property_id,
-            'rental_records_extracted': len(rental_data),
-            'rental_records_stored': stored_count,
-            'duration_seconds': duration,
-            'extraction_success': len(rental_data) > 0,
-            'timestamp': end_time.isoformat()
-        }
-
-        logger.info(f"Rental extraction pipeline complete: {summary}")
-        return summary
-
-    # ===== MULTI-STEP FLOOR PLAN AGENT METHODS =====
-
-    async def navigate_floor_plan_flow(self, url: str) -> List[Dict[str, Any]]:
-        """
-        Navigate complex apartment websites using multi-step floor plan flow:
-        Floor Plans → Availability → Apply Now
-
-        Args:
-            url: The apartment website URL
-
-        Returns:
-            List of rental data dictionaries with pricing information
-        """
-        logger.info(f"🏢 Starting multi-step floor plan navigation for {url}")
-
-        try:
-            # Step 1: Load page with cookie handling
-            if not await self.load_page_safely(url):
-                logger.error("Failed to load page safely")
-                return []
-
-            # Step 2: Navigate to Floor Plans section
-            if not await self.click_navigation_item("Floor Plans", "floor plans", "floorplans"):
-                logger.warning("Could not find Floor Plans navigation")
-                # Try alternative approaches
-                if not await self.handle_floor_plan_submenu():
-                    logger.error("Floor plan navigation failed")
-                    return []
-
-            await self.human_delay("page_navigation")
-
-            # Step 3: Find and click Availability section
-            if not await self.find_availability_section():
-                logger.warning("Could not find Availability section")
-                # Continue anyway - some sites show pricing on floor plans page
-
-            await self.human_delay("page_navigation")
-
-            # Step 4: Extract pricing from current page first
-            rental_data = await self.extract_pricing_from_current_page(url)
-
-            # Step 5: If limited data, try clicking specific units to get more pricing
-            if len(rental_data) < 3:  # Less than 3 units found
-                logger.info("Limited pricing found, attempting unit-specific extraction")
-                additional_data = await self.click_specific_unit_apply()
-                rental_data.extend(additional_data)
-
-            logger.info(f"🏢 Multi-step navigation complete: {len(rental_data)} rental records")
-            return rental_data
-
-        except Exception as e:
-            logger.error(f"Multi-step floor plan navigation failed: {str(e)}")
-            return []
-
-    async def click_navigation_item(self, primary_text: str, *alternatives: str) -> bool:
-        """
-        Click navigation item using text matching with alternatives.
-
-        Args:
-            primary_text: Primary text to search for
-            alternatives: Alternative text variations
-
-        Returns:
-            True if navigation item was found and clicked
-        """
-        try:
-            # Take screenshot for vision analysis
-            screenshot = await self.page.screenshot(full_page=True)
-
-            # Use vision to find navigation elements
-            prompt = f"""
-            Analyze this apartment website screenshot and locate navigation items.
-            Look for any of these navigation texts: {primary_text}, {', '.join(alternatives)}
-
-            Return the bounding box coordinates of the navigation element if found.
-            Format: {{"x": number, "y": number, "width": number, "height": number}}
-            If not found, return null.
-            """
-
-            vision_result = await self.vision_analyze_page(screenshot, prompt)
-
-            if vision_result and 'bounding_box' in vision_result:
-                bbox = vision_result['bounding_box']
-
-                # Click the center of the bounding box
-                center_x = bbox['x'] + bbox['width'] / 2
-                center_y = bbox['y'] + bbox['height'] / 2
-
-                await self.page.mouse.move(center_x, center_y)
-                await self.human_delay("mouse_movement")
-                await self.page.mouse.click(center_x, center_y)
-
-                logger.info(f"✅ Clicked navigation item: {primary_text}")
-                return True
-
-            # Fallback: Try text-based selectors
-            selectors = [
-                f"text={primary_text}",
-                f"text={primary_text.lower()}",
-                f"text={primary_text.upper()}"
-            ]
-
-            for alt in alternatives:
-                selectors.extend([
-                    f"text={alt}",
-                    f"text={alt.lower()}",
-                    f"text={alt.upper()}"
-                ])
-
-            for selector in selectors:
-                try:
-                    element = await self.page.query_selector(selector)
-                    if element:
-                        await element.click()
-                        logger.info(f"✅ Clicked navigation item with selector: {selector}")
-                        return True
-                except Exception:
-                    continue
-
-            logger.warning(f"❌ Could not find navigation item: {primary_text}")
-            return False
-
-        except Exception as e:
-            logger.error(f"Navigation click failed: {str(e)}")
-            return False
-
-    async def handle_floor_plan_submenu(self) -> bool:
-        """
-        Handle floor plan submenu navigation when main navigation doesn't work.
-
-        Returns:
-            True if successfully navigated to floor plans
-        """
-        try:
-            # Look for common floor plan submenu patterns
-            submenu_selectors = [
-                "a[href*='floor-plan']",
-                "a[href*='floorplan']",
-                "a[href*='floor_plans']",
-                "[data-section='floor-plans']",
-                ".floor-plans-link",
-                ".floorplans-link"
-            ]
-
-            for selector in submenu_selectors:
-                try:
-                    elements = await self.page.query_selector_all(selector)
-                    if elements:
-                        # Click the first available element
-                        await elements[0].click()
-                        await self.human_delay("page_navigation")
-                        logger.info(f"✅ Found floor plans via submenu: {selector}")
-                        return True
-                except Exception:
-                    continue
-
-            # Try vision-based approach for submenu detection
-            screenshot = await self.page.screenshot(full_page=True)
-            prompt = """
-            Look for any submenu or dropdown that contains floor plans, floorplans, or unit types.
-            Return the bounding box if you find such an element.
-            """
-
-            vision_result = await self.vision_analyze_page(screenshot, prompt)
-            if vision_result and 'bounding_box' in vision_result:
-                bbox = vision_result['bounding_box']
-                center_x = bbox['x'] + bbox['width'] / 2
-                center_y = bbox['y'] + bbox['height'] / 2
-
-                await self.page.mouse.click(center_x, center_y)
-                await self.human_delay("page_navigation")
-                logger.info("✅ Found floor plans via vision submenu detection")
-                return True
-
-            return False
-
-        except Exception as e:
-            logger.error(f"Floor plan submenu handling failed: {str(e)}")
-            return False
-
-    async def find_availability_section(self) -> bool:
-        """
-        Find and navigate to the availability section of the website.
-
-        Returns:
-            True if availability section was found and clicked
-        """
-        try:
-            # Common availability section selectors
-            availability_selectors = [
-                "text=Availability",
-                "text=Available",
-                "text=Available Units",
-                "text=Check Availability",
-                "a[href*='availability']",
-                "[data-section='availability']",
-                ".availability-link"
-            ]
-
-            for selector in availability_selectors:
-                try:
-                    element = await self.page.query_selector(selector)
-                    if element:
-                        await element.click()
-                        await self.human_delay("page_navigation")
-                        logger.info(f"✅ Found availability section: {selector}")
-                        return True
-                except Exception:
-                    continue
-
-            # Vision-based availability detection
-            screenshot = await self.page.screenshot(full_page=True)
-            prompt = """
-            Look for any buttons, links, or sections related to availability, available units,
-            or checking availability on this apartment website.
-            Return the bounding box if found.
-            """
-
-            vision_result = await self.vision_analyze_page(screenshot, prompt)
-            if vision_result and 'bounding_box' in vision_result:
-                bbox = vision_result['bounding_box']
-                center_x = bbox['x'] + bbox['width'] / 2
-                center_y = bbox['y'] + bbox['height'] / 2
-
-                await self.page.mouse.click(center_x, center_y)
-                await self.human_delay("page_navigation")
-                logger.info("✅ Found availability section via vision")
-                return True
-
-            logger.info("ℹ️ Availability section not found - continuing with current page")
-            return False
-
-        except Exception as e:
-            logger.error(f"Availability section search failed: {str(e)}")
-            return False
-
-    async def click_specific_unit_apply(self) -> List[Dict[str, Any]]:
-        """
-        Click on specific unit listings to access detailed pricing pages.
-
-        Returns:
-            List of rental data extracted from unit detail pages
-        """
-        rental_data = []
-
-        try:
-            # Look for unit listing elements
-            unit_selectors = [
-                ".unit-listing",
-                ".apartment-unit",
-                ".floor-plan-unit",
-                "[data-unit]",
-                ".unit-card",
-                ".available-unit"
-            ]
-
-            units_found = []
-            for selector in unit_selectors:
-                try:
-                    elements = await self.page.query_selector_all(selector)
-                    if elements:
-                        units_found.extend(elements[:3])  # Limit to first 3 units
-                except Exception:
-                    continue
-
-            if not units_found:
-                # Try vision-based unit detection
-                screenshot = await self.page.screenshot(full_page=True)
-                prompt = """
-                Find individual apartment unit listings or floor plan options.
-                Look for elements that represent specific units with pricing or "Apply" buttons.
-                Return bounding boxes for up to 3 unit elements.
-                """
-
-                vision_result = await self.vision_analyze_page(screenshot, prompt)
-                if vision_result and 'unit_boxes' in vision_result:
-                    # This would require extending the vision analysis to return multiple boxes
-                    pass
-
-            # Process found units
-            for i, unit_element in enumerate(units_found[:3]):  # Process up to 3 units
-                try:
-                    # Click the unit to open details
-                    await unit_element.click()
-                    await self.human_delay("page_navigation")
-
-                    # Look for Apply button on the detail page
-                    apply_data = await self.vision_analyze_apply_buttons()
-
-                    if apply_data:
-                        rental_data.extend(apply_data)
-
-                    # Go back to unit listing
-                    await self.page.go_back()
-                    await self.human_delay("page_navigation")
-
-                except Exception as e:
-                    logger.warning(f"Failed to process unit {i+1}: {str(e)}")
-                    continue
-
-            logger.info(f"📋 Processed {len(units_found)} units, extracted {len(rental_data)} records")
-            return rental_data
-
-        except Exception as e:
-            logger.error(f"Unit-specific extraction failed: {str(e)}")
-            return []
-
-    async def vision_analyze_apply_buttons(self) -> List[Dict[str, Any]]:
-        """
-        Use vision to analyze Apply buttons and extract pricing from application pages.
-
-        Returns:
-            List of rental data with pricing information
-        """
-        try:
-            screenshot = await self.page.screenshot(full_page=True)
-
-            prompt = """
-            Analyze this apartment website page for Apply buttons and pricing information.
-
-            1. Look for "Apply Now", "Apply", "Start Application" buttons
-            2. Extract any visible pricing information (monthly rent, deposits, etc.)
-            3. Note the unit type or floor plan if visible
-
-            Return a JSON object with:
-            - apply_buttons: array of bounding boxes for apply buttons
-            - pricing_info: any visible pricing data
-            - unit_type: the type of unit/floor plan shown
-            """
-
-            vision_result = await self.vision_analyze_page(screenshot, prompt)
-
-            if not vision_result:
-                return []
-
-            rental_data = []
-
-            # If apply buttons found, click one to get pricing
-            if 'apply_buttons' in vision_result and vision_result['apply_buttons']:
-                button = vision_result['apply_buttons'][0]  # Click first apply button
-
-                center_x = button['x'] + button['width'] / 2
-                center_y = button['y'] + button['height'] / 2
-
-                await self.page.mouse.click(center_x, center_y)
-                await self.human_delay("page_navigation")
-
-                # Extract pricing from application page
-                app_pricing = await self.extract_pricing_from_application()
-                if app_pricing:
-                    rental_data.extend(app_pricing)
-
-                # Go back
-                await self.page.go_back()
-                await self.human_delay("page_navigation")
-
-            # Also extract any pricing visible on current page
-            if 'pricing_info' in vision_result:
-                pricing_data = self._parse_vision_pricing(vision_result['pricing_info'])
-                if pricing_data:
-                    rental_data.extend(pricing_data)
-
-            return rental_data
-
-        except Exception as e:
-            logger.error(f"Vision apply button analysis failed: {str(e)}")
-            return []
-
-    async def extract_pricing_from_application(self) -> List[Dict[str, Any]]:
-        """
-        Extract pricing information from application/lease pages.
-
-        Returns:
-            List of rental data dictionaries
-        """
-        try:
-            # Wait for application page to load
-            await self.page.wait_for_load_state('networkidle')
-            await self.human_delay("page_load")
-
-            screenshot = await self.page.screenshot(full_page=True)
-
-            prompt = """
-            Analyze this lease application page for detailed pricing information.
-
-            Extract:
-            - Monthly rent amounts
-            - Security deposit
-            - Application fees
-            - Lease terms (6-month, 12-month, etc.)
-            - Unit type/floor plan
-            - Any special pricing or promotions
-
-            Return structured pricing data.
-            """
-
-            vision_result = await self.vision_analyze_page(screenshot, prompt)
-
-            if vision_result and 'pricing_data' in vision_result:
-                return self._parse_vision_pricing(vision_result['pricing_data'])
-
-            return []
-
-        except Exception as e:
-            logger.error(f"Application pricing extraction failed: {str(e)}")
-            return []
-
-    def _parse_vision_pricing(self, vision_pricing: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """
-        Parse pricing data from vision analysis results.
-
-        Args:
-            vision_pricing: Raw pricing data from vision analysis
-
-        Returns:
-            List of standardized rental data dictionaries
-        """
-        rental_data = []
-
-        try:
-            # Extract unit information
-            unit_type = vision_pricing.get('unit_type', 'Unknown')
-            monthly_rent = vision_pricing.get('monthly_rent')
-            deposit = vision_pricing.get('security_deposit')
-            lease_terms = vision_pricing.get('lease_terms', [])
-
-            # Create rental record
-            if monthly_rent:
-                record = {
-                    'unit_type': unit_type,
-                    'monthly_rent': monthly_rent,
-                    'security_deposit': deposit,
-                    'lease_term_months': 12,  # Default to 12 months
-                    'available_date': None,
-                    'special_pricing': vision_pricing.get('special_pricing'),
-                    'extraction_method': 'vision_application'
-                }
-
-                # Add multiple lease terms if available
-                if lease_terms:
-                    for term in lease_terms:
-                        term_record = record.copy()
-                        term_record['lease_term_months'] = term.get('months', 12)
-                        term_record['monthly_rent'] = term.get('rent', monthly_rent)
-                        rental_data.append(term_record)
-                else:
-                    rental_data.append(record)
-
-            return rental_data
-
-            return []
-
-        except Exception as e:
-            logger.error(f"Vision pricing parsing failed: {str(e)}")
-            return []
-
-    def _extract_best_monthly_rate(self, rental_data: List[Dict[str, Any]]) -> Optional[float]:
-        """
-        Extract the best (lowest) monthly rate from rental data.
-
-        Args:
-            rental_data: List of rental data dictionaries
-
-        Returns:
-            Best monthly rate found, or None if no valid rates
-        """
-        try:
-            valid_rates = []
-            for record in rental_data:
-                rent = record.get('monthly_rent')
-                if rent and isinstance(rent, (int, float)) and rent > 0:
-                    # Only consider 12-month leases for consistency
-                    if record.get('lease_term_months') == 12:
-                        valid_rates.append(rent)
-
-            if valid_rates:
-                return min(valid_rates)  # Return the lowest rate
-
-            # If no 12-month leases found, return the lowest rate overall
-            all_rates = [r.get('monthly_rent') for r in rental_data
-                        if r.get('monthly_rent') and isinstance(r.get('monthly_rent'), (int, float)) and r.get('monthly_rent') > 0]
-            return min(all_rates) if all_rates else None
-
-        except Exception as e:
-            logger.error(f"Failed to extract best monthly rate: {str(e)}")
-            return None
-
-    def _is_complex_site(self, url: str) -> bool:
-        """
-        Determine if a website requires complex multi-step navigation.
-
-        Args:
-            url: The website URL to check
-
-        Returns:
-            True if the site is known to require multi-step navigation
-        """
-        complex_sites = [
-            "thecollectiveuws.com",
-            "bellmorningside.com",
-            "novelwestmidtown.com",
-            "altaporter.com"
-            # Add more complex sites as they are discovered
-        ]
-
-        return any(site in url for site in complex_sites)
-
-
-# Example usage
-async def main():
-    """Example usage of the Rental Data Agent"""
-    async with RentalDataAgent() as agent:
-        # Example property URL
-        test_url = "https://example-apartments.com"
-
-        # Run extraction (will fail without real URL and API keys)
-        summary = await agent.run_extraction_pipeline(test_url)
-        print("Extraction Summary:", json.dumps(summary, indent=2))
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
