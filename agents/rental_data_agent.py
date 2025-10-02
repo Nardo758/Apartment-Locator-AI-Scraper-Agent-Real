@@ -45,6 +45,7 @@ class RentalData:
     sqft: Optional[int] = None
     monthly_rent: float = 0.0
     lease_term_months: int = 12
+    lease_term: Optional[str] = None  # Descriptive lease term (e.g., "12 months", "flexible")
     concessions: Optional[str] = None
     availability_date: Optional[str] = None
     availability_status: str = 'available'
@@ -2108,6 +2109,7 @@ class RentalDataAgent:
                     sqft=None,
                     monthly_rent=lease_flow_result.get("12_month_rate", 0.0),
                     lease_term_months=12,
+                    lease_term="12 months",  # Descriptive lease term
                     concessions=None,
                     availability_date=None,
                     availability_status='available',
@@ -2137,6 +2139,7 @@ class RentalDataAgent:
                         sqft=None,
                         monthly_rent=selected_term.get("monthly_price", 0.0),
                         lease_term_months=selected_term.get("months", 12),
+                        lease_term=f"{selected_term.get('months', 12)} months",  # Descriptive lease term
                         concessions=None,
                         availability_date=None,
                         availability_status='available',
@@ -2192,6 +2195,7 @@ class RentalDataAgent:
                     sqft=unit.get('sqft'),
                     monthly_rent=unit.get('monthly_rent', 0.0),
                     lease_term_months=unit.get('lease_term_months', 12),
+                    lease_term=unit.get('lease_term') or f"{unit.get('lease_term_months', 12)} months",  # Descriptive lease term
                     concessions=concessions or unit.get('concessions'),
                     availability_date=unit.get('availability_date'),
                     availability_status=unit.get('availability_status', 'available'),
@@ -2216,6 +2220,7 @@ class RentalDataAgent:
                             sqft=None,
                             monthly_rent=item.get('monthly_rent', 0.0),
                             lease_term_months=item.get('lease_term_months', 12),
+                            lease_term=item.get('lease_term') or f"{item.get('lease_term_months', 12)} months",  # Descriptive lease term
                             concessions=item.get('special_pricing'),
                             availability_date=item.get('available_date'),
                             availability_status='available',
@@ -2659,6 +2664,7 @@ class RentalDataAgent:
                     'sqft': rental.sqft,
                     'monthly_rent': rental.monthly_rent,
                     'lease_term_months': rental.lease_term_months,
+                    'lease_term': rental.lease_term,  # Descriptive lease term
                     'concessions': rental.concessions,
                     'availability_date': rental.availability_date,
                     'availability_status': rental.availability_status,
