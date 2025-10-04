@@ -78,6 +78,9 @@ jobs:
         fi
 
     - name: Check system health
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       run: |
         echo "Checking system health..."
 
@@ -121,6 +124,9 @@ jobs:
           ${{ runner.os }}-deno-
 
     - name: Populate queue for ${{ matrix.region }}
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       run: |
         echo "🚀 Populating scraping queue for region: ${{ matrix.region }}"
 
@@ -138,8 +144,8 @@ jobs:
 
         # Call command-station Edge Function to populate queue
         # This will add scraping jobs to the queue for the specified region
-        RESPONSE=$(curl -s -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/command-station" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+        RESPONSE=$(curl -s -X POST "$SUPABASE_URL/functions/v1/command-station" \
+          -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
           -H "Content-Type: application/json" \
           -d "{
             \"action\": \"populate_queue\",
