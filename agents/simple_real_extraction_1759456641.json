@@ -1,0 +1,608 @@
+{
+  "extraction_session": {
+    "original_url": "https://highlandsatsweetwatercreek.com/",
+    "final_url": "https://highlandsatsweetwatercreek.com/",
+    "page_title": "Highlands at Sweetwater Creek | Luxury Apartment Amenities | Duluth GA",
+    "timestamp": "2025-10-02 21:57:21",
+    "extraction_method": "direct_authenticated_chrome",
+    "stealth_level": "maximum_authenticated"
+  },
+  "rental_data": {
+    "prices": [
+      "$1,500",
+      "$2,000",
+      "$1,573",
+      "$1,455",
+      "$1,623",
+      "$1,505",
+      "$1,633",
+      "$1,515",
+      "$1,763",
+      "$1,645",
+      "$1,888",
+      "$1,770",
+      "$1,568",
+      "$1,450",
+      "$1,618",
+      "$1,628",
+      "$1,673",
+      "$1,510",
+      "$1,555",
+      "$1,668",
+      "$1,550",
+      "$1,813",
+      "$1,695",
+      "$1,803",
+      "$1,833",
+      "$1,685",
+      "$1,715",
+      "$1,908",
+      "$1,790"
+    ],
+    "units": [
+      "*Prices include base rent, all mandatory monthly fees and any user-selected optional fees. Variable or usage-based fees not included.",
+      "1 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            2 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            3 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+      "1 bath",
+      "455 Ba",
+      "505 Ba",
+      "515 Ba",
+      "645 Ba",
+      "2 bath",
+      "770 Ba",
+      "450 Ba",
+      "500 Ba",
+      "555 Ba",
+      "695 Ba",
+      "715 Ba",
+      "790 Ba",
+      "5 bath",
+      "1 Bed",
+      "2 Bed",
+      "3 Bed",
+      "1 bed",
+      "2 bed",
+      "3 bed"
+    ],
+    "features": [],
+    "availability": [],
+    "price_selectors": [
+      {
+        "selector": "text_content",
+        "text": "$1,500",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,000",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,573",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,455",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,623",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,505",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,633",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,515",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,763",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,645",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,888",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,770",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,568",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,450",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,618",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,628",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,673",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,510",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,555",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,668",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,550",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,813",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,695",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,803",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,833",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,685",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,715",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,908",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,790",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      }
+    ],
+    "unit_selectors": [
+      {
+        "selector": "[class*='unit']",
+        "text": "*Prices include base rent, all mandatory monthly fees and any user-selected optional fees. Variable or usage-based fees not included.",
+        "element_index": 0
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            2 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            3 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "455 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "505 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "515 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "645 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "2 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "770 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "450 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "500 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "555 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "695 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "715 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "790 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "5 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "3 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "2 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "3 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      }
+    ]
+  },
+  "page_analysis": {
+    "hasDynamicContent": false,
+    "contentAreas": [
+      {
+        "tag": "DIV",
+        "classes": "",
+        "id": "content",
+        "childCount": 2
+      }
+    ],
+    "forms": 0,
+    "scripts": 31,
+    "stylesheets": 5,
+    "images": 25,
+    "links": 74,
+    "totalElements": 1215
+  },
+  "learned_patterns": {
+    "price_selectors_found": [
+      {
+        "selector": "text_content",
+        "text": "$1,500",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,000",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,573",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,455",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,623",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,505",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,633",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,515",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,763",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,645",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,888",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,770",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,568",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,450",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,618",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,628",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,673",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,510",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,555",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,668",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,550",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,813",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,695",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,803",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,833",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,685",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,715",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,908",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,790",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?"
+      }
+    ],
+    "unit_selectors_found": [
+      {
+        "selector": "[class*='unit']",
+        "text": "*Prices include base rent, all mandatory monthly fees and any user-selected optional fees. Variable or usage-based fees not included.",
+        "element_index": 0
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            2 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            3 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "455 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "505 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "515 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "645 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "2 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "770 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "450 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "500 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "555 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "695 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "715 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "790 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "5 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "3 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "2 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      },
+      {
+        "selector": "text_content",
+        "text": "3 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit)?"
+      }
+    ],
+    "content_areas": [],
+    "dynamic_content_detected": false
+  }
+}

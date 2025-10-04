@@ -1,0 +1,41 @@
+{
+  "demo_info": {
+    "timestamp": "2025-10-02T21:13:41.986600",
+    "method": "auto_demo_activity_monitor"
+  },
+  "captured_data": {
+    "page_title": "Test Rental Website - Highlands at Sweetwater Creek",
+    "prices_found": [
+      "$2,150/month",
+      "$1,425/month",
+      "$1,895/month",
+      "$2,050/month",
+      "$1,750/month",
+      "$1,650/month"
+    ],
+    "units_found": [
+      "Floor Plan: The Douglas",
+      "Floor Plan: The Aspen",
+      "Floor Plan: The Birch",
+      "3 Bedrooms, 2 Baths",
+      "1 Bedroom, 1 Bath",
+      "Studio",
+      "2 Bedrooms, 2.5 Baths",
+      "Floor Plan: The Cedar",
+      "2 Bedrooms, 2 Baths"
+    ],
+    "total_prices": 6,
+    "total_units": 9
+  },
+  "learned_patterns": {
+    "price_selectors": [
+      ".price",
+      "[class*='price']"
+    ],
+    "unit_selectors": [
+      ".unit-type",
+      ".floor-plan h3"
+    ],
+    "price_regex": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month)?"
+  }
+}

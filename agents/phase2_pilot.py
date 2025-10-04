@@ -346,29 +346,24 @@ class Phase2PilotExecutor:
         return results
 
     async def store_rental_data(self, rental_units: List, property_data: Dict):
-        """Store extracted rental data in database"""
+        """Store extracted rental data in database using the rental agent's method"""
         try:
             if not rental_units:
+                logger.info("No rental units to store")
                 return
 
-            # Store each rental unit
-            for unit in rental_units:
-                rental_data = {
-                    'property_id': property_data.get('property_id'),
-                    'unit_type': getattr(unit, 'floorplan_name', 'Unknown'),
-                    'bedrooms': getattr(unit, 'bedrooms', 0),
-                    'bathrooms': getattr(unit, 'bathrooms', 0),
-                    'square_feet': getattr(unit, 'sqft', None),
-                    'monthly_rent': getattr(unit, 'monthly_rent', 0.0),
-                    'availability_date': getattr(unit, 'availability_date', None),
-                    'floor_plan_url': None,  # Not available in RentalData
-                    'extracted_at': datetime.now().isoformat(),
-                    'extraction_method': 'vision_pilot'
-                }
+            # Get property_id from property_data
+            property_id = property_data.get('property_id')
+            if not property_id:
+                logger.warning("No property_id available for database storage")
+                return
 
-                # In a real implementation, this would store to Supabase
-                # For now, just log the data
-                logger.info(f"Would store rental data: {rental_data}")
+            # Use the rental agent's store_rental_data method
+            if self.rental_agent and self.rental_agent.supabase:
+                stored_count = await self.rental_agent.store_rental_data(property_id, rental_units)
+                logger.info(f"Successfully stored {stored_count}/{len(rental_units)} rental records in database")
+            else:
+                logger.warning("Rental agent or Supabase client not available - cannot store to database")
 
         except Exception as e:
             logger.error(f"Error storing rental data: {str(e)}")

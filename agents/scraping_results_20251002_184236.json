@@ -1,0 +1,58 @@
+[
+  {
+    "url": "https://www.belldecatur.com",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T18:41:49.824182",
+    "error": null
+  },
+  {
+    "url": "https://www.churchstreetstation.com",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T18:41:56.919755",
+    "error": null
+  },
+  {
+    "url": "https://www.artisanoakhurst.com",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T18:42:01.282537",
+    "error": null
+  },
+  {
+    "url": "https://www.krogstreetlofts.com",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T18:42:05.775158",
+    "error": null
+  },
+  {
+    "url": "https://www.viningsvillage.com",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T18:42:27.202332",
+    "error": null
+  },
+  {
+    "url": "https://www.clubatvinings.com",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T18:42:31.723957",
+    "error": null
+  },
+  {
+    "url": "https://www.riversideclub.com",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T18:42:36.285308",
+    "error": null
+  }
+]

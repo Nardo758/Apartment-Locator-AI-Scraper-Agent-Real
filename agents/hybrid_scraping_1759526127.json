@@ -1,0 +1,293 @@
+{
+  "hybrid_scraping": {
+    "video_analysis_file": "video_analysis_1759496735.json",
+    "target_url": "https://boulevardatgrantpark.com/",
+    "final_url": "https://boulevardatgrantpark.com/",
+    "final_page_title": "Upscale Apartments in Atlanta | The Boulevard at Grant Park",
+    "timestamp": "2025-10-03 17:15:27",
+    "extraction_method": "hybrid_video_simple",
+    "stealth_level": "authenticated_profile",
+    "video_patterns_used": true
+  },
+  "rental_data": {
+    "prices": [
+      "$400",
+      "$800",
+      "$20",
+      "$20 per month",
+      "$2,067",
+      "$2,127",
+      "$1,914",
+      "$1,662",
+      "$1,722",
+      "$1,509",
+      "$1,638",
+      "$1,698",
+      "$1,485",
+      "$400 - $800",
+      "$2,067 - $2,127",
+      "$1,662 - $1,722",
+      "$1,638 - $1,698"
+    ],
+    "units": [
+      "* Total monthly leasing prices include base rent, all mandatory monthly fees and any user-selected optional fees. Excludes variable or usage-based fees and required charges due at or prior to move-in or at move-out.\n                                    \n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n                                \n                                    \n                                    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A12\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        S2\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A9\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+      "* Total monthly leasing prices include base rent, all mandatory monthly fees and any user-selected optional fees. Excludes variable or usage-based fees and required charges due at or prior to move-in or at move-out.",
+      "A12\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        S2\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A9\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+      "A12\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent",
+      "Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent",
+      "S2\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent",
+      "Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent",
+      "A9\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+      "Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+      "1 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            2 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+      "1 bath",
+      "914 Ba",
+      "509 Ba",
+      "485 Ba",
+      "Studio\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            ",
+      "1 Bed",
+      "2 Bed",
+      "1 bed"
+    ],
+    "features": [],
+    "availability": [],
+    "price_selectors": [
+      {
+        "selector": "text_content",
+        "text": "$400",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$800",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$20",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$20 per month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,067",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,127",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,914",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,662",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,722",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,509",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,638",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,698",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,485",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$400 - $800",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,067 - $2,127",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,662 - $1,722",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,638 - $1,698",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      }
+    ],
+    "unit_selectors": [
+      {
+        "selector": "[class*='unit']",
+        "text": "* Total monthly leasing prices include base rent, all mandatory monthly fees and any user-selected optional fees. Excludes variable or usage-based fees and required charges due at or prior to move-in or at move-out.\n                                    \n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n                                \n                                    \n                                    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A12\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        S2\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A9\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+        "element_index": 0,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "* Total monthly leasing prices include base rent, all mandatory monthly fees and any user-selected optional fees. Excludes variable or usage-based fees and required charges due at or prior to move-in or at move-out.",
+        "element_index": 2,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "A12\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        S2\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A9\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+        "element_index": 3,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "A12\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent",
+        "element_index": 5,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "Outside price filter range\n                        \n                        \n                            #136\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath702 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $2,067 - $2,127 /mo*\n                                                                    \n                                                                                    12 months\n                                                                                                                            $1,914 Base Rent",
+        "element_index": 10,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "S2\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent",
+        "element_index": 12,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "Outside price filter range\n                        \n                        \n                            #176\n\n                                                            Available Oct 07\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\tStudio1 bath545 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,662 - $1,722 /mo*\n                                                                    \n                                                                                    15 months\n                                                                                                                            $1,509 Base Rent",
+        "element_index": 17,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "A9\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+        "element_index": 19,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "Outside price filter range\n                        \n                        \n                            #130\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath585 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,638 - $1,698 /mo*\n                                                                    \n                                                                                    14 months\n                                                                                                                            $1,485 Base Rent",
+        "element_index": 24,
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            2 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "914 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "509 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "485 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Studio\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            ",
+        "pattern": "Studio\\s+(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      }
+    ]
+  },
+  "page_analysis": {
+    "hasDynamicContent": false,
+    "contentAreas": [
+      {
+        "tag": "DIV",
+        "classes": "",
+        "id": "content",
+        "childCount": 3
+      }
+    ],
+    "pricingElements": 24,
+    "unitElements": 173,
+    "forms": 0,
+    "scripts": 32,
+    "stylesheets": 7,
+    "images": 10,
+    "links": 99,
+    "totalElements": 1279
+  },
+  "video_patterns_info": {
+    "patterns_loaded": true,
+    "transitions_learned": 3,
+    "pricing_detected": true
+  }
+}

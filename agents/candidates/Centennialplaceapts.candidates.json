@@ -1,0 +1,26 @@
+{
+  "analysis_dir": "Centennialplaceapts.analysis_top_frames",
+  "candidates": [
+    {
+      "time": 8.0,
+      "motion": 114.66176682542005,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Centennialplaceapts.analysis_top_frames\\frame_top1_8000ms.png"
+    },
+    {
+      "time": 9.0,
+      "motion": 96.89608913503787,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Centennialplaceapts.analysis_top_frames\\frame_top2_9000ms.png"
+    },
+    {
+      "time": 2.0,
+      "motion": 47.31648300872614,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Centennialplaceapts.analysis_top_frames\\frame_top3_2000ms.png"
+    }
+  ]
+}

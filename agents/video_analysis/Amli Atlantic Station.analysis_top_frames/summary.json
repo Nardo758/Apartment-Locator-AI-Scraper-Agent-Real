@@ -1,0 +1,23 @@
+{
+  "video": "Amli Atlantic Station.mp4",
+  "top_frames": [
+    {
+      "time": 4.0,
+      "motion": 59.4890582453344,
+      "ocr": null,
+      "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top1_4000ms.png"
+    },
+    {
+      "time": 2.0,
+      "motion": 56.19665168194195,
+      "ocr": null,
+      "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top2_2000ms.png"
+    },
+    {
+      "time": 5.0,
+      "motion": 49.096670153417016,
+      "ocr": null,
+      "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top3_5000ms.png"
+    }
+  ]
+}

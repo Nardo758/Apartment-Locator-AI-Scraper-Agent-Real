@@ -1,0 +1,42 @@
+{
+  "url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+  "used_container": "main",
+  "result": {
+    "ok": true,
+    "matchedSelector": null,
+    "href": null,
+    "dataAttrs": {},
+    "scoring": [
+      {
+        "selector": "main a.track-apply",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "main a.floorplan-action-button",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "main a[data-selenium-id^=\"floorplan-\"]",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "main a.btn-primary",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "main a[href*=\"apply\"]",
+        "count": 0,
+        "isUnique": false
+      }
+    ],
+    "beforeHref": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+    "afterHref": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+    "actionType": "modal",
+    "modalHtml": "<me-chat orgslug=\"amli\" widgettype=\"default\" class=\"meetelise-chat\" role=\"dialog\" aria-label=\"EliseAI Widget\" aria-describedby=\"aria-describe-info\" aria-modal=\"true\" buildingslug=\"7fa2dd90-884d-11ed-b90c-0f6d2bc0d940\"></me-chat>"
+  },
+  "timestamp": "2025-10-03 19:29:43"
+}

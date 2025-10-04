@@ -1,0 +1,113 @@
+{
+  "video_analysis": {
+    "video_path": "c:\\Users\\Leon\\Desktop\\The Huntley.mp4",
+    "duration_seconds": 36.166666666666664,
+    "total_frames": 1085,
+    "fps": 30.0,
+    "key_frames_extracted": 37,
+    "timestamp": "2025-10-03 17:26:28"
+  },
+  "navigation_patterns": {
+    "page_transitions": [
+      {
+        "timestamp": 13.0,
+        "transition_type": "text_content_loaded"
+      }
+    ],
+    "ui_interactions": [],
+    "content_changes": [
+      {
+        "timestamp": 1.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 9,
+        "current_count": 4
+      },
+      {
+        "timestamp": 4.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 4,
+        "current_count": 1
+      },
+      {
+        "timestamp": 6.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 3,
+        "current_count": 10
+      },
+      {
+        "timestamp": 12.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 10,
+        "current_count": 0
+      },
+      {
+        "timestamp": 13.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 0,
+        "current_count": 8
+      },
+      {
+        "timestamp": 24.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 8,
+        "current_count": 5
+      },
+      {
+        "timestamp": 25.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 5,
+        "current_count": 8
+      },
+      {
+        "timestamp": 29.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 8,
+        "current_count": 1
+      },
+      {
+        "timestamp": 30.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 1,
+        "current_count": 6
+      }
+    ],
+    "interactions": []
+  },
+  "rental_data_patterns": {
+    "price_indicators": [],
+    "unit_indicators": [],
+    "navigation_to_pricing": [
+      {
+        "timestamp": 0.0,
+        "confidence": "high",
+        "reason": "Found 7 rectangular UI elements"
+      }
+    ],
+    "pricing_page_identified": true
+  },
+  "learned_patterns": {
+    "ui_elements": {
+      "button_patterns": {
+        "count": 144,
+        "avg_aspect_ratio": 4.265865390191408
+      },
+      "text_field_patterns": {
+        "count": 59,
+        "avg_aspect_ratio": 16.7666187690791
+      },
+      "navigation_patterns": [],
+      "content_layouts": []
+    },
+    "text_patterns": {
+      "text_regions_found": 36,
+      "estimated_text_elements": "OCR analysis would go here",
+      "common_phrases": [
+        "Floor Plans",
+        "Pricing",
+        "Availability",
+        "Apply Now"
+      ]
+    },
+    "interaction_patterns": []
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "video": "Atlantic House Midtown.mp4",
+  "top_frames": [
+    {
+      "time": 1.0,
+      "motion": 97.7950378193446,
+      "ocr": null,
+      "image": "video_analysis\\Atlantic House Midtown.analysis_top_frames\\frame_top1_1000ms.png"
+    },
+    {
+      "time": 20.0,
+      "motion": 81.0772406854308,
+      "ocr": null,
+      "image": "video_analysis\\Atlantic House Midtown.analysis_top_frames\\frame_top2_20000ms.png"
+    },
+    {
+      "time": 13.0,
+      "motion": 78.69477437059162,
+      "ocr": null,
+      "image": "video_analysis\\Atlantic House Midtown.analysis_top_frames\\frame_top3_13000ms.png"
+    }
+  ]
+}

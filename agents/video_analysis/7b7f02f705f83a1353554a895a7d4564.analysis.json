@@ -1,0 +1,28 @@
+{
+  "file": "7b7f02f705f83a1353554a895a7d4564.webm",
+  "fps": 25.0,
+  "frame_count": 86,
+  "duration": 3.44,
+  "samples": [
+    {
+      "time": 0.0,
+      "motion": 0.0,
+      "ocr": null
+    },
+    {
+      "time": 1.0,
+      "motion": 107.52385555555556,
+      "ocr": null
+    },
+    {
+      "time": 2.0,
+      "motion": 12.628130555555556,
+      "ocr": null
+    },
+    {
+      "time": 3.0,
+      "motion": 66.51200833333333,
+      "ocr": null
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "scraping_timestamp": "2025-10-03 17:48:55",
+  "target_url": "https://www.thehuntley.com/",
+  "final_url": "https://www.thehuntley.com/",
+  "final_title": "Upscale Apartments in Buckhead, GA | The Huntley | Home",
+  "method": "huntley_dynamic_scraping",
+  "video_patterns_used": false,
+  "initial_data": {
+    "prices": [],
+    "units": [
+      "0ba",
+      "0ba"
+    ],
+    "total_prices": 0,
+    "total_units": 2
+  },
+  "dynamic_pricing_data": {
+    "prices": [],
+    "units": [
+      "0ba"
+    ],
+    "total_prices": 0,
+    "total_units": 1,
+    "extraction_methods": [
+      "direct_selectors",
+      "regex_patterns"
+    ],
+    "selectors_used": 33
+  },
+  "navigation_performed": true,
+  "dynamic_content_waited": true,
+  "total_prices_found": 0,
+  "total_units_found": 1
+}

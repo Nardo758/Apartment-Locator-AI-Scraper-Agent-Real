@@ -1,0 +1,208 @@
+{
+  "file": "Amli Atlantic Station.mp4",
+  "fps": 30.0,
+  "frame_count": 1197,
+  "duration": 39.9,
+  "samples": [
+    {
+      "time": 0.0,
+      "motion": 0.0,
+      "ocr": null
+    },
+    {
+      "time": 1.0,
+      "motion": 0.1831503827123597,
+      "ocr": null
+    },
+    {
+      "time": 2.0,
+      "motion": 56.19665168194195,
+      "ocr": null
+    },
+    {
+      "time": 3.0,
+      "motion": 47.732343656604904,
+      "ocr": null
+    },
+    {
+      "time": 4.0,
+      "motion": 59.4890582453344,
+      "ocr": null
+    },
+    {
+      "time": 5.0,
+      "motion": 49.096670153417016,
+      "ocr": null
+    },
+    {
+      "time": 6.0,
+      "motion": 33.76091736816763,
+      "ocr": null
+    },
+    {
+      "time": 7.0,
+      "motion": 23.6410530608687,
+      "ocr": null
+    },
+    {
+      "time": 8.0,
+      "motion": 14.93940733545859,
+      "ocr": null
+    },
+    {
+      "time": 9.0,
+      "motion": 14.896758463671382,
+      "ocr": null
+    },
+    {
+      "time": 10.0,
+      "motion": 11.64496942867105,
+      "ocr": null
+    },
+    {
+      "time": 11.0,
+      "motion": 0.5157775453277545,
+      "ocr": null
+    },
+    {
+      "time": 12.0,
+      "motion": 2.5919697856478714,
+      "ocr": null
+    },
+    {
+      "time": 13.0,
+      "motion": 0.08235268479776849,
+      "ocr": null
+    },
+    {
+      "time": 14.0,
+      "motion": 2.0455778458524274,
+      "ocr": null
+    },
+    {
+      "time": 15.0,
+      "motion": 0.12735511307033273,
+      "ocr": null
+    },
+    {
+      "time": 16.0,
+      "motion": 0.024004615793318723,
+      "ocr": null
+    },
+    {
+      "time": 17.0,
+      "motion": 0.7439121961546125,
+      "ocr": null
+    },
+    {
+      "time": 18.0,
+      "motion": 1.2374196802151822,
+      "ocr": null
+    },
+    {
+      "time": 19.0,
+      "motion": 0.3496437495849107,
+      "ocr": null
+    },
+    {
+      "time": 20.0,
+      "motion": 0.017115689546390384,
+      "ocr": null
+    },
+    {
+      "time": 21.0,
+      "motion": 0.6488956548449226,
+      "ocr": null
+    },
+    {
+      "time": 22.0,
+      "motion": 0.036198902503818825,
+      "ocr": null
+    },
+    {
+      "time": 23.0,
+      "motion": 0.015755234276416286,
+      "ocr": null
+    },
+    {
+      "time": 24.0,
+      "motion": 0.19482373231719466,
+      "ocr": null
+    },
+    {
+      "time": 25.0,
+      "motion": 0.19316960134821012,
+      "ocr": null
+    },
+    {
+      "time": 26.0,
+      "motion": 0.017721201102477255,
+      "ocr": null
+    },
+    {
+      "time": 27.0,
+      "motion": 0.19602489705784684,
+      "ocr": null
+    },
+    {
+      "time": 28.0,
+      "motion": 4.338378744105731,
+      "ocr": null
+    },
+    {
+      "time": 29.0,
+      "motion": 5.349605872683801,
+      "ocr": null
+    },
+    {
+      "time": 30.0,
+      "motion": 6.046906131699542,
+      "ocr": null
+    },
+    {
+      "time": 31.0,
+      "motion": 6.885811520389188,
+      "ocr": null
+    },
+    {
+      "time": 32.0,
+      "motion": 0.3066078070000664,
+      "ocr": null
+    },
+    {
+      "time": 33.0,
+      "motion": 6.081055530650196,
+      "ocr": null
+    },
+    {
+      "time": 34.0,
+      "motion": 3.746353959122003,
+      "ocr": null
+    },
+    {
+      "time": 35.0,
+      "motion": 5.141717722653915,
+      "ocr": null
+    },
+    {
+      "time": 36.0,
+      "motion": 0.07914144999003786,
+      "ocr": null
+    },
+    {
+      "time": 37.0,
+      "motion": 4.275408655442651,
+      "ocr": null
+    },
+    {
+      "time": 38.0,
+      "motion": 0.013115785016935645,
+      "ocr": null
+    },
+    {
+      "time": 39.0,
+      "motion": 0.7186773593677359,
+      "ocr": null
+    }
+  ]
+}

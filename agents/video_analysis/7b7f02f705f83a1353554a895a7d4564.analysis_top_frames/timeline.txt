@@ -1,0 +1,14 @@
+Analysis for 7b7f02f705f83a1353554a895a7d4564.analysis.json
+Video file: 7b7f02f705f83a1353554a895a7d4564.webm
+Duration: 3.44s, fps: 25.0, frames: 86
+
+Top motion samples:
+ - t=1.0s motion=107.52 ocr=None
+ - t=3.0s motion=66.51 ocr=None
+ - t=2.0s motion=12.63 ocr=None
+
+Full sample timeline (time, motion, ocr):
+0.0s | motion=0.00 | ocr=None
+1.0s | motion=107.52 | ocr=None
+2.0s | motion=12.63 | ocr=None
+3.0s | motion=66.51 | ocr=None

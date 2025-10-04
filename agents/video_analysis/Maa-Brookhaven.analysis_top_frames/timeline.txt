@@ -1,0 +1,61 @@
+Analysis for Maa-Brookhaven.analysis.json
+Video file: Maa-Brookhaven.mp4
+Duration: 51.0s, fps: 30.0, frames: 1530
+
+Top motion samples:
+ - t=33.0s motion=89.24 ocr=None
+ - t=44.0s motion=78.75 ocr=None
+ - t=15.0s motion=74.26 ocr=None
+
+Full sample timeline (time, motion, ocr):
+0.0s | motion=0.00 | ocr=None
+1.0s | motion=0.69 | ocr=None
+2.0s | motion=0.85 | ocr=None
+3.0s | motion=59.59 | ocr=None
+4.0s | motion=10.72 | ocr=None
+5.0s | motion=13.88 | ocr=None
+6.0s | motion=0.00 | ocr=None
+7.0s | motion=0.02 | ocr=None
+8.0s | motion=16.54 | ocr=None
+9.0s | motion=0.28 | ocr=None
+10.0s | motion=0.03 | ocr=None
+11.0s | motion=0.00 | ocr=None
+12.0s | motion=0.00 | ocr=None
+13.0s | motion=71.36 | ocr=None
+14.0s | motion=15.77 | ocr=None
+15.0s | motion=74.26 | ocr=None
+16.0s | motion=66.53 | ocr=None
+17.0s | motion=45.63 | ocr=None
+18.0s | motion=0.04 | ocr=None
+19.0s | motion=7.44 | ocr=None
+20.0s | motion=18.66 | ocr=None
+21.0s | motion=27.25 | ocr=None
+22.0s | motion=0.15 | ocr=None
+23.0s | motion=0.13 | ocr=None
+24.0s | motion=0.00 | ocr=None
+25.0s | motion=0.55 | ocr=None
+26.0s | motion=3.49 | ocr=None
+27.0s | motion=0.19 | ocr=None
+28.0s | motion=8.94 | ocr=None
+29.0s | motion=26.55 | ocr=None
+30.0s | motion=0.06 | ocr=None
+31.0s | motion=0.03 | ocr=None
+32.0s | motion=25.49 | ocr=None
+33.0s | motion=89.24 | ocr=None
+34.0s | motion=0.31 | ocr=None
+35.0s | motion=6.82 | ocr=None
+36.0s | motion=5.68 | ocr=None
+37.0s | motion=4.78 | ocr=None
+38.0s | motion=4.51 | ocr=None
+39.0s | motion=4.44 | ocr=None
+40.0s | motion=5.70 | ocr=None
+41.0s | motion=6.83 | ocr=None
+42.0s | motion=1.16 | ocr=None
+43.0s | motion=0.06 | ocr=None
+44.0s | motion=78.75 | ocr=None
+45.0s | motion=47.86 | ocr=None
+46.0s | motion=31.41 | ocr=None
+47.0s | motion=0.21 | ocr=None
+48.0s | motion=0.10 | ocr=None
+49.0s | motion=0.01 | ocr=None
+50.0s | motion=0.02 | ocr=None

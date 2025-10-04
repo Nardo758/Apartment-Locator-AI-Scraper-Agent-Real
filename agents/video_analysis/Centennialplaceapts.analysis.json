@@ -1,0 +1,153 @@
+{
+  "file": "Centennialplaceapts.mp4",
+  "fps": 30.0,
+  "frame_count": 845,
+  "duration": 28.166666666666668,
+  "samples": [
+    {
+      "time": 0.0,
+      "motion": 0.0,
+      "ocr": null
+    },
+    {
+      "time": 1.0,
+      "motion": 0.17797281057055836,
+      "ocr": null
+    },
+    {
+      "time": 2.0,
+      "motion": 47.31648300872614,
+      "ocr": null
+    },
+    {
+      "time": 3.0,
+      "motion": 10.863219874480977,
+      "ocr": null
+    },
+    {
+      "time": 4.0,
+      "motion": 8.26359630437409,
+      "ocr": null
+    },
+    {
+      "time": 5.0,
+      "motion": 9.123295626757892,
+      "ocr": null
+    },
+    {
+      "time": 6.0,
+      "motion": 0.29879016788858015,
+      "ocr": null
+    },
+    {
+      "time": 7.0,
+      "motion": 0.0024411775303570787,
+      "ocr": null
+    },
+    {
+      "time": 8.0,
+      "motion": 114.66176682542005,
+      "ocr": null
+    },
+    {
+      "time": 9.0,
+      "motion": 96.89608913503787,
+      "ocr": null
+    },
+    {
+      "time": 10.0,
+      "motion": 19.959709178234043,
+      "ocr": null
+    },
+    {
+      "time": 11.0,
+      "motion": 11.183011481535647,
+      "ocr": null
+    },
+    {
+      "time": 12.0,
+      "motion": 0.012833270806971584,
+      "ocr": null
+    },
+    {
+      "time": 13.0,
+      "motion": 0.761129162507074,
+      "ocr": null
+    },
+    {
+      "time": 14.0,
+      "motion": 22.907052973605396,
+      "ocr": null
+    },
+    {
+      "time": 15.0,
+      "motion": 23.170927997185252,
+      "ocr": null
+    },
+    {
+      "time": 16.0,
+      "motion": 10.721677147780525,
+      "ocr": null
+    },
+    {
+      "time": 17.0,
+      "motion": 0.006013128416429809,
+      "ocr": null
+    },
+    {
+      "time": 18.0,
+      "motion": 0.05942706776797845,
+      "ocr": null
+    },
+    {
+      "time": 19.0,
+      "motion": 0.8495986655390726,
+      "ocr": null
+    },
+    {
+      "time": 20.0,
+      "motion": 4.16810265344923,
+      "ocr": null
+    },
+    {
+      "time": 21.0,
+      "motion": 0.007565689771746986,
+      "ocr": null
+    },
+    {
+      "time": 22.0,
+      "motion": 15.135480319032812,
+      "ocr": null
+    },
+    {
+      "time": 23.0,
+      "motion": 2.8928149791967375,
+      "ocr": null
+    },
+    {
+      "time": 24.0,
+      "motion": 1.406844199143283,
+      "ocr": null
+    },
+    {
+      "time": 25.0,
+      "motion": 13.569065665397064,
+      "ocr": null
+    },
+    {
+      "time": 26.0,
+      "motion": 1.3139824841405592,
+      "ocr": null
+    },
+    {
+      "time": 27.0,
+      "motion": 13.571247199560831,
+      "ocr": null
+    },
+    {
+      "time": 28.0,
+      "motion": 0.012160317591526935,
+      "ocr": null
+    }
+  ]
+}

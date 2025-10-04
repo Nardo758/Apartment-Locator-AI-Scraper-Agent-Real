@@ -1,0 +1,71 @@
+{
+  "scraping_timestamp": "2025-10-03 19:26:23",
+  "target_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+  "final_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center/floorplans",
+  "final_title": "1 & 2 BR Apartments in Midtown Atlanta | AMLI Arts Center",
+  "method": "huntley_relational_scraping_approach2",
+  "relational_analysis": {
+    "pricing_containers": {
+      "div[class*=\"floor\"] > div[class*=\"price\"]": 0,
+      "div[class*=\"plan\"] > div[class*=\"rent\"]": 0,
+      "section[class*=\"pricing\"] > div[class*=\"amount\"]": 0,
+      "div[data-floor] > span[class*=\"price\"]": 0,
+      "article[class*=\"unit\"] > div[class*=\"cost\"]": 0,
+      "div[class*=\"availability\"]": 0,
+      "div[class*=\"action\"] > button[class*=\"apply\"]": 0
+    },
+    "sibling_anchors": {
+      "i[class*=\"icon-dollar\"] + span": 0,
+      "img[alt*=\"floor\"] ~ div[class*=\"price\"]": 0,
+      "svg[class*=\"bed\"] + span[class*=\"price\"]": 0,
+      "span[class*=\"sqft\"] ~ span[class*=\"rent\"]": 0,
+      "div[class*=\"badge\"] + div[class*=\"pricing\"]": 0,
+      "div[class*=\"availability\"] ~ div[class*=\"price\"]": 0
+    },
+    "static_attributes": {
+      "div[data-price][data-price!=\"\"]": 0,
+      "span[data-rent][data-rent!=\"\"]": 0,
+      "div[data-monthly][data-monthly!=\"\"]": 0,
+      "a[data-floor-id]": 0,
+      "button[data-unit-type]": 0,
+      "div[data-availability=\"available\"]": 0,
+      "button[data-action=\"apply\"]": 0
+    },
+    "hierarchy_paths": {
+      "main > section > div > div[class*=\"floor\"]": 0,
+      "div[class*=\"container\"] > div[class*=\"row\"] > div[class*=\"pricing\"]": 0,
+      "article > header + div > div[class*=\"price\"]": 0,
+      "section[data-section=\"floor-plans\"] div[class*=\"price\"]": 0,
+      "section[class*=\"availability\"] div[class*=\"price\"]": 0
+    },
+    "static_relationships": {
+      "div[class*=\"floor-plan\"] > h3 + p + div": 0,
+      "div[class*=\"unit-card\"] > div[class*=\"image\"] + div[class*=\"details\"] > div[class*=\"price\"]": 0,
+      "li[class*=\"floor-item\"] > a > span[class*=\"name\"] + span[class*=\"price\"]": 0,
+      "tr[class*=\"floor-row\"] > td:nth-child(1) + td:nth-child(2) + td:nth-child(3)": 0,
+      "div[class*=\"action\"] > button[class*=\"apply\"]": 0
+    },
+    "total_selectors_found": 0,
+    "categories_analyzed": 5
+  },
+  "relational_pricing_data": {
+    "prices": [],
+    "units": [],
+    "total_prices": 0,
+    "total_units": 0,
+    "extraction_log": [],
+    "categories_processed": 5,
+    "extraction_methods": [
+      "relational_selectors",
+      "data_attributes"
+    ]
+  },
+  "interactor_fallback": {
+    "ok": false,
+    "error": "Container not found using selector: div[id^=\"fp-container-\"]"
+  },
+  "navigation_performed": true,
+  "relational_interactions_attempted": true,
+  "total_prices_found": 0,
+  "total_units_found": 0
+}

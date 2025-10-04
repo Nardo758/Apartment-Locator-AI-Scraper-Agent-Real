@@ -1,0 +1,138 @@
+{
+  "file": "Atlantic House Midtown.mp4",
+  "fps": 30.0,
+  "frame_count": 753,
+  "duration": 25.1,
+  "samples": [
+    {
+      "time": 0.0,
+      "motion": 0.0,
+      "ocr": null
+    },
+    {
+      "time": 1.0,
+      "motion": 97.7950378193446,
+      "ocr": null
+    },
+    {
+      "time": 2.0,
+      "motion": 77.79230577773278,
+      "ocr": null
+    },
+    {
+      "time": 3.0,
+      "motion": 57.62598081401235,
+      "ocr": null
+    },
+    {
+      "time": 4.0,
+      "motion": 2.550608421079275,
+      "ocr": null
+    },
+    {
+      "time": 5.0,
+      "motion": 31.93567178377375,
+      "ocr": null
+    },
+    {
+      "time": 6.0,
+      "motion": 30.1398556410516,
+      "ocr": null
+    },
+    {
+      "time": 7.0,
+      "motion": 0.012016553609395566,
+      "ocr": null
+    },
+    {
+      "time": 8.0,
+      "motion": 32.30232695487834,
+      "ocr": null
+    },
+    {
+      "time": 9.0,
+      "motion": 0.11545024636360568,
+      "ocr": null
+    },
+    {
+      "time": 10.0,
+      "motion": 17.14498698575816,
+      "ocr": null
+    },
+    {
+      "time": 11.0,
+      "motion": 0.6469839441800816,
+      "ocr": null
+    },
+    {
+      "time": 12.0,
+      "motion": 0.26722910549762074,
+      "ocr": null
+    },
+    {
+      "time": 13.0,
+      "motion": 78.69477437059162,
+      "ocr": null
+    },
+    {
+      "time": 14.0,
+      "motion": 23.68647805507745,
+      "ocr": null
+    },
+    {
+      "time": 15.0,
+      "motion": 8.936278201039451,
+      "ocr": null
+    },
+    {
+      "time": 16.0,
+      "motion": 22.06652819260234,
+      "ocr": null
+    },
+    {
+      "time": 17.0,
+      "motion": 0.009653108231244305,
+      "ocr": null
+    },
+    {
+      "time": 18.0,
+      "motion": 2.3004286051770104,
+      "ocr": null
+    },
+    {
+      "time": 19.0,
+      "motion": 0.199686350443792,
+      "ocr": null
+    },
+    {
+      "time": 20.0,
+      "motion": 81.0772406854308,
+      "ocr": null
+    },
+    {
+      "time": 21.0,
+      "motion": 0.017862416050757654,
+      "ocr": null
+    },
+    {
+      "time": 22.0,
+      "motion": 0.1132987833687692,
+      "ocr": null
+    },
+    {
+      "time": 23.0,
+      "motion": 0.059432055954912084,
+      "ocr": null
+    },
+    {
+      "time": 24.0,
+      "motion": 0.013797838412473423,
+      "ocr": null
+    },
+    {
+      "time": 25.0,
+      "motion": 0.02120562080253788,
+      "ocr": null
+    }
+  ]
+}

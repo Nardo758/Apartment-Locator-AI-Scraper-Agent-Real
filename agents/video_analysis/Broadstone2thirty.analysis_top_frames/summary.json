@@ -1,0 +1,23 @@
+{
+  "video": "Broadstone2thirty.mp4",
+  "top_frames": [
+    {
+      "time": 4.0,
+      "motion": 84.27106359315489,
+      "ocr": null,
+      "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top1_4000ms.png"
+    },
+    {
+      "time": 16.0,
+      "motion": 78.42490268495105,
+      "ocr": null,
+      "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top2_16000ms.png"
+    },
+    {
+      "time": 30.0,
+      "motion": 74.38654271894575,
+      "ocr": null,
+      "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top3_30000ms.png"
+    }
+  ]
+}

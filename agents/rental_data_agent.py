@@ -32,13 +32,18 @@ HUMAN_TIMING_PROFILE = {
     "typing_speed": (0.1, 0.3),           # Human typing speed if needed
 }
 
-# Lease term preferences for intelligent selection
-LEASE_TERM_PREFERENCES = {
-    "ideal": [12],           # Perfect match
-    "excellent": [11, 13],   # Very close
-    "good": [14, 15, 16],    # Reasonable
-    "acceptable": [17, 18],  # Longer but ok
-    "fallback": [6, 7, 8, 9, 10, 19, 20, 21, 22, 23, 24]  # Last resort
+# Universal Navigation Flow for rental websites
+UNIVERSAL_NAVIGATION = {
+    "step_1_to_2": {
+        "button_texts": ["Availability", "Continue", "Check Availability", "View Availability", "See Availability"],
+        "button_selectors": ["[data-action='availability']", ".availability-btn", ".check-availability"],
+        "fallback": "click_first_unit"  # If no availability button, click first unit
+    },
+    "step_2_to_3": {
+        "button_texts": ["Apply Now", "Apply", "Select", "Lease Now", "Rent Now"],
+        "button_selectors": [".apply-btn", "[data-action='apply']", ".lease-now"],
+        "fallback": "click_first_apply"
+    }
 }
 
 @dataclass
@@ -520,6 +525,10 @@ class RentalDataAgent:
         rental_data = []
 
         try:
+            # Ensure browser is initialized for template system
+            if not self.context:
+                await self._init_browser()
+
             # ===== TEMPLATE-BASED EXTRACTION (PRIMARY METHOD) =====
             if self.use_template_system:
                 logger.info("🎯 Attempting template-based extraction...")
@@ -561,84 +570,38 @@ class RentalDataAgent:
                         update_template_success(template_type, False)
 
             # ===== TRADITIONAL EXTRACTION (FALLBACK METHOD) =====
-            logger.info("🔄 Falling back to traditional extraction method...")
+            logger.info("🔄 Falling back to universal rental flow extraction...")
 
-            # Load page safely with human-like behavior
-            if not await self.load_page_safely(property_url):
-                logger.error("❌ Failed to load page safely")
-                return []
+            # Use the universal rental scraper
+            universal_data = await self.universal_rental_scraper(property_url)
 
-            # Extract concessions first
-            concessions = await self._extract_concessions()
-            if not concessions and "thecollectiveuws.com" in property_url:
-                # Try site-specific extraction for The Collective UWS
-                concessions = await self._extract_concessions_site_specific(property_url)
-            logger.info(f"Found concessions: {concessions}")
+            if universal_data:
+                logger.info(f"✅ Universal scraper extracted {len(universal_data)} units")
 
-            # Step 2: Site-specific navigation (for known problematic sites)
-            site_nav_success = await self._site_specific_navigation(property_url)
-            if site_nav_success:
-                logger.info("Site-specific navigation successful")
+                # Convert universal data to RentalData objects
+                for unit in universal_data:
+                    rental_info = RentalData(
+                        floorplan_name=unit.get('floorplan_name', 'Universal Extracted'),
+                        bedrooms=unit.get('bedrooms', 1),
+                        bathrooms=unit.get('bathrooms', 1.0),
+                        sqft=unit.get('sqft'),
+                        monthly_rent=unit.get('price', 0.0) if unit.get('price') else 0.0,
+                        lease_term_months=unit.get('lease_term_months', 12),
+                        lease_term=unit.get('lease_term') or f"{unit.get('lease_term_months', 12)} months",
+                        concessions=None,  # Universal scraper doesn't extract concessions yet
+                        availability_date=unit.get('availability_date'),
+                        availability_status='available',
+                        confidence_score=unit.get('confidence_score', 0.7),
+                        data_source='universal_agent',
+                        raw_data=unit
+                    )
+                    rental_data.append(rental_info)
 
-            # Step 3: Pre-navigation - try to access pricing/floor plans content
-            await self._pre_navigate_to_content()
+                return rental_data
 
-            # Step 4: Navigate to floor plans/pricing section if needed
-            await self._navigate_to_floor_plans()
-
-            # Step 5: Extract available units and pricing
-            units_data = await self._extract_unit_pricing()
-            logger.info(f"Extracted {len(units_data)} unit configurations")
-
-            # Step 6: Navigate to application/pricing page if needed
-            if not units_data:
-                await self._navigate_to_pricing_page()
-                units_data = await self._extract_unit_pricing()
-
-            # Step 7: Process and structure the data
-            for unit in units_data:
-                rental_info = RentalData(
-                    floorplan_name=unit.get('floorplan_name', 'Unknown'),
-                    bedrooms=unit.get('bedrooms', 0),
-                    bathrooms=unit.get('bathrooms', 1.0),
-                    sqft=unit.get('sqft'),
-                    monthly_rent=unit.get('monthly_rent', 0.0),
-                    lease_term_months=unit.get('lease_term_months', 12),
-                    lease_term=unit.get('lease_term') or f"{unit.get('lease_term_months', 12)} months",  # Descriptive lease term
-                    concessions=concessions or unit.get('concessions'),
-                    availability_date=unit.get('availability_date'),
-                    availability_status=unit.get('availability_status', 'available'),
-                    confidence_score=unit.get('confidence_score', 0.5),
-                    data_source='vision_agent',
-                    raw_data=unit
-                )
-                rental_data.append(rental_info)
-
-            # ===== MULTI-STEP NAVIGATION FALLBACK =====
-            # If standard extraction found very limited data (< 3 units), try multi-step navigation
-            if len(rental_data) < 3 and self._is_complex_site(property_url):
-                logger.info(f"Limited data found ({len(rental_data)} units), trying multi-step navigation")
-                multi_step_data = await self.navigate_floor_plan_flow(property_url)
-                if multi_step_data:
-                    # Convert multi-step data to RentalData objects
-                    for item in multi_step_data:
-                        rental_info = RentalData(
-                            floorplan_name=item.get('unit_type', 'Multi-Step Extracted'),
-                            bedrooms=1,  # Default, could be enhanced with vision
-                            bathrooms=1.0,
-                            sqft=None,
-                            monthly_rent=item.get('monthly_rent', 0.0),
-                            lease_term_months=item.get('lease_term_months', 12),
-                            lease_term=item.get('lease_term') or f"{item.get('lease_term_months', 12)} months",  # Descriptive lease term
-                            concessions=item.get('special_pricing'),
-                            availability_date=item.get('available_date'),
-                            availability_status='available',
-                            confidence_score=0.8,
-                            data_source='multi_step_agent',
-                            raw_data=item
-                        )
-                        rental_data.append(rental_info)
-                    logger.info(f"Multi-step navigation added {len(multi_step_data)} additional records")
+            # If universal scraper failed, return empty
+            logger.warning("⚠️  Universal scraper also failed")
+            return []
 
             logger.info(f"Successfully extracted {len(rental_data)} rental records")
             return rental_data
@@ -659,7 +622,7 @@ class RentalDataAgent:
         """
         try:
             # Use the smart scraper for template-based extraction
-            result = await self.smart_scraper.scrape_property(property_url)
+            result = await self.smart_scraper.scrape_property(property_url, self.context)
 
             if result and isinstance(result, dict):
                 return result
@@ -1022,6 +985,13 @@ class RentalDataAgent:
                 window.mouseY = Math.random() * 600;
             """)
 
+    async def is_visible(self, element) -> bool:
+        """Check if an element is visible on the page"""
+        try:
+            return await element.is_visible()
+        except:
+            return False
+
     async def human_like_page_load(self, url: str):
         """Load page with human-like behavior and cookie handling"""
         await self.page.goto(url, wait_until='networkidle', timeout=self.page_timeout)
@@ -1254,6 +1224,11 @@ class RentalDataAgent:
         """Enhanced page loading with advanced cookie handling and human-like behavior"""
 
         try:
+            # Ensure browser is initialized
+            if not self.page:
+                logger.error("❌ Browser not initialized, cannot load page")
+                return False
+
             # Extract domain for pre-emptive handling
             from urllib.parse import urlparse
             domain = urlparse(url).netloc.replace('www.', '')
@@ -1769,3 +1744,467 @@ class RentalDataAgent:
 
         logger.warning("Failed to handle OneTrust overlay")
         return False
+
+    # ===== TRADITIONAL EXTRACTION METHODS (FALLBACK) =====
+
+    async def _extract_concessions(self) -> Optional[str]:
+        """Extract concessions information from the page"""
+        try:
+            # Look for common concession patterns
+            concession_selectors = [
+                ".concessions", ".specials", ".offers", ".promotions",
+                "[class*='concession']", "[class*='special']", "[class*='offer']",
+                ".pricing-specials", ".current-specials"
+            ]
+
+            for selector in concession_selectors:
+                try:
+                    elements = await self.page.query_selector_all(selector)
+                    for element in elements:
+                        if await self.is_visible(element):
+                            text = await element.inner_text()
+                            if text and len(text.strip()) > 10:  # Meaningful content
+                                logger.info(f"Found concessions: {text[:100]}...")
+                                return text.strip()
+                except:
+                    continue
+
+            # Try text-based search for concession keywords
+            body_element = await self.page.query_selector("body")
+            page_text = await body_element.inner_text() if body_element else ""
+            concession_keywords = ["concession", "special", "offer", "promotion", "discount", "move-in special"]
+            
+            for keyword in concession_keywords:
+                if keyword.lower() in page_text.lower():
+                    # Extract surrounding context (up to 200 characters around the keyword)
+                    keyword_index = page_text.lower().find(keyword.lower())
+                    if keyword_index != -1:
+                        start = max(0, keyword_index - 100)
+                        end = min(len(page_text), keyword_index + 100)
+                        context = page_text[start:end].strip()
+                        if len(context) > 10:
+                            logger.info(f"Found concessions via text search: {context[:100]}...")
+                            return context
+
+            return None
+
+        except Exception as e:
+            logger.error(f"Error extracting concessions: {str(e)}")
+            return None
+
+    async def _pre_navigate_to_content(self) -> bool:
+        """Pre-navigation step to access pricing/floor plans content"""
+        try:
+            # Try to find and click on pricing/floor plans links before main navigation
+            pre_nav_selectors = [
+                "a[href*='pricing']",
+                "a[href*='rates']",
+                "a[href*='rent']",
+                ".pricing-link",
+                ".rates-link"
+            ]
+
+            for selector in pre_nav_selectors:
+                try:
+                    element = await self.page.query_selector(selector)
+                    if element and await self.is_visible(element):
+                        await self.human_like_click(selector)
+                        await asyncio.sleep(2)
+                        logger.info(f"Pre-navigation: clicked {selector}")
+                        return True
+                except Exception:
+                    continue
+
+            return False
+
+        except Exception as e:
+            logger.error(f"Error in pre-navigation: {str(e)}")
+            return False
+
+    async def _navigate_to_floor_plans(self) -> bool:
+        """Navigate to floor plans/pricing section if needed"""
+        try:
+            # Common selectors for floor plans navigation
+            floorplan_selectors = [
+                "a[href*='floor-plans']",
+                "a[href*='floorplans']",
+                "a[href*='pricing']",
+                "a[href*='rates']",
+                ".floor-plans",
+                ".pricing-link",
+                "a:has-text('Floor Plans')",
+                "a:has-text('Pricing')"
+            ]
+
+            for selector in floorplan_selectors:
+                try:
+                    element = await self.page.query_selector(selector)
+                    if element and await self.is_visible(element):
+                        await self.human_like_click(selector)
+                        await asyncio.sleep(3)  # Wait for page to load
+                        logger.info(f"Navigated to floor plans using: {selector}")
+                        return True
+                except Exception:
+                    continue
+
+            return False
+
+        except Exception as e:
+            logger.error(f"Error navigating to floor plans: {str(e)}")
+            return False
+
+    # ===== UNIVERSAL NAVIGATION METHODS =====
+
+    async def navigate_rental_flow(self) -> bool:
+        """Navigate through the 3-step rental flow: Floor Plans → Unit Selection → Pricing Details"""
+        try:
+            logger.info("🚀 Starting universal rental flow navigation...")
+
+            # Step 1: Navigate to floor plans (already done by caller)
+            logger.info("📍 Step 1: At floor plans page")
+
+            # Step 2: Click first unit to go to unit details
+            logger.info("📍 Step 2: Attempting to select first unit...")
+            unit_clicked = await self.click_first_unit()
+            if not unit_clicked:
+                logger.warning("⚠️  Could not click first unit, trying availability button...")
+                unit_clicked = await self.click_navigation_button(
+                    UNIVERSAL_NAVIGATION["step_1_to_2"]["button_texts"],
+                    UNIVERSAL_NAVIGATION["step_1_to_2"]["button_selectors"]
+                )
+
+            if not unit_clicked:
+                logger.warning("⚠️  Could not navigate to unit details")
+
+                return False
+
+            # Wait for page to load
+            await asyncio.sleep(random.uniform(2, 4))
+
+            # Step 3: Click apply/lease button to get pricing
+            logger.info("📍 Step 3: Attempting to get pricing details...")
+            pricing_clicked = await self.click_navigation_button(
+                UNIVERSAL_NAVIGATION["step_2_to_3"]["button_texts"],
+                UNIVERSAL_NAVIGATION["step_2_to_3"]["button_selectors"]
+            )
+
+            if not pricing_clicked:
+                logger.warning("⚠️  Could not navigate to pricing details")
+                return False
+
+            # Wait for pricing page to load
+            await asyncio.sleep(random.uniform(2, 4))
+            logger.info("✅ Successfully navigated rental flow!")
+            return True
+
+        except Exception as e:
+            logger.error(f"Error in rental flow navigation: {str(e)}")
+            return False
+
+    async def click_navigation_button(self, button_texts: List[str], button_selectors: List[str]) -> bool:
+        """Click a navigation button using text or selector matching"""
+        try:
+            # Try text-based matching first
+            for text in button_texts:
+                try:
+                    button = self.page.locator(f"button:has-text('{text}'), a:has-text('{text}'), input[value*='{text}']")
+                    if await button.count() > 0:
+                        await button.first.click()
+                        logger.info(f"✅ Clicked button with text: '{text}'")
+                        return True
+                except:
+                    continue
+
+            # Try selector-based matching
+            for selector in button_selectors:
+                try:
+                    button = self.page.locator(selector)
+                    if await button.count() > 0:
+                        await button.first.click()
+                        logger.info(f"✅ Clicked button with selector: '{selector}'")
+                        return True
+                except:
+                    continue
+
+            return False
+
+        except Exception as e:
+            logger.error(f"Error clicking navigation button: {str(e)}")
+            return False
+
+    async def click_first_unit(self) -> bool:
+        """Click the first available unit/floorplan"""
+        try:
+            unit_selectors = [
+                ".unit-card:first-child",
+                ".floorplan-item:first-child",
+                "[data-unit]:first-child",
+                ".apartment-unit:first-child",
+                ".unit:first-child",
+                ".floor-plan:first-child"
+            ]
+
+            for selector in unit_selectors:
+                try:
+                    unit = self.page.locator(selector)
+                    if await unit.count() > 0:
+                        await unit.first.click()
+                        logger.info(f"✅ Clicked first unit with selector: '{selector}'")
+                        return True
+                except:
+                    continue
+
+            return False
+
+        except Exception as e:
+            logger.error(f"Error clicking first unit: {str(e)}")
+            return False
+
+    async def click_first_apply_button(self) -> bool:
+        """Click the first apply/lease button found"""
+        try:
+            apply_selectors = [
+                ".apply-btn:first-child",
+                ".lease-now:first-child",
+                "button:has-text('Apply'):first-child",
+                "a:has-text('Apply'):first-child",
+                "[data-action='apply']:first-child"
+            ]
+
+            for selector in apply_selectors:
+                try:
+                    button = self.page.locator(selector)
+                    if await button.count() > 0:
+                        await button.first.click()
+                        logger.info(f"✅ Clicked apply button with selector: '{selector}'")
+                        return True
+                except:
+                    continue
+
+            return False
+
+        except Exception as e:
+            logger.error(f"Error clicking apply button: {str(e)}")
+            return False
+
+    # ===== UNIVERSAL DATA EXTRACTION METHODS =====
+
+    async def extract_rental_data_universal(self) -> List[Dict[str, Any]]:
+        """Extract rental data using universal patterns"""
+        try:
+            # Try to extract pricing details first (most valuable)
+            pricing_data = await self.extract_pricing_details()
+            if pricing_data:
+                return [pricing_data]
+
+            # Fall back to unit details
+            unit_data = await self.extract_unit_details()
+            if unit_data:
+                return [unit_data]
+
+            # Fall back to floorplan details
+            floorplan_data = await self.extract_floorplan_details()
+            if floorplan_data:
+                return [floorplan_data]
+
+            return []
+
+        except Exception as e:
+            logger.error(f"Error in universal data extraction: {str(e)}")
+            return []
+
+    async def extract_pricing_details(self) -> Optional[Dict[str, Any]]:
+        """Extract detailed pricing information from pricing page"""
+        try:
+            logger.info("💰 Extracting pricing details...")
+
+            # Get page content
+            content = await self.page.content()
+
+            # Look for pricing patterns
+            pricing_patterns = [
+                r'\$([0-9,]+)',  # $1,234
+                r'([0-9,]+)\s*(?:per month|monthly)',  # 1234 per month
+                r'(?:rent|price)[:\s]*\$?([0-9,]+)',  # rent: $1234
+            ]
+
+            prices = []
+            for pattern in pricing_patterns:
+                matches = re.findall(pattern, content, re.IGNORECASE)
+                for match in matches:
+                    price = int(match.replace(',', ''))
+                    if 500 <= price <= 10000:  # Reasonable rent range
+                        prices.append(price)
+
+            if prices:
+                min_price = min(prices)
+                max_price = max(prices)
+
+                # Try to extract unit info
+                unit_info = await self.parse_unit_text(content)
+
+                return {
+                    "price": min_price if min_price == max_price else f"${min_price}-${max_price}",
+                    "unit_type": unit_info.get("unit_type", "Unknown"),
+                    "bedrooms": unit_info.get("bedrooms"),
+                    "bathrooms": unit_info.get("bathrooms"),
+                    "sqft": unit_info.get("sqft"),
+                    "available_date": unit_info.get("available_date"),
+                    "data_type": "pricing_details"
+                }
+
+            return None
+
+        except Exception as e:
+            logger.error(f"Error extracting pricing details: {str(e)}")
+            return None
+
+    async def extract_unit_details(self) -> Optional[Dict[str, Any]]:
+        """Extract unit-specific information"""
+        try:
+            logger.info("🏠 Extracting unit details...")
+
+            content = await self.page.content()
+            unit_info = await self.parse_unit_text(content)
+
+            if unit_info:
+                return {
+                    **unit_info,
+                    "data_type": "unit_details"
+                }
+
+            return None
+
+        except Exception as e:
+            logger.error(f"Error extracting unit details: {str(e)}")
+            return None
+
+    async def extract_floorplan_details(self) -> Optional[Dict[str, Any]]:
+        """Extract basic floorplan information"""
+        try:
+            logger.info("📐 Extracting floorplan details...")
+
+            content = await self.page.content()
+            unit_info = await self.parse_unit_text(content)
+
+            if unit_info:
+                return {
+                    **unit_info,
+                    "data_type": "floorplan_details"
+                }
+
+            return None
+
+        except Exception as e:
+            logger.error(f"Error extracting floorplan details: {str(e)}")
+            return None
+
+    async def parse_unit_text(self, text: str) -> Dict[str, Any]:
+        """Parse unit information from text using regex patterns"""
+        try:
+            unit_info = {}
+
+            # Bedroom patterns
+            bedroom_patterns = [
+                r'(\d+)\s*bedroom',
+                r'(\d+)\s*bed',
+                r'(\d+)\s*br',
+                r'(\d+)BR'
+            ]
+
+            for pattern in bedroom_patterns:
+                match = re.search(pattern, text, re.IGNORECASE)
+                if match:
+                    unit_info["bedrooms"] = int(match.group(1))
+                    break
+
+            # Bathroom patterns
+            bathroom_patterns = [
+                r'(\d+(?:\.\d+)?)\s*bathroom',
+                r'(\d+(?:\.\d+)?)\s*bath',
+                r'(\d+(?:\.\d+)?)\s*ba',
+                r'(\d+(?:\.\d+)?)BA'
+            ]
+
+            for pattern in bathroom_patterns:
+                match = re.search(pattern, text, re.IGNORECASE)
+                if match:
+                    unit_info["bathrooms"] = float(match.group(1))
+                    break
+
+            # Square footage patterns
+            sqft_patterns = [
+                r'(\d+(?:,\d+)?)\s*(?:sq\s*ft|sqft|square\s*feet)',
+                r'(\d+(?:,\d+)?)\s*sq\.?\s*ft\.?'
+            ]
+
+            for pattern in sqft_patterns:
+                match = re.search(pattern, text, re.IGNORECASE)
+                if match:
+                    unit_info["sqft"] = int(match.group(1).replace(',', ''))
+                    break
+
+            # Unit type patterns
+            unit_type_patterns = [
+                r'(studio|1br|1-bed|one-bed|2br|2-bed|two-bed|3br|3-bed|three-bed|4br|4-bed|four-bed|penthouse|loft)',
+                r'(one|two|three|four)\s*bedroom'
+            ]
+
+            for pattern in unit_type_patterns:
+                match = re.search(pattern, text, re.IGNORECASE)
+                if match:
+                    unit_type = match.group(1).lower()
+                    unit_info["unit_type"] = unit_type.replace('-', ' ').title()
+                    break
+
+            # Available date patterns
+            date_patterns = [
+                r'available[:\s]*([A-Za-z]+\s+\d{1,2},?\s+\d{4})',
+                r'available[:\s]*(\d{1,2}/\d{1,2}/\d{4})',
+                r'available[:\s]*([A-Za-z]+\s+\d{1,2})'
+            ]
+
+            for pattern in date_patterns:
+                match = re.search(pattern, text, re.IGNORECASE)
+                if match:
+                    unit_info["available_date"] = match.group(1)
+                    break
+
+            return unit_info
+
+        except Exception as e:
+            logger.error(f"Error parsing unit text: {str(e)}")
+            return {}
+
+    # ===== COMPLETE UNIVERSAL SCRAPING FLOW =====
+
+    async def universal_rental_scraper(self, url: str) -> List[Dict[str, Any]]:
+        """Universal scraper that follows the 3-step rental flow"""
+        try:
+            # Navigate through the rental flow
+            success = await self.navigate_rental_flow()
+
+            if not success:
+                logger.info("⚠️  Could not navigate rental flow, extracting available data...")
+
+            # Extract whatever data we can get
+            data = await self.extract_rental_data_universal()
+
+            # If we got pricing details, we're done
+            if data and data[0].get('price'):
+                logger.info("✅ Successfully extracted pricing data!")
+                return data
+
+            # Otherwise try to go back and get floorplan data
+            logger.info("🔄 Could not reach pricing, extracting floorplan data...")
+            await self.page.goto(url)  # Go back to start
+            floorplan_data = await self.extract_floorplan_details()
+
+            if floorplan_data:
+                return [floorplan_data]
+
+            return []
+
+        except Exception as e:
+            logger.error(f"Error in universal rental scraper: {str(e)}")
+            return []

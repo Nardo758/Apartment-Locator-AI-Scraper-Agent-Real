@@ -1,0 +1,558 @@
+{
+  "hybrid_scraping": {
+    "video_analysis_file": "video_analysis_1759496735.json",
+    "target_url": "https://www.thehuntley.com/",
+    "final_url": "https://www.thehuntley.com/",
+    "final_page_title": "Upscale Apartments in Buckhead, GA | The Huntley | Home",
+    "timestamp": "2025-10-03 17:20:19",
+    "extraction_method": "hybrid_video_simple",
+    "stealth_level": "authenticated_profile",
+    "video_patterns_used": true
+  },
+  "rental_data": {
+    "prices": [
+      "$700",
+      "$2,185",
+      "$2,481",
+      "$2,710",
+      "$2,457",
+      "$2,559",
+      "$3,296",
+      "$2,603",
+      "$3,653",
+      "$3,068",
+      "$3,466",
+      "$3,176",
+      "$4,034",
+      "$10,438",
+      "$6,343/ month",
+      "$6,915/ month",
+      "$7,250/ month",
+      "$6,619/ month",
+      "$6,877/ month",
+      "$8,420/ month",
+      "$6,982/ month",
+      "$9,770/ month",
+      "$8,121/ month",
+      "$9,464/ month",
+      "$9,528/ month",
+      "$9,843/ month",
+      "$24,869/ month",
+      "$6,343",
+      "$6,915",
+      "$7,250",
+      "$6,619",
+      "$6,877",
+      "$8,420",
+      "$6,982",
+      "$9,770",
+      "$8,121",
+      "$9,464",
+      "$9,528",
+      "$9,843",
+      "$24,869",
+      "Rent\n                                    $2,185",
+      "Rent\n                                    $2,481",
+      "Rent\n                                    $2,710",
+      "Rent\n                                    $2,457",
+      "Rent\n                                    $2,559",
+      "Rent\n                                    $3,296",
+      "Rent\n                                    $2,603",
+      "Rent\n                                    $3,653",
+      "Rent\n                                    $3,068",
+      "Rent\n                                    $3,466",
+      "Rent\n                                    $3,176",
+      "Rent\n                                    $4,034",
+      "Rent\n                                    $10,438"
+    ],
+    "units": [
+      "1 Bedroom\n                                                    \n                                                \n                                                \n                                                    \n                                                    \n                                                        2 Bedroom",
+      "3 Bedroom",
+      "1 Bath",
+      "5 Bath",
+      "2 Bath",
+      "1 Bath\n                                \n                                    ",
+      "5 Bath\n                                \n                                    ",
+      "2025\n                            \n\n\n                    \n                    \n                                    \n                                            \t\n\t\t\n\n\n\n\n\n\n\n\t\n\n                                    \n                    \n                    \n                        \n\n\n\n                            \n                                \n                                    Ba",
+      "2 Bath\n                                \n                                    ",
+      "2025\n                            \n\n\n                    \n                    \n                                    \n                                            \t\n\t\t\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\n\n                                    \n                    \n                    \n                        \n\n\n\n                            \n                                \n                                    Ba",
+      "1 Bath\n                                    ",
+      "1 Bed",
+      "2 Bed",
+      "3 Bed",
+      "1 Bed\n\n\n    ",
+      "2 Bed\n\n\n    ",
+      "3 Bed\n\n\n    ",
+      "1 Bed\n                                ",
+      "one\n                                            \n                                        \n                                    \n                                \n                                \n                                \n                                    \n                                        Bath"
+    ],
+    "features": [],
+    "availability": [],
+    "price_selectors": [
+      {
+        "selector": "text_content",
+        "text": "$700",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,185",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,481",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,710",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,457",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,559",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$3,296",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,603",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$3,653",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$3,068",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$3,466",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$3,176",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$4,034",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$10,438",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,343/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,915/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$7,250/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,619/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,877/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$8,420/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,982/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,770/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$8,121/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,464/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,528/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,843/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$24,869/ month",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,343",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,915",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$7,250",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,619",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,877",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$8,420",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$6,982",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,770",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$8,121",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,464",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,528",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$9,843",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$24,869",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $2,185",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $2,481",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $2,710",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $2,457",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $2,559",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $3,296",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $2,603",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $3,653",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $3,068",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $3,466",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $3,176",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $4,034",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "Rent\n                                    $10,438",
+        "pattern": "Rent\\s+(?:starts\\s+)?(?:at\\s+)?\\$[\\d,]+",
+        "video_guided": true
+      }
+    ],
+    "unit_selectors": [
+      {
+        "selector": "text_content",
+        "text": "1 Bedroom\n                                                    \n                                                \n                                                \n                                                    \n                                                    \n                                                        2 Bedroom",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "3 Bedroom",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "5 Bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bath\n                                \n                                    ",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "5 Bath\n                                \n                                    ",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2025\n                            \n\n\n                    \n                    \n                                    \n                                            \t\n\t\t\n\n\n\n\n\n\n\n\t\n\n                                    \n                    \n                    \n                        \n\n\n\n                            \n                                \n                                    Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bath\n                                \n                                    ",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2025\n                            \n\n\n                    \n                    \n                                    \n                                            \t\n\t\t\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\n\n                                    \n                    \n                    \n                        \n\n\n\n                            \n                                \n                                    Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bath\n                                    ",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "3 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bed\n\n\n    ",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bed\n\n\n    ",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "3 Bed\n\n\n    ",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bed\n                                ",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "one\n                                            \n                                        \n                                    \n                                \n                                \n                                \n                                    \n                                        Bath",
+        "pattern": "(?:One|Two|Three|Four|Five)\\s*(?:Bedroom|Bath)\\s*(?:Apartment|Unit)?",
+        "video_guided": true
+      }
+    ]
+  },
+  "page_analysis": {
+    "hasDynamicContent": false,
+    "contentAreas": [
+      {
+        "tag": "MAIN",
+        "classes": "",
+        "id": "main-content",
+        "childCount": 1
+      },
+      {
+        "tag": "DIV",
+        "classes": "container",
+        "id": "",
+        "childCount": 1
+      }
+    ],
+    "pricingElements": 28,
+    "unitElements": 83,
+    "forms": 1,
+    "scripts": 71,
+    "stylesheets": 18,
+    "images": 100,
+    "links": 187,
+    "totalElements": 3257
+  },
+  "video_patterns_info": {
+    "patterns_loaded": true,
+    "transitions_learned": 3,
+    "pricing_detected": true
+  }
+}

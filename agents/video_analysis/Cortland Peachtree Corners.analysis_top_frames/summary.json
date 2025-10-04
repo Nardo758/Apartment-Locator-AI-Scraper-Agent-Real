@@ -1,0 +1,23 @@
+{
+  "video": "Cortland Peachtree Corners.mp4",
+  "top_frames": [
+    {
+      "time": 28.0,
+      "motion": 137.89810977207785,
+      "ocr": null,
+      "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top1_28000ms.png"
+    },
+    {
+      "time": 30.0,
+      "motion": 137.84883566102496,
+      "ocr": null,
+      "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top2_30000ms.png"
+    },
+    {
+      "time": 32.0,
+      "motion": 134.90028881270817,
+      "ocr": null,
+      "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top3_32000ms.png"
+    }
+  ]
+}

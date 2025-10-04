@@ -1,0 +1,3 @@
+Set SUPABASE_URL, SUPABASE_KEY and SUPABASE_TABLE environment variables and re-run this script to push results.
+Example:
+$env:SUPABASE_URL="https://xyz.supabase.co"; $env:SUPABASE_KEY="<key>"; $env:SUPABASE_TABLE="training_results"; python run_extraction_and_push.py

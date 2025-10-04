@@ -1,0 +1,22 @@
+{
+  "url": "https://highlandsatsweetwatercreek.com/",
+  "timestamp": "2025-10-02 21:25:37",
+  "page_title": "Highlands at Sweetwater Creek | Luxury Apartment Amenities | Duluth GA",
+  "method": "chrome_profile_authenticated",
+  "chrome_info": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "chromeVersion": "140",
+    "hasChromeRuntime": false,
+    "activityEvents": 1,
+    "cookiesEnabled": true,
+    "localStorage": true,
+    "sessionStorage": true
+  },
+  "rental_data": {
+    "prices_found": [],
+    "units_found": [],
+    "total_prices": 0,
+    "total_units": 0
+  },
+  "stealth_level": "chrome_authenticated"
+}

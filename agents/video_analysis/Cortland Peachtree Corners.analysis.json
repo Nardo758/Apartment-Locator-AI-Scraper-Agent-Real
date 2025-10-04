@@ -1,0 +1,188 @@
+{
+  "file": "Cortland Peachtree Corners.mp4",
+  "fps": 30.0,
+  "frame_count": 1058,
+  "duration": 35.266666666666666,
+  "samples": [
+    {
+      "time": 0.0,
+      "motion": 0.0,
+      "ocr": null
+    },
+    {
+      "time": 1.0,
+      "motion": 13.119084253419677,
+      "ocr": null
+    },
+    {
+      "time": 2.0,
+      "motion": 114.63020771688957,
+      "ocr": null
+    },
+    {
+      "time": 3.0,
+      "motion": 2.6673037172615524,
+      "ocr": null
+    },
+    {
+      "time": 4.0,
+      "motion": 125.70435322016131,
+      "ocr": null
+    },
+    {
+      "time": 5.0,
+      "motion": 69.79175155977885,
+      "ocr": null
+    },
+    {
+      "time": 6.0,
+      "motion": 21.383242205332838,
+      "ocr": null
+    },
+    {
+      "time": 7.0,
+      "motion": 21.908140544950374,
+      "ocr": null
+    },
+    {
+      "time": 8.0,
+      "motion": 0.020896386723703565,
+      "ocr": null
+    },
+    {
+      "time": 9.0,
+      "motion": 0.2522361057098896,
+      "ocr": null
+    },
+    {
+      "time": 10.0,
+      "motion": 103.39590378404883,
+      "ocr": null
+    },
+    {
+      "time": 11.0,
+      "motion": 79.13433383916947,
+      "ocr": null
+    },
+    {
+      "time": 12.0,
+      "motion": 26.057044472718665,
+      "ocr": null
+    },
+    {
+      "time": 13.0,
+      "motion": 0.8423519055509527,
+      "ocr": null
+    },
+    {
+      "time": 14.0,
+      "motion": 0.022213110596351216,
+      "ocr": null
+    },
+    {
+      "time": 15.0,
+      "motion": 86.35779646365589,
+      "ocr": null
+    },
+    {
+      "time": 16.0,
+      "motion": 85.65170434370931,
+      "ocr": null
+    },
+    {
+      "time": 17.0,
+      "motion": 65.34559140557631,
+      "ocr": null
+    },
+    {
+      "time": 18.0,
+      "motion": 0.17936505588150753,
+      "ocr": null
+    },
+    {
+      "time": 19.0,
+      "motion": 31.14252690512825,
+      "ocr": null
+    },
+    {
+      "time": 20.0,
+      "motion": 51.571184988079736,
+      "ocr": null
+    },
+    {
+      "time": 21.0,
+      "motion": 0.8299460629322152,
+      "ocr": null
+    },
+    {
+      "time": 22.0,
+      "motion": 28.033331290262584,
+      "ocr": null
+    },
+    {
+      "time": 23.0,
+      "motion": 81.36121984004869,
+      "ocr": null
+    },
+    {
+      "time": 24.0,
+      "motion": 52.98674610689346,
+      "ocr": null
+    },
+    {
+      "time": 25.0,
+      "motion": 75.16614603587914,
+      "ocr": null
+    },
+    {
+      "time": 26.0,
+      "motion": 3.458383705594914,
+      "ocr": null
+    },
+    {
+      "time": 27.0,
+      "motion": 6.073826889910894,
+      "ocr": null
+    },
+    {
+      "time": 28.0,
+      "motion": 137.89810977207785,
+      "ocr": null
+    },
+    {
+      "time": 29.0,
+      "motion": 0.13013797068123023,
+      "ocr": null
+    },
+    {
+      "time": 30.0,
+      "motion": 137.84883566102496,
+      "ocr": null
+    },
+    {
+      "time": 31.0,
+      "motion": 0.4853274056101314,
+      "ocr": null
+    },
+    {
+      "time": 32.0,
+      "motion": 134.90028881270817,
+      "ocr": null
+    },
+    {
+      "time": 33.0,
+      "motion": 0.018618538964881727,
+      "ocr": null
+    },
+    {
+      "time": 34.0,
+      "motion": 0.01608231320697293,
+      "ocr": null
+    },
+    {
+      "time": 35.0,
+      "motion": 0.18345736181796662,
+      "ocr": null
+    }
+  ]
+}
