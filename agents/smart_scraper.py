@@ -328,7 +328,7 @@ class SmartScraper:
 
             # Extract data from each unit
             for i, unit_elem in enumerate(unit_elements[:10]):  # Limit to first 10 units
-                unit_data = await self._extract_unit_data(unit_elem, navigation)
+                unit_data = await self._extract_unit_data(page, unit_elem, navigation)
                 if unit_data:
                     data["units"].append(unit_data)
 
@@ -339,44 +339,179 @@ class SmartScraper:
 
         return data
 
-    async def _extract_unit_data(self, unit_element, navigation: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Extract data from a single unit element."""
+    async def _extract_unit_data(self, page: Page, unit_element, navigation: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Extract data from a single unit element. Attempts selector-based extraction, visible-text parsing,
+        and a click-to-open-modal fallback when necessary.
+        """
         try:
             unit_data = {}
+            import re
 
-            # Extract price
+            # Try explicit selectors from template/navigation first
             price_selector = navigation.get("price_selector")
             if price_selector:
                 try:
                     price_elem = await unit_element.query_selector(price_selector)
                     if price_elem:
-                        unit_data["price"] = await price_elem.text_content()
+                        unit_data["price"] = (await price_elem.text_content() or "").strip()
                 except Exception:
                     pass
 
-            # Extract bed/bath info
             bedbath_selector = navigation.get("bedbath_selector")
             if bedbath_selector:
                 try:
                     bedbath_elem = await unit_element.query_selector(bedbath_selector)
                     if bedbath_elem:
-                        unit_data["bedbath"] = await bedbath_elem.text_content()
+                        unit_data["bedbath"] = (await bedbath_elem.text_content() or "").strip()
                 except Exception:
                     pass
 
-            # Extract lease term
-            lease_term_selector = navigation.get("lease_term_selector")
-            if lease_term_selector:
+            # Fallback: parse visible text inside the unit element
+            try:
+                visible_text = (await unit_element.text_content() or "").strip()
+            except Exception:
+                visible_text = ""
+
+            if not unit_data.get("price"):
+                m = re.search(r"\$\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?", visible_text)
+                if m:
+                    unit_data["price"] = m.group(0).strip()
+
+            if not unit_data.get("bedbath"):
+                m2 = re.search(r"(\d+\s*(?:bed|bedroom|br))", visible_text, flags=re.I)
+                m3 = re.search(r"(\d+\s*(?:bath|bathroom|ba))", visible_text, flags=re.I)
+                beds = m2.group(0).strip() if m2 else None
+                baths = m3.group(0).strip() if m3 else None
+                if beds or baths:
+                    unit_data["bedbath"] = " ".join([x for x in (beds, baths) if x])
+
+            # Try to extract sqft
+            if not unit_data.get("sqft"):
+                m4 = re.search(r"(\d{3,5})\s*(?:sq\.\s*ft|sqft|sq ft|sqft\.)", visible_text, flags=re.I)
+                if m4:
+                    unit_data["sqft"] = m4.group(1).strip()
+
+            # Try to capture unit name or number from visible text or attributes
+            if not unit_data.get("unit_name"):
+                # common patterns like 'A1B' or '#2105' or 'Unit 2105'
+                m_name = re.search(r"(#\d+)|([A-Z]\d+[A-Z]?)|(Unit\s+\d+)", visible_text)
+                if m_name:
+                    unit_data["unit_name"] = m_name.group(0).strip()
+
+            # If key fields still missing, attempt to click to reveal modal/details and scrape modal text
+            if not unit_data.get("price") or not unit_data.get("bedbath"):
                 try:
-                    lease_elem = await unit_element.query_selector(lease_term_selector)
-                    if lease_elem:
-                        unit_data["lease_term"] = await lease_elem.text_content()
+                    await unit_element.click()
+                    # small wait for modal/dialog load
+                    await page.wait_for_timeout(1000)
+
+                    modal_selectors = ['.modal', '[role="dialog"]', '.unit-details', '.jd-fp-unit-card__modal', '.floorplan-modal']
+                    modal_text = ""
+                    for ms in modal_selectors:
+                        try:
+                            modal = await page.query_selector(ms)
+                            if modal:
+                                modal_text = (await modal.text_content() or "").strip()
+                                break
+                        except Exception:
+                            continue
+
+                    if modal_text:
+                        if not unit_data.get("price"):
+                            m = re.search(r"\$\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?", modal_text)
+                            if m:
+                                unit_data["price"] = m.group(0).strip()
+
+                        if not unit_data.get("bedbath"):
+                            m2 = re.search(r"(\d+\s*(?:bed|bedroom|br))", modal_text, flags=re.I)
+                            m3 = re.search(r"(\d+\s*(?:bath|bathroom|ba))", modal_text, flags=re.I)
+                            beds = m2.group(0).strip() if m2 else None
+                            baths = m3.group(0).strip() if m3 else None
+                            if beds or baths:
+                                unit_data["bedbath"] = " ".join([x for x in (beds, baths) if x])
+
                 except Exception:
+                    # clicking/modal extraction is best-effort
                     pass
 
-            # Only return if we got some data
-            if unit_data:
-                return unit_data
+            # Normalize whitespace
+            for k, v in list(unit_data.items()):
+                if isinstance(v, str):
+                    unit_data[k] = v.strip()
+
+            # Post-process and normalize structured fields to align with DB schema
+            try:
+                from decimal import Decimal, InvalidOperation
+
+                # Normalize price into a decimal string without $ or commas (e.g. '1568.50')
+                if unit_data.get('price'):
+                    p_raw = str(unit_data.get('price'))
+                    p_clean = p_raw.replace('$', '').replace(',', '').strip()
+                    try:
+                        p_dec = Decimal(p_clean)
+                        # Format with two decimal places
+                        unit_data['price'] = format(p_dec.quantize(Decimal('0.01')), 'f')
+                    except (InvalidOperation, Exception):
+                        # leave as-is
+                        unit_data['price'] = p_clean
+
+                # If bedbath string exists, extract numeric bedrooms and bathrooms
+                if unit_data.get('bedbath') and not unit_data.get('bedrooms'):
+                    bb = unit_data.get('bedbath')
+                    m_bed = re.search(r"(\d+(?:\.\d+)?)\s*(?:bed|bd|br|bedroom)", bb, flags=re.I)
+                    m_bath = re.search(r"(\d+(?:\.\d+)?)\s*(?:bath|ba|bathroom)", bb, flags=re.I)
+                    if m_bed:
+                        try:
+                            unit_data['bedrooms'] = int(float(m_bed.group(1)))
+                        except Exception:
+                            unit_data['bedrooms'] = None
+                    if m_bath:
+                        try:
+                            # allow float bathrooms (e.g., 1.5)
+                            unit_data['bathrooms'] = float(m_bath.group(1))
+                        except Exception:
+                            unit_data['bathrooms'] = None
+
+                # Normalize sqft to int if present
+                if unit_data.get('sqft'):
+                    try:
+                        unit_data['sqft'] = int(str(unit_data.get('sqft')).replace(',', '').split()[0])
+                    except Exception:
+                        try:
+                            unit_data['sqft'] = int(float(unit_data.get('sqft')))
+                        except Exception:
+                            unit_data['sqft'] = None
+
+                # Try to populate unit_name from element attributes if missing
+                if not unit_data.get('unit_name'):
+                    try:
+                        # check common attributes like data-unit, data-unit-number, aria-label
+                        attrs = ['data-unit', 'data-unit-number', 'data-unitname', 'aria-label', 'id', 'title']
+                        for a in attrs:
+                            try:
+                                val = await unit_element.get_attribute(a)
+                                if val:
+                                    unit_data['unit_name'] = val.strip()
+                                    break
+                            except Exception:
+                                continue
+                    except Exception:
+                        pass
+
+                # normalize final field names to match mapping keys used by push script
+                if unit_data.get('unit_name'):
+                    unit_data['unit_name'] = str(unit_data.get('unit_name'))
+                if unit_data.get('bedrooms') is None and 'beds' in unit_data:
+                    try:
+                        unit_data['bedrooms'] = int(unit_data.get('beds'))
+                    except Exception:
+                        unit_data['bedrooms'] = None
+
+            except Exception:
+                # best-effort normalization; swallow errors
+                pass
+
+            return unit_data if unit_data else None
 
         except Exception as e:
             print(f"⚠️  Unit extraction error: {e}")
@@ -538,6 +673,28 @@ class SmartScraper:
                         break
                 except Exception:
                     continue
+
+            # Fallback: if we didn't find price or bedbath via selectors, parse the element's visible text
+            if not unit_data.get("price") or not unit_data.get("bedbath"):
+                try:
+                    text = (await unit_element.text_content()) or ""
+                    # Price regex: $1,234 or $1,234.56
+                    import re
+                    if not unit_data.get("price"):
+                        m = re.search(r"\$\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?", text)
+                        if m:
+                            unit_data["price"] = m.group(0).strip()
+
+                    if not unit_data.get("bedbath"):
+                        # try to find patterns like '1 bed', '2 bed', '1 bed 1 bath'
+                        m2 = re.search(r"(\d+\s*(?:bed|bedroom|br))", text, flags=re.I)
+                        m3 = re.search(r"(\d+\s*(?:bath|bathroom|ba))", text, flags=re.I)
+                        beds = m2.group(0).strip() if m2 else None
+                        baths = m3.group(0).strip() if m3 else None
+                        if beds or baths:
+                            unit_data["bedbath"] = " ".join([x for x in (beds, baths) if x])
+                except Exception:
+                    pass
 
             return unit_data if unit_data else None
 

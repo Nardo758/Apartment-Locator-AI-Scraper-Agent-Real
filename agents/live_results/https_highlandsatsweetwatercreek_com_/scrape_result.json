@@ -1,0 +1,50 @@
+{
+  "property_url": "https://highlandsatsweetwatercreek.com/floorplans/",
+  "units": [
+    {
+      "price": "$1,568.50",
+      "bedbath": "1 bed 1 bath",
+      "sqft": "700",
+      "unit_name": "A1B"
+    },
+    {
+      "price": "$1,618.50",
+      "bedbath": "1 bed 1 bath",
+      "sqft": "806",
+      "unit_name": "A1D"
+    },
+    {
+      "price": "$1,618.50",
+      "bedbath": "1 bed 1 bath",
+      "sqft": "806",
+      "unit_name": "A1D"
+    },
+    {
+      "price": "$1,628.50",
+      "bedbath": "1 bed 1 bath",
+      "sqft": "813",
+      "unit_name": "A1F"
+    },
+    {
+      "price": "$1,758.50",
+      "bedbath": "1 bed 1 bath",
+      "sqft": "820",
+      "unit_name": "A1G"
+    },
+    {
+      "price": "$1,918.50",
+      "bedbath": "2 bed 2 bath",
+      "sqft": "1169",
+      "unit_name": "B2D"
+    }
+  ],
+  "extraction_method": "template",
+  "template_used": "unknown",
+  "scrape_metadata": {
+    "template_used": "buildium",
+    "template_name": null,
+    "scrape_duration": 39.22360682487488,
+    "success": true,
+    "units_found": 6
+  }
+}

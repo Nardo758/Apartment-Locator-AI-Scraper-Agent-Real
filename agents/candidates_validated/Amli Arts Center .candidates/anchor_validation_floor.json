@@ -1,0 +1,23 @@
+{
+  "time": null,
+  "motion": null,
+  "ocr": null,
+  "image": null,
+  "tested": [
+    {
+      "expr": "a[text contains floor]",
+      "type": "anchor_keyword",
+      "matches": [
+        {
+          "index": 0,
+          "visible": true,
+          "clicked": true,
+          "click_error": null,
+          "before_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+          "after_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center/floorplans",
+          "screenshot": "anchor_shot_1759579978469_floor_0.png"
+        }
+      ]
+    }
+  ]
+}

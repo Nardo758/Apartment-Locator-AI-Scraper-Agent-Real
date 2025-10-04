@@ -7,21 +7,452 @@
       "motion": 47.369585906662586,
       "ocr": null,
       "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top1_1000ms.png",
-      "tested": []
+      "tested": [
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [
+            {
+              "index": 0,
+              "visible": false
+            },
+            {
+              "index": 1,
+              "visible": true,
+              "clicked": true,
+              "click_error": null,
+              "before_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "after_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "modal_html": "",
+              "screenshot": "shot_1759578272413_1.png"
+            },
+            {
+              "index": 2,
+              "visible": true,
+              "clicked": true,
+              "click_error": null,
+              "before_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "after_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "modal_html": "",
+              "screenshot": "shot_1759578288820_2.png"
+            }
+          ],
+          "count": 5
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [
+            {
+              "index": 0,
+              "visible": false
+            },
+            {
+              "index": 1,
+              "visible": true,
+              "clicked": true,
+              "click_error": null,
+              "before_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "after_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center/floorplans",
+              "modal_html": "",
+              "screenshot": "shot_1759578305265_1.png"
+            },
+            {
+              "index": 2,
+              "visible": false
+            }
+          ],
+          "count": 6
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [
+            {
+              "index": 0,
+              "visible": false
+            },
+            {
+              "index": 1,
+              "visible": false
+            },
+            {
+              "index": 2,
+              "visible": true,
+              "clicked": true,
+              "click_error": null,
+              "before_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "after_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "modal_html": "",
+              "screenshot": "shot_1759578321730_2.png"
+            }
+          ],
+          "count": 11
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [
+            {
+              "index": 0,
+              "visible": false
+            },
+            {
+              "index": 1,
+              "visible": false
+            }
+          ],
+          "count": 2
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [
+            {
+              "index": 0,
+              "visible": false
+            },
+            {
+              "index": 1,
+              "visible": false
+            },
+            {
+              "index": 2,
+              "visible": false
+            }
+          ],
+          "count": 7
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [
+            {
+              "index": 0,
+              "visible": true,
+              "clicked": true,
+              "click_error": null,
+              "before_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "after_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+              "modal_html": null,
+              "screenshot": null
+            },
+            {
+              "index": 1,
+              "visible": false
+            },
+            {
+              "index": 2,
+              "visible": false
+            }
+          ],
+          "count": 5
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".unit",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".units",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".floorplan",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".floor-plans",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".pricing",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".price",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "[data-unit]",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        }
+      ]
     },
     {
       "time": 2.0,
       "motion": 32.404684735266095,
       "ocr": null,
       "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top2_2000ms.png",
-      "tested": []
+      "tested": [
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".unit",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".units",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".floorplan",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".floor-plans",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".pricing",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".price",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "[data-unit]",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        }
+      ]
     },
     {
       "time": 3.0,
       "motion": 27.696233369062202,
       "ocr": null,
       "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top3_3000ms.png",
-      "tested": []
+      "tested": [
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]",
+          "type": "xpath_fallback_keyword",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".unit",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".units",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".floorplan",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".floor-plans",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".pricing",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": ".price",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        },
+        {
+          "expr": "[data-unit]",
+          "type": "css_fallback",
+          "matches": [],
+          "error": "locator-error: Locator.count: Target page, context or browser has been closed"
+        }
+      ]
     }
   ]
 }

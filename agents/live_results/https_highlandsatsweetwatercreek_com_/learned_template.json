@@ -1,0 +1,18 @@
+{
+  "learned_at": "2025-10-04T09:15:26.955349",
+  "url": "https://highlandsatsweetwatercreek.com",
+  "selectors": {
+    "unit_selector": "[data-unit]",
+    "price_selector": {
+      "method": "text_content",
+      "regex": "\\$\\s?\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?"
+    },
+    "bedbath_selector": {
+      "method": "text_content",
+      "regex": "(\\d+\\s*(?:bed|bedroom|br))(?:.*?(\\d+\\s*(?:bath|bathroom|ba)))?"
+    }
+  },
+  "success_rate": 1.0,
+  "usage_count": 1,
+  "last_used": "2025-10-04T09:15:26.955349"
+}

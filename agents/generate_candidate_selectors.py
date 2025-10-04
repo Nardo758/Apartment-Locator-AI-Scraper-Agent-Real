@@ -59,9 +59,21 @@ def generate_for_analysis_dir(dirpath: Path):
     data = json.loads(summary.read_text(encoding='utf-8'))
     top_frames = data.get('top_frames', [])
     candidates = []
+    # common property keywords to try when OCR is empty
+    fallback_keywords = ['availability', 'floor plan', 'apply', 'price', 'rent', 'units', 'availability', 'bed', 'bath', 'floorplans', 'pricing', 'amenities', 'fees', 'concessions']
     for tf in top_frames:
         ocr = tf.get('ocr')
         candidates_from_text = text_to_candidate_selectors(ocr or '')
+        # if no OCR-derived candidates, add some generic fallbacks
+        if not candidates_from_text:
+            for k in fallback_keywords:
+                expr = "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '%s')]" % k
+                candidates_from_text.append({'type': 'xpath_fallback_keyword', 'expr': expr})
+            # also add a few CSS heuristics
+            css_samples = ['.unit', '.units', '.floorplan', '.floor-plans', '.pricing', '.price', '[data-unit]']
+            for cs in css_samples:
+                candidates_from_text.append({'type': 'css_fallback', 'expr': cs})
+
         candidates.append({'time': tf.get('time'), 'motion': tf.get('motion'), 'ocr': ocr, 'candidates': candidates_from_text, 'image': tf.get('image')})
 
     out_path = CANDIDATES_DIR / (dirpath.stem + '.candidates.json')

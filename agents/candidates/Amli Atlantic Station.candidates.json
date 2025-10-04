@@ -5,21 +5,240 @@
       "time": 4.0,
       "motion": 59.4890582453344,
       "ocr": null,
-      "candidates": [],
+      "candidates": [
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".unit"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".units"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floorplan"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floor-plans"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".pricing"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".price"
+        },
+        {
+          "type": "css_fallback",
+          "expr": "[data-unit]"
+        }
+      ],
       "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top1_4000ms.png"
     },
     {
       "time": 2.0,
       "motion": 56.19665168194195,
       "ocr": null,
-      "candidates": [],
+      "candidates": [
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".unit"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".units"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floorplan"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floor-plans"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".pricing"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".price"
+        },
+        {
+          "type": "css_fallback",
+          "expr": "[data-unit]"
+        }
+      ],
       "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top2_2000ms.png"
     },
     {
       "time": 5.0,
       "motion": 49.096670153417016,
       "ocr": null,
-      "candidates": [],
+      "candidates": [
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".unit"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".units"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floorplan"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floor-plans"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".pricing"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".price"
+        },
+        {
+          "type": "css_fallback",
+          "expr": "[data-unit]"
+        }
+      ],
       "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top3_5000ms.png"
     }
   ]

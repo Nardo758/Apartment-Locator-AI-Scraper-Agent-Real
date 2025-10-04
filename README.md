@@ -4,6 +4,21 @@ A comprehensive apartment rental data scraping system with intelligent learning 
 
 ## Features
 
+## Usage
+ - python enhanced_scraper.py extract https://www.apartments.com/example
+
+Supabase push helper
+--------------------
+If you want to push a saved scrape result to Supabase, use the helper script:
+
+    python agents/push_scrape_to_supabase.py --file agents/live_results/<domain>/scrape_result.json --dry-run
+
+To actually push, set these environment variables and omit --dry-run:
+
+    SUPABASE_URL
+    SUPABASE_SERVICE_ROLE_KEY
+
+The script will call the RPC `rpc_bulk_upsert_properties` by default. Modify the --rpc argument to change.
 ### Core Scraping Engine
 - **Template-Based Scraping**: Intelligent platform detection with customizable templates
 - **Universal Navigation Flow**: 3-step rental process (Floor Plans → Unit Selection → Pricing Details)

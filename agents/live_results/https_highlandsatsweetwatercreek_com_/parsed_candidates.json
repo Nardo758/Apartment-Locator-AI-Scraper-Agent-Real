@@ -1,0 +1,11 @@
+{
+  "prices": [
+    {
+      "text": "$133",
+      "selector": "style",
+      "method": "parent_text"
+    }
+  ],
+  "units": [],
+  "detected_selectors": []
+}

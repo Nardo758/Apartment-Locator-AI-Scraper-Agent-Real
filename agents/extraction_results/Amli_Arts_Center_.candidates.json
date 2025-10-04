@@ -1,0 +1,12 @@
+{
+  "site_key": "Amli Arts Center .candidates",
+  "url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+  "timestamp": "2025-10-04T12:42:42.954836",
+  "chosen_expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]",
+  "match_count": 6,
+  "clicked": true,
+  "modal_html": "",
+  "final_url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center/floorplans",
+  "screenshot": "extraction_results\\Amli_Arts_Center_.candidates\\extraction_1759581776942.png",
+  "page_html_saved": true
+}

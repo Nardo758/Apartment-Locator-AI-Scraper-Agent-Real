@@ -5,21 +5,240 @@
       "time": 4.0,
       "motion": 84.27106359315489,
       "ocr": null,
-      "candidates": [],
+      "candidates": [
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".unit"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".units"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floorplan"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floor-plans"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".pricing"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".price"
+        },
+        {
+          "type": "css_fallback",
+          "expr": "[data-unit]"
+        }
+      ],
       "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top1_4000ms.png"
     },
     {
       "time": 16.0,
       "motion": 78.42490268495105,
       "ocr": null,
-      "candidates": [],
+      "candidates": [
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".unit"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".units"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floorplan"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floor-plans"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".pricing"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".price"
+        },
+        {
+          "type": "css_fallback",
+          "expr": "[data-unit]"
+        }
+      ],
       "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top2_16000ms.png"
     },
     {
       "time": 30.0,
       "motion": 74.38654271894575,
       "ocr": null,
-      "candidates": [],
+      "candidates": [
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floor plan')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'apply')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'price')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'rent')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'units')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'availability')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bed')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'bath')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'floorplans')]"
+        },
+        {
+          "type": "xpath_fallback_keyword",
+          "expr": "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'pricing')]"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".unit"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".units"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floorplan"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".floor-plans"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".pricing"
+        },
+        {
+          "type": "css_fallback",
+          "expr": ".price"
+        },
+        {
+          "type": "css_fallback",
+          "expr": "[data-unit]"
+        }
+      ],
       "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top3_30000ms.png"
     }
   ]

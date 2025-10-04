@@ -53,6 +53,18 @@ def analyze_video(path: Path, sample_rate=1.0):
             continue
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Basic preprocessing to improve OCR: contrast, denoise, adaptive threshold
+        try:
+            # increase contrast
+            gray = cv2.convertScaleAbs(gray, alpha=1.3, beta=0)
+            # denoise
+            gray = cv2.fastNlMeansDenoising(gray, None, h=10)
+            # adaptive threshold to make text pop
+            gray = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                         cv2.THRESH_BINARY, 11, 2)
+        except Exception:
+            # fallback: keep original gray
+            pass
         motion = 0.0
         if prev_gray is not None:
             diff = cv2.absdiff(gray, prev_gray)
@@ -61,7 +73,9 @@ def analyze_video(path: Path, sample_rate=1.0):
         text = None
         if pytesseract is not None:
             try:
-                text = pytesseract.image_to_string(gray)
+                # use OCR config to only look for short text lines (reduce noise)
+                config = '--psm 6'
+                text = pytesseract.image_to_string(gray, config=config)
                 text = text.strip() if text else None
             except Exception:
                 text = None
