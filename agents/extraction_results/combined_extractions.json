@@ -3,76 +3,76 @@
     {
       "site_key": "Amli Arts Center .candidates",
       "url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
-      "timestamp": "2025-10-04T01:16:59.215724",
+      "timestamp": "2025-10-04T02:04:05.088896",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Amli Atlantic Station.candidates",
       "url": "https://www.amli.com/apartments/atlanta/midtown-apartments",
-      "timestamp": "2025-10-04T01:17:03.750908",
+      "timestamp": "2025-10-04T02:04:11.394070",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Atlantic House Midtown.candidates",
       "url": "https://atlantichousemidtown.com",
-      "timestamp": "2025-10-04T01:17:08.528222",
+      "timestamp": "2025-10-04T02:04:16.263935",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Broadstone2thirty.candidates",
       "url": "https://www.broadstone2thirty.com",
-      "timestamp": "2025-10-04T01:17:12.896048",
+      "timestamp": "2025-10-04T02:04:21.213394",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Centennialplaceapts.candidates",
       "url": "https://www.centennialplaceapts.com",
-      "timestamp": "2025-10-04T01:17:18.649613",
+      "timestamp": "2025-10-04T02:04:27.160825",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Cortland Peachtree Corners.candidates",
       "url": "https://cortland.com/apartments/atlanta-metro/cortland-brookhaven",
-      "timestamp": "2025-10-04T01:17:21.797106",
+      "timestamp": "2025-10-04T02:04:31.995217",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Maa-Brookhaven.candidates",
       "url": "https://www.maac.com/georgia/atlanta/maa-brookhaven",
-      "timestamp": "2025-10-04T01:17:28.639778",
+      "timestamp": "2025-10-04T02:04:39.266595",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Novel Midtown Atlanta.candidates",
       "url": "https://novelmidtownatl.com",
-      "timestamp": "2025-10-04T01:17:35.668477",
+      "timestamp": "2025-10-04T02:04:46.866655",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Sentral.com.candidates",
       "url": "https://sentral.com/atlanta/west-midtown",
-      "timestamp": "2025-10-04T01:17:39.898333",
+      "timestamp": "2025-10-04T02:04:51.022896",
       "chosen_expr": null,
       "error": "no-candidate"
     },
     {
       "site_key": "Windsorcommunites.candidates",
       "url": "https://www.windsoratmidtown.com",
-      "timestamp": "2025-10-04T01:17:43.425279",
+      "timestamp": "2025-10-04T02:04:54.800361",
       "chosen_expr": null,
       "error": "no-candidate"
     }
   ],
   "supabase": {
     "pushed": false,
-    "reason": "HTTP Error 404: Not Found"
+    "reason": "missing-env"
   }
 }

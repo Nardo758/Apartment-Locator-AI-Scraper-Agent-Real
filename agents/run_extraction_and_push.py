@@ -229,7 +229,8 @@ def main():
                 print('No URL mapping for', stem, '- skipping')
                 continue
             print('Extracting', stem, '->', url)
-            r = extract_for_site(p, stem, url, vd, headful=False)
+            # run in headful mode to allow interactive/unobstructed extraction
+            r = extract_for_site(p, stem, url, vd, headful=True)
             reports.append(r)
 
     # attempt supabase push
