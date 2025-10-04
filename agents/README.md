@@ -191,7 +191,8 @@ python integration_demo.py
 ## 🔧 Development
 
 ### Project Structure
-```
+
+```text
 agents/
 ├── property_discovery_agent.py    # Main discovery agent ✅
 ├── rental_data_agent.py          # Vision-based rental agent ✅
@@ -204,6 +205,7 @@ agents/
 ```
 
 ### Adding New Agent Features
+
 1. Extend base agent classes with new methods
 2. Add configuration options to `.env.example`
 3. Update database schema if needed
@@ -213,12 +215,14 @@ agents/
 ## 🚨 Error Handling
 
 ### Common Issues
+
 - **Missing API Keys**: Check `.env` configuration
 - **Rate Limits**: Implement exponential backoff
 - **Website Blocking**: Rotate user agents and proxies
 - **Claude API Errors**: Fallback to simpler extraction methods
 
 ### Logging
+
 - Structured logging with different levels
 - Performance metrics collection
 - Error tracking and alerting
@@ -226,16 +230,19 @@ agents/
 ## 🔄 Future Enhancements
 
 ### Phase 2: Rental Data Agent ✅ **COMPLETED**
+
 - Complete vision-guided browser automation
 - Multi-page navigation intelligence
 - Advanced concession detection
 
 ### Phase 3: Hybrid Intelligence ⭐ **NEXT**
+
 - Smart routing between agents based on website complexity
 - Cost optimization through intelligent agent selection
 - Automated quality assurance and fallback mechanisms
 
 ### Advanced Features
+
 - Real-time pricing monitoring
 - Competitive analysis
 - Market trend detection
@@ -246,6 +253,7 @@ agents/
 ## 📞 Support
 
 For issues or questions:
+
 1. Check the test suite: `python test_agent_structure.py`
 2. Review configuration in `.env`
 3. Check Supabase database connectivity
@@ -253,5 +261,4 @@ For issues or questions:
 
 ---
 
-**🎯 Goal**: Build the most efficient and cost-effective apartment data collection system using cutting-edge AI agents.</content>
-<parameter name="filePath">c:\Users\Leon\Documents\GitHub\Apartment-Locator-AI-Scraper-Agent-Real\agents\README.md
+**🎯 Goal**: Build the most efficient and cost-effective apartment data collection system using cutting-edge AI agents.
