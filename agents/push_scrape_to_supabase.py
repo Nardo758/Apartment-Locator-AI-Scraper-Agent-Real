@@ -319,7 +319,10 @@ def main():
                 return str(obj)
             raise TypeError
 
-        out = {'mode': 'dry-run', 'count': len(payloads), 'payloads': payloads}
+        # validate/coerce payloads for safer inspection
+        cleaned, issues = validate_and_coerce(payloads)
+
+        out = {'mode': 'dry-run', 'count': len(cleaned), 'payloads': cleaned, 'validation_issues': issues}
         print(json.dumps(out, indent=2, ensure_ascii=False, default=_serialize))
         # save a local backup for reproducibility
         import datetime
@@ -341,19 +344,27 @@ def main():
         print('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables are required for push')
         sys.exit(3)
 
-    print(f'Calling Supabase RPC {args.rpc} with {len(payloads)} items...')
-    result = call_supabase_rpc(supabase_url, service_key, args.rpc, payloads)
+    # validate/coerce payloads before push
+    cleaned, issues = validate_and_coerce(payloads)
+    if issues:
+        print('Validation issues detected before push:')
+        for isue in issues:
+            print(' -', isue)
+
+    print(f'Calling Supabase RPC {args.rpc} with {len(cleaned)} items...')
+    result = call_supabase_rpc(supabase_url, service_key, args.rpc, cleaned)
     # save a local backup of the payload + RPC response
     try:
         import datetime
         ts = datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
-        backup_obj = {'mode': 'push', 'rpc': args.rpc, 'items': payloads, 'result': result}
+        backup_obj = {'mode': 'push', 'rpc': args.rpc, 'items': cleaned, 'validation_issues': issues, 'result': result}
         backup_path = os.path.join(backups_dir, f'push_{ts}.json')
         with open(backup_path, 'w', encoding='utf-8') as bf:
             json.dump(backup_obj, bf, indent=2, ensure_ascii=False)
         print(f'Local push backup saved to: {backup_path}')
     except Exception as e:
         print('Failed to write local push backup:', e)
+
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
