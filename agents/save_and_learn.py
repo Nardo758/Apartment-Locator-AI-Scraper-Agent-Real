@@ -1,9 +1,16 @@
 import asyncio
 import json
+import os
 from pathlib import Path
 
 from smart_scraper import SmartScraper
 from template_manager import TemplateManager
+
+try:
+    from push_scrape_to_supabase import build_payloads, call_supabase_rpc
+except Exception:
+    # allow module import when running from agents/ dir
+    from agents.push_scrape_to_supabase import build_payloads, call_supabase_rpc
 
 
 async def run_and_save(url: str):
@@ -45,6 +52,38 @@ async def run_and_save(url: str):
         print('Saved learned template to', learned_file)
     else:
         print('Failed to record learned template for domain')
+
+    # Build payloads for push and save a local backup
+    payloads = build_payloads(result, improved=True)
+    backups_dir = Path(__file__).resolve().parent / 'backups'
+    backups_dir.mkdir(parents=True, exist_ok=True)
+    ts = __import__('datetime').datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
+    backup_path = backups_dir / f'save_and_learn_{ts}.json'
+    try:
+        with open(backup_path, 'w', encoding='utf-8') as bf:
+            json.dump({'scrape_result': result, 'payloads': payloads}, bf, indent=2, ensure_ascii=False)
+        print('Saved push backup to', backup_path)
+    except Exception as e:
+        print('Failed to write save_and_learn backup:', e)
+
+    # If Supabase env vars are present, attempt a push (best-effort)
+    supabase_url = os.environ.get('SUPABASE_URL')
+    service_key = os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or os.environ.get('SUPABASE_SERVICE_KEY')
+    if supabase_url and service_key:
+        print('SUPABASE env vars detected — attempting best-effort push (backed up locally)')
+        try:
+            res = call_supabase_rpc(supabase_url, service_key, 'rpc_bulk_upsert_properties', payloads)
+            print('Push result:', res)
+            # save response next to backup
+            try:
+                with open(str(backup_path) + '.response.json', 'w', encoding='utf-8') as rf:
+                    json.dump(res, rf, indent=2, ensure_ascii=False)
+            except Exception:
+                pass
+        except Exception as e:
+            print('Push attempt failed:', e)
+    else:
+        print('No SUPABASE env vars found — backup saved, push skipped.')
 
 
 def main():
