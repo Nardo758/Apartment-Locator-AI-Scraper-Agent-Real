@@ -5,7 +5,8 @@ A comprehensive apartment rental data scraping system with intelligent learning 
 ## Features
 
 ## Usage
- - python enhanced_scraper.py extract https://www.apartments.com/example
+
+- python enhanced_scraper.py extract https://www.apartments.com/example
 
 Supabase push helper
 --------------------

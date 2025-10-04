@@ -99,7 +99,7 @@ The extension requires these permissions:
 
 ### File Structure
 
-```
+```text
 browser-extension/
 ├── manifest.json          # Extension manifest
 ├── popup.html            # Extension popup UI
