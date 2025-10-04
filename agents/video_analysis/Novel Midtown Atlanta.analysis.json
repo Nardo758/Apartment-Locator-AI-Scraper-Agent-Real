@@ -1,0 +1,328 @@
+{
+  "file": "Novel Midtown Atlanta.mp4",
+  "fps": 30.0,
+  "frame_count": 1904,
+  "duration": 63.46666666666667,
+  "samples": [
+    {
+      "time": 0.0,
+      "motion": 0.0,
+      "ocr": null
+    },
+    {
+      "time": 1.0,
+      "motion": 18.702827669057367,
+      "ocr": null
+    },
+    {
+      "time": 2.0,
+      "motion": 47.842599141543914,
+      "ocr": null
+    },
+    {
+      "time": 3.0,
+      "motion": 48.747253193874684,
+      "ocr": null
+    },
+    {
+      "time": 4.0,
+      "motion": 0.47241370573915686,
+      "ocr": null
+    },
+    {
+      "time": 5.0,
+      "motion": 83.68086641570304,
+      "ocr": null
+    },
+    {
+      "time": 6.0,
+      "motion": 0.5996862602688534,
+      "ocr": null
+    },
+    {
+      "time": 7.0,
+      "motion": 0.031557128711408006,
+      "ocr": null
+    },
+    {
+      "time": 8.0,
+      "motion": 90.108773839258,
+      "ocr": null
+    },
+    {
+      "time": 9.0,
+      "motion": 95.93266366298526,
+      "ocr": null
+    },
+    {
+      "time": 10.0,
+      "motion": 8.27600070517544,
+      "ocr": null
+    },
+    {
+      "time": 11.0,
+      "motion": 11.24523531535488,
+      "ocr": null
+    },
+    {
+      "time": 12.0,
+      "motion": 0.12046096093877008,
+      "ocr": null
+    },
+    {
+      "time": 13.0,
+      "motion": 15.121247949396272,
+      "ocr": null
+    },
+    {
+      "time": 14.0,
+      "motion": 0.2309153979490796,
+      "ocr": null
+    },
+    {
+      "time": 15.0,
+      "motion": 9.126790649458133,
+      "ocr": null
+    },
+    {
+      "time": 16.0,
+      "motion": 10.135702462413516,
+      "ocr": null
+    },
+    {
+      "time": 17.0,
+      "motion": 0.3101373191932286,
+      "ocr": null
+    },
+    {
+      "time": 18.0,
+      "motion": 10.07017023441805,
+      "ocr": null
+    },
+    {
+      "time": 19.0,
+      "motion": 61.80029389347628,
+      "ocr": null
+    },
+    {
+      "time": 20.0,
+      "motion": 5.694856441904311,
+      "ocr": null
+    },
+    {
+      "time": 21.0,
+      "motion": 17.346353039538386,
+      "ocr": null
+    },
+    {
+      "time": 22.0,
+      "motion": 1.381873085311449,
+      "ocr": null
+    },
+    {
+      "time": 23.0,
+      "motion": 16.977403772055208,
+      "ocr": null
+    },
+    {
+      "time": 24.0,
+      "motion": 3.5471264100869644,
+      "ocr": null
+    },
+    {
+      "time": 25.0,
+      "motion": 26.49886517425645,
+      "ocr": null
+    },
+    {
+      "time": 26.0,
+      "motion": 15.998553756959385,
+      "ocr": null
+    },
+    {
+      "time": 27.0,
+      "motion": 13.107229420594923,
+      "ocr": null
+    },
+    {
+      "time": 28.0,
+      "motion": 13.817279331814602,
+      "ocr": null
+    },
+    {
+      "time": 29.0,
+      "motion": 6.308601345744984,
+      "ocr": null
+    },
+    {
+      "time": 30.0,
+      "motion": 6.81559028884746,
+      "ocr": null
+    },
+    {
+      "time": 31.0,
+      "motion": 13.847610848722978,
+      "ocr": null
+    },
+    {
+      "time": 32.0,
+      "motion": 15.196870097816701,
+      "ocr": null
+    },
+    {
+      "time": 33.0,
+      "motion": 0.5728589796913697,
+      "ocr": null
+    },
+    {
+      "time": 34.0,
+      "motion": 0.5766149889895511,
+      "ocr": null
+    },
+    {
+      "time": 35.0,
+      "motion": 0.11324188573202067,
+      "ocr": null
+    },
+    {
+      "time": 36.0,
+      "motion": 0.15354139527616908,
+      "ocr": null
+    },
+    {
+      "time": 37.0,
+      "motion": 5.172694086871702e-05,
+      "ocr": null
+    },
+    {
+      "time": 38.0,
+      "motion": 5.172694086871702e-05,
+      "ocr": null
+    },
+    {
+      "time": 39.0,
+      "motion": 85.0669594693027,
+      "ocr": null
+    },
+    {
+      "time": 40.0,
+      "motion": 0.8170766466585452,
+      "ocr": null
+    },
+    {
+      "time": 41.0,
+      "motion": 0.12036120183852327,
+      "ocr": null
+    },
+    {
+      "time": 42.0,
+      "motion": 85.37099353729934,
+      "ocr": null
+    },
+    {
+      "time": 43.0,
+      "motion": 85.60930113735931,
+      "ocr": null
+    },
+    {
+      "time": 44.0,
+      "motion": 145.97257997090622,
+      "ocr": null
+    },
+    {
+      "time": 45.0,
+      "motion": 81.25688179443925,
+      "ocr": null
+    },
+    {
+      "time": 46.0,
+      "motion": 112.53669498628709,
+      "ocr": null
+    },
+    {
+      "time": 47.0,
+      "motion": 0.08423151711950612,
+      "ocr": null
+    },
+    {
+      "time": 48.0,
+      "motion": 0.005197501905451598,
+      "ocr": null
+    },
+    {
+      "time": 49.0,
+      "motion": 44.527776839420575,
+      "ocr": null
+    },
+    {
+      "time": 50.0,
+      "motion": 38.55579964572324,
+      "ocr": null
+    },
+    {
+      "time": 51.0,
+      "motion": 11.836462109487988,
+      "ocr": null
+    },
+    {
+      "time": 52.0,
+      "motion": 0.09140625494836807,
+      "ocr": null
+    },
+    {
+      "time": 53.0,
+      "motion": 35.13482521572246,
+      "ocr": null
+    },
+    {
+      "time": 54.0,
+      "motion": 11.663207471481565,
+      "ocr": null
+    },
+    {
+      "time": 55.0,
+      "motion": 9.62726991540006,
+      "ocr": null
+    },
+    {
+      "time": 56.0,
+      "motion": 0.2901680808882677,
+      "ocr": null
+    },
+    {
+      "time": 57.0,
+      "motion": 5.015879643020769,
+      "ocr": null
+    },
+    {
+      "time": 58.0,
+      "motion": 8.756396722412122,
+      "ocr": null
+    },
+    {
+      "time": 59.0,
+      "motion": 0.004094345717537122,
+      "ocr": null
+    },
+    {
+      "time": 60.0,
+      "motion": 7.378268562054383,
+      "ocr": null
+    },
+    {
+      "time": 61.0,
+      "motion": 7.367191607145497,
+      "ocr": null
+    },
+    {
+      "time": 62.0,
+      "motion": 0.009545204068059986,
+      "ocr": null
+    },
+    {
+      "time": 63.0,
+      "motion": 0.01243030058630904,
+      "ocr": null
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "video": "7b7f02f705f83a1353554a895a7d4564.webm",
+  "top_frames": [
+    {
+      "time": 1.0,
+      "motion": 107.52385555555556,
+      "ocr": null,
+      "image": "video_analysis\\7b7f02f705f83a1353554a895a7d4564.analysis_top_frames\\frame_top1_1000ms.png"
+    },
+    {
+      "time": 3.0,
+      "motion": 66.51200833333333,
+      "ocr": null,
+      "image": "video_analysis\\7b7f02f705f83a1353554a895a7d4564.analysis_top_frames\\frame_top2_3000ms.png"
+    },
+    {
+      "time": 2.0,
+      "motion": 12.628130555555556,
+      "ocr": null,
+      "image": "video_analysis\\7b7f02f705f83a1353554a895a7d4564.analysis_top_frames\\frame_top3_2000ms.png"
+    }
+  ]
+}

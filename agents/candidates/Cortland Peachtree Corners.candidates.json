@@ -1,0 +1,26 @@
+{
+  "analysis_dir": "Cortland Peachtree Corners.analysis_top_frames",
+  "candidates": [
+    {
+      "time": 28.0,
+      "motion": 137.89810977207785,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top1_28000ms.png"
+    },
+    {
+      "time": 30.0,
+      "motion": 137.84883566102496,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top2_30000ms.png"
+    },
+    {
+      "time": 32.0,
+      "motion": 134.90028881270817,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top3_32000ms.png"
+    }
+  ]
+}

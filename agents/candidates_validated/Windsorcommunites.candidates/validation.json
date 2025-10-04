@@ -1,0 +1,27 @@
+{
+  "url": "https://www.windsoratmidtown.com",
+  "candidates_file": "Windsorcommunites.candidates.json",
+  "results": [
+    {
+      "time": 2.0,
+      "motion": 160.3858333653563,
+      "ocr": null,
+      "image": "video_analysis\\Windsorcommunites.analysis_top_frames\\frame_top1_2000ms.png",
+      "tested": []
+    },
+    {
+      "time": 46.0,
+      "motion": 143.3535067269552,
+      "ocr": null,
+      "image": "video_analysis\\Windsorcommunites.analysis_top_frames\\frame_top2_46000ms.png",
+      "tested": []
+    },
+    {
+      "time": 38.0,
+      "motion": 142.5384568992387,
+      "ocr": null,
+      "image": "video_analysis\\Windsorcommunites.analysis_top_frames\\frame_top3_38000ms.png",
+      "tested": []
+    }
+  ]
+}

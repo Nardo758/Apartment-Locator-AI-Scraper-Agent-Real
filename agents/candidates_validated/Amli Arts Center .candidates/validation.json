@@ -1,0 +1,27 @@
+{
+  "url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+  "candidates_file": "Amli Arts Center .candidates.json",
+  "results": [
+    {
+      "time": 1.0,
+      "motion": 47.369585906662586,
+      "ocr": null,
+      "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top1_1000ms.png",
+      "tested": []
+    },
+    {
+      "time": 2.0,
+      "motion": 32.404684735266095,
+      "ocr": null,
+      "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top2_2000ms.png",
+      "tested": []
+    },
+    {
+      "time": 3.0,
+      "motion": 27.696233369062202,
+      "ocr": null,
+      "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top3_3000ms.png",
+      "tested": []
+    }
+  ]
+}

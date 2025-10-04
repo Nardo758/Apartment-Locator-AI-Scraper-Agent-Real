@@ -1,0 +1,643 @@
+{
+  "hybrid_scraping": {
+    "video_analysis_file": "video_analysis_1759496735.json",
+    "target_url": "https://highlandsatsweetwatercreek.com/",
+    "final_url": "https://highlandsatsweetwatercreek.com/",
+    "final_page_title": "Highlands at Sweetwater Creek | Luxury Apartment Amenities | Duluth GA",
+    "timestamp": "2025-10-03 17:15:02",
+    "extraction_method": "hybrid_video_simple",
+    "stealth_level": "authenticated_profile",
+    "video_patterns_used": true
+  },
+  "rental_data": {
+    "prices": [
+      "$1,500",
+      "$2,000",
+      "$1,568.50",
+      "$1,450",
+      "$1,618.50",
+      "$1,628.50",
+      "$1,510",
+      "$1,758.50",
+      "$1,640",
+      "$1,918.50",
+      "$1,800",
+      "$1,563.50",
+      "$1,445",
+      "$1,613.50",
+      "$1,495",
+      "$1,623.50",
+      "$1,668.50",
+      "$1,505",
+      "$1,550",
+      "$1,663.50",
+      "$1,545",
+      "$1,843.50",
+      "$1,725",
+      "$1,833.50",
+      "$1,863.50",
+      "$1,715",
+      "$1,745",
+      "$1,878.50",
+      "$1,760",
+      "$1,938.50",
+      "$1,820",
+      "$1,568",
+      "$1,618",
+      "$1,628",
+      "$1,758",
+      "$1,918",
+      "$1,563",
+      "$1,613",
+      "$1,623",
+      "$1,668",
+      "$1,663",
+      "$1,843",
+      "$1,833",
+      "$1,863",
+      "$1,878",
+      "$1,938",
+      "$1,450 - $1,495",
+      "$1,505 - $1,550",
+      "$1,545 - $1,640",
+      "$1,715 - $1,745",
+      "$1,800 - $1,820"
+    ],
+    "units": [
+      "*Prices include base rent, all mandatory monthly fees and any user-selected optional fees. Variable or usage-based fees not included.\n                                    \n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n                                \n                                    \n                                    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1B\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1F\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2155\n\n                                                            Available Nov 28\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath813 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,628.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,510 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1G\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #4105\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath820 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,758.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,640 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        B2D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2142\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t2 bed2 bath1169 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,918.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,800 Base Rent",
+      "*Prices include base rent, all mandatory monthly fees and any user-selected optional fees. Variable or usage-based fees not included.",
+      "A1B\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1F\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2155\n\n                                                            Available Nov 28\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath813 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,628.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,510 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1G\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #4105\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath820 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,758.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,640 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        B2D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2142\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t2 bed2 bath1169 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,918.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,800 Base Rent",
+      "A1B\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent",
+      "Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent",
+      "A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+      "Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+      "A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+      "Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+      "A1F\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2155\n\n                                                            Available Nov 28\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath813 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,628.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,510 Base Rent",
+      "A1G\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #4105\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath820 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,758.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,640 Base Rent",
+      "B2D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2142\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t2 bed2 bath1169 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,918.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,800 Base Rent",
+      "1 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            2 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            3 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+      "1 bath",
+      "450 Ba",
+      "500 Ba",
+      "510 Ba",
+      "640 Ba",
+      "2 bath",
+      "800 Ba",
+      "445 Ba",
+      "495 Ba",
+      "550 Ba",
+      "725 Ba",
+      "745 Ba",
+      "760 Ba",
+      "820 Ba",
+      "5 bath",
+      "1 Bed",
+      "2 Bed",
+      "3 Bed",
+      "1 bed",
+      "2 bed",
+      "3 bed"
+    ],
+    "features": [],
+    "availability": [],
+    "price_selectors": [
+      {
+        "selector": "text_content",
+        "text": "$1,500",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$2,000",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,568.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,450",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,618.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,628.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,510",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,758.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,640",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,918.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,800",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,563.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,445",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,613.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,495",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,623.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,668.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,505",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,550",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,663.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,545",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,843.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,725",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,833.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,863.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,715",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,745",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,878.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,760",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,938.50",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,820",
+        "pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month|\\s*monthly|\\s*mo\\.?|\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,568",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,618",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,628",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,758",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,918",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,563",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,613",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,623",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,668",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,663",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,843",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,833",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,863",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,878",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,938",
+        "pattern": "\\$[\\d,]{3,}(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,450 - $1,495",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,505 - $1,550",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,545 - $1,640",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,715 - $1,745",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "$1,800 - $1,820",
+        "pattern": "\\$[\\d,]+(?:\\s*-\\s*\\$[\\d,]+)?(?:\\s*per\\s*month)?",
+        "video_guided": true
+      }
+    ],
+    "unit_selectors": [
+      {
+        "selector": "[class*='unit']",
+        "text": "*Prices include base rent, all mandatory monthly fees and any user-selected optional fees. Variable or usage-based fees not included.\n                                    \n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n                                \n                                    \n                                    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1B\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1F\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2155\n\n                                                            Available Nov 28\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath813 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,628.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,510 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1G\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #4105\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath820 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,758.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,640 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        B2D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2142\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t2 bed2 bath1169 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,918.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,800 Base Rent",
+        "element_index": 0,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "*Prices include base rent, all mandatory monthly fees and any user-selected optional fees. Variable or usage-based fees not included.",
+        "element_index": 2,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "A1B\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1F\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2155\n\n                                                            Available Nov 28\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath813 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,628.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,510 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                    \n                                            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        A1G\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #4105\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath820 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,758.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,640 Base Rent\n                                                                            \n                                                            \n                        \n\t\t\t\t\t                \n            \n        \n    \n        \n            \n\t\t\t\t                \n                    \n                \n\t\t\t\t                    \n                        B2D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2142\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t2 bed2 bath1169 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,918.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,800 Base Rent",
+        "element_index": 3,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "A1B\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent",
+        "element_index": 5,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "Outside price filter range\n                        \n                        \n                            #2105\n\n                                                            Available Oct 10\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath700 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,568.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,450 Base Rent",
+        "element_index": 10,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+        "element_index": 12,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "Outside price filter range\n                        \n                        \n                            #2130\n\n                                                            Available Oct 08\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+        "element_index": 17,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "A1D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+        "element_index": 19,
+        "video_guided": true
+      },
+      {
+        "selector": "[class*='unit']",
+        "text": "Outside price filter range\n                        \n                        \n                            #2164\n\n                                                            Available Dec 16\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath806 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,618.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,500 Base Rent",
+        "element_index": 24,
+        "video_guided": true
+      },
+      {
+        "selector": "[data-unit]",
+        "text": "A1F\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2155\n\n                                                            Available Nov 28\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath813 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,628.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,510 Base Rent",
+        "element_index": 3,
+        "video_guided": true
+      },
+      {
+        "selector": "[data-unit]",
+        "text": "A1G\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #4105\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t1 bed1 bath820 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,758.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,640 Base Rent",
+        "element_index": 4,
+        "video_guided": true
+      },
+      {
+        "selector": "[data-unit]",
+        "text": "B2D\n                    \n\t\t\t\t            \n            \n                \n                    \n                        \n                            Outside price filter range\n                        \n                        \n                            #2142\n\n                                                            Available Now\n                                                    \n                        \n\t\t\t\t\t\t                            \n\t\t\t\t\t\t\t\t2 bed2 bath1169 sq. ft.                            \n\t\t\t\t\t\t\n                                                    \n                                                \n                    \n\t\t\t\t\t                        \n                            \n                                $1,918.50 Estimated Monthly Price*\n                                                                    \n                                                                                                                            $1,800 Base Rent",
+        "element_index": 5,
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            2 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n                                        \n                                            \n                                            3 Bedroom\n                                        \n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "450 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "500 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "510 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "640 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "800 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "445 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "495 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "550 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "725 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "745 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "760 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "820 Ba",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "5 bath",
+        "pattern": "\\d+\\s*(?:bedroom|bath|br|ba)(?:\\s*\\d+\\s*(?:bedroom|bath|br|ba))*\\s*(?:apartment|unit|condo|townhome)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "3 Bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "1 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "2 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      },
+      {
+        "selector": "text_content",
+        "text": "3 bed",
+        "pattern": "\\d+\\s*(?:Bed|Bath)\\s*(?:Apartment|Unit|Condo)?",
+        "video_guided": true
+      }
+    ]
+  },
+  "page_analysis": {
+    "hasDynamicContent": false,
+    "contentAreas": [
+      {
+        "tag": "DIV",
+        "classes": "",
+        "id": "content",
+        "childCount": 2
+      }
+    ],
+    "pricingElements": 16,
+    "unitElements": 158,
+    "forms": 0,
+    "scripts": 31,
+    "stylesheets": 5,
+    "images": 25,
+    "links": 74,
+    "totalElements": 1217
+  },
+  "video_patterns_info": {
+    "patterns_loaded": true,
+    "transitions_learned": 3,
+    "pricing_detected": true
+  }
+}

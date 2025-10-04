@@ -1,0 +1,272 @@
+[
+  {
+    "url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center",
+    "candidates_file": "Amli Arts Center .candidates.json",
+    "results": [
+      {
+        "time": 1.0,
+        "motion": 47.369585906662586,
+        "ocr": null,
+        "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top1_1000ms.png",
+        "tested": []
+      },
+      {
+        "time": 2.0,
+        "motion": 32.404684735266095,
+        "ocr": null,
+        "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top2_2000ms.png",
+        "tested": []
+      },
+      {
+        "time": 3.0,
+        "motion": 27.696233369062202,
+        "ocr": null,
+        "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top3_3000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://www.amli.com/apartments/atlanta/midtown-apartments",
+    "candidates_file": "Amli Atlantic Station.candidates.json",
+    "results": [
+      {
+        "time": 4.0,
+        "motion": 59.4890582453344,
+        "ocr": null,
+        "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top1_4000ms.png",
+        "tested": []
+      },
+      {
+        "time": 2.0,
+        "motion": 56.19665168194195,
+        "ocr": null,
+        "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top2_2000ms.png",
+        "tested": []
+      },
+      {
+        "time": 5.0,
+        "motion": 49.096670153417016,
+        "ocr": null,
+        "image": "video_analysis\\Amli Atlantic Station.analysis_top_frames\\frame_top3_5000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://atlantichousemidtown.com",
+    "candidates_file": "Atlantic House Midtown.candidates.json",
+    "results": [
+      {
+        "time": 1.0,
+        "motion": 97.7950378193446,
+        "ocr": null,
+        "image": "video_analysis\\Atlantic House Midtown.analysis_top_frames\\frame_top1_1000ms.png",
+        "tested": []
+      },
+      {
+        "time": 20.0,
+        "motion": 81.0772406854308,
+        "ocr": null,
+        "image": "video_analysis\\Atlantic House Midtown.analysis_top_frames\\frame_top2_20000ms.png",
+        "tested": []
+      },
+      {
+        "time": 13.0,
+        "motion": 78.69477437059162,
+        "ocr": null,
+        "image": "video_analysis\\Atlantic House Midtown.analysis_top_frames\\frame_top3_13000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://www.broadstone2thirty.com",
+    "candidates_file": "Broadstone2thirty.candidates.json",
+    "results": [
+      {
+        "time": 4.0,
+        "motion": 84.27106359315489,
+        "ocr": null,
+        "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top1_4000ms.png",
+        "tested": []
+      },
+      {
+        "time": 16.0,
+        "motion": 78.42490268495105,
+        "ocr": null,
+        "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top2_16000ms.png",
+        "tested": []
+      },
+      {
+        "time": 30.0,
+        "motion": 74.38654271894575,
+        "ocr": null,
+        "image": "video_analysis\\Broadstone2thirty.analysis_top_frames\\frame_top3_30000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://www.centennialplaceapts.com",
+    "candidates_file": "Centennialplaceapts.candidates.json",
+    "results": [
+      {
+        "time": 8.0,
+        "motion": 114.66176682542005,
+        "ocr": null,
+        "image": "video_analysis\\Centennialplaceapts.analysis_top_frames\\frame_top1_8000ms.png",
+        "tested": []
+      },
+      {
+        "time": 9.0,
+        "motion": 96.89608913503787,
+        "ocr": null,
+        "image": "video_analysis\\Centennialplaceapts.analysis_top_frames\\frame_top2_9000ms.png",
+        "tested": []
+      },
+      {
+        "time": 2.0,
+        "motion": 47.31648300872614,
+        "ocr": null,
+        "image": "video_analysis\\Centennialplaceapts.analysis_top_frames\\frame_top3_2000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://cortland.com/apartments/atlanta-metro/cortland-brookhaven",
+    "candidates_file": "Cortland Peachtree Corners.candidates.json",
+    "results": [
+      {
+        "time": 28.0,
+        "motion": 137.89810977207785,
+        "ocr": null,
+        "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top1_28000ms.png",
+        "tested": []
+      },
+      {
+        "time": 30.0,
+        "motion": 137.84883566102496,
+        "ocr": null,
+        "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top2_30000ms.png",
+        "tested": []
+      },
+      {
+        "time": 32.0,
+        "motion": 134.90028881270817,
+        "ocr": null,
+        "image": "video_analysis\\Cortland Peachtree Corners.analysis_top_frames\\frame_top3_32000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://www.maac.com/georgia/atlanta/maa-brookhaven",
+    "candidates_file": "Maa-Brookhaven.candidates.json",
+    "results": [
+      {
+        "time": 33.0,
+        "motion": 89.23840025373461,
+        "ocr": null,
+        "image": "video_analysis\\Maa-Brookhaven.analysis_top_frames\\frame_top1_33000ms.png",
+        "tested": []
+      },
+      {
+        "time": 44.0,
+        "motion": 78.74652637747643,
+        "ocr": null,
+        "image": "video_analysis\\Maa-Brookhaven.analysis_top_frames\\frame_top2_44000ms.png",
+        "tested": []
+      },
+      {
+        "time": 15.0,
+        "motion": 74.26359937658584,
+        "ocr": null,
+        "image": "video_analysis\\Maa-Brookhaven.analysis_top_frames\\frame_top3_15000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://novelmidtownatl.com",
+    "candidates_file": "Novel Midtown Atlanta.candidates.json",
+    "results": [
+      {
+        "time": 44.0,
+        "motion": 145.97257997090622,
+        "ocr": null,
+        "image": "video_analysis\\Novel Midtown Atlanta.analysis_top_frames\\frame_top1_44000ms.png",
+        "tested": []
+      },
+      {
+        "time": 46.0,
+        "motion": 112.53669498628709,
+        "ocr": null,
+        "image": "video_analysis\\Novel Midtown Atlanta.analysis_top_frames\\frame_top2_46000ms.png",
+        "tested": []
+      },
+      {
+        "time": 9.0,
+        "motion": 95.93266366298526,
+        "ocr": null,
+        "image": "video_analysis\\Novel Midtown Atlanta.analysis_top_frames\\frame_top3_9000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://sentral.com/atlanta/west-midtown",
+    "candidates_file": "Sentral.com.candidates.json",
+    "results": [
+      {
+        "time": 15.0,
+        "motion": 66.63902793760388,
+        "ocr": null,
+        "image": "video_analysis\\Sentral.com.analysis_top_frames\\frame_top1_15000ms.png",
+        "tested": []
+      },
+      {
+        "time": 16.0,
+        "motion": 66.20476601457614,
+        "ocr": null,
+        "image": "video_analysis\\Sentral.com.analysis_top_frames\\frame_top2_16000ms.png",
+        "tested": []
+      },
+      {
+        "time": 2.0,
+        "motion": 64.27777831053147,
+        "ocr": null,
+        "image": "video_analysis\\Sentral.com.analysis_top_frames\\frame_top3_2000ms.png",
+        "tested": []
+      }
+    ]
+  },
+  {
+    "url": "https://www.windsoratmidtown.com",
+    "candidates_file": "Windsorcommunites.candidates.json",
+    "results": [
+      {
+        "time": 2.0,
+        "motion": 160.3858333653563,
+        "ocr": null,
+        "image": "video_analysis\\Windsorcommunites.analysis_top_frames\\frame_top1_2000ms.png",
+        "tested": []
+      },
+      {
+        "time": 46.0,
+        "motion": 143.3535067269552,
+        "ocr": null,
+        "image": "video_analysis\\Windsorcommunites.analysis_top_frames\\frame_top2_46000ms.png",
+        "tested": []
+      },
+      {
+        "time": 38.0,
+        "motion": 142.5384568992387,
+        "ocr": null,
+        "image": "video_analysis\\Windsorcommunites.analysis_top_frames\\frame_top3_38000ms.png",
+        "tested": []
+      }
+    ]
+  }
+]

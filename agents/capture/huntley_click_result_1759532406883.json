@@ -1,0 +1,12 @@
+{
+  "timestamp": 1759532406883,
+  "containerId": "fp-container-4869865",
+  "result": {
+    "ok": true,
+    "res": true,
+    "matched": "a.floorplan-action-button",
+    "href": "javascript:void(0);"
+  },
+  "screenshot": "c:\\Users\\Leon\\Documents\\GitHub\\Apartment-Locator-AI-Scraper-Agent-Real\\agents\\capture\\huntley_click_1759532406883.png",
+  "video": "c:\\Users\\Leon\\Documents\\GitHub\\Apartment-Locator-AI-Scraper-Agent-Real\\agents\\capture\\fe51f5e91e455dab9923d5594a7a2e4b.webm"
+}

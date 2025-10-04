@@ -1,0 +1,23 @@
+{
+  "video": "Amli Arts Center .mp4",
+  "top_frames": [
+    {
+      "time": 1.0,
+      "motion": 47.369585906662586,
+      "ocr": null,
+      "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top1_1000ms.png"
+    },
+    {
+      "time": 2.0,
+      "motion": 32.404684735266095,
+      "ocr": null,
+      "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top2_2000ms.png"
+    },
+    {
+      "time": 3.0,
+      "motion": 27.696233369062202,
+      "ocr": null,
+      "image": "video_analysis\\Amli Arts Center .analysis_top_frames\\frame_top3_3000ms.png"
+    }
+  ]
+}

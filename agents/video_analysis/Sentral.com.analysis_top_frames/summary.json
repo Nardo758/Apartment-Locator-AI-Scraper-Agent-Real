@@ -1,0 +1,23 @@
+{
+  "video": "Sentral.com.mp4",
+  "top_frames": [
+    {
+      "time": 15.0,
+      "motion": 66.63902793760388,
+      "ocr": null,
+      "image": "video_analysis\\Sentral.com.analysis_top_frames\\frame_top1_15000ms.png"
+    },
+    {
+      "time": 16.0,
+      "motion": 66.20476601457614,
+      "ocr": null,
+      "image": "video_analysis\\Sentral.com.analysis_top_frames\\frame_top2_16000ms.png"
+    },
+    {
+      "time": 2.0,
+      "motion": 64.27777831053147,
+      "ocr": null,
+      "image": "video_analysis\\Sentral.com.analysis_top_frames\\frame_top3_2000ms.png"
+    }
+  ]
+}

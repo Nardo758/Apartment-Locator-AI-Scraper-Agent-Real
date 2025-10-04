@@ -1,0 +1,27 @@
+{
+  "url": "https://novelmidtownatl.com",
+  "candidates_file": "Novel Midtown Atlanta.candidates.json",
+  "results": [
+    {
+      "time": 44.0,
+      "motion": 145.97257997090622,
+      "ocr": null,
+      "image": "video_analysis\\Novel Midtown Atlanta.analysis_top_frames\\frame_top1_44000ms.png",
+      "tested": []
+    },
+    {
+      "time": 46.0,
+      "motion": 112.53669498628709,
+      "ocr": null,
+      "image": "video_analysis\\Novel Midtown Atlanta.analysis_top_frames\\frame_top2_46000ms.png",
+      "tested": []
+    },
+    {
+      "time": 9.0,
+      "motion": 95.93266366298526,
+      "ocr": null,
+      "image": "video_analysis\\Novel Midtown Atlanta.analysis_top_frames\\frame_top3_9000ms.png",
+      "tested": []
+    }
+  ]
+}

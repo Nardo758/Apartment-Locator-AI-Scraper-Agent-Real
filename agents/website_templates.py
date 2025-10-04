@@ -148,13 +148,15 @@ WEBSITE_TEMPLATES = {
 # One-off templates for specific domains that don't fit main templates
 ONE_OFF_TEMPLATES = {
     "altaporter.com": {
-        "cookie_selectors": ["button[class*='close']", "text=X", "[aria-label*='close']"],
-        "floorplan_selector": "a[href*='floorplans'], a:has-text('Floor Plans')",
-        "unit_selector": "[data-unit]:nth-of-type(1), .unit-card:first-child",
-        "price_selector": ".rent-price, .price, .monthly-rent",
-        "bedbath_selector": ".unit-details, .specs, .bed-bath",
-        "lease_term_selector": ".lease-options, .term",
-        "special_notes": "Aggressive cookie popups, use escape key fallback",
+        "navigation": {
+            "cookie_selectors": ["button[class*='close']", "text=X", "[aria-label*='close']"],
+            "floorplan_selector": "header a.header__button[href*='floorplans']:has-text('Find Your Home')",
+            "unit_selector": "[data-unit]:nth-of-type(1), .unit-card:first-child, .floorplan-item:first-child",
+            "price_selector": ".rent-price, .price, .monthly-rent, .pricing",
+            "bedbath_selector": ".unit-details, .specs, .bed-bath, .floorplan-details",
+            "lease_term_selector": ".lease-options, .term, .lease-terms"
+        },
+        "special_notes": "Use header 'Find Your Home' button specifically. Multiple floorplan links exist, prioritize header button",
         "behavior": {
             "wait_for_network_idle": True,
             "scroll_before_click": True,

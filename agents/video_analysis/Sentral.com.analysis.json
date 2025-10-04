@@ -1,0 +1,153 @@
+{
+  "file": "Sentral.com.mp4",
+  "fps": 30.0,
+  "frame_count": 860,
+  "duration": 28.666666666666668,
+  "samples": [
+    {
+      "time": 0.0,
+      "motion": 0.0,
+      "ocr": null
+    },
+    {
+      "time": 1.0,
+      "motion": 0.1609752589182969,
+      "ocr": null
+    },
+    {
+      "time": 2.0,
+      "motion": 64.27777831053147,
+      "ocr": null
+    },
+    {
+      "time": 3.0,
+      "motion": 29.565530835784,
+      "ocr": null
+    },
+    {
+      "time": 4.0,
+      "motion": 0.01700762903294549,
+      "ocr": null
+    },
+    {
+      "time": 5.0,
+      "motion": 0.1859097302135277,
+      "ocr": null
+    },
+    {
+      "time": 6.0,
+      "motion": 46.99047329838469,
+      "ocr": null
+    },
+    {
+      "time": 7.0,
+      "motion": 15.14084196394323,
+      "ocr": null
+    },
+    {
+      "time": 8.0,
+      "motion": 1.6063754634957166,
+      "ocr": null
+    },
+    {
+      "time": 9.0,
+      "motion": 8.210575693645314,
+      "ocr": null
+    },
+    {
+      "time": 10.0,
+      "motion": 0.0007501172058134083,
+      "ocr": null
+    },
+    {
+      "time": 11.0,
+      "motion": 0.01360706218301155,
+      "ocr": null
+    },
+    {
+      "time": 12.0,
+      "motion": 0.04237203256190598,
+      "ocr": null
+    },
+    {
+      "time": 13.0,
+      "motion": 0.06330126156075523,
+      "ocr": null
+    },
+    {
+      "time": 14.0,
+      "motion": 31.930734560797852,
+      "ocr": null
+    },
+    {
+      "time": 15.0,
+      "motion": 66.63902793760388,
+      "ocr": null
+    },
+    {
+      "time": 16.0,
+      "motion": 66.20476601457614,
+      "ocr": null
+    },
+    {
+      "time": 17.0,
+      "motion": 0.012708839449345779,
+      "ocr": null
+    },
+    {
+      "time": 18.0,
+      "motion": 0.18419000127860888,
+      "ocr": null
+    },
+    {
+      "time": 19.0,
+      "motion": 21.65836956058475,
+      "ocr": null
+    },
+    {
+      "time": 20.0,
+      "motion": 0.0008774453394706559,
+      "ocr": null
+    },
+    {
+      "time": 21.0,
+      "motion": 34.415629395218005,
+      "ocr": null
+    },
+    {
+      "time": 22.0,
+      "motion": 14.918496675616929,
+      "ocr": null
+    },
+    {
+      "time": 23.0,
+      "motion": 26.74394845075225,
+      "ocr": null
+    },
+    {
+      "time": 24.0,
+      "motion": 0.012428078250863062,
+      "ocr": null
+    },
+    {
+      "time": 25.0,
+      "motion": 0.06590482887951242,
+      "ocr": null
+    },
+    {
+      "time": 26.0,
+      "motion": 0.04981779823551975,
+      "ocr": null
+    },
+    {
+      "time": 27.0,
+      "motion": 0.0711412649703789,
+      "ocr": null
+    },
+    {
+      "time": 28.0,
+      "motion": 0.01130343519584026,
+      "ocr": null
+    }
+  ]
+}

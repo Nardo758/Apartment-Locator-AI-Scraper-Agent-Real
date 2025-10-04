@@ -1,0 +1,39 @@
+Analysis for Centennialplaceapts.analysis.json
+Video file: Centennialplaceapts.mp4
+Duration: 28.166666666666668s, fps: 30.0, frames: 845
+
+Top motion samples:
+ - t=8.0s motion=114.66 ocr=None
+ - t=9.0s motion=96.90 ocr=None
+ - t=2.0s motion=47.32 ocr=None
+
+Full sample timeline (time, motion, ocr):
+0.0s | motion=0.00 | ocr=None
+1.0s | motion=0.18 | ocr=None
+2.0s | motion=47.32 | ocr=None
+3.0s | motion=10.86 | ocr=None
+4.0s | motion=8.26 | ocr=None
+5.0s | motion=9.12 | ocr=None
+6.0s | motion=0.30 | ocr=None
+7.0s | motion=0.00 | ocr=None
+8.0s | motion=114.66 | ocr=None
+9.0s | motion=96.90 | ocr=None
+10.0s | motion=19.96 | ocr=None
+11.0s | motion=11.18 | ocr=None
+12.0s | motion=0.01 | ocr=None
+13.0s | motion=0.76 | ocr=None
+14.0s | motion=22.91 | ocr=None
+15.0s | motion=23.17 | ocr=None
+16.0s | motion=10.72 | ocr=None
+17.0s | motion=0.01 | ocr=None
+18.0s | motion=0.06 | ocr=None
+19.0s | motion=0.85 | ocr=None
+20.0s | motion=4.17 | ocr=None
+21.0s | motion=0.01 | ocr=None
+22.0s | motion=15.14 | ocr=None
+23.0s | motion=2.89 | ocr=None
+24.0s | motion=1.41 | ocr=None
+25.0s | motion=13.57 | ocr=None
+26.0s | motion=1.31 | ocr=None
+27.0s | motion=13.57 | ocr=None
+28.0s | motion=0.01 | ocr=None

@@ -1,0 +1,104 @@
+{
+  "results": [
+    {
+      "site": "Amli Arts Center .candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"459d82e0-d0f4-4b8a-9653-900ced7d5ec6\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Amli Arts Center .candidates: no-candidate\",\"meta\":{\"url\": \"https://www.amli.com/apartments/atlanta/midtown-apartments/amli-arts-center\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:16:59.215724\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:23.047919+00:00\"}]"
+      }
+    },
+    {
+      "site": "Amli Atlantic Station.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"1d1ba138-75b6-4047-aa73-6ba6c50cd69f\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Amli Atlantic Station.candidates: no-candidate\",\"meta\":{\"url\": \"https://www.amli.com/apartments/atlanta/midtown-apartments\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:03.750908\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:23.293536+00:00\"}]"
+      }
+    },
+    {
+      "site": "Atlantic House Midtown.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"4538db4e-bba5-442d-b3df-1f561426a847\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Atlantic House Midtown.candidates: no-candidate\",\"meta\":{\"url\": \"https://atlantichousemidtown.com\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:08.528222\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:23.52069+00:00\"}]"
+      }
+    },
+    {
+      "site": "Broadstone2thirty.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"e2ee657d-2977-4507-914f-f8815fdbfcd8\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Broadstone2thirty.candidates: no-candidate\",\"meta\":{\"url\": \"https://www.broadstone2thirty.com\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:12.896048\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:23.721167+00:00\"}]"
+      }
+    },
+    {
+      "site": "Centennialplaceapts.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"a4e3fadb-3223-46a7-947b-d43be0eccf6e\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Centennialplaceapts.candidates: no-candidate\",\"meta\":{\"url\": \"https://www.centennialplaceapts.com\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:18.649613\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:23.943174+00:00\"}]"
+      }
+    },
+    {
+      "site": "Cortland Peachtree Corners.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"04437e4a-de94-4b99-9f17-b6f1823d7279\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Cortland Peachtree Corners.candidates: no-candidate\",\"meta\":{\"url\": \"https://cortland.com/apartments/atlanta-metro/cortland-brookhaven\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:21.797106\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:24.089336+00:00\"}]"
+      }
+    },
+    {
+      "site": "Maa-Brookhaven.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"f345b865-c720-412b-8ee6-39124fa6c1f4\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Maa-Brookhaven.candidates: no-candidate\",\"meta\":{\"url\": \"https://www.maac.com/georgia/atlanta/maa-brookhaven\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:28.639778\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:24.304252+00:00\"}]"
+      }
+    },
+    {
+      "site": "Novel Midtown Atlanta.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"df0aa662-1eb6-4679-803f-6cace3383e83\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Novel Midtown Atlanta.candidates: no-candidate\",\"meta\":{\"url\": \"https://novelmidtownatl.com\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:35.668477\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:24.483557+00:00\"}]"
+      }
+    },
+    {
+      "site": "Sentral.com.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"c84da710-9216-4cf2-97da-79e215d8b67d\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Sentral.com.candidates: no-candidate\",\"meta\":{\"url\": \"https://sentral.com/atlanta/west-midtown\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:39.898333\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:24.654717+00:00\"}]"
+      }
+    },
+    {
+      "site": "Windsorcommunites.candidates",
+      "target": "scraping_logs",
+      "payload_count": 1,
+      "resp": {
+        "ok": true,
+        "status": 201,
+        "text": "[{\"id\":\"020abf49-58fe-4fa7-8ea3-76b49463b943\",\"job_id\":null,\"level\":\"error\",\"message\":\"Extraction result for Windsorcommunites.candidates: no-candidate\",\"meta\":{\"url\": \"https://www.windsoratmidtown.com\", \"error\": \"no-candidate\", \"timestamp\": \"2025-10-04T01:17:43.425279\", \"chosen_expr\": null},\"created_at\":\"2025-10-04T01:42:24.803164+00:00\"}]"
+      }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "session_info": {
+    "url": "https://altaporter.com",
+    "start_time": "2025-10-02T20:19:36.688343",
+    "end_time": "2025-10-02T20:19:40.724736",
+    "duration_seconds": 4.036393,
+    "success_signal": true
+  },
+  "navigation_path": [
+    {
+      "type": "click",
+      "selector": "a[href*='floorplans']",
+      "description": "Floor Plans",
+      "timestamp": "2025-10-02T20:19:37.705283"
+    },
+    {
+      "type": "scroll",
+      "selector": "window",
+      "description": "Scroll to view units",
+      "timestamp": "2025-10-02T20:19:39.209809"
+    }
+  ],
+  "extracted_data": {
+    "page_title": "Floor Plans | Alta Porter Apartments",
+    "current_url": "https://altaporter.com/floorplans",
+    "prices_found": [
+      "$2,450/month",
+      "$2,700/month",
+      "$3,200/month",
+      "$2,950/month"
+    ],
+    "units_found": [
+      "1 Bedroom / 1 Bathroom - 650 sq ft",
+      "2 Bedroom / 2 Bathroom - 950 sq ft",
+      "3 Bedroom / 2 Bathroom - 1,200 sq ft",
+      "Studio - 500 sq ft"
+    ],
+    "features_found": [
+      "In-unit laundry",
+      "Stainless steel appliances",
+      "Hardwood floors",
+      "City views"
+    ]
+  },
+  "successful_selectors": [
+    ".price",
+    ".unit-card",
+    "[data-rent]",
+    ".floorplan-item",
+    ".unit-details"
+  ],
+  "learned_patterns": {
+    "price_pattern": "\\$[\\d,]+(?:\\.\\d{2})?(?:\\s*/\\s*month)?",
+    "unit_pattern": "(\\d+)\\s*bedroom|\\bstudio\\b",
+    "sqft_pattern": "(\\d+(?:,\\d+)?)\\s*sq\\s*ft"
+  }
+}

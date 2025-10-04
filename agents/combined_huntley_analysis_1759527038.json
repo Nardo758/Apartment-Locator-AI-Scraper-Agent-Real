@@ -1,0 +1,115 @@
+{
+  "navigation_patterns": {
+    "page_transitions": [
+      {
+        "timestamp": 13.0,
+        "transition_type": "text_content_loaded"
+      },
+      {
+        "timestamp": 1.0,
+        "transition_type": "text_content_loaded"
+      },
+      {
+        "timestamp": 15.0,
+        "transition_type": "text_content_loaded"
+      }
+    ],
+    "content_changes": [
+      {
+        "timestamp": 1.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 9,
+        "current_count": 4
+      },
+      {
+        "timestamp": 4.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 4,
+        "current_count": 1
+      },
+      {
+        "timestamp": 6.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 3,
+        "current_count": 10
+      },
+      {
+        "timestamp": 12.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 10,
+        "current_count": 0
+      },
+      {
+        "timestamp": 13.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 0,
+        "current_count": 8
+      },
+      {
+        "timestamp": 24.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 8,
+        "current_count": 5
+      },
+      {
+        "timestamp": 25.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 5,
+        "current_count": 8
+      },
+      {
+        "timestamp": 29.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 8,
+        "current_count": 1
+      },
+      {
+        "timestamp": 30.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 1,
+        "current_count": 6
+      },
+      {
+        "timestamp": 7.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 3,
+        "current_count": 10
+      },
+      {
+        "timestamp": 13.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 10,
+        "current_count": 0
+      },
+      {
+        "timestamp": 15.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 0,
+        "current_count": 10
+      },
+      {
+        "timestamp": 24.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 10,
+        "current_count": 2
+      },
+      {
+        "timestamp": 25.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 2,
+        "current_count": 7
+      }
+    ],
+    "pricing_page_identified": true
+  },
+  "rental_data_patterns": {
+    "pricing_selectors": [],
+    "unit_selectors": [],
+    "extraction_patterns": []
+  },
+  "video_sources": [
+    "video_analysis_1759526788.json",
+    "video_analysis_1759526796.json"
+  ],
+  "combined_timestamp": "2025-10-03 17:30:38"
+}

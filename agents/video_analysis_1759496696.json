@@ -1,0 +1,137 @@
+{
+  "video_analysis": {
+    "video_path": "C:\\Users\\Leon\\Desktop\\Recording 2025-10-03 090238.mp4",
+    "duration_seconds": 29.1,
+    "total_frames": 873,
+    "fps": 30.0,
+    "key_frames_extracted": 30,
+    "timestamp": "2025-10-03 09:04:56"
+  },
+  "navigation_patterns": {
+    "page_transitions": [
+      {
+        "timestamp": 2.0,
+        "transition_type": "text_content_loaded"
+      },
+      {
+        "timestamp": 17.0,
+        "transition_type": "text_content_loaded"
+      },
+      {
+        "timestamp": 23.0,
+        "transition_type": "text_content_loaded"
+      }
+    ],
+    "ui_interactions": [],
+    "content_changes": [
+      {
+        "timestamp": 2.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 2,
+        "current_count": 6
+      },
+      {
+        "timestamp": 5.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 8,
+        "current_count": 5
+      },
+      {
+        "timestamp": 12.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 7,
+        "current_count": 4
+      },
+      {
+        "timestamp": 14.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 6,
+        "current_count": 2
+      },
+      {
+        "timestamp": 15.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 2,
+        "current_count": 8
+      },
+      {
+        "timestamp": 16.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 8,
+        "current_count": 0
+      },
+      {
+        "timestamp": 17.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 0,
+        "current_count": 10
+      },
+      {
+        "timestamp": 18.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 10,
+        "current_count": 6
+      },
+      {
+        "timestamp": 19.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 6,
+        "current_count": 3
+      },
+      {
+        "timestamp": 21.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 3,
+        "current_count": 0
+      }
+    ],
+    "interactions": []
+  },
+  "rental_data_patterns": {
+    "price_indicators": [],
+    "unit_indicators": [],
+    "navigation_to_pricing": [
+      {
+        "timestamp": 9.0,
+        "confidence": "high",
+        "reason": "Found 6 rectangular UI elements"
+      },
+      {
+        "timestamp": 15.0,
+        "confidence": "high",
+        "reason": "Found 7 rectangular UI elements"
+      },
+      {
+        "timestamp": 17.0,
+        "confidence": "high",
+        "reason": "Found 6 rectangular UI elements"
+      }
+    ],
+    "pricing_page_identified": true
+  },
+  "learned_patterns": {
+    "ui_elements": {
+      "button_patterns": {
+        "count": 44,
+        "avg_aspect_ratio": 3.1570752615770146
+      },
+      "text_field_patterns": {
+        "count": 14,
+        "avg_aspect_ratio": 16.514317870163904
+      },
+      "navigation_patterns": [],
+      "content_layouts": []
+    },
+    "text_patterns": {
+      "text_regions_found": 21,
+      "estimated_text_elements": "OCR analysis would go here",
+      "common_phrases": [
+        "Floor Plans",
+        "Pricing",
+        "Availability",
+        "Apply Now"
+      ]
+    },
+    "interaction_patterns": []
+  }
+}

@@ -45,10 +45,12 @@ class SmartScraper:
             Dictionary containing extracted rental data
         """
         start_time = time.time()
+        context_created = False
 
         # Create browser context if not provided
         if context is None:
             context = await self._create_browser_context()
+            context_created = True
 
         try:
             # Get initial page content for template detection
@@ -83,7 +85,7 @@ class SmartScraper:
             return result
 
         finally:
-            if context and not context.isinstance(context, type(None)):
+            if context_created and context is not None:
                 await context.close()
 
     async def _create_browser_context(self) -> BrowserContext:
@@ -221,41 +223,64 @@ class SmartScraper:
                 continue
 
     async def _navigate_with_template(self, page: Page, template: Dict[str, Any]):
-        """Navigate to floorplans using template selectors."""
+        """Navigate to floorplans using template selectors with fallbacks."""
         navigation = template.get("navigation", {})
         floorplan_selector = navigation.get("floorplan_selector")
 
-        if not floorplan_selector:
-            return
+        # Common floorplan selectors to try as fallbacks
+        fallback_selectors = [
+            "a:has-text('Floor Plans')",
+            "a:has-text('Floorplans')",
+            "a[href*='floorplans']",
+            "a[href*='floor-plans']",
+            "a[href*='apartments']",
+            "a:has-text('Apartments')",
+            "a:has-text('Units')",
+            "a:has-text('Availability')",
+            "nav a:has-text('Floor Plans')",
+            ".floor-plans-link",
+            "#floor-plans-link",
+            "[href*='floorplans']",
+            "[href*='floor-plans']"
+        ]
+
+        # Add template selector first if it exists
+        if floorplan_selector:
+            selectors_to_try = [floorplan_selector] + fallback_selectors
+        else:
+            selectors_to_try = fallback_selectors
 
         behavior = template.get("behavior", {})
         scroll_before_click = behavior.get("scroll_before_click", False)
 
-        try:
-            # Wait for navigation element
-            await page.wait_for_selector(floorplan_selector, timeout=10000, state="visible")
+        for selector in selectors_to_try:
+            try:
+                # Wait for navigation element
+                await page.wait_for_selector(selector, timeout=5000, state="visible")
 
-            if scroll_before_click:
-                # Scroll element into view
-                await page.locator(floorplan_selector).scroll_into_view_if_needed()
+                if scroll_before_click:
+                    # Scroll element into view
+                    await page.locator(selector).scroll_into_view_if_needed()
+                    await asyncio.sleep(random.uniform(1.0, 2.0))
 
-                # Add human-like delay
-                await asyncio.sleep(random.uniform(1.0, 2.0))
+                # Click to navigate
+                await page.click(selector)
 
-            # Click to navigate
-            await page.click(floorplan_selector)
+                # Wait for navigation
+                wait_for_idle = behavior.get("wait_for_network_idle", False)
+                if wait_for_idle:
+                    await page.wait_for_load_state("networkidle", timeout=15000)
+                else:
+                    await asyncio.sleep(2)
 
-            # Wait for navigation
-            wait_for_idle = behavior.get("wait_for_network_idle", False)
-            if wait_for_idle:
-                await page.wait_for_load_state("networkidle", timeout=15000)
-            else:
-                await asyncio.sleep(2)
+                print(f"🏠 Navigated to floorplans using: {selector}")
+                return  # Success, exit the loop
 
-            print(f"🏠 Navigated to floorplans using: {floorplan_selector}")
+            except Exception as e:
+                print(f"⚠️  Selector failed: {selector} - {e}")
+                continue
 
-        except Exception as e:
-            print(f"⚠️  Floorplan navigation failed: {e}")
+        print(f"⚠️  All floorplan navigation selectors failed")
 
     async def _extract_data_with_template(self, page: Page, template: Dict[str, Any]) -> Dict[str, Any]:
         """Extract rental data using template selectors."""
@@ -269,15 +294,37 @@ class SmartScraper:
         }
 
         try:
-            # Find unit containers
-            unit_selector = navigation.get("unit_selector", ".unit, .apartment, .unit-card")
-            unit_elements = await page.query_selector_all(unit_selector)
+            # Find unit containers - try multiple selectors
+            unit_selectors = [
+                navigation.get("unit_selector", ".unit, .apartment, .unit-card"),
+                ".unit-listing",
+                ".apartment-unit",
+                ".unit-card",
+                ".unit-item",
+                ".property-unit",
+                ".rental-unit",
+                "[data-unit]",
+                ".floorplan",
+                ".apartment"
+            ]
 
-            if not unit_elements:
-                print(f"⚠️  No units found with selector: {unit_selector}")
+            unit_elements = None
+            successful_selector = None
+
+            for selector in unit_selectors:
+                try:
+                    unit_elements = await page.query_selector_all(selector)
+                    if unit_elements and len(unit_elements) > 0:
+                        successful_selector = selector
+                        break
+                except Exception:
+                    continue
+
+            if not unit_elements or len(unit_elements) == 0:
+                print(f"⚠️  No units found with any selector")
                 return data
 
-            print(f"🏢 Found {len(unit_elements)} potential units")
+            print(f"🏢 Found {len(unit_elements)} potential units using selector: {successful_selector}")
 
             # Extract data from each unit
             for i, unit_elem in enumerate(unit_elements[:10]):  # Limit to first 10 units

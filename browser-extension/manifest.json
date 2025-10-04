@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Rental Scraper Navigator",
+  "version": "1.0",
+  "description": "Records navigation patterns for rental website scraping",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "downloads"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Rental Scraper Navigator"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

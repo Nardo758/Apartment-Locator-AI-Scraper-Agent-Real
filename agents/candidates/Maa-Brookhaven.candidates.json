@@ -1,0 +1,26 @@
+{
+  "analysis_dir": "Maa-Brookhaven.analysis_top_frames",
+  "candidates": [
+    {
+      "time": 33.0,
+      "motion": 89.23840025373461,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Maa-Brookhaven.analysis_top_frames\\frame_top1_33000ms.png"
+    },
+    {
+      "time": 44.0,
+      "motion": 78.74652637747643,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Maa-Brookhaven.analysis_top_frames\\frame_top2_44000ms.png"
+    },
+    {
+      "time": 15.0,
+      "motion": 74.26359937658584,
+      "ocr": null,
+      "candidates": [],
+      "image": "video_analysis\\Maa-Brookhaven.analysis_top_frames\\frame_top3_15000ms.png"
+    }
+  ]
+}

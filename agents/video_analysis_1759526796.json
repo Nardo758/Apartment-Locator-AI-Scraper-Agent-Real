@@ -1,0 +1,87 @@
+{
+  "video_analysis": {
+    "video_path": "c:\\Users\\Leon\\Desktop\\The Huntley 2.mp4",
+    "duration_seconds": 30.566666666666666,
+    "total_frames": 917,
+    "fps": 30.0,
+    "key_frames_extracted": 31,
+    "timestamp": "2025-10-03 17:26:36"
+  },
+  "navigation_patterns": {
+    "page_transitions": [
+      {
+        "timestamp": 1.0,
+        "transition_type": "text_content_loaded"
+      },
+      {
+        "timestamp": 15.0,
+        "transition_type": "text_content_loaded"
+      }
+    ],
+    "ui_interactions": [],
+    "content_changes": [
+      {
+        "timestamp": 7.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 3,
+        "current_count": 10
+      },
+      {
+        "timestamp": 13.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 10,
+        "current_count": 0
+      },
+      {
+        "timestamp": 15.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 0,
+        "current_count": 10
+      },
+      {
+        "timestamp": 24.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 10,
+        "current_count": 2
+      },
+      {
+        "timestamp": 25.0,
+        "change_type": "ui_element_count_change",
+        "previous_count": 2,
+        "current_count": 7
+      }
+    ],
+    "interactions": []
+  },
+  "rental_data_patterns": {
+    "price_indicators": [],
+    "unit_indicators": [],
+    "navigation_to_pricing": [],
+    "pricing_page_identified": false
+  },
+  "learned_patterns": {
+    "ui_elements": {
+      "button_patterns": {
+        "count": 138,
+        "avg_aspect_ratio": 4.332896784605725
+      },
+      "text_field_patterns": {
+        "count": 44,
+        "avg_aspect_ratio": 11.864971104282933
+      },
+      "navigation_patterns": [],
+      "content_layouts": []
+    },
+    "text_patterns": {
+      "text_regions_found": 28,
+      "estimated_text_elements": "OCR analysis would go here",
+      "common_phrases": [
+        "Floor Plans",
+        "Pricing",
+        "Availability",
+        "Apply Now"
+      ]
+    },
+    "interaction_patterns": []
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://www.thehuntley.com/",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T19:11:08.720321",
+    "error": null
+  },
+  {
+    "url": "https://www.hanoverbuckheadvillage.com/",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T19:13:28.536259",
+    "error": null
+  },
+  {
+    "url": "https://altaporter.com/",
+    "success": false,
+    "units_found": 0,
+    "data": [],
+    "timestamp": "2025-10-02T19:15:21.258556",
+    "error": null
+  }
+]

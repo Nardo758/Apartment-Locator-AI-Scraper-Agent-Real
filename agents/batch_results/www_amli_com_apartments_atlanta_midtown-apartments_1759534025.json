@@ -1,0 +1,9 @@
+{
+  "url": "https://www.amli.com/apartments/atlanta/midtown-apartments",
+  "used_container": null,
+  "result": {
+    "ok": false,
+    "error": "All containers failed: 'coroutine' object has no attribute 'get'"
+  },
+  "timestamp": "2025-10-03 19:27:05"
+}

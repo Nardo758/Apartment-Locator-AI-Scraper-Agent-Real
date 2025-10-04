@@ -1,0 +1,40 @@
+{
+  "url": "https://lillimidtown.com",
+  "result": {
+    "ok": true,
+    "matchedSelector": null,
+    "href": null,
+    "dataAttrs": {},
+    "scoring": [
+      {
+        "selector": "body a.track-apply",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "body a.floorplan-action-button",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "body a[data-selenium-id^=\"floorplan-\"]",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "body a.btn-primary",
+        "count": 0,
+        "isUnique": false
+      },
+      {
+        "selector": "body a[href*=\"apply\"]",
+        "count": 0,
+        "isUnique": false
+      }
+    ],
+    "beforeHref": "https://lillimidtown.com/",
+    "afterHref": "https://lillimidtown.com/",
+    "actionType": "modal",
+    "modalHtml": "<me-chat orgslug=\"rangewater\" widgettype=\"default\" class=\"meetelise-chat\" role=\"dialog\" aria-label=\"EliseAI Widget\" aria-modal=\"true\" buildingslug=\"1e04a400-ecdf-11ed-8b71-c3823685ff68\" data-uw-rm-sr-aria-describedby=\"aria-describe-info\"></me-chat>"
+  }
+}
