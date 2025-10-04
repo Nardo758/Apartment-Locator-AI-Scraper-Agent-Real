@@ -1,0 +1,135 @@
+{
+  "scrape_result": {
+    "property_url": "https://highlandsatsweetwatercreek.com/floorplans/",
+    "units": [
+      {
+        "price": "$1,568.50",
+        "bedbath": "1 bed 1 bath",
+        "sqft": "700",
+        "unit_name": "A1B",
+        "external_id": "ext_d7cc2d105dad2fe7"
+      },
+      {
+        "price": "$1,618.50",
+        "bedbath": "1 bed 1 bath",
+        "sqft": "806",
+        "unit_name": "A1D",
+        "external_id": "ext_90a2b3f1a5d251ec"
+      },
+      {
+        "price": "$1,618.50",
+        "bedbath": "1 bed 1 bath",
+        "sqft": "806",
+        "unit_name": "A1D",
+        "external_id": "ext_90a2b3f1a5d251ec"
+      },
+      {
+        "price": "$1,628.50",
+        "bedbath": "1 bed 1 bath",
+        "sqft": "813",
+        "unit_name": "A1F",
+        "external_id": "ext_ae6a6ee61daafbfa"
+      },
+      {
+        "price": "$1,758.50",
+        "bedbath": "1 bed 1 bath",
+        "sqft": "820",
+        "unit_name": "A1G",
+        "external_id": "ext_8302ba7bc0e13285"
+      },
+      {
+        "price": "$1,918.50",
+        "bedbath": "2 bed 2 bath",
+        "sqft": "1169",
+        "unit_name": "B2D",
+        "external_id": "ext_75a0b2db9deb7d8e"
+      }
+    ],
+    "extraction_method": "template",
+    "template_used": "unknown",
+    "scrape_metadata": {
+      "template_used": "buildium",
+      "template_name": null,
+      "scrape_duration": 39.22360682487488,
+      "success": true,
+      "units_found": 6
+    }
+  },
+  "payloads": [
+    {
+      "property_id": "highlandsatsweetwatercreek.com",
+      "unit_number": "A1B",
+      "unit": "A1B",
+      "name": "A1B",
+      "address": "https://highlandsatsweetwatercreek.com/floorplans/",
+      "source": "highlandsatsweetwatercreek.com",
+      "city": "",
+      "state": "",
+      "current_price": "1568.50",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 700,
+      "listing_url": "https://highlandsatsweetwatercreek.com/floorplans/"
+    },
+    {
+      "property_id": "highlandsatsweetwatercreek.com",
+      "unit_number": "A1D",
+      "unit": "A1D",
+      "name": "A1D",
+      "address": "https://highlandsatsweetwatercreek.com/floorplans/",
+      "source": "highlandsatsweetwatercreek.com",
+      "city": "",
+      "state": "",
+      "current_price": "1618.50",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 806,
+      "listing_url": "https://highlandsatsweetwatercreek.com/floorplans/"
+    },
+    {
+      "property_id": "highlandsatsweetwatercreek.com",
+      "unit_number": "A1F",
+      "unit": "A1F",
+      "name": "A1F",
+      "address": "https://highlandsatsweetwatercreek.com/floorplans/",
+      "source": "highlandsatsweetwatercreek.com",
+      "city": "",
+      "state": "",
+      "current_price": "1628.50",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 813,
+      "listing_url": "https://highlandsatsweetwatercreek.com/floorplans/"
+    },
+    {
+      "property_id": "highlandsatsweetwatercreek.com",
+      "unit_number": "A1G",
+      "unit": "A1G",
+      "name": "A1G",
+      "address": "https://highlandsatsweetwatercreek.com/floorplans/",
+      "source": "highlandsatsweetwatercreek.com",
+      "city": "",
+      "state": "",
+      "current_price": "1758.50",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "square_feet": 820,
+      "listing_url": "https://highlandsatsweetwatercreek.com/floorplans/"
+    },
+    {
+      "property_id": "highlandsatsweetwatercreek.com",
+      "unit_number": "B2D",
+      "unit": "B2D",
+      "name": "B2D",
+      "address": "https://highlandsatsweetwatercreek.com/floorplans/",
+      "source": "highlandsatsweetwatercreek.com",
+      "city": "",
+      "state": "",
+      "current_price": "1918.50",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "square_feet": 1169,
+      "listing_url": "https://highlandsatsweetwatercreek.com/floorplans/"
+    }
+  ]
+}

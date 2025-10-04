@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "status_code": 200,
+  "data": [
+    {
+      "id": null,
+      "external_id": "highlandsatsweetwatercreek.com_A1B"
+    },
+    {
+      "id": null,
+      "external_id": "highlandsatsweetwatercreek.com_A1D"
+    },
+    {
+      "id": null,
+      "external_id": "highlandsatsweetwatercreek.com_A1F"
+    },
+    {
+      "id": null,
+      "external_id": "highlandsatsweetwatercreek.com_A1G"
+    },
+    {
+      "id": null,
+      "external_id": "highlandsatsweetwatercreek.com_B2D"
+    }
+  ]
+}
