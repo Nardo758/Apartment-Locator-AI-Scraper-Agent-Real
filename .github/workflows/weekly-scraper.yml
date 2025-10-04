@@ -29,6 +29,10 @@ on:
         type: boolean
 
 env:
+  # These secrets are intentionally referenced here to provide runtime
+  # configuration to the workflow steps (Supabase keys and AI API keys).
+  # See .github/WORKFLOW_SECRETS_README.md for details on why these are needed
+  # and how to manage them in the repository settings.
   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
   SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
   SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
