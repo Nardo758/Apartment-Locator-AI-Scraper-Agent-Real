@@ -12,11 +12,11 @@ on:
         default: 'all'
         type: choice
         options:
-        - all
-        - atlanta
-        - austin
-        - dallas
-        - houston
+          - all
+          - atlanta
+          - austin
+          - dallas
+          - houston
       force_run:
         description: 'Force run even if cost limits exceeded'
         required: false
@@ -28,16 +28,7 @@ on:
         default: false
         type: boolean
 
-env:
-  # These secrets are intentionally referenced here to provide runtime
-  # configuration to the workflow steps (Supabase keys and AI API keys).
-  # See .github/WORKFLOW_SECRETS_README.md for details on why these are needed
-  # and how to manage them in the repository settings.
-  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+env: {}
 
 jobs:
   pre-flight-checks:
@@ -285,7 +276,9 @@ jobs:
         echo "TOTAL_REGIONS=$((SUCCESS_COUNT + FAILED_COUNT))" >> $GITHUB_ENV
 
     - name: Send Slack notification
-      if: always() && secrets.SLACK_WEBHOOK_URL
+      if: always()
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       run: |
         if [ "${{ needs.pre-flight-checks.outputs.should_run }}" == "false" ]; then
           MESSAGE="⏸️ Weekly scraper skipped due to cost limits\nEstimated cost: \$\${{ needs.pre-flight-checks.outputs.estimated_cost }}"
@@ -297,10 +290,10 @@ jobs:
           MESSAGE="🏠 Weekly scraper queue populated!\nRegions processed: $TOTAL_REGIONS\nSuccessful: $SUCCESS_COUNT\nFailed: $FAILED_COUNT\nEstimated cost: \$\${{ needs.pre-flight-checks.outputs.estimated_cost }}"
         fi
 
-        if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+        if [ -n "$SLACK_WEBHOOK_URL" ]; then
           curl -X POST -H 'Content-type: application/json' \
             --data "{\"text\":\"$MESSAGE\"}" \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
+            "$SLACK_WEBHOOK_URL"
         else
           echo "Slack notification: $MESSAGE"
         fi
