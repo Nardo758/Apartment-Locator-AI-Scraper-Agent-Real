@@ -47,16 +47,19 @@ export class ClaudeService {
         messages: [{ role: 'user', content: prompt }]
       });
 
-      console.log('Claude raw response:', response.content[0].text);
-      
-      const intelligence = this.parseClaudeResponse(response.content[0].text);
+      const firstBlock = response.content[0] as unknown as { type?: string; text?: string } | undefined;
+      const text = firstBlock && typeof firstBlock === 'object' && 'text' in firstBlock ? (firstBlock.text as string | undefined) : undefined;
+      if (text) {
+        console.log('Claude raw response:', text);
+      }
+      const intelligence = this.parseClaudeResponse(text ?? '');
       return { success: true, data: intelligence };
       
     } catch (error) {
       console.error('Claude analysis error:', error);
       return { 
         success: false, 
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         data: this.getDefaultResponse() 
       };
     }
