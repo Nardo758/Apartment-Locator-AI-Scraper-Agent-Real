@@ -30,6 +30,7 @@ def main():
     ap.add_argument('--dry-run', action='store_true', help='Do not call Supabase, just print summary')
     ap.add_argument('--rpc', help='Override rpc name from backup')
     ap.add_argument('--push', action='store_true', help='Actually call Supabase RPC')
+    ap.add_argument('--confirm', action='store_true', help='Confirm destructive push (required to actually push)')
     args = ap.parse_args()
 
     if not os.path.exists(args.backup):
@@ -43,12 +44,25 @@ def main():
     print(f'Loaded backup: {args.backup}')
     print(f'RPC: {rpc_name}  items: {len(items)}')
 
+    # validate and coerce loaded items
+    try:
+        from push_scrape_to_supabase import validate_and_coerce
+    except Exception:
+        from agents.push_scrape_to_supabase import validate_and_coerce
+
+    cleaned, issues = validate_and_coerce(items)
+
     if args.dry_run or not args.push:
         # Just summarize
-        sample = items[:3]
+        sample = cleaned[:3]
         print('Sample items:')
         print(json.dumps(sample, indent=2, ensure_ascii=False))
-        print('\nDry-run/summary complete. Use --push to actually send to Supabase.')
+        if issues:
+            print('\nValidation issues:')
+            for i in issues:
+                print(' -', i)
+
+        print('\nDry-run/summary complete. Use --push --confirm to actually send to Supabase.')
         return
 
     # Require env vars
@@ -58,8 +72,12 @@ def main():
         print('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY required to push')
         raise SystemExit(3)
 
+    if not args.confirm:
+        print('Refusing to push because --confirm was not provided. Use --push --confirm to actually send.')
+        return
+
     print('Calling Supabase RPC...')
-    res = call_supabase_rpc(supabase_url, service_key, rpc_name, items)
+    res = call_supabase_rpc(supabase_url, service_key, rpc_name, cleaned)
     print(json.dumps(res, indent=2, ensure_ascii=False))
 
     # Save a replay backup with response
