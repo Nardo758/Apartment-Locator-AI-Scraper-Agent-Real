@@ -4,11 +4,12 @@ A sophisticated two-agent system for discovering and extracting apartment rental
 
 ## 🤖 Agent Overview
 
+ 
 ### 1. Property Discovery Agent (Claude-based)
 
 **Purpose**: Discover apartment property websites and extract basic information using lightweight scraping.
 
-- **Features**:
+-- **Features**:
 
 - SERP API integration for finding property URLs
 - Claude AI for intelligent information extraction
@@ -104,6 +105,7 @@ asyncio.run(main())
 ## ⚙️ Configuration
 
 - **SERP_API_KEY**: For property URL discovery
+
 ### Required API Keys
 
 - **SERP_API_KEY**: For property URL discovery
@@ -156,6 +158,7 @@ Properties are automatically prioritized based on:
 ## 💰 Cost Optimization
 
 - Uses Claude Haiku (cost-effective model)
+
 ### Discovery Agent (Low Cost)
 
 
@@ -164,6 +167,7 @@ Properties are automatically prioritized based on:
 - Batch processing to minimize API calls
 
 - Vision model analysis per page
+
 ### Rental Agent (Higher Cost)
 
 
@@ -203,6 +207,7 @@ python integration_demo.py
 ## 📈 Monitoring & Analytics
 
 - Automatic cost logging per agent operation
+
 ### Cost Tracking
 
 
@@ -211,6 +216,7 @@ python integration_demo.py
 - Performance metrics collection
 
 - Properties discovered per batch
+
 ### Success Metrics
 
 

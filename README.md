@@ -11,7 +11,6 @@ A comprehensive apartment rental data scraping system with intelligent learning 
 ## Supabase push helper
 
 If you want to push a saved scrape result to Supabase, use the helper script:
-If you want to push a saved scrape result to Supabase, use the helper script:
 
     python agents/push_scrape_to_supabase.py --file agents/live_results/<domain>/scrape_result.json --dry-run
 
@@ -58,6 +57,7 @@ apartment-scraper/
 │   ├── test_learning.py             # Learning system tests
 │   └── scrape_specific_sites.py     # Batch processing utility
 ├── browser-extension/               # Chrome extension for recording
+### Advanced Capabilities
 │   ├── manifest.json               # Extension manifest
 │   ├── popup.html                  # Extension UI
 │   ├── popup.js                    # Popup functionality
@@ -78,7 +78,8 @@ apartment-scraper/
 
 ## Quick Start
 
-### Basic Scraping
+# ### Basic Scraping
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -88,7 +89,8 @@ cd agents
 python scrape_specific_sites.py
 ```
 
-### Watch and Learn Mode
+# ### Watch and Learn Mode
+
 ```bash
 # Start learning session
 python enhanced_scraper.py learn https://www.apartments.com/example
@@ -101,6 +103,7 @@ python enhanced_scraper.py interactive
 ```
 
 ### Browser Extension
+
 1. Open Chrome and go to `chrome://extensions/`
 2. Enable "Developer mode"
 3. Click "Load unpacked" and select the `browser-extension` folder
@@ -111,6 +114,7 @@ python enhanced_scraper.py interactive
 ## Learning System Usage
 
 ### 1. Interactive Training
+
 ```python
 from agents.learning_system import start_learning_session
 
@@ -119,6 +123,7 @@ learned_path = await start_learning_session("https://www.apartments.com/example"
 ```
 
 ### 2. Enhanced Extraction
+
 ```python
 from agents.learning_system import extract_with_learning
 
@@ -127,6 +132,7 @@ results = await extract_with_learning("https://www.apartments.com/example")
 ```
 
 ### 3. Human-in-the-Loop
+
 ```python
 from agents.learning_system import LearningEnhancedRentalDataAgent
 
@@ -137,6 +143,7 @@ results = await agent.extract_rental_data_with_learning(url, enable_learning=Tru
 ```
 
 ### 4. Browser Extension Integration
+
 1. Record a session using the Chrome extension
 2. Export the session as JSON
 3. Import into the learning system:
