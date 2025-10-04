@@ -15,7 +15,8 @@ from psycopg2 import sql
 MIGRATIONS = [
     'supabase/migrations/20251004130000_add_scraped_properties_fields_and_index.sql',
     'supabase/migrations/20251004131000_add_missing_apartments_columns.sql',
-    'supabase/migrations/20251004120000_rpc_bulk_upsert_properties_v2.sql'
+    'supabase/migrations/20251004120000_rpc_bulk_upsert_properties_v2.sql',
+    'supabase/migrations/20251004132000_rpc_merge_apartments_into_scraped.sql'
 ]
 
 

@@ -203,6 +203,75 @@ EOF
     - name: Verify deployed functions
       run: supabase functions list | cat
 
+  integration-tests:
+    name: Integration tests (post-migration)
+    runs-on: ubuntu-latest
+    needs: apply-remote-migrations
+    environment: ${{ inputs.environment || 'production' }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Select environment and export secrets
+      shell: bash
+      run: |
+        if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
+          echo "SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID_STAGING }}.supabase.co" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}" >> $GITHUB_ENV
+        else
+          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }}" >> $GITHUB_ENV
+        fi
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install node-fetch v2 (for CommonJS tests)
+      run: npm install node-fetch@2
+
+    - name: Run apartments upsert integration test
+      env:
+        SUPABASE_URL: ${{ env.SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+      run: node scripts/integration_test_apartments_upsert.js
+
+    - name: Run RPC v2 integration test
+      env:
+        SUPABASE_URL: ${{ env.SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+      run: node scripts/integration_test_rpc_v2.js
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Python deps
+      run: |
+        python -m pip install --upgrade pip
+        pip install psycopg2-binary python-dotenv
+
+    - name: Compute POSTGRES_URI and run direct SQL verification
+      shell: bash
+      env:
+        DB_PASSWORD: ${{ env.DB_PASSWORD }}
+        PROJECT_REF: ${{ env.PROJECT_REF }}
+      run: |
+        if [ -n "$DB_PASSWORD" ] && [ -n "$PROJECT_REF" ]; then
+          export POSTGRES_URI="postgresql://postgres:${DB_PASSWORD}@db.${PROJECT_REF}.supabase.co:5432/postgres?sslmode=require"
+          echo "POSTGRES_URI=$POSTGRES_URI" >> $GITHUB_ENV
+          python scripts/run_direct_sql.py
+        else
+          echo "DB credentials not available; skipping direct SQL verification"
+        fi
+
   generate-and-commit-types:
     name: Generate and commit TypeScript types
     runs-on: ubuntu-latest
