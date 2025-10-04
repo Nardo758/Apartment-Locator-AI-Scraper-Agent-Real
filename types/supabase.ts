@@ -108,7 +108,9 @@ export type Database = {
       apartments: {
         Row: {
           address: string
+          admin_fee_amount: number | null
           amenities: Json | null
+          application_fee: number | null
           available_date: string | null
           bathrooms: number
           bedrooms: number
@@ -121,6 +123,7 @@ export type Database = {
           deposit_amount: number | null
           description: string | null
           external_id: string | null
+          free_rent_concessions: string | null
           furnished: boolean | null
           id: string
           intelligence_confidence: number | null
@@ -135,6 +138,7 @@ export type Database = {
           researched_at: string | null
           scraped_at: string | null
           scraping_job_id: number | null
+          security_deposit: number | null
           source: string | null
           source_name: string | null
           source_url: string | null
@@ -150,7 +154,9 @@ export type Database = {
         }
         Insert: {
           address: string
+          admin_fee_amount?: number | null
           amenities?: Json | null
+          application_fee?: number | null
           available_date?: string | null
           bathrooms: number
           bedrooms: number
@@ -163,6 +169,7 @@ export type Database = {
           deposit_amount?: number | null
           description?: string | null
           external_id?: string | null
+          free_rent_concessions?: string | null
           furnished?: boolean | null
           id?: string
           intelligence_confidence?: number | null
@@ -177,6 +184,7 @@ export type Database = {
           researched_at?: string | null
           scraped_at?: string | null
           scraping_job_id?: number | null
+          security_deposit?: number | null
           source?: string | null
           source_name?: string | null
           source_url?: string | null
@@ -192,7 +200,9 @@ export type Database = {
         }
         Update: {
           address?: string
+          admin_fee_amount?: number | null
           amenities?: Json | null
+          application_fee?: number | null
           available_date?: string | null
           bathrooms?: number
           bedrooms?: number
@@ -205,6 +215,7 @@ export type Database = {
           deposit_amount?: number | null
           description?: string | null
           external_id?: string | null
+          free_rent_concessions?: string | null
           furnished?: boolean | null
           id?: string
           intelligence_confidence?: number | null
@@ -219,6 +230,7 @@ export type Database = {
           researched_at?: string | null
           scraped_at?: string | null
           scraping_job_id?: number | null
+          security_deposit?: number | null
           source?: string | null
           source_name?: string | null
           source_url?: string | null
@@ -608,6 +620,8 @@ export type Database = {
           admin_fee_amount: number | null
           admin_fee_waived: boolean | null
           ai_price: number | null
+          ai_provider: string | null
+          ai_raw: Json | null
           amenities: Json | null
           application_fee: number | null
           bathrooms: number
@@ -656,6 +670,8 @@ export type Database = {
           admin_fee_amount?: number | null
           admin_fee_waived?: boolean | null
           ai_price?: number | null
+          ai_provider?: string | null
+          ai_raw?: Json | null
           amenities?: Json | null
           application_fee?: number | null
           bathrooms: number
@@ -704,6 +720,8 @@ export type Database = {
           admin_fee_amount?: number | null
           admin_fee_waived?: boolean | null
           ai_price?: number | null
+          ai_provider?: string | null
+          ai_raw?: Json | null
           amenities?: Json | null
           application_fee?: number | null
           bathrooms?: number
@@ -1387,6 +1405,10 @@ export type Database = {
         Returns: boolean
       }
       rpc_bulk_upsert_properties: {
+        Args: { p_rows: Json }
+        Returns: Json
+      }
+      rpc_bulk_upsert_properties_v2: {
         Args: { p_rows: Json }
         Returns: Json
       }
