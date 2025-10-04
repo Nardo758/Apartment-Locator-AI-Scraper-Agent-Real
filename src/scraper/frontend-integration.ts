@@ -16,10 +16,13 @@ export class ScraperFrontendIntegration {
   private supabase;
 
   constructor() {
-    this.supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const deno = (globalThis as unknown as { Deno?: { env?: { get: (k: string) => string | undefined } } }).Deno;
+    const supabaseUrl = deno?.env?.get('SUPABASE_URL') ?? process.env.SUPABASE_URL ?? '';
+    const supabaseKey = deno?.env?.get('SUPABASE_SERVICE_ROLE_KEY') ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required');
+    }
+    this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 
   /**

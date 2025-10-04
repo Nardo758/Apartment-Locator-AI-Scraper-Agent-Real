@@ -29,7 +29,11 @@ export class ClaudeService {
   private anthropic: Anthropic;
 
   constructor() {
-    const apiKey = Deno.env.get('ANTHROPIC_API_KEY') || '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';
+    const deno = (globalThis as unknown as { Deno?: { env?: { get: (k: string) => string | undefined } } }).Deno;
+    const apiKey = deno?.env?.get('ANTHROPIC_API_KEY') ?? process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      throw new Error('ANTHROPIC_API_KEY is required');
+    }
     this.anthropic = new Anthropic({ apiKey });
   }
 
