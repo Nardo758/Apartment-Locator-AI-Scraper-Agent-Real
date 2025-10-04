@@ -206,6 +206,88 @@ def call_supabase_rpc(supabase_url: str, service_key: str, rpc_name: str, items:
     return {'ok': resp.ok, 'status_code': resp.status_code, 'data': data}
 
 
+from typing import Tuple
+
+
+def validate_and_coerce(items: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[str]]:
+    """Validate required fields and coerce common types to expected shapes.
+
+    Returns (cleaned_items, issues). Issues is a list of human-readable strings.
+    This function mutates copies of items and is best-effort: it will fill defaults where safe.
+    """
+    from copy import deepcopy
+    cleaned = []
+    issues = []
+
+    for idx, it in enumerate(items):
+        c = deepcopy(it)
+
+        # property_id and unit_number required
+        if not c.get('property_id'):
+            issues.append(f'item[{idx}] missing property_id')
+            c['property_id'] = ''
+        if not c.get('unit_number'):
+            issues.append(f'item[{idx}] missing unit_number')
+            c['unit_number'] = ''
+
+        # current_price: allow string decimal or numeric; normalize to string with 2 decimals
+        cp = c.get('current_price')
+        if cp is None:
+            issues.append(f'item[{idx}] missing current_price')
+        else:
+            try:
+                from decimal import Decimal, InvalidOperation
+                if isinstance(cp, str):
+                    cp_clean = cp.replace('$', '').replace(',', '').strip()
+                    cp_dec = Decimal(cp_clean)
+                else:
+                    cp_dec = Decimal(str(cp))
+                c['current_price'] = format(cp_dec.quantize(Decimal('0.01')), 'f')
+            except Exception:
+                issues.append(f'item[{idx}] current_price could not be parsed: {cp}')
+
+        # bedrooms -> int
+        b = c.get('bedrooms')
+        if b is None:
+            c['bedrooms'] = 0
+        else:
+            try:
+                c['bedrooms'] = int(float(b))
+            except Exception:
+                issues.append(f'item[{idx}] bedrooms coerced to 0 from {b}')
+                c['bedrooms'] = 0
+
+        # bathrooms -> float
+        ba = c.get('bathrooms')
+        if ba is None:
+            c['bathrooms'] = 0
+        else:
+            try:
+                c['bathrooms'] = float(ba)
+            except Exception:
+                issues.append(f'item[{idx}] bathrooms coerced to 0 from {ba}')
+                c['bathrooms'] = 0
+
+        # square_feet -> int or None
+        sf = c.get('square_feet')
+        if sf is None:
+            c['square_feet'] = None
+        else:
+            try:
+                c['square_feet'] = int(float(str(sf).replace(',', '')))
+            except Exception:
+                issues.append(f'item[{idx}] square_feet coerced to null from {sf}')
+                c['square_feet'] = None
+
+        # listing_url fallback
+        if not c.get('listing_url'):
+            c['listing_url'] = ''
+
+        cleaned.append(c)
+
+    return cleaned, issues
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--file', '-f', required=True, help='Path to scrape_result.json')
