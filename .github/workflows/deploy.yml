@@ -171,7 +171,8 @@ jobs:
         SUPABASE_URL: https://${PROJECT_REF}.supabase.co
       run: |
         echo "Syncing runtime secrets to Supabase environment..."
-        supabase secrets set --env-file <(cat <<EOF
+        TMPFILE=$(mktemp)
+        cat > "$TMPFILE" <<EOF
 ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
 SUPABASE_URL=$SUPABASE_URL
 SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
@@ -180,7 +181,8 @@ ENABLE_AI_PRICING=true
 ENABLE_FRONTEND_SYNC=true
 ENABLE_MARKET_INTELLIGENCE=true
 EOF
-        )
+        supabase secrets set --env-file "$TMPFILE"
+        rm -f "$TMPFILE"
 
     - name: Deploy all functions
       shell: bash

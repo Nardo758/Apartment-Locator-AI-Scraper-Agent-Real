@@ -34,91 +34,73 @@ This document outlines the plan to add latitude, longitude, and zip_code fields 
 ## Pre-Migration Steps
 
 1. **Backup Database**
-   ```bash
-   # Create backup before migration
-   pg_dump -h <host> -U <user> -d <database> > backup_pre_location_migration_$(date +%Y%m%d_%H%M%S).sql
-   ```
+    # Create backup before migration
+    pg_dump -h <host> -U <user> -d <database> > backup_pre_location_migration_$(date +%Y%m%d_%H%M%S).sql
 
 2. **Verify Current Schema**
-   ```bash
-   # Run verification script
-   node scripts/verify_schema_pre_migration.js
-   ```
+    # Run verification script
+    node scripts/verify_schema_pre_migration.js
 
 3. **Check Disk Space**
-   ```sql
-   -- Estimate space needed for new columns (run this query)
-   SELECT 
-       COUNT(*) as total_properties,
-       pg_size_pretty(COUNT(*) * (8 + 8 + 50)) as estimated_additional_space
-   FROM scraped_properties;
-   ```
+    -- Estimate space needed for new columns (run this query)
+    SELECT 
+        COUNT(*) as total_properties,
+        pg_size_pretty(COUNT(*) * (8 + 8 + 50)) as estimated_additional_space
+    FROM scraped_properties;
 
 ## Migration Execution
 
 ### Development Environment
-```bash
-# Apply migration locally
-supabase db reset --local
-# OR if already applied:
-supabase migration up --local
-```
+    # Apply migration locally
+    supabase db reset --local
+    # OR if already applied:
+    supabase migration up --local
 
 ### Production Environment  
-```bash
-# Apply migration to staging first
-supabase db push --project-ref <staging-ref>
+    # Apply migration to staging first
+    supabase db push --project-ref <staging-ref>
 
-# Verify staging results
-node scripts/verify_migration_success.js --env staging
+    # Verify staging results
+    node scripts/verify_migration_success.js --env staging
 
-# Apply to production
-supabase db push --project-ref <production-ref>
-```
+    # Apply to production
+    supabase db push --project-ref <production-ref>
 
 ## Post-Migration Steps
 
 1. **Verify Migration Success**
-   ```bash
-   node scripts/verify_migration_success.js
-   ```
+    node scripts/verify_migration_success.js
 
 2. **Run Backfill Scripts** (Optional - can be done gradually)
-   ```bash
-   # Populate zip codes from existing addresses
-   node scripts/backfill_zip_codes.js
-   
-   # Geocode properties to populate lat/lng
-   node scripts/geocode_properties.js
-   ```
+    # Populate zip codes from existing addresses
+    node scripts/backfill_zip_codes.js
+    
+    # Geocode properties to populate lat/lng
+    node scripts/geocode_properties.js
 
 3. **Monitor Performance**
-   ```bash
-   # Check query performance with new indexes
-   node scripts/check_location_query_performance.js
-   ```
+    # Check query performance with new indexes
+    node scripts/check_location_query_performance.js
 
 ## Rollback Procedure
 
 If issues arise, the migration can be rolled back:
 
-```sql
--- Emergency rollback script
--- WARNING: This will permanently delete location data
+    -- Emergency rollback script
+    -- WARNING: This will permanently delete location data
 
--- Remove constraints
-ALTER TABLE scraped_properties DROP CONSTRAINT IF EXISTS check_latitude_range;
-ALTER TABLE scraped_properties DROP CONSTRAINT IF EXISTS check_longitude_range;
+    -- Remove constraints
+    ALTER TABLE scraped_properties DROP CONSTRAINT IF EXISTS check_latitude_range;
+    ALTER TABLE scraped_properties DROP CONSTRAINT IF EXISTS check_longitude_range;
 
--- Remove indexes
-DROP INDEX IF EXISTS idx_scraped_properties_location;
-DROP INDEX IF EXISTS idx_scraped_properties_zip_code;
+    -- Remove indexes
+    DROP INDEX IF EXISTS idx_scraped_properties_location;
+    DROP INDEX IF EXISTS idx_scraped_properties_zip_code;
 
--- Remove columns (THIS WILL DELETE DATA!)
-ALTER TABLE scraped_properties DROP COLUMN IF EXISTS latitude;
-ALTER TABLE scraped_properties DROP COLUMN IF EXISTS longitude;  
-ALTER TABLE scraped_properties DROP COLUMN IF EXISTS zip_code;
-```
+    -- Remove columns (THIS WILL DELETE DATA!)
+    ALTER TABLE scraped_properties DROP COLUMN IF EXISTS latitude;
+    ALTER TABLE scraped_properties DROP COLUMN IF EXISTS longitude;  
+    ALTER TABLE scraped_properties DROP COLUMN IF EXISTS zip_code;
 
 ## Verification Checklist
 
