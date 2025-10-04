@@ -22,6 +22,7 @@ To actually push, set these environment variables and omit --dry-run:
 
 The script will call the RPC `rpc_bulk_upsert_properties` by default. Modify the --rpc argument to change.
 ### Core Scraping Engine
+
 - **Template-Based Scraping**: Intelligent platform detection with customizable templates
 - **Universal Navigation Flow**: 3-step rental process (Floor Plans → Unit Selection → Pricing Details)
 - **Multi-Stage Data Extraction**: Pricing details, unit information, and floorplan data
@@ -29,6 +30,7 @@ The script will call the RPC `rpc_bulk_upsert_properties` by default. Modify the
 - **Supabase Integration**: Cloud database storage with real-time sync
 
 ### Watch and Learn System 🧠
+
 - **Interactive Training**: Learn navigation patterns by watching human demonstrations
 - **Browser Extension**: Chrome extension for recording user interactions
 - **Playback Learning**: Parse and learn from Playwright codegen recordings
@@ -36,6 +38,7 @@ The script will call the RPC `rpc_bulk_upsert_properties` by default. Modify the
 - **Session Management**: Save, export, and manage learned navigation paths
 
 ### Advanced Capabilities
+
 - **Smart Selector Generation**: Automatically generates unique CSS selectors
 - **Fallback Strategies**: Multiple extraction methods with intelligent retry logic
 - **Error Recovery**: Comprehensive exception handling and logging
