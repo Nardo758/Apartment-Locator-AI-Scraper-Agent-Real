@@ -39,7 +39,8 @@ def main():
 
     b = load_backup(args.backup)
     items = b.get('items') or b.get('payloads') or []
-    rpc_name = args.rpc or b.get('rpc') or 'rpc_bulk_upsert_properties'
+    # prefer v2 RPC which accepts extended fields; allow override via args or backup metadata
+    rpc_name = args.rpc or b.get('rpc') or 'rpc_bulk_upsert_properties_v2'
 
     print(f'Loaded backup: {args.backup}')
     print(f'RPC: {rpc_name}  items: {len(items)}')

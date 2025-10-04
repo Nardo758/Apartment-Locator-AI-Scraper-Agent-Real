@@ -90,7 +90,9 @@ async def run_and_save(url: str, existing_file: str = None):
     if supabase_url and service_key:
         print('SUPABASE env vars detected — attempting best-effort push (backed up locally)')
         try:
-            res = call_supabase_rpc(supabase_url, service_key, 'rpc_bulk_upsert_properties', cleaned)
+            # use v2 RPC to accept extended fields by default; allow override via SUPABASE_RPC_NAME
+            rpc_name = os.environ.get('SUPABASE_RPC_NAME') or 'rpc_bulk_upsert_properties_v2'
+            res = call_supabase_rpc(supabase_url, service_key, rpc_name, cleaned)
             print('Push result:', res)
             # save response next to backup
             try:

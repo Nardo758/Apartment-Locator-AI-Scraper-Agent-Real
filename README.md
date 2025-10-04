@@ -18,7 +18,7 @@ To actually push, set these environment variables and omit --dry-run:
     SUPABASE_URL
     SUPABASE_SERVICE_ROLE_KEY
 
-The script will call the RPC rpc_bulk_upsert_properties by default. Modify the --rpc argument to change.
+The script will call the RPC rpc_bulk_upsert_properties_v2 by default (accepts extended fields such as amenities, AI-derived pricing, and provenance). Modify the --rpc argument to change.
 
 ### Core Scraping Engine
 

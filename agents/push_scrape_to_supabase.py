@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Read a saved scrape_result.json (from agents/live_results/*) and either perform a dry-run
-print of the mapped payload or call the Supabase service-role RPC `rpc_bulk_upsert_properties`.
+print of the mapped payload or call the Supabase service-role RPC `rpc_bulk_upsert_properties_v2` (preferred).
 
 Usage:
   python agents/push_scrape_to_supabase.py --file <path-to-scrape_result.json> [--dry-run]
@@ -115,6 +115,20 @@ def map_unit_to_payload(property_url: str, unit: Dict[str, Any], improved: bool 
         'bathrooms': bathrooms,
         'square_feet': sqft,
         'raw': unit,
+        # Extended fields (AI or scraper-provided)
+        'amenities': unit.get('amenities') or unit.get('unit_features') or None,
+        'free_rent_concessions': unit.get('free_rent_concessions') or unit.get('concessions') or None,
+        'application_fee': unit.get('application_fee') or unit.get('app_fee') or None,
+        'admin_fee_waived': unit.get('admin_fee_waived') if 'admin_fee_waived' in unit else None,
+        'admin_fee_amount': unit.get('admin_fee_amount') or unit.get('admin_fee') or None,
+        'security_deposit': unit.get('security_deposit') or unit.get('deposit') or None,
+        'ai_price': unit.get('ai_price') or None,
+        'effective_price': unit.get('effective_price') or None,
+        'latitude': unit.get('latitude') or unit.get('lat') or None,
+        'longitude': unit.get('longitude') or unit.get('lng') or None,
+        'zip_code': unit.get('zip_code') or unit.get('zip') or None,
+        'ai_provider': unit.get('ai_provider') or None,
+        'ai_raw': unit.get('ai_raw') or None,
     }
     return payload
 
@@ -157,7 +171,7 @@ def build_payloads(scrape: Dict[str, Any], improved: bool = False) -> List[Dict[
             continue
         seen.add(key)
 
-        # Build RPC-shaped object expected by rpc_bulk_upsert_properties(p_rows jsonb)
+    # Build RPC-shaped object expected by rpc_bulk_upsert_properties_v2(p_rows jsonb)
         rpc_item = {
             'property_id': prop_domain or property_url,
             'unit_number': payload.get('unit_number'),
@@ -172,7 +186,21 @@ def build_payloads(scrape: Dict[str, Any], improved: bool = False) -> List[Dict[
             'bedrooms': payload.get('bedrooms') or 0,
             'bathrooms': payload.get('bathrooms') or 0,
             'square_feet': payload.get('square_feet'),
-            'listing_url': payload.get('listing_url') or property_url
+            'listing_url': payload.get('listing_url') or property_url,
+            # Extended fields for rpc v2
+            'amenities': payload.get('amenities'),
+            'free_rent_concessions': payload.get('free_rent_concessions'),
+            'application_fee': payload.get('application_fee'),
+            'admin_fee_waived': payload.get('admin_fee_waived'),
+            'admin_fee_amount': payload.get('admin_fee_amount'),
+            'security_deposit': payload.get('security_deposit'),
+            'ai_price': payload.get('ai_price'),
+            'effective_price': payload.get('effective_price'),
+            'latitude': payload.get('latitude'),
+            'longitude': payload.get('longitude'),
+            'zip_code': payload.get('zip_code'),
+            'ai_provider': payload.get('ai_provider'),
+            'ai_raw': payload.get('ai_raw'),
         }
         mapped.append(rpc_item)
     return mapped
@@ -230,19 +258,21 @@ def validate_and_coerce(items: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any
             issues.append(f'item[{idx}] missing unit_number')
             c['unit_number'] = ''
 
-        # current_price: allow string decimal or numeric; normalize to string with 2 decimals
+        # current_price: allow string decimal or numeric; normalize to INTEGER dollars (rounded half-up)
         cp = c.get('current_price')
         if cp is None:
             issues.append(f'item[{idx}] missing current_price')
         else:
             try:
-                from decimal import Decimal, InvalidOperation
+                from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
                 if isinstance(cp, str):
                     cp_clean = cp.replace('$', '').replace(',', '').strip()
                     cp_dec = Decimal(cp_clean)
                 else:
                     cp_dec = Decimal(str(cp))
-                c['current_price'] = format(cp_dec.quantize(Decimal('0.01')), 'f')
+                # Quantize to whole dollars and convert to int for DB INTEGER column
+                cp_whole = int(cp_dec.quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+                c['current_price'] = cp_whole
             except Exception:
                 issues.append(f'item[{idx}] current_price could not be parsed: {cp}')
 
@@ -257,13 +287,16 @@ def validate_and_coerce(items: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any
                 issues.append(f'item[{idx}] bedrooms coerced to 0 from {b}')
                 c['bedrooms'] = 0
 
-        # bathrooms -> float
+        # bathrooms -> float with one decimal precision (matches DB DECIMAL(2,1))
         ba = c.get('bathrooms')
         if ba is None:
             c['bathrooms'] = 0
         else:
             try:
-                c['bathrooms'] = float(ba)
+                from decimal import Decimal, ROUND_HALF_UP
+                ba_dec = Decimal(str(ba))
+                ba_quant = ba_dec.quantize(Decimal('0.1'), rounding=ROUND_HALF_UP)
+                c['bathrooms'] = float(ba_quant)
             except Exception:
                 issues.append(f'item[{idx}] bathrooms coerced to 0 from {ba}')
                 c['bathrooms'] = 0
@@ -292,7 +325,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--file', '-f', required=True, help='Path to scrape_result.json')
     ap.add_argument('--dry-run', action='store_true', help='Do not call Supabase, just print payloads')
-    ap.add_argument('--rpc', default='rpc_bulk_upsert_properties', help='RPC name to call on Supabase')
+    ap.add_argument('--rpc', default='rpc_bulk_upsert_properties_v2', help='RPC name to call on Supabase')
     ap.add_argument('--improved-mapping', action='store_true', help='Use improved mapping: preserve cents, stable ids, dedupe')
     args = ap.parse_args()
 
