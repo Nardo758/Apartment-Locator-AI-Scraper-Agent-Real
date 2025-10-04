@@ -1,12 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { getModelCost } from './costs.ts';
-import { 
-  transformScrapedToFrontendFormat, 
+import { getModelCost } from './costs';
+import {
+  transformScrapedToFrontendFormat,
   batchTransformProperties,
   saveTransformedProperties,
   type ScrapedPropertyData,
-  type FrontendProperty 
-} from './data-transformer.ts';
+  type FrontendProperty
+} from './data-transformer';
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;
@@ -183,7 +183,8 @@ export async function syncToFrontendSchema(
       details
     };
   } catch (error) {
-    details.push(`Error syncing to frontend schema: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    details.push(`Error syncing to frontend schema: ${message}`);
     return {
       success: 0,
       errors: frontendProperties.length,
