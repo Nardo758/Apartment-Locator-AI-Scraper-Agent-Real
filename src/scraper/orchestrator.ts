@@ -222,7 +222,8 @@ export async function shouldScrapeProperty(property: ScrapingJob): Promise<boole
       const externalId = String(property.external_id ?? '');
   const now = new Date();
   const weekNumber = isoWeekNumber(now);
-      const seed = Number(Deno.env.get('SAMPLING_SEED') ?? 0);
+      const deno = (globalThis as unknown as { Deno?: { env?: { get: (k: string) => string | undefined } } }).Deno;
+      const seed = Number((deno?.env?.get('SAMPLING_SEED') ?? process.env.SAMPLING_SEED) ?? 0);
       if (!deterministicSample(externalId, weekNumber, 0.10, seed)) return false;
     }
   } catch {

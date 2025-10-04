@@ -19,9 +19,15 @@ async function dispatchToWorker(workerUrl: string, payload: Record<string, unkno
   let lastErr: unknown = null;
   while (attempt <= maxRetries) {
     try {
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
       const res = await fetch(workerUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          // Required by Supabase Edge Functions for authenticated access
+          'Authorization': serviceKey ? `Bearer ${serviceKey}` : '',
+          'apikey': serviceKey || '',
+        },
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`Worker responded ${res.status}`);
