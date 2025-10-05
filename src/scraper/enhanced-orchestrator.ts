@@ -41,11 +41,11 @@ export class EnhancedScrapingOrchestrator {
    * Get properties to scrape using the new property_sources system
    */
   async getPropertySourcesBatch(limit = 50, region?: string): Promise<ScrapingJob[]> {
-    const { data: sources, error } = await this.supabase
-      .rpc('get_next_property_sources_batch', {
-        batch_size: limit,
-        region_filter: region
-      });
+    // Call RPC and gracefully handle errors
+    const { data: sources, error } = await this.supabase.rpc('get_next_property_sources_batch', {
+      batch_size: limit,
+      region_filter: region,
+    });
 
     if (error) {
       console.error('Error getting property sources batch:', error);
@@ -53,18 +53,18 @@ export class EnhancedScrapingOrchestrator {
     }
 
     // Transform property sources to scraping jobs
-    const jobs: ScrapingJob[] = (sources || []).map(source => ({
+    const jobs: ScrapingJob[] = (sources || []).map((source: any) => ({
       external_id: `source_${source.id}_${Date.now()}`,
       property_source_id: source.id,
       url: source.url,
       property_name: source.property_name,
       website_name: source.website_name,
-      priority_score: source.priority * 10, // Convert 1-10 to 10-100
+      priority_score: Number(source.priority ?? 0) * 10, // Convert 1-10 to 10-100
       expected_units: source.expected_units,
       metadata: source.metadata,
       should_scrape: true,
-      ai_model: 'gpt-4-turbo-preview', // Use best model for property sources
-      processing_level: 'comprehensive'
+      ai_model: 'gpt-4-turbo-preview',
+      processing_level: 'comprehensive',
     }));
 
     return jobs;
@@ -181,9 +181,10 @@ export class EnhancedScrapingOrchestrator {
       
     } catch (error) {
       console.error('❌ Frontend integration error:', error);
+      const errMsg = (error && typeof error === 'object' && 'message' in (error as Record<string, unknown>)) ? String((error as Record<string, unknown>)['message']) : String(error);
       scrapingResult.frontend_integration = {
         processed: 0,
-        errors: [error.message],
+        errors: [errMsg],
         frontend_properties_created: 0
       };
     }
@@ -210,9 +211,9 @@ export class EnhancedScrapingOrchestrator {
     }
 
     // Update metrics for each source
-    for (const [sourceId, sourceResults] of sourceResults) {
+    for (const [sourceId, resultsForSource] of sourceResults) {
       try {
-        const unitsFound = sourceResults.length;
+        const unitsFound = resultsForSource.length;
         const avgCost = 0.05; // Estimate cost per property
         const totalCost = avgCost * unitsFound;
         const success = unitsFound > 0;

@@ -22,6 +22,14 @@
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "scripts/*_deno.ts",
+  "scripts/validate-config.ts",
+    "scripts/*_deno/**/*.ts",
+    "scripts/preview_weekly_batch_deno.ts",
+    "scripts/preview_weekly_batch_deno.ts",
+    "scripts/**/deno*.ts",
+    "supabase/functions/**",
+    "supabase/**/deno.json"
   ]
 }
