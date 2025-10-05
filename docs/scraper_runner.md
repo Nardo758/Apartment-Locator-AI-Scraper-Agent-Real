@@ -11,6 +11,29 @@ This document explains how to run the included scraper runner locally or in GitH
 python -m venv .venv; .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python scripts/run_scraper_to_supabase.py --payload scripts/sample_scrape_payload.json
+
+## Playwright (JS-rendered sites)
+
+If a site is client-side rendered, use Playwright to render the page before extracting units.
+
+Install Playwright and the Chromium browser:
+
+```powershell
+pip install playwright
+playwright install chromium
+```
+
+Then run the Playwright-based scraper for Highlands (dry-run):
+
+```powershell
+python scripts/scrape_highlands_playwright.py --dry-run
+```
+
+To push the extracted rows to Supabase directly (requires `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set in your env):
+
+```powershell
+python scripts/scrape_highlands_playwright.py --push
+```
 ```
 
 ## GitHub Actions
