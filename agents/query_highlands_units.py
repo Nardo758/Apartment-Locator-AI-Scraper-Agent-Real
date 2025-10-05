@@ -2,7 +2,11 @@
 import json
 import psycopg
 
-DB = "postgresql://postgres.jdymvpasjsdbryatscux:Mama%40%24_5030@aws-1-us-east-1.pooler.supabase.com:5432/postgres"
+import os, sys
+DB = os.getenv('POSTGRES_URI') or os.getenv('STAGING_POSTGRES_URI') or ''
+if not DB:
+    print('Error: POSTGRES_URI or STAGING_POSTGRES_URI environment variable must be set')
+    sys.exit(1)
 
 SQL = '''
 SELECT

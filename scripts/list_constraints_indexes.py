@@ -1,6 +1,9 @@
-import psycopg2, json
-uri='postgresql://postgres.jdymvpasjsdbryatscux:Mama%40%24_5030@aws-1-us-east-1.pooler.supabase.com:5432/postgres'
-conn=psycopg2.connect(uri); cur=conn.cursor();
+import psycopg2, json, os, sys
+uri = os.getenv('POSTGRES_URI') or os.getenv('STAGING_POSTGRES_URI') or ''
+if not uri:
+	print('Error: POSTGRES_URI or STAGING_POSTGRES_URI environment variable must be set to run list_constraints_indexes.py')
+	sys.exit(1)
+conn = psycopg2.connect(uri); cur = conn.cursor();
 cur.execute("SELECT conname, contype, pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid = 'public.scraped_properties'::regclass;")
 cons = cur.fetchall()
 cur.execute("SELECT indexname, indexdef FROM pg_indexes WHERE schemaname='public' AND tablename='scraped_properties';")

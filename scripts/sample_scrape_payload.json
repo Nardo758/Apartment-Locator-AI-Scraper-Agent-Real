@@ -1,0 +1,17 @@
+[
+  {
+    "source": "example_site",
+    "external_id": "prop-1234-unit-1",
+    "property_external_id": "prop-1234",
+    "unit_identifier": "1A",
+    "unit_name": "Unit 1A",
+    "beds": 1,
+    "baths": 1.0,
+    "rent": 1500,
+    "floorplan": "1BR",
+    "amenities": ["Washer/Dryer", "Dishwasher"],
+    "ai_price": null,
+    "effective_price": null,
+    "ai_provenance": null
+  }
+]

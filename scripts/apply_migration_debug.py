@@ -1,5 +1,8 @@
-import psycopg2, sys
-uri = 'postgresql://postgres.jdymvpasjsdbryatscux:Mama%40%24_5030@aws-1-us-east-1.pooler.supabase.com:5432/postgres'
+import psycopg2, sys, os
+uri = os.getenv('POSTGRES_URI') or os.getenv('STAGING_POSTGRES_URI') or ''
+if not uri:
+    print('Error: POSTGRES_URI or STAGING_POSTGRES_URI environment variable must be set to run this debug script.')
+    sys.exit(1)
 sql_path = 'supabase/migrations/20251004120000_rpc_bulk_upsert_properties_v2.sql'
 with open(sql_path, 'r', encoding='utf-8') as f:
     sql = f.read()

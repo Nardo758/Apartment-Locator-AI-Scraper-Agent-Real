@@ -1,8 +1,13 @@
 const { createClient } = require('@supabase/supabase-js');
 
-// Production Supabase credentials
-const SUPABASE_URL = 'https://jdymvpasjsdbryatscux.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkeW12cGFzanNkYnJ5YXRzY3V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1ODc1NTgsImV4cCI6MjA3NDE2MzU1OH0.Y88-nn2LDE6qZ4p69rFuOCjM6ES027WXs-T_4g7DTso';
+// Read Supabase credentials from environment variables. Avoid committing keys to source.
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_ANON || '';
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('Error: SUPABASE_URL and SUPABASE_ANON_KEY must be set in the environment to run this script.');
+  process.exit(1);
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

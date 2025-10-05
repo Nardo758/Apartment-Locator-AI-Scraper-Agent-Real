@@ -1,9 +1,14 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 
-// Production Supabase credentials
-const SUPABASE_URL = 'https://jdymvpasjsdbryatscux.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkeW12cGFzanNkYnJ5YXRzY3V4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODU4NzU1OCwiZXhwIjoyMDc0MTYzNTU4fQ.riR6SZMQHVzPoX87ZOGeLaK3aqPR8gPIdlZvQn_1qs4';
+// Read Supabase credentials from environment variables. Do NOT commit keys to source.
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || '';
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('Error: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in the environment to run this script.');
+  process.exit(1);
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
