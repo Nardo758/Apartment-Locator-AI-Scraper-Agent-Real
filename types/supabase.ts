@@ -620,6 +620,7 @@ export type Database = {
           admin_fee_amount: number | null
           admin_fee_waived: boolean | null
           ai_price: number | null
+          ai_provenance: Json | null
           ai_provider: string | null
           ai_raw: Json | null
           amenities: Json | null
@@ -670,6 +671,7 @@ export type Database = {
           admin_fee_amount?: number | null
           admin_fee_waived?: boolean | null
           ai_price?: number | null
+          ai_provenance?: Json | null
           ai_provider?: string | null
           ai_raw?: Json | null
           amenities?: Json | null
@@ -720,6 +722,7 @@ export type Database = {
           admin_fee_amount?: number | null
           admin_fee_waived?: boolean | null
           ai_price?: number | null
+          ai_provenance?: Json | null
           ai_provider?: string | null
           ai_raw?: Json | null
           amenities?: Json | null
@@ -1426,6 +1429,10 @@ export type Database = {
           p_tokens_used?: number
         }
         Returns: undefined
+      }
+      rpc_merge_apartments_to_scraped_v1: {
+        Args: { p_rows: Json }
+        Returns: Json
       }
       rpc_update_property_with_history: {
         Args: { p_external_id: string; p_payload: Json }
