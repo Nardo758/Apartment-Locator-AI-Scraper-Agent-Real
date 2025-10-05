@@ -284,3 +284,25 @@ This project is licensed under the MIT License. See LICENSE file for details.
 ## Security Note
 
 This tool is for research and personal use only. Respect website terms of service and robots.txt files. Use responsibly and avoid overloading servers with requests.
+
+## 🔒 Security & Code Quality
+
+### Secret Prevention
+
+- Never commit API keys, tokens, or credentials.
+- Use GitHub Secrets for environment variables in CI.
+- Run the `secret-scan` workflow locally (or in CI) before pushing.
+
+### Generated Files
+
+- Add temporary/generated files to `.gitignore` (screenshots, payloads, logs).
+- Keep the repository focused on source code; do not commit large binaries.
+- CI validates that generated files are ignored and detects large files.
+
+### Recommended developer flow
+
+1. Use a local `.env.local` copied from `.env.local.template` for secrets.
+2. Run `python -m venv .venv && .\.venv\Scripts\Activate.ps1` and install deps.
+3. Use the Playwright scraper in `scripts/` with `--dry-run` to validate extractions before pushing.
+4. If pushing from CI, store secrets in GitHub repository Secrets and use the provided workflows.
+
