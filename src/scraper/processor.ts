@@ -1,8 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ScrapingJob } from './orchestrator';
 import { syncToFrontendSchema } from './orchestrator';
-import { transformScrapedToFrontendFormat, type ScrapedPropertyData } from './data-transformer';
+import { transformScrapedToFrontendFormat } from './data-transformer';
+import type { ScrapedPropertyData } from '../types/frontend';
+import { ScrapedPropertySchema, type ScrapedPropertyType } from '../schemas/scraped-property-schema';
+import { validationPassCounter, validationFailCounter, validationFailByReason } from '../observability/metrics';
 import process from 'node:process';
+import { startMetricsServer } from '../observability/server';
 
 
 type WorkerResult = {
@@ -42,6 +46,15 @@ async function dispatchToWorker(workerUrl: string, payload: Record<string, unkno
   }
   throw lastErr;
 }
+
+// Start metrics server for long-running worker processes if enabled
+(() => {
+  const envEnable = String(process.env.ENABLE_METRICS || 'false').toLowerCase();
+  if (envEnable === 'true') {
+    const port = Number(process.env.METRICS_PORT || 9090);
+    try { startMetricsServer({ port, enabled: true }); } catch (e) { console.error('Failed to start metrics server:', e); }
+  }
+})();
 
 export async function processBatchWithCostOptimization(
   supabase: SupabaseClient, 
@@ -108,11 +121,13 @@ export async function processBatchWithCostOptimization(
       // If successful and frontend sync is enabled, prepare for transformation
       if (workerResult.success && enableFrontendSync && workerResult.data) {
         try {
-          const scrapedData: ScrapedPropertyData = {
+          const scrapedDataRaw = {
             external_id: job.external_id,
             property_id: String(job.property_id || job.external_id.split('_')[0] || ''),
             unit_number: String(job.unit_number || job.external_id.split('_')[1] || '1'),
+            property_source_id: job.property_source_id,
             source: String(job.source || 'unknown'),
+            website_name: String(workerResult.data.website_name || job.website_name || ''),
             name: String(workerResult.data.name || job.name || ''),
             address: String(workerResult.data.address || job.address || ''),
             city: String(workerResult.data.city || job.city || ''),
@@ -127,10 +142,25 @@ export async function processBatchWithCostOptimization(
             application_fee: workerResult.data.application_fee ? Number(workerResult.data.application_fee) : undefined,
             admin_fee_waived: Boolean(workerResult.data.admin_fee_waived),
             admin_fee_amount: workerResult.data.admin_fee_amount ? Number(workerResult.data.admin_fee_amount) : undefined,
-          };
-          
-          const frontendProperty = await transformScrapedToFrontendFormat(scrapedData);
-          frontendProperties.push(frontendProperty);
+          } as unknown;
+
+          const parsed = ScrapedPropertySchema.safeParse(scrapedDataRaw);
+          if (!parsed.success) {
+            // classify as schema violation (non-retryable) and record for manual review
+            console.warn(`Schema validation failed for ${job.external_id}:`, parsed.error.format());
+            validationFailCounter.inc();
+            validationFailByReason.inc({ reason: 'zod_error' }, 1);
+            try {
+              await supabase.from('failed_scrapes').insert({ external_id: job.external_id, payload: scrapedDataRaw, error: parsed.error.flatten(), created_at: new Date().toISOString() });
+            } catch (dbErr) {
+              console.error('Failed to write schema violation to failed_scrapes:', dbErr);
+            }
+          } else {
+            validationPassCounter.inc();
+            const scrapedData = parsed.data as ScrapedPropertyType;
+            const frontendProperty = await transformScrapedToFrontendFormat(scrapedData as ScrapedPropertyData);
+            frontendProperties.push(frontendProperty);
+          }
         } catch (transformError) {
           console.error(`Error transforming property ${job.external_id} for frontend:`, transformError);
         }

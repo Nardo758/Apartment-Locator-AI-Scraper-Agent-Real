@@ -10,9 +10,8 @@ import {
 import { 
   transformScrapedToFrontendFormat,
   batchTransformProperties,
-  type ScrapedPropertyData,
-  type FrontendProperty 
 } from './data-transformer';
+import type { ScrapedPropertyData as ScrapedPropertyDataType, FrontendProperty as FrontendPropertyType } from '../types/frontend';
 
 // Test configuration
 const TEST_CONFIG = {
@@ -118,7 +117,7 @@ async function testDataTransformation(): Promise<void> {
   console.log('\n🔄 Test 2: Data Transformation');
   
   // Create sample scraped data
-  const sampleScrapedData: ScrapedPropertyData = {
+  const sampleScrapedData: ScrapedPropertyDataType = {
     external_id: 'test_property_001',
     property_id: 'test_property',
     unit_number: '001',
@@ -159,7 +158,7 @@ async function testDataTransformation(): Promise<void> {
     console.log(`  Apartment IQ Score: ${frontendProperty.apartment_iq_data?.competitiveness_score || 'N/A'}`);
     
     // Test batch transformation
-    const batchData = [sampleScrapedData, {
+  const batchData: ScrapedPropertyDataType[] = [sampleScrapedData, {
       ...sampleScrapedData,
       external_id: 'test_property_002',
       name: 'Cozy Studio Apartment',
@@ -225,7 +224,7 @@ async function testBatchProcessingWithSync(supabase: any): Promise<void> {
     console.log(`📦 Processing batch of ${mockBatch.length} properties`);
     
     // Transform to scraped data format
-    const scrapedData: ScrapedPropertyData[] = mockBatch.map(job => ({
+  const scrapedData: ScrapedPropertyDataType[] = mockBatch.map(job => ({
       external_id: job.external_id,
       property_id: String(job.property_id || ''),
       unit_number: String(job.unit_number || ''),

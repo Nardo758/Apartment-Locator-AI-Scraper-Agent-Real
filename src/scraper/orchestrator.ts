@@ -4,9 +4,8 @@ import {
   transformScrapedToFrontendFormat,
   batchTransformProperties,
   saveTransformedProperties,
-  type ScrapedPropertyData,
-  type FrontendProperty
 } from './data-transformer';
+import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;

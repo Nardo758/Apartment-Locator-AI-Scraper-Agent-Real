@@ -4,6 +4,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getModelCost } from './costs';
 import { scraperFrontendIntegration } from './frontend-integration';
+import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;
@@ -19,7 +20,7 @@ export type ScrapingJob = Record<string, unknown> & {
 
 export type ScrapingResult = {
   success: boolean;
-  properties: any[];
+  properties: ScrapedPropertyData[];
   cost: number;
   source: string;
   metadata: Record<string, any>;
@@ -151,7 +152,7 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Process scraping results with frontend integration
    */
-  async processScrapingResults(results: any[], source: string, cost: number): Promise<ScrapingResult> {
+  async processScrapingResults(results: ScrapedPropertyData[], source: string, cost: number): Promise<ScrapingResult> {
     const startTime = Date.now();
     
     const scrapingResult: ScrapingResult = {
@@ -170,7 +171,6 @@ export class EnhancedScrapingOrchestrator {
     // Integrate with frontend data system
     try {
       console.log('🔄 Integrating scraping results with frontend system...');
-      
       const frontendIntegration = await scraperFrontendIntegration.processScraperResults(scrapingResult);
       scrapingResult.frontend_integration = frontendIntegration;
       
@@ -196,7 +196,7 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Update property source metrics based on scraping results
    */
-  private async updatePropertySourceMetrics(results: any[]): Promise<void> {
+  private async updatePropertySourceMetrics(results: ScrapedPropertyData[]): Promise<void> {
     // Group results by property source
     const sourceResults = new Map<number, any[]>();
     
@@ -235,7 +235,7 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Analyze source breakdown for metadata
    */
-  private analyzeSourceBreakdown(results: any[]): Record<string, number> {
+  private analyzeSourceBreakdown(results: ScrapedPropertyData[]): Record<string, number> {
     const breakdown: Record<string, number> = {};
     
     for (const result of results) {
@@ -394,8 +394,8 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Get frontend-ready properties for API responses
    */
-  async getFrontendProperties(filters: any = {}): Promise<any[]> {
-    return scraperFrontendIntegration.getFrontendProperties(filters);
+  async getFrontendProperties(filters: Record<string, unknown> = {}): Promise<FrontendProperty[]> {
+    return scraperFrontendIntegration.getFrontendProperties(filters as any) as Promise<FrontendProperty[]>;
   }
 }
 

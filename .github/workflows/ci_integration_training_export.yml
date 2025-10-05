@@ -1,0 +1,60 @@
+name: CI - Integration - Training Export
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  training-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local Supabase
+        run: supabase start | cat
+
+      - name: Apply migrations (local reset)
+        run: supabase db reset --force | cat
+
+      - name: Generate types (local)
+        run: |
+          mkdir -p types
+          supabase gen types typescript --local > types/supabase.ts
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Run training exporter (mock dry-run)
+        run: |
+          # Run in mock mode so CI does not need Supabase service role
+          node scripts/failed_scrapes_training.js --mock --limit=200 --batch-size=50 --dry-run --out-dir=tmp/ci_training_batches --redact --redact-fields=contact_email,phone,owner_name,address
+
+      - name: Validate generated batches
+        run: |
+          node scripts/validate_training_batches.js --dir=tmp/ci_training_batches
+
+      - name: Upload training batches
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-training-batches
+          path: tmp/ci_training_batches
+          if-no-files-found: warn
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop | cat
