@@ -17,3 +17,10 @@ Thumbs.db
 
 # Optional: lockfiles
 package-lock.json
+
+# Playwright generated files
+highlands_*.json
+playwright_payload_*.json
+converted_payload_*.json
+*.png
+*.html
