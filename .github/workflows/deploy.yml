@@ -54,86 +54,78 @@ jobs:
     environment: ${{ inputs.environment || 'production' }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install Supabase CLI
-      uses: supabase/setup-cli@v1
-      with:
-        version: latest
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
 
-    - name: Set environment: staging
-      if: ${{ github.event.inputs.environment == 'staging' }}
-      shell: bash
-      env:
-        PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_ID_STAGING }}
-        DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}
-      run: |
-        echo "PROJECT_REF=$PROJECT_REF" >> $GITHUB_ENV
-        echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
-
-    - name: Set environment: production
-      if: ${{ github.event.inputs.environment != 'staging' }}
-      shell: bash
-      env:
-        PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_ID }}
-        DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-      run: |
-        echo "PROJECT_REF=$PROJECT_REF" >> $GITHUB_ENV
-        echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
-
-    - name: Link Supabase project
-      run: supabase link --project-ref "$PROJECT_REF"
-
-    - name: Compute DB URL (for backup)
-      id: dburl
-      shell: bash
-      run: |
-        if [ -n "${DB_PASSWORD}" ] && [ -n "${PROJECT_REF}" ]; then
-          echo "db_url=postgresql://postgres:${DB_PASSWORD}@db.${PROJECT_REF}.supabase.co:5432/postgres?sslmode=require" >> $GITHUB_OUTPUT
-        else
-          echo "db_url=" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Install PostgreSQL client
-      if: steps.dburl.outputs.db_url != ''
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y postgresql-client
-
-    - name: Pre-deploy backup (pg_dump)
-      if: steps.dburl.outputs.db_url != ''
-      env:
-        DB_URL: ${{ steps.dburl.outputs.db_url }}
-      run: |
-        echo "Creating logical backup before migration..."
-        pg_dump --no-owner --no-privileges --format=custom "$DB_URL" -f predeploy.backup
-        tar -czf predeploy.backup.tar.gz predeploy.backup
-
-    - name: Upload backup artifact
-      if: steps.dburl.outputs.db_url != ''
-      uses: actions/upload-artifact@v4
-      with:
-        name: predeploy-backup
-        path: predeploy.backup.tar.gz
-        retention-days: 14
-
-    - name: Apply migrations (remote)
-      env:
-        DB_URL: ${{ steps.dburl.outputs.db_url }}
-      shell: bash
-      run: |
-        set -euo pipefail
-        echo "Applying remote migrations..."
-        if supabase db push --non-interactive | cat; then
-          echo "Remote migrations applied successfully."
-        else
-          echo "Migration failed. Attempting rollback from backup..." >&2
-          if [ -f predeploy.backup ]; then
-            pg_restore --clean --if-exists --no-owner --no-privileges -d "$DB_URL" predeploy.backup || true
+      - name: Set environment variables
+        shell: bash
+        run: |
+          # Choose project ref and DB password based on workflow input
+          if [ "${{ github.event.inputs.environment }}" = "staging" ]; then
+            echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
+            echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}" >> $GITHUB_ENV
+          else
+            echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
+            echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }}" >> $GITHUB_ENV
           fi
-          exit 1
-        fi
+
+      - name: Link Supabase project
+        run: supabase link --project-ref "$PROJECT_REF"
+
+      - name: Compute DB URL (for backup)
+        id: dburl
+        shell: bash
+        run: |
+          if [ -n "${DB_PASSWORD}" ] && [ -n "${PROJECT_REF}" ]; then
+            echo "db_url=postgresql://postgres:${DB_PASSWORD}@db.${PROJECT_REF}.supabase.co:5432/postgres?sslmode=require" >> $GITHUB_OUTPUT
+          else
+            echo "db_url=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install PostgreSQL client
+        if: steps.dburl.outputs.db_url != ''
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y postgresql-client
+
+      - name: Pre-deploy backup (pg_dump)
+        if: steps.dburl.outputs.db_url != ''
+        env:
+          DB_URL: ${{ steps.dburl.outputs.db_url }}
+        run: |
+          echo "Creating logical backup before migration..."
+          pg_dump --no-owner --no-privileges --format=custom "$DB_URL" -f predeploy.backup
+          tar -czf predeploy.backup.tar.gz predeploy.backup
+
+      - name: Upload backup artifact
+        if: steps.dburl.outputs.db_url != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: predeploy-backup
+          path: predeploy.backup.tar.gz
+          retention-days: 14
+
+      - name: Apply migrations (remote)
+        env:
+          DB_URL: ${{ steps.dburl.outputs.db_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Applying remote migrations..."
+          if supabase db push --non-interactive | cat; then
+            echo "Remote migrations applied successfully."
+          else
+            echo "Migration failed. Attempting rollback from backup..." >&2
+            if [ -f predeploy.backup ]; then
+              pg_restore --clean --if-exists --no-owner --no-privileges -d "$DB_URL" predeploy.backup || true
+            fi
+            exit 1
+          fi
 
   deploy-edge-functions:
     name: Deploy Edge Functions
@@ -165,24 +157,19 @@ jobs:
     - name: Set environment secrets in Supabase
       if: env.SUPABASE_ACCESS_TOKEN != ''
       env:
+        SUPABASE_URL: https://${PROJECT_REF}.supabase.co
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        SUPABASE_URL: https://${PROJECT_REF}.supabase.co
       run: |
         echo "Syncing runtime secrets to Supabase environment..."
-        TMPFILE=$(mktemp)
-        cat > "$TMPFILE" <<EOF
-ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
-SUPABASE_URL=$SUPABASE_URL
-SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
-SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
-ENABLE_AI_PRICING=true
-ENABLE_FRONTEND_SYNC=true
-ENABLE_MARKET_INTELLIGENCE=true
-EOF
-        supabase secrets set --env-file "$TMPFILE"
-        rm -f "$TMPFILE"
+        supabase secrets set ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
+        supabase secrets set SUPABASE_URL="$SUPABASE_URL"
+        supabase secrets set SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
+        supabase secrets set SUPABASE_SERVICE_ROLE_KEY="$SUPABASE_SERVICE_ROLE_KEY"
+        supabase secrets set ENABLE_AI_PRICING=true
+        supabase secrets set ENABLE_FRONTEND_SYNC=true
+        supabase secrets set ENABLE_MARKET_INTELLIGENCE=true
 
     - name: Deploy all functions
       shell: bash
