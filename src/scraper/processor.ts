@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ScrapingJob } from './orchestrator';
-import { syncToFrontendSchema, type FrontendProperty } from './orchestrator';
+import { syncToFrontendSchema } from './orchestrator';
 import { transformScrapedToFrontendFormat, type ScrapedPropertyData } from './data-transformer';
 import process from 'node:process';
 
@@ -12,6 +12,7 @@ type WorkerResult = {
   price_changed?: boolean;
   duration?: number;
   error?: string;
+  data?: any;
 };
 
 async function dispatchToWorker(workerUrl: string, payload: Record<string, unknown>, maxRetries = 2) {
@@ -48,7 +49,7 @@ export async function processBatchWithCostOptimization(
   options: { enableFrontendSync?: boolean; frontendTable?: string } = {}
 ) {
   const results: Array<Record<string, unknown>> = [];
-  const frontendProperties: FrontendProperty[] = [];
+  const frontendProperties: any[] = [];
   const { enableFrontendSync = false, frontendTable = 'properties' } = options;
 
   for (const job of batch) {
@@ -136,7 +137,7 @@ export async function processBatchWithCostOptimization(
       }
 
       results.push({ success: workerResult.success === true, job, result: workerResult });
-    } catch (err) {
+      } catch (err) {
       await supabase.rpc('update_scraping_metrics', {
         p_external_id: job.external_id,
         p_success: false,
@@ -144,7 +145,9 @@ export async function processBatchWithCostOptimization(
         p_price_changed: false,
       });
 
-      const msg = (err && typeof err === 'object' && 'message' in (err as Record<string, unknown>)) ? String((err as Record<string, unknown>)['message']) : String(err);
+      const msg = (err && typeof err === 'object' && 'message' in (err as Record<string, unknown>))
+        ? String((err as Record<string, unknown>)['message'])
+        : String(err);
       results.push({ success: false, job, error: msg });
     }
   }
@@ -169,7 +172,7 @@ export async function processBatchWithCostOptimization(
       results.push({
         frontend_sync: {
           enabled: true,
-          error: syncError.message,
+          error: String(syncError),
           properties_attempted: frontendProperties.length
         }
       });

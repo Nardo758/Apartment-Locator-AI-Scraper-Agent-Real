@@ -1,4 +1,21 @@
-import SupabaseClientWrapper, { Apartment } from '../src/tools/supabaseClient';
+import SupabaseClientWrapper from '../src/tools/supabaseClient';
+
+// Minimal Apartment shape used by this script to avoid importing internal types
+type Apartment = {
+  external_id: string;
+  source?: string;
+  title?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  rent_price?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  square_feet?: number;
+  amenities?: string[];
+  images?: string[];
+};
 import * as process from 'node:process';
 
 function scrapeApartments(): Apartment[] {

@@ -107,7 +107,7 @@ async function testSchemaVerification(supabase: any): Promise<void> {
     console.log('✅ Schema verification completed');
     
   } catch (error) {
-    console.log('⚠️  Schema verification skipped:', error.message);
+      console.log('⚠️  Schema verification skipped:', String(error));
   }
 }
 
@@ -269,7 +269,7 @@ async function testGeographicSearch(supabase: any): Promise<void> {
   console.log('\n🌍 Test 4: Geographic Search');
   
   try {
-    // Test geographic search function (Austin, TX coordinates)
+      // Test geographic search function (Austin, TX coordinates)
     const austinLat = 30.2672;
     const austinLng = -97.7431;
     const radiusMiles = 10;
@@ -286,7 +286,7 @@ async function testGeographicSearch(supabase: any): Promise<void> {
       });
     
     if (error) {
-      console.log('⚠️  Geographic search function not available:', error.message);
+        console.log('⚠️  Geographic search function not available:', String(error));
     } else {
       console.log(`📍 Found ${nearbyProperties?.length || 0} properties within ${radiusMiles} miles of Austin`);
       
@@ -300,7 +300,7 @@ async function testGeographicSearch(supabase: any): Promise<void> {
     console.log('✅ Geographic search test completed');
     
   } catch (error) {
-    console.log('⚠️  Geographic search test skipped:', error.message);
+      console.log('⚠️  Geographic search test skipped:', String(error));
   }
 }
 
@@ -325,12 +325,12 @@ async function testAiPriceCalculation(supabase: any): Promise<void> {
           bedrooms: testCase.bedrooms,
           bathrooms: testCase.bathrooms,
           sqft: testCase.sqft,
-          amenities: '["pool", "gym"]'::JSON,
+          amenities: ["pool", "gym"],
           market_rent: testCase.market_rent
         });
       
       if (error) {
-        console.log('⚠️  AI price calculation function not available');
+          console.log('⚠️  AI price calculation function not available:', String(error));
         break;
       }
       
@@ -340,7 +340,7 @@ async function testAiPriceCalculation(supabase: any): Promise<void> {
     console.log('✅ AI price calculation test completed');
     
   } catch (error) {
-    console.log('⚠️  AI price calculation test skipped:', error.message);
+      console.log('⚠️  AI price calculation test skipped:', String(error));
   }
 }
 
@@ -405,21 +405,23 @@ async function testDataQuality(supabase: any): Promise<void> {
     console.log('✅ Data quality assessment completed');
     
   } catch (error) {
-    console.log('⚠️  Data quality assessment failed:', error.message);
+      console.log('⚠️  Data quality assessment failed:', String(error));
   }
 }
 
 /**
  * Run the test if this file is executed directly
  */
-if (import.meta.main) {
-  runIntegrationTest()
-    .then(() => {
-      console.log('\n🎉 Integration test suite completed successfully!');
-      Deno.exit(0);
-    })
-    .catch((error) => {
-      console.error('\n💥 Integration test suite failed:', error);
-      Deno.exit(1);
-    });
+// Run the test when executed directly. Support both Deno and Node environments.
+const isDeno = typeof (globalThis as any).Deno !== 'undefined';
+if (isDeno) {
+  runIntegrationTest().then(() => (globalThis as any).Deno.exit?.(0)).catch(() => (globalThis as any).Deno.exit?.(1));
+} else if (typeof require !== 'undefined' && require.main === module) {
+  runIntegrationTest().then(() => {
+    console.log('\n🎉 Integration test suite completed successfully!');
+    process.exit(0);
+  }).catch((error) => {
+    console.error('\n💥 Integration test suite failed:', String(error));
+    process.exit(1);
+  });
 }

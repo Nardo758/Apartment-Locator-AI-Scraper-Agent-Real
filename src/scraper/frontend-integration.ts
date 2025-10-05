@@ -61,7 +61,7 @@ export class ScraperFrontendIntegration {
 
     } catch (error) {
       console.error('❌ Frontend integration error:', error);
-      errors.push(error.message);
+        errors.push(String(error));
     }
 
     return {
