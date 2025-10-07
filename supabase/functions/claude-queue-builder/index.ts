@@ -196,7 +196,12 @@ serve(async (req: Request) => {
               listing_url: c.property_url || c.url || null
             };
 
-            const atomicResp = await fetch(rpcAtomicUrl, {
+              // Prepare optional fields from the earlier RPC result (property_sources id and metadata)
+              const property_source_id = (json && json.property_source_id) ? json.property_source_id : null;
+              const priority = (c.priority_level && typeof c.priority_level === 'number') ? c.priority_level : null;
+              const metadata = (json && json.discovery_id) ? { discovery_id: json.discovery_id } : null;
+
+              const atomicResp = await fetch(rpcAtomicUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -204,7 +209,7 @@ serve(async (req: Request) => {
                 'Authorization': `Bearer ${SERVICE_KEY}`
               },
               // PostgREST maps JSON body keys to function params. Wrap under 'p_row' to match function signature (p_row jsonb).
-              body: JSON.stringify({ p_row: scrapedRecord })
+                body: JSON.stringify({ p_row: scrapedRecord, p_property_source_id: property_source_id, p_priority: priority, p_metadata: metadata })
             });
 
             if (!atomicResp.ok) {

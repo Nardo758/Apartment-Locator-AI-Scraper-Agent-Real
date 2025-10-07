@@ -3,7 +3,12 @@
 -- It will upsert into public.scraped_properties (on conflict property_id,unit_number) and then insert a row into public.scraping_queue
 -- The operation is atomic within a single transaction.
 
-CREATE OR REPLACE FUNCTION public.rpc_upsert_property_and_enqueue(p_row jsonb)
+CREATE OR REPLACE FUNCTION public.rpc_upsert_property_and_enqueue(
+  p_row jsonb,
+  p_property_source_id integer DEFAULT NULL,
+  p_priority integer DEFAULT NULL,
+  p_metadata jsonb DEFAULT NULL
+)
 RETURNS jsonb
 LANGUAGE plpgsql
 AS $function$
@@ -62,7 +67,7 @@ BEGIN
 
   -- Insert into scraping_queue with derived canonical property_id and external_id
   INSERT INTO public.scraping_queue (
-    external_id, property_id, unit_number, url, source, status, property_source_id, created_at
+    external_id, property_id, unit_number, url, source, status, property_source_id, priority, metadata, created_at
   ) VALUES (
     COALESCE(canonical.external_id::text, (rec->>'property_id')::text),
     COALESCE(canonical.property_id::text, (rec->>'property_id')::text),
@@ -70,7 +75,9 @@ BEGIN
     (rec->>'listing_url')::text,
     (rec->>'source')::text,
     'queued',
-    NULL,
+    COALESCE(p_property_source_id, NULL),
+    COALESCE(p_priority, NULL),
+    COALESCE(p_metadata, NULL),
     now_ts
   )
   RETURNING * INTO inserted_queue;
