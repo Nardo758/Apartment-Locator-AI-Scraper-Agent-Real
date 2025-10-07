@@ -125,9 +125,9 @@ CREATE POLICY "Service role full access" ON public.agent_processing_queue
     FOR ALL USING (auth.role() = 'service_role');
 
 -- Create indexes for agent_processing_queue
-CREATE INDEX idx_agent_queue_status ON public.agent_processing_queue(status, priority DESC);
-CREATE INDEX idx_agent_queue_property ON public.agent_processing_queue(property_id, agent_type);
-CREATE INDEX idx_agent_queue_created ON public.agent_processing_queue(created_at);
+CREATE INDEX IF NOT EXISTS idx_agent_queue_status ON public.agent_processing_queue(status, priority DESC);
+CREATE INDEX IF NOT EXISTS idx_agent_queue_property ON public.agent_processing_queue(property_id, agent_type);
+CREATE INDEX IF NOT EXISTS idx_agent_queue_created ON public.agent_processing_queue(created_at);
 
 -- Cost tracking table for agent usage
 CREATE TABLE IF NOT EXISTS public.agent_costs (
