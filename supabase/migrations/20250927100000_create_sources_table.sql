@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.sources (
 ALTER TABLE public.sources ENABLE ROW LEVEL SECURITY;
 
 -- Create policy for service role (full access)
+DROP POLICY IF EXISTS "Service role can do anything" ON public.sources;
 CREATE POLICY "Service role can do anything" ON public.sources
     FOR ALL USING (auth.role() = 'service_role');
 
@@ -24,6 +25,16 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_sources_updated_at
-    BEFORE UPDATE ON public.sources
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger t
+        JOIN pg_class c ON t.tgrelid = c.oid
+        WHERE c.relname = 'sources' AND t.tgname = 'update_sources_updated_at'
+    ) THEN
+        CREATE TRIGGER update_sources_updated_at
+            BEFORE UPDATE ON public.sources
+            FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
