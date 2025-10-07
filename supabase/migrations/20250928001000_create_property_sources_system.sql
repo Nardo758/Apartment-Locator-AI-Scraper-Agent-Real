@@ -50,11 +50,20 @@ CREATE POLICY "Authenticated users read access" ON public.property_sources
     FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Create indexes for performance
-CREATE INDEX idx_property_sources_active_priority ON public.property_sources (is_active, priority DESC, next_scrape ASC);
-CREATE INDEX idx_property_sources_next_scrape ON public.property_sources (next_scrape) WHERE is_active = true;
-CREATE INDEX idx_property_sources_region ON public.property_sources (region) WHERE is_active = true;
-CREATE INDEX idx_property_sources_website ON public.property_sources (website_name);
-CREATE INDEX idx_property_sources_success_rate ON public.property_sources (success_rate DESC);
+CREATE INDEX IF NOT EXISTS idx_property_sources_active_priority ON public.property_sources (is_active, priority DESC, next_scrape ASC);
+-- Partial indexes need a guard; create only if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = 'idx_property_sources_next_scrape') THEN
+        CREATE INDEX idx_property_sources_next_scrape ON public.property_sources (next_scrape) WHERE is_active = true;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = 'idx_property_sources_region') THEN
+        CREATE INDEX idx_property_sources_region ON public.property_sources (region) WHERE is_active = true;
+    END IF;
+END$$;
+
+CREATE INDEX IF NOT EXISTS idx_property_sources_website ON public.property_sources (website_name);
+CREATE INDEX IF NOT EXISTS idx_property_sources_success_rate ON public.property_sources (success_rate DESC);
 
 -- Create function to calculate next scrape time based on frequency
 CREATE OR REPLACE FUNCTION public.calculate_next_scrape_time(
