@@ -339,6 +339,9 @@ CREATE TABLE IF NOT EXISTS public.market_intelligence (
 
 -- Enable RLS
 ALTER TABLE public.market_intelligence ENABLE ROW LEVEL SECURITY;
+-- Ensure market_intelligence policies are idempotent
+DROP POLICY IF EXISTS "Service role full access" ON public.market_intelligence;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.market_intelligence;
 
 CREATE POLICY "Service role full access" ON public.market_intelligence
     FOR ALL USING (auth.role() = 'service_role');
