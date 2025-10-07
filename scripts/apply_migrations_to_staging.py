@@ -12,12 +12,18 @@ import sys
 import psycopg2
 from psycopg2 import sql
 
-MIGRATIONS = [
-    'supabase/migrations/20251004130000_add_scraped_properties_fields_and_index.sql',
-    'supabase/migrations/20251004131000_add_missing_apartments_columns.sql',
-    'supabase/migrations/20251004120000_rpc_bulk_upsert_properties_v2.sql',
-    'supabase/migrations/20251004132000_rpc_merge_apartments_into_scraped.sql'
-]
+import glob
+import pathlib
+
+MIGRATIONS_DIR = 'supabase/migrations'
+
+def discover_migrations():
+    """Discover .sql migration files under supabase/migrations and return a sorted list."""
+    p = pathlib.Path(MIGRATIONS_DIR)
+    if not p.exists():
+        return []
+    files = [str(x).replace('\\','/') for x in sorted(p.glob('*.sql'))]
+    return files
 
 
 def read_sql(path):
@@ -30,35 +36,77 @@ def main():
     if not uri:
         print('Error: POSTGRES_URI or STAGING_POSTGRES_URI environment variable must be set to apply migrations.')
         sys.exit(1)
+    # CLI flags
+    confirm = os.getenv('YES') == '1' or '--yes' in sys.argv or '-y' in sys.argv
+    list_only = '--list' in sys.argv
+    dry_run = '--dry-run' in sys.argv
 
-    confirm = os.getenv('YES') == '1' or '--yes' in sys.argv
+    migrations = discover_migrations()
+    if not migrations:
+        print('No migration files found in', MIGRATIONS_DIR)
+        sys.exit(0)
+
+    print('Migrations to apply (%d):' % len(migrations))
+    for m in migrations:
+        print('  ', m)
+
+    if list_only:
+        print('\nList-only mode; exiting without applying migrations.')
+        sys.exit(0)
+
+    if dry_run:
+        print('\nDry-run mode; not executing SQL. Use --yes to run for real.')
+        sys.exit(0)
+
     if not confirm:
-        print('About to apply migrations to:', uri)
+        print('\nAbout to apply migrations to:', uri)
         ans = input('Proceed? (type YES to continue) ')
         if ans.strip() != 'YES':
             print('Aborted by user')
             sys.exit(1)
 
-    conn = psycopg2.connect(uri)
-    conn.autocommit = True
-    cur = conn.cursor()
+    conn = None
+    try:
+        conn = psycopg2.connect(uri)
+        conn.autocommit = True
+        cur = conn.cursor()
 
-    for mig in MIGRATIONS:
-        print('\n--- Applying', mig)
-        sql_text = read_sql(mig)
-        try:
-            cur.execute(sql_text)
-            print('OK')
-        except Exception as e:
-            print('ERROR applying', mig)
-            print(e)
-            cur.close()
-            conn.close()
-            sys.exit(2)
+        for mig in migrations:
+            print('\n--- Applying', mig)
+            try:
+                sql_text = read_sql(mig)
+            except Exception as e:
+                print('ERROR reading', mig)
+                print(e)
+                cur.close()
+                conn.close()
+                sys.exit(2)
 
-    cur.close()
-    conn.close()
-    print('\nAll migrations applied successfully')
+            try:
+                cur.execute(sql_text)
+                print('OK')
+            except Exception as e:
+                print('ERROR applying', mig)
+                # Print a concise error message and the SQLSTATE if available
+                try:
+                    print('Error:', e)
+                except:
+                    print('Error applying migration (exception printing failed)')
+                cur.close()
+                conn.close()
+                sys.exit(2)
+
+        cur.close()
+        conn.close()
+        print('\nAll migrations applied successfully')
+    except Exception as e:
+        print('Failed to connect or apply migrations:', e)
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+        sys.exit(3)
 
 
 if __name__ == '__main__':
