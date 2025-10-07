@@ -14,49 +14,67 @@ ALTER TABLE public.scraping_costs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.property_intelligence ENABLE ROW LEVEL SECURITY;
 
 -- Create secure policies for service role (full access for backend operations)
+-- Ensure existing policies are removed to allow idempotent re-apply
+DROP POLICY IF EXISTS "Service role full access" ON public.apartments;
+DROP POLICY IF EXISTS "Service role full access" ON public.scrape_jobs;
+DROP POLICY IF EXISTS "Service role full access" ON public.ai_results;
+DROP POLICY IF EXISTS "Service role full access" ON public.scraped_properties;
+DROP POLICY IF EXISTS "Service role full access" ON public.price_history;
+DROP POLICY IF EXISTS "Service role full access" ON public.scraping_queue;
+DROP POLICY IF EXISTS "Service role full access" ON public.scraping_logs;
+DROP POLICY IF EXISTS "Service role full access" ON public.scraping_costs;
+DROP POLICY IF EXISTS "Service role full access" ON public.property_intelligence;
+
 CREATE POLICY "Service role full access" ON public.apartments
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.scrape_jobs
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.ai_results
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.scraped_properties
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.price_history
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.scraping_queue
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.scraping_logs
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.scraping_costs
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 CREATE POLICY "Service role full access" ON public.property_intelligence
-    FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING (auth.role() = 'service_role');
 
 -- Create read-only policies for authenticated users (for dashboard/analytics)
+-- Drop any existing authenticated read policies to avoid duplicate policy errors
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.apartments;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.scraped_properties;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.price_history;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.property_intelligence;
+
 CREATE POLICY "Authenticated users read access" ON public.apartments
-    FOR SELECT USING (auth.role() = 'authenticated');
+  FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE POLICY "Authenticated users read access" ON public.scraped_properties
-    FOR SELECT USING (auth.role() = 'authenticated');
+  FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE POLICY "Authenticated users read access" ON public.price_history
-    FOR SELECT USING (auth.role() = 'authenticated');
+  FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE POLICY "Authenticated users read access" ON public.property_intelligence
-    FOR SELECT USING (auth.role() = 'authenticated');
+  FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Create policies for anonymous users (public read access to apartments only)
+DROP POLICY IF EXISTS "Anonymous users read apartments" ON public.apartments;
 CREATE POLICY "Anonymous users read apartments" ON public.apartments
-    FOR SELECT USING (true);
+  FOR SELECT USING (true);
 
 -- Secure all existing functions with proper search_path
 -- Update functions to use security definer with explicit search path
