@@ -71,6 +71,9 @@ LEFT JOIN public.scraped_properties sp ON sq.external_id = sp.external_id
 WHERE sq.status = 'pending';
 
 -- Function to get next batch for processing
+-- Ensure any conflicting previous definition is removed before creating the new signature
+DROP FUNCTION IF EXISTS public.get_next_scraping_batch(integer);
+
 CREATE OR REPLACE FUNCTION public.get_next_scraping_batch(batch_size INTEGER DEFAULT 50)
 RETURNS TABLE(
     queue_id BIGINT,
