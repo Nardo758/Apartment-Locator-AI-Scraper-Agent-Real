@@ -33,6 +33,10 @@ CREATE TABLE IF NOT EXISTS public.properties_basic (
 ALTER TABLE public.properties_basic ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for properties_basic
+-- Ensure policies are idempotent
+DROP POLICY IF EXISTS "Service role full access" ON public.properties_basic;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.properties_basic;
+
 CREATE POLICY "Service role full access" ON public.properties_basic
     FOR ALL USING (auth.role() = 'service_role');
 
@@ -40,11 +44,11 @@ CREATE POLICY "Authenticated users read access" ON public.properties_basic
     FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Create indexes for properties_basic
-CREATE INDEX idx_properties_basic_url ON public.properties_basic(property_url);
-CREATE INDEX idx_properties_basic_location ON public.properties_basic(city, state);
-CREATE INDEX idx_properties_basic_priority ON public.properties_basic(priority_level, website_complexity);
-CREATE INDEX idx_properties_basic_confidence ON public.properties_basic(confidence_score DESC);
-CREATE INDEX idx_properties_basic_verified ON public.properties_basic(last_verified);
+CREATE INDEX IF NOT EXISTS idx_properties_basic_url ON public.properties_basic(property_url);
+CREATE INDEX IF NOT EXISTS idx_properties_basic_location ON public.properties_basic(city, state);
+CREATE INDEX IF NOT EXISTS idx_properties_basic_priority ON public.properties_basic(priority_level, website_complexity);
+CREATE INDEX IF NOT EXISTS idx_properties_basic_confidence ON public.properties_basic(confidence_score DESC);
+CREATE INDEX IF NOT EXISTS idx_properties_basic_verified ON public.properties_basic(last_verified);
 
 -- ============================================================================
 -- DATABASE 2: Rental Data (Vision Agent-Managed)
@@ -75,6 +79,9 @@ CREATE TABLE IF NOT EXISTS public.rental_prices (
 ALTER TABLE public.rental_prices ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for rental_prices
+DROP POLICY IF EXISTS "Service role full access" ON public.rental_prices;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.rental_prices;
+
 CREATE POLICY "Service role full access" ON public.rental_prices
     FOR ALL USING (auth.role() = 'service_role');
 
@@ -82,12 +89,12 @@ CREATE POLICY "Authenticated users read access" ON public.rental_prices
     FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Create indexes for rental_prices
-CREATE INDEX idx_rental_prices_property ON public.rental_prices(property_id);
-CREATE INDEX idx_rental_prices_bedrooms ON public.rental_prices(bedrooms, bathrooms);
-CREATE INDEX idx_rental_prices_rent ON public.rental_prices(monthly_rent);
-CREATE INDEX idx_rental_prices_availability ON public.rental_prices(availability_date, availability_status);
-CREATE INDEX idx_rental_prices_extracted ON public.rental_prices(extracted_at DESC);
-CREATE INDEX idx_rental_prices_data_source ON public.rental_prices(data_source);
+CREATE INDEX IF NOT EXISTS idx_rental_prices_property ON public.rental_prices(property_id);
+CREATE INDEX IF NOT EXISTS idx_rental_prices_bedrooms ON public.rental_prices(bedrooms, bathrooms);
+CREATE INDEX IF NOT EXISTS idx_rental_prices_rent ON public.rental_prices(monthly_rent);
+CREATE INDEX IF NOT EXISTS idx_rental_prices_availability ON public.rental_prices(availability_date, availability_status);
+CREATE INDEX IF NOT EXISTS idx_rental_prices_extracted ON public.rental_prices(extracted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_rental_prices_data_source ON public.rental_prices(data_source);
 
 -- ============================================================================
 -- ADDITIONAL TABLES FOR AGENT SYSTEM
@@ -113,6 +120,7 @@ CREATE TABLE IF NOT EXISTS public.agent_processing_queue (
 ALTER TABLE public.agent_processing_queue ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for agent_processing_queue
+DROP POLICY IF EXISTS "Service role full access" ON public.agent_processing_queue;
 CREATE POLICY "Service role full access" ON public.agent_processing_queue
     FOR ALL USING (auth.role() = 'service_role');
 
@@ -139,13 +147,14 @@ CREATE TABLE IF NOT EXISTS public.agent_costs (
 ALTER TABLE public.agent_costs ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for agent_costs
+DROP POLICY IF EXISTS "Service role full access" ON public.agent_costs;
 CREATE POLICY "Service role full access" ON public.agent_costs
     FOR ALL USING (auth.role() = 'service_role');
 
 -- Create indexes for agent_costs
-CREATE INDEX idx_agent_costs_type ON public.agent_costs(agent_type, operation_type);
-CREATE INDEX idx_agent_costs_date ON public.agent_costs(created_at DESC);
-CREATE INDEX idx_agent_costs_property ON public.agent_costs(property_id);
+CREATE INDEX IF NOT EXISTS idx_agent_costs_type ON public.agent_costs(agent_type, operation_type);
+CREATE INDEX IF NOT EXISTS idx_agent_costs_date ON public.agent_costs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_agent_costs_property ON public.agent_costs(property_id);
 
 -- ============================================================================
 -- FUNCTIONS FOR AGENT SYSTEM
