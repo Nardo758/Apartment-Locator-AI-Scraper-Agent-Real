@@ -350,8 +350,8 @@ CREATE POLICY "Authenticated users read access" ON public.market_intelligence
     FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Create indexes
-CREATE INDEX idx_market_intelligence_location ON public.market_intelligence(location);
-CREATE INDEX idx_market_intelligence_timeliness ON public.market_intelligence(calculated_at, valid_until);
+CREATE INDEX IF NOT EXISTS idx_market_intelligence_location ON public.market_intelligence(location);
+CREATE INDEX IF NOT EXISTS idx_market_intelligence_timeliness ON public.market_intelligence(calculated_at, valid_until);
 
 -- ============================================================================
 -- 6. CREATE UTILITY FUNCTIONS
