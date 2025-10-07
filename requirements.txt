@@ -2,3 +2,4 @@ requests==2.31.0
 python-dotenv==1.0.0
 supabase==1.0.3
 beautifulsoup4==4.12.2
+psycopg2-binary==2.9.10
