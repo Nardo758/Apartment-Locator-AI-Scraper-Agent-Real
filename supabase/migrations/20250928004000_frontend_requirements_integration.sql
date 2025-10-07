@@ -255,9 +255,9 @@ CREATE POLICY "Authenticated users read access" ON public.apartment_iq_data
     FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Create indexes
-CREATE INDEX idx_apartment_iq_property ON public.apartment_iq_data(property_id);
-CREATE INDEX idx_apartment_iq_market ON public.apartment_iq_data(market_velocity, percentile_rank);
-CREATE INDEX idx_apartment_iq_urgency ON public.apartment_iq_data(urgency_score DESC);
+CREATE INDEX IF NOT EXISTS idx_apartment_iq_property ON public.apartment_iq_data(property_id);
+CREATE INDEX IF NOT EXISTS idx_apartment_iq_market ON public.apartment_iq_data(market_velocity, percentile_rank);
+CREATE INDEX IF NOT EXISTS idx_apartment_iq_urgency ON public.apartment_iq_data(urgency_score DESC);
 
 -- ============================================================================
 -- 4. CREATE RENTAL OFFERS TABLE
