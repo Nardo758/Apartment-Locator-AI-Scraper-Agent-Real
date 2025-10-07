@@ -9,6 +9,20 @@ on:
 jobs:
   run-integration:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 54330:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,7 +37,22 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Run claude queue integration test
+      - name: Wait for Postgres
         run: |
-          python ./.venv/Scripts/Activate.ps1 || true
+          echo "Waiting for Postgres to accept connections..."
+          for i in $(seq 1 30); do
+            pg_isready -h 127.0.0.1 -p 54330 -U postgres && break || echo "waiting..." ;
+            sleep 2
+          done
+
+      - name: Apply migrations
+        env:
+          POSTGRES_URI: postgresql://postgres:postgres@127.0.0.1:54330/postgres
+        run: |
+          python ./scripts/apply_migrations_to_staging.py --yes
+
+      - name: Run claude queue integration test
+        env:
+          POSTGRES_URI: postgresql://postgres:postgres@127.0.0.1:54330/postgres
+        run: |
           python ./scripts/tests/test_claude_queue_integration.py
