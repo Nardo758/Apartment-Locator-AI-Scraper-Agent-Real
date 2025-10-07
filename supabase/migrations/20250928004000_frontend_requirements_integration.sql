@@ -358,21 +358,29 @@ CREATE INDEX IF NOT EXISTS idx_market_intelligence_timeliness ON public.market_i
 -- ============================================================================
 
 -- Update triggers for updated_at columns
-CREATE TRIGGER update_properties_updated_at 
-    BEFORE UPDATE ON public.properties 
-    FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_user_profiles_updated_at 
-    BEFORE UPDATE ON public.user_profiles 
-    FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_apartment_iq_data_updated_at 
-    BEFORE UPDATE ON public.apartment_iq_data 
-    FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
-
-CREATE TRIGGER update_rental_offers_updated_at 
-    BEFORE UPDATE ON public.rental_offers 
-    FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_properties_updated_at') THEN
+        CREATE TRIGGER update_properties_updated_at 
+            BEFORE UPDATE ON public.properties 
+            FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_user_profiles_updated_at') THEN
+        CREATE TRIGGER update_user_profiles_updated_at 
+            BEFORE UPDATE ON public.user_profiles 
+            FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_apartment_iq_data_updated_at') THEN
+        CREATE TRIGGER update_apartment_iq_data_updated_at 
+            BEFORE UPDATE ON public.apartment_iq_data 
+            FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_rental_offers_updated_at') THEN
+        CREATE TRIGGER update_rental_offers_updated_at 
+            BEFORE UPDATE ON public.rental_offers 
+            FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+END$$;
 
 -- ============================================================================
 -- 7. CREATE GEOGRAPHIC SEARCH FUNCTION
