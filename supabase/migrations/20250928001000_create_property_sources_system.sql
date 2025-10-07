@@ -39,6 +39,10 @@ CREATE TABLE IF NOT EXISTS public.property_sources (
 ALTER TABLE public.property_sources ENABLE ROW LEVEL SECURITY;
 
 -- Create secure policies
+-- Remove any existing policies to make migration re-runnable
+DROP POLICY IF EXISTS "Service role full access" ON public.property_sources;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.property_sources;
+
 CREATE POLICY "Service role full access" ON public.property_sources
     FOR ALL USING (auth.role() = 'service_role');
 
@@ -208,9 +212,15 @@ END;
 $$;
 
 -- Create updated_at trigger for property_sources
-CREATE TRIGGER update_property_sources_updated_at
-    BEFORE UPDATE ON public.property_sources
-    FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+-- Create update trigger if it doesn't already exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_property_sources_updated_at') THEN
+        CREATE TRIGGER update_property_sources_updated_at
+            BEFORE UPDATE ON public.property_sources
+            FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+END$$;
 
 -- Add relationship between scraped_properties and property_sources
 ALTER TABLE public.scraped_properties 
