@@ -73,6 +73,11 @@ CREATE TABLE IF NOT EXISTS public.properties (
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for properties
+-- Make policy creation idempotent
+DROP POLICY IF EXISTS "Service role full access" ON public.properties;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.properties;
+DROP POLICY IF EXISTS "Anonymous users read active properties" ON public.properties;
+
 CREATE POLICY "Service role full access" ON public.properties
     FOR ALL USING (auth.role() = 'service_role');
 
@@ -83,15 +88,30 @@ CREATE POLICY "Anonymous users read active properties" ON public.properties
     FOR SELECT USING (is_active = true);
 
 -- Create performance indexes
-CREATE INDEX idx_properties_location ON public.properties(city, state);
-CREATE INDEX idx_properties_coordinates ON public.properties(latitude, longitude) WHERE latitude IS NOT NULL AND longitude IS NOT NULL;
-CREATE INDEX idx_properties_price_range ON public.properties(original_price, effective_price);
-CREATE INDEX idx_properties_bedrooms ON public.properties(bedrooms);
-CREATE INDEX idx_properties_market_velocity ON public.properties(market_velocity);
-CREATE INDEX idx_properties_availability ON public.properties(availability_type);
-CREATE INDEX idx_properties_active ON public.properties(is_active) WHERE is_active = true;
-CREATE INDEX idx_properties_external_id ON public.properties(external_id);
-CREATE INDEX idx_properties_match_score ON public.properties(match_score DESC) WHERE match_score IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_properties_location ON public.properties(city, state);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_properties_coordinates') THEN
+        CREATE INDEX idx_properties_coordinates ON public.properties(latitude, longitude) WHERE latitude IS NOT NULL AND longitude IS NOT NULL;
+    END IF;
+END$$;
+CREATE INDEX IF NOT EXISTS idx_properties_price_range ON public.properties(original_price, effective_price);
+CREATE INDEX IF NOT EXISTS idx_properties_bedrooms ON public.properties(bedrooms);
+CREATE INDEX IF NOT EXISTS idx_properties_market_velocity ON public.properties(market_velocity);
+CREATE INDEX IF NOT EXISTS idx_properties_availability ON public.properties(availability_type);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_properties_active') THEN
+        CREATE INDEX idx_properties_active ON public.properties(is_active) WHERE is_active = true;
+    END IF;
+END$$;
+CREATE INDEX IF NOT EXISTS idx_properties_external_id ON public.properties(external_id);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_properties_match_score') THEN
+        CREATE INDEX idx_properties_match_score ON public.properties(match_score DESC) WHERE match_score IS NOT NULL;
+    END IF;
+END$$;
 
 -- ============================================================================
 -- 2. CREATE USER PROFILES TABLE
@@ -160,6 +180,12 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
 ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for user profiles
+-- Make user_profiles policies idempotent
+DROP POLICY IF EXISTS "Users can view own profile" ON public.user_profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.user_profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.user_profiles;
+DROP POLICY IF EXISTS "Service role full access" ON public.user_profiles;
+
 CREATE POLICY "Users can view own profile" ON public.user_profiles
     FOR SELECT USING (auth.uid() = user_id);
 
@@ -218,6 +244,9 @@ CREATE TABLE IF NOT EXISTS public.apartment_iq_data (
 
 -- Enable RLS
 ALTER TABLE public.apartment_iq_data ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Service role full access" ON public.apartment_iq_data;
+DROP POLICY IF EXISTS "Authenticated users read access" ON public.apartment_iq_data;
 
 CREATE POLICY "Service role full access" ON public.apartment_iq_data
     FOR ALL USING (auth.role() = 'service_role');
