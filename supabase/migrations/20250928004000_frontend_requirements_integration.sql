@@ -293,6 +293,9 @@ CREATE TABLE IF NOT EXISTS public.rental_offers (
 
 -- Enable RLS
 ALTER TABLE public.rental_offers ENABLE ROW LEVEL SECURITY;
+-- Ensure idempotent policies for rental_offers
+DROP POLICY IF EXISTS "Users can manage own offers" ON public.rental_offers;
+DROP POLICY IF EXISTS "Service role full access" ON public.rental_offers;
 
 CREATE POLICY "Users can manage own offers" ON public.rental_offers
     FOR ALL USING (auth.uid() = user_id);
