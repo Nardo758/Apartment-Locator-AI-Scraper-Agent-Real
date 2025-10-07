@@ -354,6 +354,8 @@ export type Database = {
       properties: {
         Row: {
           address: string
+          admin_fee_amount: number | null
+          admin_fee_waived: boolean | null
           ai_price: number
           amenities: string[] | null
           apartment_iq_data: Json | null
@@ -390,6 +392,8 @@ export type Database = {
         }
         Insert: {
           address: string
+          admin_fee_amount?: number | null
+          admin_fee_waived?: boolean | null
           ai_price: number
           amenities?: string[] | null
           apartment_iq_data?: Json | null
@@ -426,6 +430,8 @@ export type Database = {
         }
         Update: {
           address?: string
+          admin_fee_amount?: number | null
+          admin_fee_waived?: boolean | null
           ai_price?: number
           amenities?: string[] | null
           apartment_iq_data?: Json | null
