@@ -1,6 +1,16 @@
 version: '3.8'
 services:
-  supabase:
-    image: supabase/supabase:latest
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - "54331:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres -h localhost"]
+      interval: 5s
+      timeout: 2s
+      retries: 12

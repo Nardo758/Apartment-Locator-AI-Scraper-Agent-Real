@@ -34,3 +34,23 @@ INSERT INTO scraped_properties (
   'https://www.apartments.com/example')
 ON CONFLICT (external_id) DO NOTHING;
 */
+
+-- Non-destructive upgrades to keep this local copy compatible with canonical migrations
+ALTER TABLE IF EXISTS scraped_properties
+    ADD COLUMN IF NOT EXISTS property_id VARCHAR,
+    ADD COLUMN IF NOT EXISTS unit_number VARCHAR,
+    ADD COLUMN IF NOT EXISTS first_seen_at TIMESTAMPTZ DEFAULT NOW(),
+    ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ DEFAULT NOW(),
+    ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'active';
+
+-- Add generated external_id if external_id is missing but property_id/unit_number present
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name='scraped_properties' AND column_name='external_id'
+    ) THEN
+        -- cannot create GENERATED column if external_id already exists; skip
+        RAISE NOTICE 'external_id column missing; please recreate table if you want a GENERATED ALWAYS AS expression';
+    END IF;
+END$$;
