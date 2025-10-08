@@ -1,5 +1,9 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 
+// Allow the host process (CI or local dev) to control the port used by the function
+// server. Defaults to 54321 which the integration tests expect.
+const FUNCTIONS_PORT = Number(Deno.env.get('FUNCTIONS_PORT') || Deno.env.get('PORT') || 54321);
+
 serve(async (req: Request) => {
   try {
     const body = await req.json().catch(() => ({}));
@@ -233,4 +237,4 @@ serve(async (req: Request) => {
   } catch (err) {
     return new Response(JSON.stringify({ error: 'internal_error', message: String(err) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
-});
+}, { port: FUNCTIONS_PORT });

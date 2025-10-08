@@ -59,11 +59,13 @@ CREATE TABLE scraping_queue (
     source VARCHAR NOT NULL,
     status VARCHAR DEFAULT 'pending',
     priority INTEGER DEFAULT 1,
+    property_source_id BIGINT,
+    metadata JSONB,
     data JSONB,
     error TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     started_at TIMESTAMPTZ,
-    completed_at TIMESTAMptz
+    completed_at TIMESTAMPTZ
 );
 
 -- Indexes for performance

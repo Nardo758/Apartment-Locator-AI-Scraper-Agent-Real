@@ -24,7 +24,7 @@ jobs:
         run: supabase start | cat
 
       - name: Apply migrations (local reset)
-        run: supabase db reset --force | cat
+  run: supabase db reset --yes | cat
 
       - name: Generate types (local)
         run: |
