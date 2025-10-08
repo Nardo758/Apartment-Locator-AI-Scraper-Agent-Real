@@ -1,8 +1,5 @@
-import {
-  createClient,
-  PostgrestResponse,
-  SupabaseClient as SClient,
-} from "@supabase/supabase-js";
+import { PostgrestResponse, SupabaseClient as SClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../lib/supabase-client";
 import type { Apartment } from "../types";
 import * as process from "node:process";
 
@@ -12,10 +9,10 @@ export class SupabaseClientWrapper {
   private client: SClient;
 
   constructor() {
-    const url = process.env.SUPABASE_URL || "http://localhost";
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required");
-    this.client = createClient(url, key);
+  const url = process.env.SUPABASE_URL || "http://localhost";
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is required");
+  this.client = createTypedClient(url, key) as unknown as SClient;
   }
 
   async upsertApartment(apartment: Apartment) {
