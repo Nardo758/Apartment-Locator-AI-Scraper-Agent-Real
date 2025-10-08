@@ -36,7 +36,7 @@ export function startMetricsServer(
 
         res.writeHead(404, { "Content-Type": "text/plain" });
         res.end("not found");
-      } catch (err) {
+      } catch (_e) {
         res.writeHead(500, { "Content-Type": "text/plain" });
         res.end("internal error");
       }
@@ -50,7 +50,7 @@ export function startMetricsServer(
     if (!server) return;
     try {
       server.close();
-    } catch (e) {
+    } catch (_e) {
       // ignore
     }
   };
@@ -65,6 +65,6 @@ export function stopMetricsServer() {
   if (!server) return;
   try {
     server.close();
-  } catch (e) {}
+  } catch (_e) {}
   server = null;
 }

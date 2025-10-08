@@ -208,7 +208,7 @@ export async function getScrapingBatchWithTransformation(
     );
 
     return { jobs, frontendProperties };
-  } catch (error) {
+  } catch (_e) {
     console.error("Error transforming properties for frontend:", error);
     return { jobs };
   }
@@ -241,7 +241,7 @@ export async function syncToFrontendSchema(
       errors: result.errors,
       details,
     };
-  } catch (error) {
+  } catch (_e) {
     const message = error instanceof Error ? error.message : String(error);
     details.push(`Error syncing to frontend schema: ${message}`);
     return {

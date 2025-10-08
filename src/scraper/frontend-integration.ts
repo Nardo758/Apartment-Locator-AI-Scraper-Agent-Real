@@ -76,7 +76,7 @@ export class ScraperFrontendIntegration {
       console.log(
         `✅ Frontend integration complete: ${frontendPropertiesCreated} properties processed`,
       );
-    } catch (error) {
+    } catch (_e) {
       console.error("❌ Frontend integration error:", error);
       errors.push(String(error));
     }
@@ -139,7 +139,7 @@ export class ScraperFrontendIntegration {
         } else {
           scrapedProperties.push(data);
         }
-      } catch (error) {
+      } catch (_e) {
         console.error("Error processing property:", error);
       }
     }
@@ -169,7 +169,7 @@ export class ScraperFrontendIntegration {
       for (const [location, properties] of locationGroups) {
         await this.updateLocationIntelligence(location, properties);
       }
-    } catch (error) {
+    } catch (_e) {
       console.error("Error updating market intelligence:", error);
     }
   }
@@ -254,7 +254,7 @@ export class ScraperFrontendIntegration {
       console.log(
         `📊 Updated market intelligence for ${location}: ${properties.length} properties, avg rent $${averageRent}`,
       );
-    } catch (error) {
+    } catch (_e) {
       console.error(`Error updating intelligence for ${location}:`, error);
     }
   }
@@ -298,7 +298,7 @@ export class ScraperFrontendIntegration {
       if (currentConcessionRate > 0.15) return "slow";
       if (currentConcessionRate < 0.05) return "hot";
       return "normal";
-    } catch (error) {
+    } catch (_e) {
       console.warn("Error calculating market velocity:", error);
       return "normal";
     }
@@ -420,7 +420,7 @@ export class ScraperFrontendIntegration {
         for (const user of usersToProcess) {
           try {
             await frontendDataService.calculateUserMatchScores(user.user_id);
-          } catch (error) {
+          } catch (_e) {
             console.error(
               `Error updating match scores for user ${user.user_id}:`,
               error,
@@ -428,7 +428,7 @@ export class ScraperFrontendIntegration {
           }
         }
       }
-    } catch (error) {
+    } catch (_e) {
       console.error("Error scheduling match score updates:", error);
     }
   }
@@ -501,7 +501,7 @@ export class ScraperFrontendIntegration {
       }
 
       return data || [];
-    } catch (error) {
+    } catch (_e) {
       console.error("Error in getFrontendProperties:", error);
       return [];
     }

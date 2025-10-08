@@ -106,7 +106,7 @@ export async function calculateAiPrice(
     }
 
     return Math.round(adjustedPrice);
-  } catch (error) {
+  } catch (_e) {
     console.error("Error calculating AI price:", error);
     return scrapedData.current_price;
   }
@@ -134,7 +134,7 @@ export async function calculateEffectivePrice(
     effectivePrice += monthlyFees;
 
     return Math.round(Math.max(effectivePrice, 0));
-  } catch (error) {
+  } catch (_e) {
     console.error("Error calculating effective price:", error);
     return scrapedData.current_price || 0;
   }
@@ -383,7 +383,7 @@ export async function generateIqData(
       recommendation,
       last_updated: new Date().toISOString(),
     };
-  } catch (error) {
+  } catch (_e) {
     console.error("Error generating IQ data:", error);
     return {
       market_position: "at_market",
@@ -453,7 +453,7 @@ export async function batchTransformProperties(
     try {
       const transformed = await transformScrapedToFrontendFormat(property);
       transformedProperties.push(transformed);
-    } catch (error) {
+    } catch (_e) {
       console.error(
         `Error transforming property ${property.external_id}:`,
         error,
@@ -491,7 +491,7 @@ export async function saveTransformedProperties(
       } else {
         success++;
       }
-    } catch (error) {
+    } catch (_e) {
       console.error(
         `Exception saving property ${property.external_id}:`,
         error,

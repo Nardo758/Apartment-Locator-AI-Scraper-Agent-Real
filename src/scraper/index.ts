@@ -56,7 +56,7 @@ export async function enhanceWithClaudeIntelligence(
       console.warn("⚠️ Claude analysis failed, using fallback:", result.error);
       return result.data; // Still return fallback data
     }
-  } catch (error) {
+  } catch (_e) {
     console.error("❌ Claude intelligence error:", error);
     return null;
   }

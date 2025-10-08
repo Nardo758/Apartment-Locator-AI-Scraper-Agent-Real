@@ -192,7 +192,7 @@ export class FrontendDataService {
 
         return Math.round(adjustedPrice);
       }
-    } catch (error) {
+    } catch (_e) {
       console.warn("AI price calculation failed, using original price:", error);
     }
 
@@ -326,7 +326,7 @@ export class FrontendDataService {
       if (marketData) {
         return marketData.market_velocity;
       }
-    } catch (error) {
+    } catch (_e) {
       console.warn("Market velocity calculation failed:", error);
     }
 
@@ -354,7 +354,7 @@ export class FrontendDataService {
         );
         return Math.max(0, daysDiff);
       }
-    } catch (error) {
+    } catch (_e) {
       console.warn("Days vacant calculation failed:", error);
     }
 
@@ -434,7 +434,7 @@ export class FrontendDataService {
           // Also create/update ApartmentIQ data
           await this.upsertApartmentIQData(frontendProperty);
         }
-      } catch (error) {
+      } catch (_e) {
         console.error("Error transforming property:", error);
       }
     }
@@ -482,7 +482,7 @@ export class FrontendDataService {
             ignoreDuplicates: false,
           });
       }
-    } catch (error) {
+    } catch (_e) {
       console.error("Error upserting ApartmentIQ data:", error);
     }
   }
@@ -516,7 +516,7 @@ export class FrontendDataService {
           }
         }
       }
-    } catch (error) {
+    } catch (_e) {
       console.error("Error calculating match scores:", error);
     }
   }

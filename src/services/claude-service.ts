@@ -72,7 +72,7 @@ export class ClaudeService {
       }
       const intelligence = this.parseClaudeResponse(text ?? "");
       return { success: true, data: intelligence };
-    } catch (error) {
+    } catch (_e) {
       console.error("Claude analysis error:", error);
       return {
         success: false,
@@ -161,7 +161,7 @@ IMPORTANT: If concessions or free rent are mentioned ANYWHERE in the content, th
       }
 
       throw new Error("No JSON found in Claude response");
-    } catch (error) {
+    } catch (_e) {
       console.error("JSON parsing error:", error);
       return this.getDefaultResponse();
     }

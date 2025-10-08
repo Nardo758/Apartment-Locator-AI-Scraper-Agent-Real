@@ -202,7 +202,7 @@ export class EnhancedScrapingOrchestrator {
       console.log(
         `✅ Frontend integration complete: ${frontendIntegration.frontend_properties_created} properties processed`,
       );
-    } catch (error) {
+    } catch (_e) {
       console.error("❌ Frontend integration error:", error);
       const errMsg = (error && typeof error === "object" &&
           "message" in (error as Record<string, unknown>))
@@ -253,7 +253,7 @@ export class EnhancedScrapingOrchestrator {
           success: success,
           error_message: success ? null : "No properties found",
         });
-      } catch (error) {
+      } catch (_e) {
         console.error(`Error updating metrics for source ${sourceId}:`, error);
       }
     }
@@ -338,7 +338,7 @@ export class EnhancedScrapingOrchestrator {
           return daysSinceLastScrape >= Math.max(1, recommended / 2); // More frequent for high-match properties
         }
       }
-    } catch (error) {
+    } catch (_e) {
       // Continue with original logic if frontend check fails
     }
 

@@ -111,7 +111,7 @@ Return ONLY valid JSON, no other text.`;
       }
 
       throw new Error("No JSON found in Claude response");
-    } catch (error) {
+    } catch (_e) {
       console.error("JSON parsing error:", error);
       return this.getDefaultResponse();
     }

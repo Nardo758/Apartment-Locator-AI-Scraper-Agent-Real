@@ -39,7 +39,7 @@ function wrapCounter(
     inc(labelsOrValue?: any, value?: number) {
       try {
         underlying.inc(labelsOrValue as any, value as any);
-      } catch (e) { /* ignore runtime shim issues */ }
+      } catch (_e) { /* ignore runtime shim issues */ }
       onInc(labelsOrValue, value);
     },
   };
@@ -73,7 +73,7 @@ export function getMetrics(): Promise<string> {
       // @ts-ignore
       return promClient.register.metrics();
     }
-  } catch (e) {
+  } catch (_e) {
     // fall through to synthesize
   }
 

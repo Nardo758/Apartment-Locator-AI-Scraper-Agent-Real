@@ -227,7 +227,7 @@ export async function processScrapingResult(
 
         await logScrapingActivity(supabase, externalId, "no_change", {});
       }
-    } catch (err) {
+    } catch (_e) {
       // best-effort; log and swallow
       const externalId = typeof oldData?.external_id === "string"
         ? oldData.external_id
@@ -299,7 +299,7 @@ export async function processScrapingResult(
       await updatePropertyWithHistory(supabase, externalId, enriched);
       await logSignificantChanges(supabase, externalId, changes);
     }
-  } catch (err) {
+  } catch (_e) {
     const externalId = typeof oldData?.external_id === "string"
       ? oldData.external_id
       : "unknown";

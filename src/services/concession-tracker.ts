@@ -176,7 +176,7 @@ Generated: ${new Date().toLocaleDateString()}
 
       console.log("✅ Concession analytics saved successfully");
       return true;
-    } catch (error) {
+    } catch (_e) {
       console.error("Error saving concession analytics:", error);
       return false;
     }

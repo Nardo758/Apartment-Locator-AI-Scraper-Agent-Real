@@ -56,7 +56,7 @@ export async function recordDailyScrapingCost(
         created_at: new Date().toISOString(),
       },
     ], { onConflict: "date" });
-  } catch (e) {
+  } catch (_e) {
     // non-fatal
     console.error("recordDailyScrapingCost failed", e);
   }
