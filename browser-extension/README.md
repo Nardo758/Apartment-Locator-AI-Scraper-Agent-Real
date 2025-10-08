@@ -1,6 +1,7 @@
 # Rental Scraper Navigator - Browser Extension
 
-A Chrome extension that records user navigation patterns on rental websites to teach scraping systems how to navigate complex rental platforms.
+A Chrome extension that records user navigation patterns on rental websites to
+teach scraping systems how to navigate complex rental platforms.
 
 ## Features
 
@@ -30,7 +31,8 @@ A Chrome extension that records user navigation patterns on rental websites to t
 ### Managing Sessions
 
 - **View Sessions**: See all saved recording sessions
-- **Export Session**: Download session data as JSON for use with the learning system
+- **Export Session**: Download session data as JSON for use with the learning
+  system
 - **Delete Session**: Remove unwanted sessions
 
 ## Recorded Actions
@@ -111,12 +113,15 @@ browser-extension/
 
 ### Adding New Rental Domains
 
-Edit the `rentalDomains` array in `content-script.js` to add more domains for auto-detection:
+Edit the `rentalDomains` array in `content-script.js` to add more domains for
+auto-detection:
 
 ```javascript
 const rentalDomains = [
-    'apartments.com', 'zillow.com', 'realtor.com',
-    'your-new-domain.com'  // Add your domain here
+  "apartments.com",
+  "zillow.com",
+  "realtor.com",
+  "your-new-domain.com", // Add your domain here
 ];
 ```
 

@@ -3,11 +3,13 @@
 ## Option 1: Supabase Dashboard (Recommended)
 
 ### Step 1: Open Supabase Dashboard
+
 1. Go to [https://supabase.com/dashboard](https://supabase.com/dashboard)
 2. Select your project
 3. Go to **SQL Editor**
 
 ### Step 2: Execute Schema Migration
+
 Copy and paste this SQL into the SQL Editor:
 
 ```sql
@@ -198,6 +200,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 ### Step 3: Verify Deployment
+
 Run this verification query in SQL Editor:
 
 ```sql
@@ -278,6 +281,7 @@ After successful deployment:
 4. ✅ **Data transformation pipeline** operational
 
 Your scraper will now automatically:
+
 - Transform scraped data to frontend format
 - Calculate AI-enhanced pricing
 - Generate market intelligence
@@ -294,4 +298,5 @@ If you encounter any issues:
 
 ---
 
-**🎉 Once deployed, your real estate scraper will have AI-powered data integration!**
+**🎉 Once deployed, your real estate scraper will have AI-powered data
+integration!**

@@ -2,10 +2,10 @@
 
 /**
  * Test script for ai-scraper-worker Supabase Edge Function
- * 
+ *
  * This script tests the AI scraper function by making HTTP requests
  * to the locally running Supabase Edge Function server.
- * 
+ *
  * Usage:
  * 1. Start the function locally: supabase functions serve ai-scraper-worker --env-file .env.local
  * 2. Run this test: deno run --allow-net --allow-env --allow-read test-ai-scraper.ts
@@ -53,7 +53,7 @@ const generateTestProperties = (): TestProperty[] => {
             <p>Admin fee waived for qualified applicants</p>
           </div>
         </div>
-      `
+      `,
     },
     {
       source: "rent.com",
@@ -68,7 +68,7 @@ const generateTestProperties = (): TestProperty[] => {
           </div>
           <div class="specials">No application fee this month!</div>
         </section>
-      `
+      `,
     },
     {
       source: "zillow.com",
@@ -88,12 +88,12 @@ const generateTestProperties = (): TestProperty[] => {
             <span>1 bathroom</span>
           </div>
         </div>
-      `
-    }
+      `,
+    },
   ];
 
   const properties: TestProperty[] = [];
-  
+
   for (let i = 1; i <= 100; i++) {
     const template = sampleHtmlTemplates[i % sampleHtmlTemplates.length];
     const cityVariations = [
@@ -101,20 +101,20 @@ const generateTestProperties = (): TestProperty[] => {
       { city: "Denver", state: "CO", zip: "80202" },
       { city: "Seattle", state: "WA", zip: "98101" },
       { city: "Portland", state: "OR", zip: "97201" },
-      { city: "Phoenix", state: "AZ", zip: "85001" }
+      { city: "Phoenix", state: "AZ", zip: "85001" },
     ];
-    
+
     const location = cityVariations[i % cityVariations.length];
     const priceVariations = [1500, 1800, 2200, 2500, 3000, 3500];
     const price = priceVariations[i % priceVariations.length];
-    
+
     // Customize HTML with variations
     const customHtml = template.html
       .replace(/Austin|Denver|Seattle/g, location.city)
       .replace(/TX|CO|WA/g, location.state)
       .replace(/78701|80202|98101/g, location.zip)
       .replace(/\$\d+,?\d*/g, `$${price.toLocaleString()}`);
-    
+
     properties.push({
       id: i,
       source: template.source,
@@ -123,10 +123,10 @@ const generateTestProperties = (): TestProperty[] => {
       external_id: `test-${template.source}-${i}`,
       source_url: `https://${template.source}/listing/${i}`,
       source_name: template.source,
-      scraping_job_id: Math.floor(i / 10) + 1
+      scraping_job_id: Math.floor(i / 10) + 1,
     });
   }
-  
+
   return properties;
 };
 
@@ -135,10 +135,12 @@ const FUNCTION_URL = "http://localhost:54321/functions/v1/ai-scraper-worker";
 const TEST_BATCH_SIZE = 5; // Process in smaller batches to avoid overwhelming the API
 const DELAY_BETWEEN_REQUESTS = 1000; // 1 second delay between requests
 
-async function testSingleProperty(property: TestProperty): Promise<{ success: boolean; result?: ApiResponse; error?: string }> {
+async function testSingleProperty(
+  property: TestProperty,
+): Promise<{ success: boolean; result?: ApiResponse; error?: string }> {
   try {
     console.log(`Testing property ${property.id}: ${property.source}`);
-    
+
     const response = await fetch(FUNCTION_URL, {
       method: "POST",
       headers: {
@@ -152,43 +154,47 @@ async function testSingleProperty(property: TestProperty): Promise<{ success: bo
         external_id: property.external_id,
         source_url: property.source_url,
         source_name: property.source_name,
-        scraping_job_id: property.scraping_job_id
-      })
+        scraping_job_id: property.scraping_job_id,
+      }),
     });
 
     const result = await response.json();
-    
+
     if (!response.ok) {
-      return { 
-        success: false, 
-        error: `HTTP ${response.status}: ${result.message || 'Unknown error'}` 
+      return {
+        success: false,
+        error: `HTTP ${response.status}: ${result.message || "Unknown error"}`,
       };
     }
 
     return { success: true, result };
   } catch (error) {
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : String(error) 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
 
 function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function runTests(): Promise<void> {
   console.log("🚀 Starting AI Scraper Worker Tests");
-  console.log("=" .repeat(50));
-  
+  console.log("=".repeat(50));
+
   // Check if function server is running
   try {
     const healthCheck = await fetch(FUNCTION_URL, { method: "GET" });
-    console.log(`✅ Function server is running (Status: ${healthCheck.status})`);
+    console.log(
+      `✅ Function server is running (Status: ${healthCheck.status})`,
+    );
   } catch (_error) {
     console.error("❌ Function server is not running. Please start it with:");
-    console.error("   supabase functions serve ai-scraper-worker --env-file .env.local");
+    console.error(
+      "   supabase functions serve ai-scraper-worker --env-file .env.local",
+    );
     return;
   }
 
@@ -201,42 +207,60 @@ async function runTests(): Promise<void> {
     total: testProperties.length,
     successful: 0,
     failed: 0,
-    errors: [] as string[]
+    errors: [] as string[],
   };
 
   // Process properties in batches
   for (let i = 0; i < testProperties.length; i += TEST_BATCH_SIZE) {
     const batch = testProperties.slice(i, i + TEST_BATCH_SIZE);
-    console.log(`📦 Processing batch ${Math.floor(i / TEST_BATCH_SIZE) + 1}/${Math.ceil(testProperties.length / TEST_BATCH_SIZE)}`);
-    
+    console.log(
+      `📦 Processing batch ${Math.floor(i / TEST_BATCH_SIZE) + 1}/${
+        Math.ceil(testProperties.length / TEST_BATCH_SIZE)
+      }`,
+    );
+
     // Process batch concurrently
-    const batchPromises = batch.map(property => testSingleProperty(property));
+    const batchPromises = batch.map((property) => testSingleProperty(property));
     const batchResults = await Promise.all(batchPromises);
-    
+
     // Analyze batch results
     batchResults.forEach((result, index) => {
       const property = batch[index];
       if (result.success) {
         results.successful++;
-        console.log(`  ✅ Property ${property.id} (${property.source}): Success`);
+        console.log(
+          `  ✅ Property ${property.id} (${property.source}): Success`,
+        );
         if (result.result?.data) {
           const data = result.result.data;
-          console.log(`     📍 ${data.name || 'N/A'} - ${data.city || 'N/A'}, ${data.state || 'N/A'} - $${data.current_price || 'N/A'}`);
+          console.log(
+            `     📍 ${data.name || "N/A"} - ${data.city || "N/A"}, ${
+              data.state || "N/A"
+            } - $${data.current_price || "N/A"}`,
+          );
         }
         if (result.result?.usage) {
           const usage = result.result.usage;
-          console.log(`     💰 Tokens: ${usage.total_tokens || 'N/A'}, Cost: $${usage.estimated_cost || 'N/A'}`);
+          console.log(
+            `     💰 Tokens: ${usage.total_tokens || "N/A"}, Cost: $${
+              usage.estimated_cost || "N/A"
+            }`,
+          );
         }
       } else {
         results.failed++;
         results.errors.push(`Property ${property.id}: ${result.error}`);
-        console.log(`  ❌ Property ${property.id} (${property.source}): ${result.error}`);
+        console.log(
+          `  ❌ Property ${property.id} (${property.source}): ${result.error}`,
+        );
       }
     });
-    
+
     // Delay between batches to be respectful to the API
     if (i + TEST_BATCH_SIZE < testProperties.length) {
-      console.log(`⏱️  Waiting ${DELAY_BETWEEN_REQUESTS}ms before next batch...`);
+      console.log(
+        `⏱️  Waiting ${DELAY_BETWEEN_REQUESTS}ms before next batch...`,
+      );
       await delay(DELAY_BETWEEN_REQUESTS);
     }
     console.log();
@@ -244,16 +268,24 @@ async function runTests(): Promise<void> {
 
   // Final results
   console.log("📈 TEST RESULTS");
-  console.log("=" .repeat(50));
+  console.log("=".repeat(50));
   console.log(`Total Properties Tested: ${results.total}`);
-  console.log(`Successful: ${results.successful} (${((results.successful / results.total) * 100).toFixed(1)}%)`);
-  console.log(`Failed: ${results.failed} (${((results.failed / results.total) * 100).toFixed(1)}%)`);
-  
+  console.log(
+    `Successful: ${results.successful} (${
+      ((results.successful / results.total) * 100).toFixed(1)
+    }%)`,
+  );
+  console.log(
+    `Failed: ${results.failed} (${
+      ((results.failed / results.total) * 100).toFixed(1)
+    }%)`,
+  );
+
   if (results.errors.length > 0) {
     console.log("\n❌ ERRORS:");
-    results.errors.forEach(error => console.log(`   ${error}`));
+    results.errors.forEach((error) => console.log(`   ${error}`));
   }
-  
+
   console.log("\n🎉 Testing completed!");
 }
 
@@ -261,32 +293,34 @@ async function runTests(): Promise<void> {
 function validateEnvironment(): boolean {
   const requiredEnvVars = [
     "OPENAI_API_KEY",
-    "SUPABASE_URL", 
-    "SUPABASE_SERVICE_ROLE_KEY"
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
   ];
-  
-  const missingVars = requiredEnvVars.filter(varName => !Deno.env.get(varName));
-  
+
+  const missingVars = requiredEnvVars.filter((varName) =>
+    !Deno.env.get(varName)
+  );
+
   if (missingVars.length > 0) {
     console.error("❌ Missing required environment variables:");
-    missingVars.forEach(varName => console.error(`   ${varName}`));
+    missingVars.forEach((varName) => console.error(`   ${varName}`));
     console.error("\nPlease set these in your .env.local file");
     return false;
   }
-  
+
   return true;
 }
 
 // Main execution
 if (import.meta.main) {
   console.log("🔍 Validating environment...");
-  
+
   if (!validateEnvironment()) {
     Deno.exit(1);
   }
-  
+
   console.log("✅ Environment validation passed");
   console.log();
-  
+
   await runTests();
 }

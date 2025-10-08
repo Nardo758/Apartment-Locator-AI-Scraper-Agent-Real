@@ -2,13 +2,13 @@ name: Integration - Claude Queue
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       run_full:
-        description: 'Run full integration (migrations + tests). If false, runs smoke test only.'
+        description: "Run full integration (migrations + tests). If false, runs smoke test only."
         required: false
-        default: 'false'
+        default: "false"
 
 jobs:
   run-integration:
@@ -23,9 +23,9 @@ jobs:
         ports:
           - 54330:5432
         options: >-
-          --health-cmd "pg_isready -U postgres -d postgres" 
-          --health-interval 10s 
-          --health-timeout 5s 
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 5
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
@@ -54,7 +54,7 @@ jobs:
 
       - name: Start claude-queue-builder function server
         env:
-          FUNCTIONS_PORT: '54321'
+          FUNCTIONS_PORT: "54321"
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           export DENO_INSTALL="${HOME}/.deno"

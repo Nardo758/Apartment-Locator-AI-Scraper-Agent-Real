@@ -1,19 +1,19 @@
 {
-    "compilerOptions": {
-        "lib": ["deno.ns", "deno.window"],
-        "strict": true
+  "compilerOptions": {
+    "lib": ["deno.ns", "deno.window"],
+    "strict": true
+  },
+  "tasks": {
+    "scrape": {
+      "script": "src/main.ts",
+      "args": [],
+      "type": "run"
     },
-    "tasks": {
-        "scrape": {
-            "script": "src/main.ts",
-            "args": [],
-            "type": "run"
-        },
-        "test-claude": {
-            "script": "test-claude.ts",
-            "args": [],
-            "type": "run"
-        }
-    },
-    "importMap": "./import_map.json"
+    "test-claude": {
+      "script": "test-claude.ts",
+      "args": [],
+      "type": "run"
+    }
+  },
+  "importMap": "./import_map.json"
 }

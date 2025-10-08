@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import Anthropic from "@anthropic-ai/sdk";
 import process from "node:process";
 
 export interface PropertyIntelligence {
@@ -25,41 +25,55 @@ export class ClaudeService {
   private anthropic: Anthropic;
 
   constructor() {
-    const apiKey = process.env.ANTHROPIC_API_KEY || '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';
+    const apiKey = process.env.ANTHROPIC_API_KEY ||
+      "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";
     this.anthropic = new Anthropic({ apiKey });
   }
 
-  async analyzeProperty(url: string, htmlContent: string, propertyName: string): Promise<ClaudeAnalysisResult> {
+  async analyzeProperty(
+    url: string,
+    htmlContent: string,
+    propertyName: string,
+  ): Promise<ClaudeAnalysisResult> {
     try {
-      const prompt = this.buildPropertyAnalysisPrompt(url, htmlContent, propertyName);
-      
+      const prompt = this.buildPropertyAnalysisPrompt(
+        url,
+        htmlContent,
+        propertyName,
+      );
+
       const response = await this.anthropic.messages.create({
-        model: 'claude-3-haiku-20240307', // Cost-effective for initial testing
+        model: "claude-3-haiku-20240307", // Cost-effective for initial testing
         max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: "user", content: prompt }],
       });
 
-      const textContent = response.content.find(block => block.type === 'text');
-      if (!textContent || textContent.type !== 'text') {
-        throw new Error('No text content found in Claude response');
+      const textContent = response.content.find((block) =>
+        block.type === "text"
+      );
+      if (!textContent || textContent.type !== "text") {
+        throw new Error("No text content found in Claude response");
       }
-      
-      console.log('Claude raw response:', textContent.text);
-      
+
+      console.log("Claude raw response:", textContent.text);
+
       const intelligence = this.parseClaudeResponse(textContent.text);
       return { success: true, data: intelligence };
-      
     } catch (error: any) {
-      console.error('Claude analysis error:', error);
-      return { 
-        success: false, 
+      console.error("Claude analysis error:", error);
+      return {
+        success: false,
         error: error.message,
-        data: this.getDefaultResponse() 
+        data: this.getDefaultResponse(),
       };
     }
   }
 
-  private buildPropertyAnalysisPrompt(url: string, htmlContent: string, propertyName: string): string {
+  private buildPropertyAnalysisPrompt(
+    url: string,
+    htmlContent: string,
+    propertyName: string,
+  ): string {
     return `You are an expert real estate analyst. Analyze this property listing and extract structured information.
 
 PROPERTY: ${propertyName}
@@ -88,17 +102,17 @@ Return ONLY valid JSON, no other text.`;
   private parseClaudeResponse(responseText: string): PropertyIntelligence {
     try {
       // Clean the response and extract JSON
-      const cleaned = responseText.replace(/```json|```/g, '').trim();
+      const cleaned = responseText.replace(/```json|```/g, "").trim();
       const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-      
+
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
         return this.validateIntelData(parsed);
       }
-      
-      throw new Error('No JSON found in Claude response');
+
+      throw new Error("No JSON found in Claude response");
     } catch (error) {
-      console.error('JSON parsing error:', error);
+      console.error("JSON parsing error:", error);
       return this.getDefaultResponse();
     }
   }
@@ -108,15 +122,15 @@ Return ONLY valid JSON, no other text.`;
     return {
       year_built: data.year_built || null,
       unit_count: data.unit_count || null,
-      property_type: data.property_type || 'unknown',
+      property_type: data.property_type || "unknown",
       amenities: Array.isArray(data.amenities) ? data.amenities : [],
-      neighborhood: data.neighborhood || 'unknown',
-      building_type: data.building_type || 'unknown',
-      transit_access: data.transit_access || 'unknown',
+      neighborhood: data.neighborhood || "unknown",
+      building_type: data.building_type || "unknown",
+      transit_access: data.transit_access || "unknown",
       walk_score: data.walk_score || null,
       confidence_score: data.confidence_score || 0,
       researched_at: new Date().toISOString(),
-      research_source: 'claude'
+      research_source: "claude",
     };
   }
 
@@ -124,15 +138,15 @@ Return ONLY valid JSON, no other text.`;
     return {
       year_built: null,
       unit_count: null,
-      property_type: 'unknown',
+      property_type: "unknown",
       amenities: [],
-      neighborhood: 'unknown',
-      building_type: 'unknown',
-      transit_access: 'unknown',
+      neighborhood: "unknown",
+      building_type: "unknown",
+      transit_access: "unknown",
       walk_score: null,
       confidence_score: 0,
       researched_at: new Date().toISOString(),
-      research_source: 'claude_fallback'
+      research_source: "claude_fallback",
     };
   }
 }

@@ -6,9 +6,11 @@ Your deployment script is ready at: `./deploy-scraper.sh`
 
 ## Prerequisites Setup
 
-Before running the deployment script, you need to install the required dependencies:
+Before running the deployment script, you need to install the required
+dependencies:
 
 ### 1. Install Supabase CLI
+
 ```bash
 # Install via npm
 npm install -g @supabase/cli
@@ -21,6 +23,7 @@ supabase --version
 ```
 
 ### 2. Install Deno Runtime
+
 ```bash
 # Install Deno
 curl -fsSL https://deno.land/install.sh | sh
@@ -33,6 +36,7 @@ deno --version
 ```
 
 ### 3. Set Up Supabase Project
+
 ```bash
 # Login to Supabase
 supabase login
@@ -62,16 +66,19 @@ export SUPABASE_ANON_KEY="your-anon-key"
 ## Deployment Commands
 
 ### Full Deployment (Recommended)
+
 ```bash
 ./deploy-scraper.sh
 ```
 
 ### Test Only (Validate without deploying)
+
 ```bash
 ./deploy-scraper.sh test
 ```
 
 ### Validate Environment Only
+
 ```bash
 ./deploy-scraper.sh validate
 ```
@@ -90,6 +97,7 @@ export SUPABASE_ANON_KEY="your-anon-key"
 ## Expected Output
 
 The script will show colored output with status updates:
+
 - 🔵 **[INFO]** - Information messages
 - 🟢 **[SUCCESS]** - Successful operations
 - 🟡 **[WARNING]** - Warnings (non-critical)
@@ -98,6 +106,7 @@ The script will show colored output with status updates:
 ## Post-Deployment
 
 After successful deployment, you'll get:
+
 1. **Function URL**: Your live endpoint URL
 2. **Deployment Report**: `deployment-report.md` with details
 3. **Monitoring Commands**: How to check logs and performance
@@ -135,6 +144,7 @@ After successful deployment, you'll get:
 ## Performance Expectations
 
 Once deployed, your scraper will:
+
 - ✅ Process apartments at **$0.0007 each** (98% cheaper than GPT-4)
 - ✅ Maintain **93%+ accuracy** across all property types
 - ✅ Handle **10,000+ properties/day** with auto-scaling

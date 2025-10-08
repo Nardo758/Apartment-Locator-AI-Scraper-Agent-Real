@@ -1,10 +1,13 @@
-import { calculateStabilityScore, getRecommendedFrequency } from '../orchestrator';
+import {
+  calculateStabilityScore,
+  getRecommendedFrequency,
+} from "../orchestrator";
 
-describe('stability helpers', () => {
-  test('calculateStabilityScore clamps and scales', () => {
+describe("stability helpers", () => {
+  test("calculateStabilityScore clamps and scales", () => {
     const p1 = { price_changes: 0, days_on_market: 5 } as any;
     const score1 = calculateStabilityScore(p1);
-    expect(typeof score1).toBe('number');
+    expect(typeof score1).toBe("number");
     expect(score1).toBeGreaterThanOrEqual(0);
     expect(score1).toBeLessThanOrEqual(100);
 
@@ -15,7 +18,7 @@ describe('stability helpers', () => {
     expect(score2).toBeLessThanOrEqual(score1);
   });
 
-  test('getRecommendedFrequency maps score to days', () => {
+  test("getRecommendedFrequency maps score to days", () => {
     expect(getRecommendedFrequency(10)).toBe(1);
     expect(getRecommendedFrequency(40)).toBe(7);
     expect(getRecommendedFrequency(60)).toBe(14);

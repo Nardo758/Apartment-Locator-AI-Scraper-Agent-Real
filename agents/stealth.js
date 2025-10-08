@@ -4,42 +4,56 @@
 (function () {
   try {
     // navigator.webdriver
-    Object.defineProperty(navigator, 'webdriver', { get: () => false, configurable: true });
-  } catch (_e) {}
+    Object.defineProperty(navigator, "webdriver", {
+      get: () => false,
+      configurable: true,
+    });
+  } catch (_e) { /* ignore */ }
 
   try {
     // languages
-    Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'], configurable: true });
-  } catch (_e) {}
+    Object.defineProperty(navigator, "languages", {
+      get: () => ["en-US", "en"],
+      configurable: true,
+    });
+  } catch (_e) { /* ignore */ }
 
   try {
     // plugins
-    Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5], configurable: true });
-  } catch (_e) {}
+    Object.defineProperty(navigator, "plugins", {
+      get: () => [1, 2, 3, 4, 5],
+      configurable: true,
+    });
+  } catch (_e) { /* ignore */ }
 
   try {
     // mimic chrome object
     if (!globalThis.chrome) {
-      globalThis.chrome = { runtime: {}, // minimal shape
-      }; 
+      globalThis.chrome = {
+        runtime: {}, // minimal shape
+      };
     }
-  } catch (_e) {}
+  } catch (_e) { /* ignore */ }
 
   try {
     // provide a proper permissions.query implementation
     const originalQuery = navigator.permissions && navigator.permissions.query;
     if (originalQuery) {
       navigator.permissions.query = (parameters) => (
-        parameters.name === 'notifications' ? Promise.resolve({ state: Notification.permission }) : originalQuery(parameters)
+        parameters.name === "notifications"
+          ? Promise.resolve({ state: Notification.permission })
+          : originalQuery(parameters)
       );
     }
-  } catch (_e) {}
+  } catch (_e) { /* ignore */ }
 
   // override userAgent hints if available (best-effort)
   try {
-    if (navigator.userAgent && navigator.userAgent.indexOf('Headless') !== -1) {
-      Object.defineProperty(navigator, 'userAgent', { get: () => navigator.userAgent.replace(/HeadlessChrome\/[\d.]+\s*/i, '') });
+    if (navigator.userAgent && navigator.userAgent.indexOf("Headless") !== -1) {
+      Object.defineProperty(navigator, "userAgent", {
+        get: () =>
+          navigator.userAgent.replace(/HeadlessChrome\/[\d.]+\s*/i, ""),
+      });
     }
-  } catch (_e) {}
-
+  } catch (_e) { /* ignore */ }
 })();

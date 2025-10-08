@@ -2,31 +2,38 @@
 
 ## 🚀 System Overview
 
-This enhanced property scraper system provides a comprehensive, secure, and cost-effective solution for automated property data collection with AI-powered intelligence. The system includes URL management, cost monitoring, security hardening, and advanced Claude integration.
+This enhanced property scraper system provides a comprehensive, secure, and
+cost-effective solution for automated property data collection with AI-powered
+intelligence. The system includes URL management, cost monitoring, security
+hardening, and advanced Claude integration.
 
 ## ✅ Implementation Status
 
 All major components have been implemented:
 
 ### Phase 1: Security Hardening ✅ COMPLETE
+
 - ✅ RLS enabled on all 15 database tables
 - ✅ Security definer functions with explicit search_path
 - ✅ Proper role-based access control
 - ✅ Secure policies for service, authenticated, and anonymous users
 
 ### Phase 2: URL Management System ✅ COMPLETE
+
 - ✅ `property_sources` table with priority-based scraping
 - ✅ Automated URL migration from existing data
 - ✅ Success rate tracking and quality metrics
 - ✅ Regional organization and cost tracking
 
 ### Phase 3: Deployment System ✅ COMPLETE
+
 - ✅ Control scripts with on/off switches
 - ✅ GitHub Actions weekly scheduler
 - ✅ Cost monitoring and auto-pause
 - ✅ Configuration management
 
 ### Phase 4: Enhanced Claude Integration ✅ COMPLETE
+
 - ✅ URL-driven property intelligence
 - ✅ Intelligence caching system
 - ✅ Quality metrics and confidence scoring
@@ -37,6 +44,7 @@ All major components have been implemented:
 ### Core Tables
 
 #### `property_sources` - URL Management System
+
 ```sql
 - id: Primary key
 - url: Unique property listing URL
@@ -53,6 +61,7 @@ All major components have been implemented:
 ```
 
 #### Enhanced Security
+
 - RLS enabled on all tables
 - Service role: Full access for backend operations
 - Authenticated users: Read-only dashboard access
@@ -61,6 +70,7 @@ All major components have been implemented:
 ## 🎛️ Control System
 
 ### Quick Commands
+
 ```bash
 # Check system status
 ./control-scraper.sh status
@@ -82,6 +92,7 @@ All major components have been implemented:
 ```
 
 ### Configuration File: `deploy-control.json`
+
 ```json
 {
   "scraping_enabled": true,
@@ -98,6 +109,7 @@ All major components have been implemented:
 ## 🤖 AI Intelligence System
 
 ### Claude Integration Features
+
 - **Property Intelligence**: Year built, unit count, building type, amenities
 - **Neighborhood Analysis**: Transit access, walkability, local features
 - **Confidence Scoring**: 0-100% confidence in extracted data
@@ -105,6 +117,7 @@ All major components have been implemented:
 - **Batch Processing**: Efficient bulk analysis
 
 ### Intelligence Data Structure
+
 ```typescript
 interface PropertyIntelligence {
   property_name: string;
@@ -122,6 +135,7 @@ interface PropertyIntelligence {
 ## 📊 Cost Monitoring & Analytics
 
 ### Available Functions
+
 ```sql
 -- Daily cost tracking
 SELECT * FROM get_daily_scraping_cost('2025-09-28');
@@ -143,6 +157,7 @@ SELECT * FROM get_cost_projections(30);
 ```
 
 ### Cost Management Features
+
 - Daily spending limits with auto-pause
 - Per-operation cost tracking
 - Success rate monitoring
@@ -152,6 +167,7 @@ SELECT * FROM get_cost_projections(30);
 ## 🔄 Automated Scheduling
 
 ### GitHub Actions Workflow
+
 - **Schedule**: Weekly on Sundays at midnight UTC
 - **Regional Processing**: Parallel processing by region
 - **Cost Checks**: Pre-flight cost limit verification
@@ -159,6 +175,7 @@ SELECT * FROM get_cost_projections(30);
 - **Notifications**: Slack/email alerts for issues
 
 ### Workflow Features
+
 - Manual trigger with custom parameters
 - Force run capability for testing
 - Regional filtering for targeted scraping
@@ -167,6 +184,7 @@ SELECT * FROM get_cost_projections(30);
 ## 🏗️ System Architecture
 
 ### Data Flow
+
 1. **URL Management**: `property_sources` → priority-based selection
 2. **Scraping**: `ai-scraper-worker` → property data extraction
 3. **Intelligence**: `property-researcher` → Claude analysis
@@ -174,6 +192,7 @@ SELECT * FROM get_cost_projections(30);
 5. **Cost Tracking**: `scraping_costs` → monitoring and limits
 
 ### Function Hierarchy
+
 ```
 scheduled-scraper (orchestrator)
 ├── get_next_property_sources_batch()
@@ -186,6 +205,7 @@ scheduled-scraper (orchestrator)
 ## 🚀 Deployment Guide
 
 ### Prerequisites
+
 ```bash
 # Required environment variables
 SUPABASE_URL=your_supabase_url
@@ -201,6 +221,7 @@ DAILY_COST_LIMIT=50
 ```
 
 ### Deployment Steps
+
 1. **Configure Environment**
    ```bash
    cp .env.example .env
@@ -225,12 +246,14 @@ DAILY_COST_LIMIT=50
 ## 📈 Performance Optimization
 
 ### Automatic Optimizations
+
 - **Intelligent Scheduling**: Success rate-based priority
 - **Cost Efficiency**: Batch processing and caching
 - **Quality Control**: Automatic source deactivation for poor performers
 - **Rate Limiting**: Configurable delays to prevent blocking
 
 ### Performance Metrics
+
 - **Success Rate**: Percentage of successful scrapes
 - **Cost per Property**: Average cost per unit discovered
 - **Response Time**: Average processing time per source
@@ -241,6 +264,7 @@ DAILY_COST_LIMIT=50
 ### Common Issues
 
 #### High Costs
+
 ```bash
 # Check daily spending
 ./control-scraper.sh status
@@ -253,6 +277,7 @@ SELECT * FROM get_underperforming_sources(30.0, 5);
 ```
 
 #### Low Success Rates
+
 ```bash
 # Review source performance
 SELECT * FROM get_property_source_performance(7);
@@ -262,6 +287,7 @@ SELECT * FROM scraping_logs WHERE level = 'error' ORDER BY created_at DESC LIMIT
 ```
 
 #### Claude Integration Issues
+
 ```bash
 # Verify API key
 curl -H "x-api-key: $ANTHROPIC_API_KEY" https://api.anthropic.com/v1/messages
@@ -273,6 +299,7 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 ## 📊 Monitoring Dashboard
 
 ### Key Metrics to Monitor
+
 - **Daily Cost vs Limit**: Stay within budget
 - **Success Rate Trends**: Maintain quality
 - **Regional Performance**: Optimize by location
@@ -280,6 +307,7 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 - **Source Health**: Identify issues early
 
 ### Recommended Alerts
+
 - Daily cost > 80% of limit
 - Success rate < 70% for 2+ days
 - 3+ consecutive failures for any source
@@ -288,12 +316,14 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 ## 🔐 Security Features
 
 ### Database Security
+
 - Row Level Security (RLS) on all tables
 - Role-based access control
 - Secure function definitions with explicit search_path
 - API key rotation support
 
 ### Access Levels
+
 - **Service Role**: Full backend access
 - **Authenticated**: Dashboard read access
 - **Anonymous**: Public apartment listings only
@@ -301,6 +331,7 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 ## 🎯 Future Enhancements
 
 ### Planned Features
+
 - [ ] Real-time dashboard with live metrics
 - [ ] Machine learning for optimal scheduling
 - [ ] Advanced property matching algorithms
@@ -309,6 +340,7 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 - [ ] Advanced anomaly detection
 
 ### Scalability Considerations
+
 - Horizontal scaling with multiple regions
 - Database partitioning for large datasets
 - CDN integration for cached intelligence
@@ -317,6 +349,7 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 ## 📞 Support
 
 ### Getting Help
+
 1. Check the troubleshooting section above
 2. Review system logs: `./control-scraper.sh logs`
 3. Analyze cost patterns: `./control-scraper.sh costs`
@@ -324,6 +357,7 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 5. Review Supabase function logs
 
 ### Key Files
+
 - `deploy-control.json` - System configuration
 - `deploy-scraper.sh` - Deployment script
 - `control-scraper.sh` - Control interface
@@ -335,6 +369,7 @@ SELECT COUNT(*) FROM property_intelligence WHERE research_timestamp > NOW() - IN
 ## 🎉 Success Metrics
 
 This enhanced system provides:
+
 - **99.9% Uptime** with automated health checks
 - **50%+ Cost Reduction** through intelligent scheduling
 - **90%+ Data Quality** with AI enhancement

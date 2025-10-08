@@ -46,10 +46,10 @@ export interface ScrapedPropertyData {
 }
 
 export interface ApartmentIQData {
-  market_position: 'below_market' | 'at_market' | 'above_market';
+  market_position: "below_market" | "at_market" | "above_market";
   confidence_score: number;
-  price_trend: 'increasing' | 'stable' | 'decreasing';
-  demand_level: 'low' | 'medium' | 'high';
+  price_trend: "increasing" | "stable" | "decreasing";
+  demand_level: "low" | "medium" | "high";
   competitiveness_score: number;
   recommendation: string;
   last_updated: string;

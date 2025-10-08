@@ -1,16 +1,21 @@
 # Geocoding Execution Instructions
 
 ## Overview
-This document provides step-by-step instructions for running the geocoding scripts after the location fields migration has been applied.
+
+This document provides step-by-step instructions for running the geocoding
+scripts after the location fields migration has been applied.
 
 ## Prerequisites
 
 ### 1. Migration Applied
+
 Ensure the location fields migration has been successfully applied:
+
 ```bash
 # Verify migration status
 node scripts/verify_migration_success.js
 ```
+
 ### 2. Environment Configuration
 
 Ensure your `.env.local` file is properly configured.
@@ -24,10 +29,11 @@ Ensure your `.env.local` file is properly configured.
 
 ### 3. Dependencies Installed
 
-      # Install required packages
-      npm install @supabase/supabase-js node-geocoder
+    # Install required packages
+    npm install @supabase/supabase-js node-geocoder
 
-Mapbox and Google are common providers. Set provider and key with environment variables.
+Mapbox and Google are common providers. Set provider and key with environment
+variables.
 
       # For Google (recommended for accuracy)
       export GEOCODER_PROVIDER=google
@@ -58,10 +64,10 @@ Run the orchestrator or individual components depending on need:
 
 Scheduling example (run hourly via crontab):
 
-      # enable detailed logging
-      export DEBUG=true
-      export LOG_LEVEL=debug
-      0 * * * * cd /path/to/project ; timeout 3600 node scripts/backfill_location_data.js continuous >> geocoding.log 2>&1
+    # enable detailed logging
+    export DEBUG=true
+    export LOG_LEVEL=debug
+    0 * * * * cd /path/to/project ; timeout 3600 node scripts/backfill_location_data.js continuous >> geocoding.log 2>&1
 
 Rate limit recommendations (example):
 
@@ -75,10 +81,10 @@ Rate limit recommendations (example):
 
 Troubleshooting: invalid coordinates / rate limits
 
-      # Symptoms: "Rate limit exceeded" errors
-      # Solution: Increase delays or reduce batch size
-      export REQUEST_DELAY_MS=2000
-      export BATCH_SIZE=25
+    # Symptoms: "Rate limit exceeded" errors
+    # Solution: Increase delays or reduce batch size
+    export REQUEST_DELAY_MS=2000
+    export BATCH_SIZE=25
 
 Check configuration and test connection:
 
@@ -123,9 +129,9 @@ Database queries (examples)
 
 Cost estimate (example)
 
-      -- Rate: $0.75 per 1,000 requests
-      -- 10K properties: ~$7.50
-      -- 100K properties: ~$75
+    -- Rate: $0.75 per 1,000 requests
+    -- 10K properties: ~$7.50
+    -- 100K properties: ~$75
 
 Next steps after geocoding
 
@@ -140,23 +146,24 @@ Next steps after geocoding
 
 Verify results
 
-      node scripts/verify_migration_success.js
+    node scripts/verify_migration_success.js
 
 Update application code
 
-      - Add location-based search filters
-      - Implement map visualization
-      - Add radius/distance calculations
+    - Add location-based search filters
+    - Implement map visualization
+    - Add radius/distance calculations
 
 Monitor ongoing geocoding
 
-      - Set up automated geocoding for new properties
-      - Monitor geocoding success rates
-      - Update addresses that fail geocoding
+    - Set up automated geocoding for new properties
+    - Monitor geocoding success rates
+    - Update addresses that fail geocoding
 
 Support
 
 For issues or questions:
+
 1. Check the troubleshooting section above
 2. Review logs in `geocoding.log`
 3. Run status checks and verification scripts

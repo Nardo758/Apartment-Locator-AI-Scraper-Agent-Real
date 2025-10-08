@@ -1,11 +1,11 @@
-import { calculateStabilityScore } from './orchestrator';
+import { calculateStabilityScore } from "./orchestrator";
 
 export type PropertyLike = unknown;
 
 const MODEL_TIERS = {
-  cheap: 'gpt-3.5-turbo',
-  balanced: 'gpt-3.5-turbo-16k',
-  best: 'gpt-4-turbo-preview',
+  cheap: "gpt-3.5-turbo",
+  balanced: "gpt-3.5-turbo-16k",
+  best: "gpt-4-turbo-preview",
 };
 
 export const THRESHOLDS = {
@@ -17,8 +17,12 @@ export const THRESHOLDS = {
 export function getOptimalAIModel(property?: PropertyLike): string {
   let stability = 0;
   try {
-    const raw = calculateStabilityScore(property as unknown as Parameters<typeof calculateStabilityScore>[0]);
-    stability = typeof raw === 'number' && !Number.isNaN(raw) ? Math.max(0, Math.min(1, raw)) : 0;
+    const raw = calculateStabilityScore(
+      property as unknown as Parameters<typeof calculateStabilityScore>[0],
+    );
+    stability = typeof raw === "number" && !Number.isNaN(raw)
+      ? Math.max(0, Math.min(1, raw))
+      : 0;
   } catch {
     stability = 0;
   }
@@ -28,18 +32,28 @@ export function getOptimalAIModel(property?: PropertyLike): string {
   return MODEL_TIERS.best;
 }
 
-export function optimizeAIPrompt(html: string | undefined, property?: PropertyLike): string {
+export function optimizeAIPrompt(
+  html: string | undefined,
+  property?: PropertyLike,
+): string {
   let stability = 0;
   try {
-    const raw = calculateStabilityScore(property as unknown as Parameters<typeof calculateStabilityScore>[0]);
-    stability = typeof raw === 'number' && !Number.isNaN(raw) ? Math.max(0, Math.min(1, raw)) : 0;
+    const raw = calculateStabilityScore(
+      property as unknown as Parameters<typeof calculateStabilityScore>[0],
+    );
+    stability = typeof raw === "number" && !Number.isNaN(raw)
+      ? Math.max(0, Math.min(1, raw))
+      : 0;
   } catch {
     stability = 0;
   }
 
-  const safeHtml = typeof html === 'string' ? html.replace(/\s+/g, ' ').trim() : '';
+  const safeHtml = typeof html === "string"
+    ? html.replace(/\s+/g, " ").trim()
+    : "";
 
-  const jsonInstructions = `\nReturn the result as valid JSON only. Use these fields:\n{\n  "price": number | null,\n  "status": "active" | "pending" | "removed" | "unknown",\n  "concessions": string | null,\n  "notes": string | null\n}\n`;
+  const jsonInstructions =
+    `\nReturn the result as valid JSON only. Use these fields:\n{\n  "price": number | null,\n  "status": "active" | "pending" | "removed" | "unknown",\n  "concessions": string | null,\n  "notes": string | null\n}\n`;
 
   if (stability >= THRESHOLDS.promptStable) {
     const snippet = safeHtml.slice(0, 5000);

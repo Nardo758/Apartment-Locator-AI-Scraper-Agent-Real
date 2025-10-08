@@ -1,13 +1,14 @@
 # 🏢 Apartment Scraper Agent System
 
-A sophisticated two-agent system for discovering and extracting apartment rental data using AI and automated browsing.
+A sophisticated two-agent system for discovering and extracting apartment rental
+data using AI and automated browsing.
 
 ## 🤖 Agent Overview
 
- 
 ### 1. Property Discovery Agent (Claude-based)
 
-**Purpose**: Discover apartment property websites and extract basic information using lightweight scraping.
+**Purpose**: Discover apartment property websites and extract basic information
+using lightweight scraping.
 
 -- **Features**:
 
@@ -19,7 +20,8 @@ A sophisticated two-agent system for discovering and extracting apartment rental
 
 ### 2. Rental Data Agent (Vision/Cognitive) ⭐ **COMPLETED**
 
-**Purpose**: Extract detailed rental pricing and availability from complex multi-page apartment websites.
+**Purpose**: Extract detailed rental pricing and availability from complex
+multi-page apartment websites.
 
 - **Features**:
 
@@ -151,7 +153,8 @@ LUXURY_KEYWORDS=luxury,premier,executive,high-end
 
 Properties are automatically prioritized based on:
 
-- **High Priority**: Luxury buildings, large complexes (>200 units), major management companies
+- **High Priority**: Luxury buildings, large complexes (>200 units), major
+  management companies
 - **Medium Priority**: Standard apartments, medium complexity websites
 - **Low Priority**: Small properties, outdated websites
 
@@ -161,7 +164,6 @@ Properties are automatically prioritized based on:
 
 ### Discovery Agent (Low Cost)
 
-
 - Uses Claude Haiku (cost-effective model)
 - Lightweight HTML fetching (50KB limit)
 - Batch processing to minimize API calls
@@ -169,7 +171,6 @@ Properties are automatically prioritized based on:
 - Vision model analysis per page
 
 ### Rental Agent (Higher Cost)
-
 
 - Vision model analysis per page
 - Browser automation overhead
@@ -210,7 +211,6 @@ python integration_demo.py
 
 ### Cost Tracking
 
-
 - Automatic cost logging per agent operation
 - Budget alerts and usage monitoring
 - Performance metrics collection
@@ -218,7 +218,6 @@ python integration_demo.py
 - Properties discovered per batch
 
 ### Success Metrics
-
 
 - Properties discovered per batch
 - Extraction success rates
@@ -298,4 +297,5 @@ For issues or questions:
 
 ---
 
-**🎯 Goal**: Build the most efficient and cost-effective apartment data collection system using cutting-edge AI agents.
+**🎯 Goal**: Build the most efficient and cost-effective apartment data
+collection system using cutting-edge AI agents.

@@ -1,21 +1,21 @@
 // preflight-check-node.js - Simple pre-flight check using Node.js
 import process from "node:process";
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Load environment variables from .env.local
 function loadEnv() {
-  const envPath = path.join(__dirname, '.env.local');
+  const envPath = path.join(__dirname, ".env.local");
   if (fs.existsSync(envPath)) {
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const lines = envContent.split('\n');
-    
+    const envContent = fs.readFileSync(envPath, "utf8");
+    const lines = envContent.split("\n");
+
     for (const line of lines) {
       const trimmed = line.trim();
-      if (trimmed && !trimmed.startsWith('#')) {
-        const [key, ...valueParts] = trimmed.split('=');
+      if (trimmed && !trimmed.startsWith("#")) {
+        const [key, ...valueParts] = trimmed.split("=");
         if (key && valueParts.length > 0) {
-          process.env[key.trim()] = valueParts.join('=').trim();
+          process.env[key.trim()] = valueParts.join("=").trim();
         }
       }
     }
@@ -24,24 +24,27 @@ function loadEnv() {
 
 async function checkEnvVars() {
   try {
-    const envPath = path.join(__dirname, '.env.local');
+    const envPath = path.join(__dirname, ".env.local");
     if (!fs.existsSync(envPath)) {
       console.log("   ❌ .env.local file not found");
       return false;
     }
 
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const hasAnthropicKey = envContent.includes('ANTHROPIC_API_KEY=sk-ant-') && 
-                           !envContent.includes('your-actual-claude-key-here');
-    const hasSupabaseUrl = envContent.includes('SUPABASE_URL=https://') && 
-                          !envContent.includes('your-project-ref');
-    const hasSupabaseKey = envContent.includes('SUPABASE_SERVICE_ROLE_KEY=ey') && 
-                          !envContent.includes('your-actual-service-role-key-here');
-    
-    console.log(`   • ANTHROPIC_API_KEY: ${hasAnthropicKey ? '✅' : '❌'}`);
-    console.log(`   • SUPABASE_URL: ${hasSupabaseUrl ? '✅' : '❌'}`);
-    console.log(`   • SUPABASE_SERVICE_ROLE_KEY: ${hasSupabaseKey ? '✅' : '❌'}`);
-    
+    const envContent = fs.readFileSync(envPath, "utf8");
+    const hasAnthropicKey = envContent.includes("ANTHROPIC_API_KEY=sk-ant-") &&
+      !envContent.includes("your-actual-claude-key-here");
+    const hasSupabaseUrl = envContent.includes("SUPABASE_URL=https://") &&
+      !envContent.includes("your-project-ref");
+    const hasSupabaseKey =
+      envContent.includes("SUPABASE_SERVICE_ROLE_KEY=ey") &&
+      !envContent.includes("your-actual-service-role-key-here");
+
+    console.log(`   • ANTHROPIC_API_KEY: ${hasAnthropicKey ? "✅" : "❌"}`);
+    console.log(`   • SUPABASE_URL: ${hasSupabaseUrl ? "✅" : "❌"}`);
+    console.log(
+      `   • SUPABASE_SERVICE_ROLE_KEY: ${hasSupabaseKey ? "✅" : "❌"}`,
+    );
+
     return hasAnthropicKey; // We only need Claude for this test
   } catch (error) {
     console.log(`   ❌ Error reading .env.local: ${error.message}`);
@@ -52,36 +55,38 @@ async function checkEnvVars() {
 async function checkClaude() {
   try {
     loadEnv();
-    
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey || apiKey.includes('your-actual-claude-key-here')) {
+    if (!apiKey || apiKey.includes("your-actual-claude-key-here")) {
       console.log("   ❌ Claude API key not properly configured");
       return false;
     }
-    
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: 'claude-3-haiku-20240307',
+        model: "claude-3-haiku-20240307",
         max_tokens: 10,
-        messages: [{ role: 'user', content: 'Hi' }]
-      })
+        messages: [{ role: "user", content: "Hi" }],
+      }),
     });
 
     const result = await response.json();
     const isValid = response.ok && result.content;
-    
+
     if (isValid) {
       console.log("   ✅ Claude API connection successful");
     } else {
-      console.log(`   ❌ Claude API error: ${result.error?.message || 'Unknown error'}`);
+      console.log(
+        `   ❌ Claude API error: ${result.error?.message || "Unknown error"}`,
+      );
     }
-    
+
     return isValid;
   } catch (error) {
     console.log(`   ❌ Claude API connection failed: ${error.message}`);
@@ -95,15 +100,15 @@ async function preflightCheck() {
 
   const checks = [
     { name: "Environment Variables", check: await checkEnvVars() },
-    { name: "Claude API Access", check: await checkClaude() }
+    { name: "Claude API Access", check: await checkClaude() },
   ];
 
   console.log("\n📋 Pre-Flight Check Results:");
-  checks.forEach(({name, check}) => {
+  checks.forEach(({ name, check }) => {
     console.log(`${check ? "✅" : "❌"} ${name}`);
   });
 
-  const allPassed = checks.every(c => c.check);
+  const allPassed = checks.every((c) => c.check);
   if (allPassed) {
     console.log("\n🎉 ALL SYSTEMS GO! Ready for Claude API testing.");
     console.log("📊 Expected Results for Direct API Test:");
@@ -115,15 +120,19 @@ async function preflightCheck() {
   } else {
     console.log("\n🚨 Issues detected. Please fix before proceeding:");
     console.log("   1. Ensure .env.local exists with proper ANTHROPIC_API_KEY");
-    console.log("   2. Replace 'your-actual-claude-key-here' with real API key");
-    console.log("   3. Get Claude API key from: https://console.anthropic.com/");
+    console.log(
+      "   2. Replace 'your-actual-claude-key-here' with real API key",
+    );
+    console.log(
+      "   3. Get Claude API key from: https://console.anthropic.com/",
+    );
   }
 }
 
 // Run the check
 if (require.main === module) {
-  preflightCheck().catch(error => {
-    console.error('Pre-flight check failed:', error);
+  preflightCheck().catch((error) => {
+    console.error("Pre-flight check failed:", error);
     process.exit(1);
   });
 }

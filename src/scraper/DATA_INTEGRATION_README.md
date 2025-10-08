@@ -1,6 +1,8 @@
 # 🔄 Data Integration Pipeline - Real Estate Scraper
 
-Complete data transformation pipeline for converting scraper data to frontend-compatible format with AI enhancements, market intelligence, and geographic search capabilities.
+Complete data transformation pipeline for converting scraper data to
+frontend-compatible format with AI enhancements, market intelligence, and
+geographic search capabilities.
 
 ## 🏗️ Architecture Overview
 
@@ -18,18 +20,18 @@ Current Scraper Data (scraped_properties)
 
 ### Source → Target Transformation
 
-| **Scraped Properties** | **Frontend Properties** | **Enhancement** |
-|----------------------|----------------------|----------------|
-| `external_id` | `external_id` | ✅ Direct mapping |
-| `name` | `name` | ✅ Direct mapping |
-| `address` | `address` | ✅ Direct mapping |
-| `current_price` | `original_price` | ✅ Direct mapping |
-| `current_price` | `ai_price` | 🤖 AI calculation |
-| `current_price` | `effective_price` | 💰 Concession calculation |
-| `bedrooms/bathrooms` | `bedrooms/bathrooms` | ✅ Direct mapping |
-| `square_feet` | `sqft` | ✅ Direct mapping |
-| `free_rent_concessions` | `amenities/features` | 🔍 Text extraction |
-| Raw data | `apartment_iq_data` | 🧠 Market intelligence |
+| **Scraped Properties**  | **Frontend Properties** | **Enhancement**           |
+| ----------------------- | ----------------------- | ------------------------- |
+| `external_id`           | `external_id`           | ✅ Direct mapping         |
+| `name`                  | `name`                  | ✅ Direct mapping         |
+| `address`               | `address`               | ✅ Direct mapping         |
+| `current_price`         | `original_price`        | ✅ Direct mapping         |
+| `current_price`         | `ai_price`              | 🤖 AI calculation         |
+| `current_price`         | `effective_price`       | 💰 Concession calculation |
+| `bedrooms/bathrooms`    | `bedrooms/bathrooms`    | ✅ Direct mapping         |
+| `square_feet`           | `sqft`                  | ✅ Direct mapping         |
+| `free_rent_concessions` | `amenities/features`    | 🔍 Text extraction        |
+| Raw data                | `apartment_iq_data`     | 🧠 Market intelligence    |
 
 ## 🚀 Quick Start
 
@@ -65,15 +67,15 @@ npx tsx src/scraper/integration-test.ts
 ### Basic Data Transformation
 
 ```typescript
-import { transformScrapedToFrontendFormat } from './data-transformer';
+import { transformScrapedToFrontendFormat } from "./data-transformer";
 
 // Transform single property
 const scrapedData = {
-  external_id: 'apt_123_1',
-  name: 'Luxury Downtown Apartment',
-  address: '123 Main St',
-  city: 'Austin',
-  state: 'TX',
+  external_id: "apt_123_1",
+  name: "Luxury Downtown Apartment",
+  address: "123 Main St",
+  city: "Austin",
+  state: "TX",
   current_price: 2500,
   bedrooms: 2,
   bathrooms: 2.0,
@@ -81,28 +83,31 @@ const scrapedData = {
 };
 
 const frontendProperty = await transformScrapedToFrontendFormat(scrapedData);
-console.log('AI Price:', frontendProperty.ai_price);
-console.log('Effective Price:', frontendProperty.effective_price);
-console.log('Market Intelligence:', frontendProperty.apartment_iq_data);
+console.log("AI Price:", frontendProperty.ai_price);
+console.log("Effective Price:", frontendProperty.effective_price);
+console.log("Market Intelligence:", frontendProperty.apartment_iq_data);
 ```
 
 ### Batch Processing with Frontend Sync
 
 ```typescript
-import { getScrapingBatchWithTransformation, syncToFrontendSchema } from './orchestrator';
+import {
+  getScrapingBatchWithTransformation,
+  syncToFrontendSchema,
+} from "./orchestrator";
 
 // Get batch with automatic transformation
 const { jobs, frontendProperties } = await getScrapingBatchWithTransformation(
-  supabase, 
-  100,  // batch size
-  true  // enable frontend sync
+  supabase,
+  100, // batch size
+  true, // enable frontend sync
 );
 
 // Sync to frontend schema
 const syncResult = await syncToFrontendSchema(
-  supabase, 
-  frontendProperties, 
-  'properties'
+  supabase,
+  frontendProperties,
+  "properties",
 );
 
 console.log(`Synced ${syncResult.success} properties`);
@@ -111,7 +116,7 @@ console.log(`Synced ${syncResult.success} properties`);
 ### Enhanced Batch Processing
 
 ```typescript
-import { processBatchWithCostOptimization } from './processor';
+import { processBatchWithCostOptimization } from "./processor";
 
 // Process batch with frontend integration
 const results = await processBatchWithCostOptimization(
@@ -119,13 +124,13 @@ const results = await processBatchWithCostOptimization(
   batch,
   {
     enableFrontendSync: true,
-    frontendTable: 'properties'
-  }
+    frontendTable: "properties",
+  },
 );
 
 // Check sync results
-const syncInfo = results.find(r => r.frontend_sync);
-console.log('Frontend sync:', syncInfo);
+const syncInfo = results.find((r) => r.frontend_sync);
+console.log("Frontend sync:", syncInfo);
 ```
 
 ### Geographic Search
@@ -238,10 +243,10 @@ MAX_SEARCH_RESULTS=100
 const transformationConfig = {
   enableAiPricing: true,
   enableMarketIntelligence: true,
-  aiPricingWeight: 0.3,  // 30% weight to market data
-  sizePremiumThreshold: 1000,  // sqft for size premium
-  luxuryAmenities: ['pool', 'gym', 'concierge', 'doorman'],
-  concessionAmortizationPeriod: 12  // months
+  aiPricingWeight: 0.3, // 30% weight to market data
+  sizePremiumThreshold: 1000, // sqft for size premium
+  luxuryAmenities: ["pool", "gym", "concierge", "doorman"],
+  concessionAmortizationPeriod: 12, // months
 };
 ```
 
@@ -262,21 +267,21 @@ CREATE INDEX idx_properties_location ON properties(city, state);
 ```typescript
 // Optimize batch sizes for your system
 const OPTIMAL_BATCH_SIZES = {
-  transformation: 100,    // Properties per transformation batch
-  databaseSync: 50,      // Properties per database sync
-  aiProcessing: 25       // Properties per AI analysis batch
+  transformation: 100, // Properties per transformation batch
+  databaseSync: 50, // Properties per database sync
+  aiProcessing: 25, // Properties per AI analysis batch
 };
 
 // Process in chunks for large datasets
 async function processLargeDataset(properties: ScrapedPropertyData[]) {
   const chunks = chunkArray(properties, OPTIMAL_BATCH_SIZES.transformation);
-  
+
   for (const chunk of chunks) {
     const transformed = await batchTransformProperties(chunk);
     await syncToFrontendSchema(supabase, transformed);
-    
+
     // Add delay to prevent rate limiting
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }
 ```
@@ -292,14 +297,15 @@ const metrics = {
   successfulTransformations: 0,
   aiPricingSuccessRate: 0,
   marketIntelligenceSuccessRate: 0,
-  syncSuccessRate: 0
+  syncSuccessRate: 0,
 };
 
 // Log transformation details
-console.log('Transformation Metrics:', {
-  successRate: (metrics.successfulTransformations / metrics.totalProcessed) * 100,
+console.log("Transformation Metrics:", {
+  successRate: (metrics.successfulTransformations / metrics.totalProcessed) *
+    100,
   aiPricingAccuracy: metrics.aiPricingSuccessRate,
-  syncEfficiency: metrics.syncSuccessRate
+  syncEfficiency: metrics.syncSuccessRate,
 });
 ```
 
@@ -310,15 +316,15 @@ console.log('Transformation Metrics:', {
 try {
   const frontendProperty = await transformScrapedToFrontendFormat(scrapedData);
 } catch (error) {
-  if (error.message.includes('invalid price')) {
+  if (error.message.includes("invalid price")) {
     // Handle price validation errors
-    console.warn('Price validation failed:', scrapedData.external_id);
-  } else if (error.message.includes('missing required field')) {
+    console.warn("Price validation failed:", scrapedData.external_id);
+  } else if (error.message.includes("missing required field")) {
     // Handle missing data errors
-    console.warn('Required field missing:', scrapedData.external_id);
+    console.warn("Required field missing:", scrapedData.external_id);
   } else {
     // Handle unexpected errors
-    console.error('Transformation error:', error);
+    console.error("Transformation error:", error);
   }
 }
 ```
@@ -353,13 +359,13 @@ npm run test:geographic-search
 // Create test fixtures
 export const TEST_SCRAPED_PROPERTIES = [
   {
-    external_id: 'test_001',
-    name: 'Test Apartment 1',
+    external_id: "test_001",
+    name: "Test Apartment 1",
     current_price: 2500,
     bedrooms: 2,
     bathrooms: 2.0,
     // ... complete test data
-  }
+  },
 ];
 
 // Run transformation tests
@@ -404,12 +410,12 @@ const monitor = {
   transformationRate: 0,
   errorRate: 0,
   syncLatency: 0,
-  dataQualityScore: 0
+  dataQualityScore: 0,
 };
 
 // Set up alerts
-if (monitor.errorRate > 0.05) {  // 5% error rate threshold
-  await sendAlert('High transformation error rate detected');
+if (monitor.errorRate > 0.05) { // 5% error rate threshold
+  await sendAlert("High transformation error rate detected");
 }
 ```
 
@@ -417,21 +423,21 @@ if (monitor.errorRate > 0.05) {  // 5% error rate threshold
 
 ### Core Functions
 
-| Function | Purpose | Parameters | Returns |
-|----------|---------|------------|---------|
-| `transformScrapedToFrontendFormat()` | Transform single property | `ScrapedPropertyData` | `FrontendProperty` |
-| `batchTransformProperties()` | Transform multiple properties | `ScrapedPropertyData[]` | `FrontendProperty[]` |
-| `calculateAiPrice()` | AI price calculation | `ScrapedPropertyData` | `number` |
-| `generateIqData()` | Market intelligence | `ScrapedPropertyData` | `ApartmentIQData` |
-| `syncToFrontendSchema()` | Save to frontend tables | `FrontendProperty[]` | `SyncResult` |
+| Function                             | Purpose                       | Parameters              | Returns              |
+| ------------------------------------ | ----------------------------- | ----------------------- | -------------------- |
+| `transformScrapedToFrontendFormat()` | Transform single property     | `ScrapedPropertyData`   | `FrontendProperty`   |
+| `batchTransformProperties()`         | Transform multiple properties | `ScrapedPropertyData[]` | `FrontendProperty[]` |
+| `calculateAiPrice()`                 | AI price calculation          | `ScrapedPropertyData`   | `number`             |
+| `generateIqData()`                   | Market intelligence           | `ScrapedPropertyData`   | `ApartmentIQData`    |
+| `syncToFrontendSchema()`             | Save to frontend tables       | `FrontendProperty[]`    | `SyncResult`         |
 
 ### SQL Functions
 
-| Function | Purpose | Parameters |
-|----------|---------|------------|
-| `search_properties_near_location()` | Geographic search | lat, lng, radius, filters |
-| `calculate_ai_price_estimate()` | Server-side AI pricing | property details |
-| `calculate_effective_price()` | Server-side effective pricing | price, concessions, fees |
+| Function                            | Purpose                       | Parameters                |
+| ----------------------------------- | ----------------------------- | ------------------------- |
+| `search_properties_near_location()` | Geographic search             | lat, lng, radius, filters |
+| `calculate_ai_price_estimate()`     | Server-side AI pricing        | property details          |
+| `calculate_effective_price()`       | Server-side effective pricing | price, concessions, fees  |
 
 ## 🎯 Best Practices
 
@@ -472,4 +478,6 @@ if (monitor.errorRate > 0.05) {  // 5% error rate threshold
 
 ---
 
-**🎉 Your data integration pipeline is ready!** Transform your scraped property data into a powerful, AI-enhanced frontend experience with geographic search, market intelligence, and real-time pricing analysis.
+**🎉 Your data integration pipeline is ready!** Transform your scraped property
+data into a powerful, AI-enhanced frontend experience with geographic search,
+market intelligence, and real-time pricing analysis.

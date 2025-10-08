@@ -2,14 +2,14 @@
 
 /**
  * Enhanced Real Integration Test for ai-scraper-worker
- * 
+ *
  * This script provides production-ready testing with:
  * - Real API calls to OpenAI
  * - Cost tracking and monitoring
  * - Rate limiting protection
  * - Retry logic for failed requests
  * - Detailed performance analytics
- * 
+ *
  * Usage: deno run --allow-net --allow-env --allow-read test-ai-scraper-enhanced.ts
  */
 
@@ -52,16 +52,20 @@ class CostTracker {
   private totalTokens = 0;
   private costs = {
     openai: { input: 0, output: 0 },
-    anthropic: { input: 0, output: 0 }
+    anthropic: { input: 0, output: 0 },
   };
   private callCount = 0;
 
-  trackCall(service: 'openai' | 'anthropic', inputTokens: number, outputTokens: number): number {
+  trackCall(
+    service: "openai" | "anthropic",
+    inputTokens: number,
+    outputTokens: number,
+  ): number {
     this.totalTokens += inputTokens + outputTokens;
     this.callCount++;
-    
+
     let callCost = 0;
-    if (service === 'openai') {
+    if (service === "openai") {
       const inputCost = inputTokens * 0.0000015; // $1.50 per 1M tokens (GPT-4 Turbo)
       const outputCost = outputTokens * 0.000006; // $6.00 per 1M tokens
       callCost = inputCost + outputCost;
@@ -74,18 +78,18 @@ class CostTracker {
       this.costs.anthropic.input += inputCost;
       this.costs.anthropic.output += outputCost;
     }
-    
+
     return callCost;
   }
 
   getTotalCost(): number {
-    return this.costs.openai.input + this.costs.openai.output + 
-           this.costs.anthropic.input + this.costs.anthropic.output;
+    return this.costs.openai.input + this.costs.openai.output +
+      this.costs.anthropic.input + this.costs.anthropic.output;
   }
 
   getReport() {
     const totalCost = this.getTotalCost();
-    
+
     return {
       totalTokens: this.totalTokens,
       totalCost: totalCost,
@@ -95,14 +99,14 @@ class CostTracker {
         openai: {
           input: this.costs.openai.input,
           output: this.costs.openai.output,
-          total: this.costs.openai.input + this.costs.openai.output
+          total: this.costs.openai.input + this.costs.openai.output,
         },
         anthropic: {
           input: this.costs.anthropic.input,
           output: this.costs.anthropic.output,
-          total: this.costs.anthropic.input + this.costs.anthropic.output
-        }
-      }
+          total: this.costs.anthropic.input + this.costs.anthropic.output,
+        },
+      },
     };
   }
 
@@ -118,7 +122,9 @@ function loadTestConfig(): TestConfig {
     delayBetweenRequests: parseInt(Deno.env.get("TEST_DELAY_MS") || "1000"),
     maxRetries: parseInt(Deno.env.get("TEST_MAX_RETRIES") || "3"),
     timeoutMs: parseInt(Deno.env.get("TEST_TIMEOUT_MS") || "30000"),
-    costAlertThreshold: parseFloat(Deno.env.get("COST_ALERT_THRESHOLD") || "10.00")
+    costAlertThreshold: parseFloat(
+      Deno.env.get("COST_ALERT_THRESHOLD") || "10.00",
+    ),
   };
 }
 
@@ -145,7 +151,7 @@ function generateRealTestProperties(): TestProperty[] {
             <p>Admin fee: $300 (waived for qualified applicants)</p>
           </div>
         </div>
-      `
+      `,
     },
     {
       type: "budget_apartment",
@@ -165,7 +171,7 @@ function generateRealTestProperties(): TestProperty[] {
             <p>Pet-friendly (additional $25/month)</p>
           </div>
         </section>
-      `
+      `,
     },
     {
       type: "suburban_house",
@@ -190,8 +196,8 @@ function generateRealTestProperties(): TestProperty[] {
             <p>Pet deposit: $500 (refundable)</p>
           </div>
         </div>
-      `
-    }
+      `,
+    },
   ];
 
   const cities = [
@@ -202,7 +208,7 @@ function generateRealTestProperties(): TestProperty[] {
     { city: "Portland", state: "OR", zip: "97201" },
     { city: "Phoenix", state: "AZ", zip: "85001" },
     { city: "Miami", state: "FL", zip: "33101" },
-    { city: "Chicago", state: "IL", zip: "60601" }
+    { city: "Chicago", state: "IL", zip: "60601" },
   ];
 
   const properties: TestProperty[] = [];
@@ -211,13 +217,29 @@ function generateRealTestProperties(): TestProperty[] {
     const scenario = scenarios[i % scenarios.length];
     const source = scenario.sources[i % scenario.sources.length];
     const city = cities[i % cities.length];
-    
+
     // Vary prices realistically by city
-    const basePrices = { "luxury_apartment": 4500, "budget_apartment": 1200, "suburban_house": 2800 };
-    const cityMultipliers = { "NY": 2.0, "CA": 1.8, "WA": 1.5, "CO": 1.2, "TX": 1.0, "AZ": 0.9, "FL": 1.1, "IL": 1.3 };
+    const basePrices = {
+      "luxury_apartment": 4500,
+      "budget_apartment": 1200,
+      "suburban_house": 2800,
+    };
+    const cityMultipliers = {
+      "NY": 2.0,
+      "CA": 1.8,
+      "WA": 1.5,
+      "CO": 1.2,
+      "TX": 1.0,
+      "AZ": 0.9,
+      "FL": 1.1,
+      "IL": 1.3,
+    };
     const basePrice = basePrices[scenario.type as keyof typeof basePrices];
-    const multiplier = cityMultipliers[city.state as keyof typeof cityMultipliers] || 1.0;
-    const finalPrice = Math.round(basePrice * multiplier * (0.8 + Math.random() * 0.4)); // ±20% variation
+    const multiplier =
+      cityMultipliers[city.state as keyof typeof cityMultipliers] || 1.0;
+    const finalPrice = Math.round(
+      basePrice * multiplier * (0.8 + Math.random() * 0.4),
+    ); // ±20% variation
 
     // Customize HTML with realistic variations
     const customHtml = scenario.html
@@ -235,7 +257,7 @@ function generateRealTestProperties(): TestProperty[] {
       source_url: `https://${source}/listing/${city.state.toLowerCase()}-${i}`,
       source_name: source,
       scraping_job_id: Math.floor((i - 1) / 10) + 1,
-      scenario: scenario.type
+      scenario: scenario.type,
     });
   }
 
@@ -245,18 +267,18 @@ function generateRealTestProperties(): TestProperty[] {
 const FUNCTION_URL = "http://localhost:54321/functions/v1/ai-scraper-worker";
 
 async function testSinglePropertyWithRetry(
-  property: TestProperty, 
+  property: TestProperty,
   config: TestConfig,
-  costTracker: CostTracker
+  costTracker: CostTracker,
 ): Promise<TestResult> {
   const startTime = Date.now();
   let lastError = "";
-  
+
   for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), config.timeoutMs);
-      
+
       const response = await fetch(FUNCTION_URL, {
         method: "POST",
         headers: {
@@ -270,9 +292,9 @@ async function testSinglePropertyWithRetry(
           external_id: property.external_id,
           source_url: property.source_url,
           source_name: property.source_name,
-          scraping_job_id: property.scraping_job_id
+          scraping_job_id: property.scraping_job_id,
         }),
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -280,21 +302,27 @@ async function testSinglePropertyWithRetry(
       const duration = Date.now() - startTime;
 
       if (!response.ok) {
-        lastError = `HTTP ${response.status}: ${result.message || 'Unknown error'}`;
+        lastError = `HTTP ${response.status}: ${
+          result.message || "Unknown error"
+        }`;
         if (attempt < config.maxRetries) {
-          console.log(`    ⚠️  Attempt ${attempt + 1} failed: ${lastError}, retrying...`);
-          await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1))); // Exponential backoff
+          console.log(
+            `    ⚠️  Attempt ${attempt + 1} failed: ${lastError}, retrying...`,
+          );
+          await new Promise((resolve) =>
+            setTimeout(resolve, 1000 * (attempt + 1))
+          ); // Exponential backoff
           continue;
         }
       } else {
         // Track costs if usage information is available
         if (result.usage && Deno.env.get("ENABLE_COST_TRACKING") === "true") {
           const cost = costTracker.trackCall(
-            'openai', 
-            result.usage.prompt_tokens || 0, 
-            result.usage.completion_tokens || 0
+            "openai",
+            result.usage.prompt_tokens || 0,
+            result.usage.completion_tokens || 0,
           );
-          
+
           return {
             property,
             success: true,
@@ -304,25 +332,29 @@ async function testSinglePropertyWithRetry(
             tokens: {
               prompt: result.usage.prompt_tokens || 0,
               completion: result.usage.completion_tokens || 0,
-              total: result.usage.total_tokens || 0
+              total: result.usage.total_tokens || 0,
             },
-            cost
+            cost,
           };
         }
-        
+
         return {
           property,
           success: true,
           response: result,
           duration,
-          retries: attempt
+          retries: attempt,
         };
       }
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
       if (attempt < config.maxRetries) {
-        console.log(`    ⚠️  Attempt ${attempt + 1} failed: ${lastError}, retrying...`);
-        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+        console.log(
+          `    ⚠️  Attempt ${attempt + 1} failed: ${lastError}, retrying...`,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * (attempt + 1))
+        );
       }
     }
   }
@@ -332,20 +364,22 @@ async function testSinglePropertyWithRetry(
     success: false,
     error: lastError,
     duration: Date.now() - startTime,
-    retries: config.maxRetries
+    retries: config.maxRetries,
   };
 }
 
 async function runEnhancedRealTests(): Promise<void> {
   console.log("🏠 REAL 100-PROPERTY INTEGRATION TEST");
   console.log("=====================================");
-  console.log("🔥 Enhanced version with cost tracking, retry logic, and performance monitoring");
+  console.log(
+    "🔥 Enhanced version with cost tracking, retry logic, and performance monitoring",
+  );
   console.log();
 
   // Load configuration
   const config = loadTestConfig();
   const costTracker = new CostTracker();
-  
+
   console.log("⚙️ Test Configuration:");
   console.log(`   Batch Size: ${config.batchSize}`);
   console.log(`   Delay Between Batches: ${config.delayBetweenRequests}ms`);
@@ -357,15 +391,21 @@ async function runEnhancedRealTests(): Promise<void> {
   // Check if function server is running
   try {
     const healthCheck = await fetch(FUNCTION_URL, { method: "GET" });
-    console.log(`✅ Function server is running (Status: ${healthCheck.status})`);
+    console.log(
+      `✅ Function server is running (Status: ${healthCheck.status})`,
+    );
   } catch (_error) {
     console.error("❌ Function server is not running. Please start it with:");
-    console.error("   supabase functions serve ai-scraper-worker --env-file .env.local");
+    console.error(
+      "   supabase functions serve ai-scraper-worker --env-file .env.local",
+    );
     return;
   }
 
   const testProperties = generateRealTestProperties();
-  console.log(`📊 Generated ${testProperties.length} realistic test properties`);
+  console.log(
+    `📊 Generated ${testProperties.length} realistic test properties`,
+  );
   console.log(`🔄 Processing in batches of ${config.batchSize}`);
   console.log();
 
@@ -377,52 +417,81 @@ async function runEnhancedRealTests(): Promise<void> {
     const batch = testProperties.slice(i, i + config.batchSize);
     const batchNum = Math.floor(i / config.batchSize) + 1;
     const totalBatches = Math.ceil(testProperties.length / config.batchSize);
-    
-    console.log(`📦 Processing batch ${batchNum}/${totalBatches} (Properties ${i + 1}-${Math.min(i + config.batchSize, testProperties.length)})`);
-    
+
+    console.log(
+      `📦 Processing batch ${batchNum}/${totalBatches} (Properties ${i + 1}-${
+        Math.min(i + config.batchSize, testProperties.length)
+      })`,
+    );
+
     // Process batch concurrently with individual retry logic
-    const batchPromises = batch.map(property => testSinglePropertyWithRetry(property, config, costTracker));
+    const batchPromises = batch.map((property) =>
+      testSinglePropertyWithRetry(property, config, costTracker)
+    );
     const batchResults = await Promise.all(batchPromises);
-    
+
     // Analyze batch results
     batchResults.forEach((result, index) => {
       const property = batch[index];
       if (result.success) {
-        console.log(`  ✅ Property ${property.id} (${property.source}, ${property.scenario}): Success (${result.duration}ms)`);
+        console.log(
+          `  ✅ Property ${property.id} (${property.source}, ${property.scenario}): Success (${result.duration}ms)`,
+        );
         if (result.response?.data) {
           const data = result.response.data;
-          console.log(`     📍 ${data.name || 'N/A'} - ${data.city || 'N/A'}, ${data.state || 'N/A'} - $${data.current_price || 'N/A'}`);
+          console.log(
+            `     📍 ${data.name || "N/A"} - ${data.city || "N/A"}, ${
+              data.state || "N/A"
+            } - $${data.current_price || "N/A"}`,
+          );
         }
         if (result.tokens && result.cost) {
-          console.log(`     💰 Tokens: ${result.tokens.total}, Cost: $${result.cost.toFixed(4)}`);
+          console.log(
+            `     💰 Tokens: ${result.tokens.total}, Cost: $${
+              result.cost.toFixed(4)
+            }`,
+          );
         }
         if (result.retries > 0) {
           console.log(`     🔄 Retries: ${result.retries}`);
         }
       } else {
-        console.log(`  ❌ Property ${property.id} (${property.source}, ${property.scenario}): ${result.error} (${result.duration}ms)`);
+        console.log(
+          `  ❌ Property ${property.id} (${property.source}, ${property.scenario}): ${result.error} (${result.duration}ms)`,
+        );
         if (result.retries > 0) {
           console.log(`     🔄 Failed after ${result.retries} retries`);
         }
       }
     });
-    
+
     results.push(...batchResults);
 
     // Cost monitoring
-    if (Deno.env.get("ENABLE_COST_TRACKING") === "true" && costTracker.checkCostAlert(config.costAlertThreshold)) {
-      console.log(`🚨 COST ALERT: Total cost ($${costTracker.getTotalCost().toFixed(4)}) exceeded threshold ($${config.costAlertThreshold})`);
+    if (
+      Deno.env.get("ENABLE_COST_TRACKING") === "true" &&
+      costTracker.checkCostAlert(config.costAlertThreshold)
+    ) {
+      console.log(
+        `🚨 COST ALERT: Total cost ($${
+          costTracker.getTotalCost().toFixed(4)
+        }) exceeded threshold ($${config.costAlertThreshold})`,
+      );
       const userInput = prompt("Continue testing? (y/n): ");
-      if (userInput?.toLowerCase() !== 'y') {
+      if (userInput?.toLowerCase() !== "y") {
         console.log("🛑 Testing stopped by user due to cost concerns");
         break;
       }
     }
-    
+
     // Delay between batches
     if (i + config.batchSize < testProperties.length) {
-      console.log(`⏱️  Waiting ${config.delayBetweenRequests}ms before next batch...`);
-      await new Promise(resolve => setTimeout(resolve, config.delayBetweenRequests));
+      console.log(
+        `⏱️  Waiting ${config.delayBetweenRequests}ms before next batch...`,
+      );
+      await new Promise((resolve) =>
+        setTimeout(resolve, config.delayBetweenRequests)
+      );
     }
     console.log();
   }
@@ -431,65 +500,98 @@ async function runEnhancedRealTests(): Promise<void> {
   generateEnhancedTestReport(results, costTracker, Date.now() - startTime);
 }
 
-function generateEnhancedTestReport(results: TestResult[], costTracker: CostTracker, totalDuration: number): void {
+function generateEnhancedTestReport(
+  results: TestResult[],
+  costTracker: CostTracker,
+  totalDuration: number,
+): void {
   console.log("📈 ENHANCED TEST RESULTS");
-  console.log("=" .repeat(50));
-  
-  const successful = results.filter(r => r.success).length;
-  const failed = results.filter(r => !r.success).length;
+  console.log("=".repeat(50));
+
+  const successful = results.filter((r) => r.success).length;
+  const failed = results.filter((r) => !r.success).length;
   const totalRetries = results.reduce((sum, r) => sum + r.retries, 0);
-  const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) / results.length;
-  
+  const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) /
+    results.length;
+
   // Basic statistics
   console.log(`Total Properties Tested: ${results.length}`);
-  console.log(`Successful: ${successful} (${((successful / results.length) * 100).toFixed(1)}%)`);
-  console.log(`Failed: ${failed} (${((failed / results.length) * 100).toFixed(1)}%)`);
+  console.log(
+    `Successful: ${successful} (${
+      ((successful / results.length) * 100).toFixed(1)
+    }%)`,
+  );
+  console.log(
+    `Failed: ${failed} (${((failed / results.length) * 100).toFixed(1)}%)`,
+  );
   console.log(`Total Retries: ${totalRetries}`);
   console.log(`Average Duration: ${avgDuration.toFixed(0)}ms per property`);
-  console.log(`Total Test Duration: ${(totalDuration / 1000 / 60).toFixed(1)} minutes`);
-  
+  console.log(
+    `Total Test Duration: ${(totalDuration / 1000 / 60).toFixed(1)} minutes`,
+  );
+
   // Performance analysis
-  const fastResults = results.filter(r => r.duration < 3000).length;
-  const slowResults = results.filter(r => r.duration >= 10000).length;
+  const fastResults = results.filter((r) => r.duration < 3000).length;
+  const slowResults = results.filter((r) => r.duration >= 10000).length;
   console.log(`\n⚡ Performance Analysis:`);
-  console.log(`   Fast responses (<3s): ${fastResults} (${((fastResults / results.length) * 100).toFixed(1)}%)`);
-  console.log(`   Slow responses (≥10s): ${slowResults} (${((slowResults / results.length) * 100).toFixed(1)}%)`);
-  
+  console.log(
+    `   Fast responses (<3s): ${fastResults} (${
+      ((fastResults / results.length) * 100).toFixed(1)
+    }%)`,
+  );
+  console.log(
+    `   Slow responses (≥10s): ${slowResults} (${
+      ((slowResults / results.length) * 100).toFixed(1)
+    }%)`,
+  );
+
   // Cost analysis
   if (Deno.env.get("ENABLE_COST_TRACKING") === "true") {
     const costReport = costTracker.getReport();
     console.log(`\n💰 Cost Analysis:`);
     console.log(`   Total Cost: $${costReport.totalCost.toFixed(4)}`);
-    console.log(`   Average Cost per Property: $${costReport.averageCostPerCall.toFixed(4)}`);
+    console.log(
+      `   Average Cost per Property: $${
+        costReport.averageCostPerCall.toFixed(4)
+      }`,
+    );
     console.log(`   Total Tokens: ${costReport.totalTokens.toLocaleString()}`);
-    console.log(`   OpenAI Costs: $${costReport.breakdown.openai.total.toFixed(4)}`);
+    console.log(
+      `   OpenAI Costs: $${costReport.breakdown.openai.total.toFixed(4)}`,
+    );
     if (costReport.breakdown.anthropic.total > 0) {
-      console.log(`   Anthropic Costs: $${costReport.breakdown.anthropic.total.toFixed(4)}`);
+      console.log(
+        `   Anthropic Costs: $${
+          costReport.breakdown.anthropic.total.toFixed(4)
+        }`,
+      );
     }
-    
+
     // Extrapolation
     const monthlyEstimate = (costReport.totalCost / results.length) * 1000 * 30; // 1000 properties/day * 30 days
-    console.log(`   Monthly Estimate (1000 props/day): $${monthlyEstimate.toFixed(2)}`);
+    console.log(
+      `   Monthly Estimate (1000 props/day): $${monthlyEstimate.toFixed(2)}`,
+    );
   }
-  
+
   // Error analysis
-  const errors = results.filter(r => !r.success);
+  const errors = results.filter((r) => !r.success);
   if (errors.length > 0) {
     console.log(`\n❌ Error Analysis:`);
     const errorTypes = new Map<string, number>();
-    errors.forEach(error => {
-      const errorType = error.error?.split(':')[0] || 'Unknown';
+    errors.forEach((error) => {
+      const errorType = error.error?.split(":")[0] || "Unknown";
       errorTypes.set(errorType, (errorTypes.get(errorType) || 0) + 1);
     });
-    
+
     errorTypes.forEach((count, errorType) => {
       console.log(`   ${errorType}: ${count} occurrences`);
     });
   }
-  
+
   // Scenario analysis
-  const scenarios = new Map<string, { success: number, total: number }>();
-  results.forEach(result => {
+  const scenarios = new Map<string, { success: number; total: number }>();
+  results.forEach((result) => {
     const scenario = result.property.scenario;
     if (!scenarios.has(scenario)) {
       scenarios.set(scenario, { success: 0, total: 0 });
@@ -498,23 +600,31 @@ function generateEnhancedTestReport(results: TestResult[], costTracker: CostTrac
     stats.total++;
     if (result.success) stats.success++;
   });
-  
+
   console.log(`\n🏠 Scenario Analysis:`);
   scenarios.forEach((stats, scenario) => {
     const successRate = ((stats.success / stats.total) * 100).toFixed(1);
-    console.log(`   ${scenario}: ${stats.success}/${stats.total} (${successRate}%)`);
+    console.log(
+      `   ${scenario}: ${stats.success}/${stats.total} (${successRate}%)`,
+    );
   });
-  
+
   console.log("\n🎉 Enhanced testing completed!");
-  
+
   if (failed === 0) {
     console.log("✨ Perfect success rate! Your function is production-ready.");
   } else if (successful / results.length >= 0.95) {
-    console.log("✅ Excellent success rate (≥95%). Ready for production deployment.");
+    console.log(
+      "✅ Excellent success rate (≥95%). Ready for production deployment.",
+    );
   } else if (successful / results.length >= 0.90) {
-    console.log("⚠️  Good success rate (≥90%). Consider investigating common failure patterns.");
+    console.log(
+      "⚠️  Good success rate (≥90%). Consider investigating common failure patterns.",
+    );
   } else {
-    console.log("🔧 Success rate below 90%. Review errors and optimize before production deployment.");
+    console.log(
+      "🔧 Success rate below 90%. Review errors and optimize before production deployment.",
+    );
   }
 }
 
@@ -522,33 +632,35 @@ function generateEnhancedTestReport(results: TestResult[], costTracker: CostTrac
 function validateEnvironment(): boolean {
   const requiredEnvVars = [
     "OPENAI_API_KEY",
-    "SUPABASE_URL", 
-    "SUPABASE_SERVICE_ROLE_KEY"
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
   ];
-  
-  const missingVars = requiredEnvVars.filter(varName => !Deno.env.get(varName));
-  
+
+  const missingVars = requiredEnvVars.filter((varName) =>
+    !Deno.env.get(varName)
+  );
+
   if (missingVars.length > 0) {
     console.error("❌ Missing required environment variables:");
-    missingVars.forEach(varName => console.error(`   ${varName}`));
+    missingVars.forEach((varName) => console.error(`   ${varName}`));
     console.error("\nPlease set these in your .env.local file");
     console.error("Use the template: cp .env.local.template .env.local");
     return false;
   }
-  
+
   return true;
 }
 
 // Main execution
 if (import.meta.main) {
   console.log("🔍 Validating environment...");
-  
+
   if (!validateEnvironment()) {
     Deno.exit(1);
   }
-  
+
   console.log("✅ Environment validation passed");
   console.log();
-  
+
   await runEnhancedRealTests();
 }

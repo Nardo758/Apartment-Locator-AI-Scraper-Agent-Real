@@ -2,15 +2,15 @@ name: Migrate and Deploy (Supabase)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Target environment'
+        description: "Target environment"
         required: true
-        default: 'production'
+        default: "production"
         type: choice
-        options: [ 'production', 'staging' ]
+        options: ["production", "staging"]
 
 env: {}
 
@@ -20,32 +20,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install Supabase CLI
-      uses: supabase/setup-cli@v1
-      with:
-        version: latest
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
 
-    - name: Start local Supabase
-      run: supabase start | cat
+      - name: Start local Supabase
+        run: supabase start | cat
 
-    - name: Apply migrations (local reset)
-      run: supabase db reset --yes | cat
+      - name: Apply migrations (local reset)
+        run: supabase db reset --yes | cat
 
-    - name: Generate types (local)
-      run: |
-        mkdir -p types
-        supabase gen types typescript --local > types/supabase.ts
+      - name: Generate types (local)
+        run: |
+          mkdir -p types
+          supabase gen types typescript --local > types/supabase.ts
 
-    - name: Upload local artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: local-validation
-        path: |
-          types/supabase.ts
-        retention-days: 7
+      - name: Upload local artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-validation
+          path: |
+            types/supabase.ts
+          retention-days: 7
 
   apply-remote-migrations:
     name: Apply migrations to remote
@@ -134,65 +134,65 @@ jobs:
     environment: ${{ inputs.environment || 'production' }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install Supabase CLI
-      uses: supabase/setup-cli@v1
-      with:
-        version: latest
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
 
-    - name: Select environment
-      shell: bash
-      run: |
-        if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
-          echo "PROJECT_REF=${SUPABASE_PROJECT_ID_STAGING}" >> $GITHUB_ENV
-        else
-          echo "PROJECT_REF=${SUPABASE_PROJECT_ID}" >> $GITHUB_ENV
-        fi
-      env:
-        SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-        SUPABASE_PROJECT_ID_STAGING: ${{ secrets.SUPABASE_PROJECT_ID_STAGING }}
+      - name: Select environment
+        shell: bash
+        run: |
+          if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
+            echo "PROJECT_REF=${SUPABASE_PROJECT_ID_STAGING}" >> $GITHUB_ENV
+          else
+            echo "PROJECT_REF=${SUPABASE_PROJECT_ID}" >> $GITHUB_ENV
+          fi
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_PROJECT_ID_STAGING: ${{ secrets.SUPABASE_PROJECT_ID_STAGING }}
 
-    - name: Link Supabase project
-      run: supabase link --project-ref "$PROJECT_REF"
+      - name: Link Supabase project
+        run: supabase link --project-ref "$PROJECT_REF"
 
-    - name: Set environment secrets in Supabase
-      env:
-        SUPABASE_URL: https://${PROJECT_REF}.supabase.co
-      run: |
-        # Only sync secrets if SUPABASE_ACCESS_TOKEN (used locally) is present in the runner secrets.
-        if [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ]; then
-          echo "SUPABASE_ACCESS_TOKEN not provided; skipping secret sync to Supabase"
-        else
-          echo "Syncing runtime secrets to Supabase environment..."
-          supabase secrets set ANTHROPIC_API_KEY="${{ secrets.ANTHROPIC_API_KEY }}"
-          supabase secrets set SUPABASE_URL="$SUPABASE_URL"
-          supabase secrets set SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
-          supabase secrets set SUPABASE_SERVICE_ROLE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
-          supabase secrets set ENABLE_AI_PRICING=true
-          supabase secrets set ENABLE_FRONTEND_SYNC=true
-          supabase secrets set ENABLE_MARKET_INTELLIGENCE=true
-        fi
+      - name: Set environment secrets in Supabase
+        env:
+          SUPABASE_URL: https://${PROJECT_REF}.supabase.co
+        run: |
+          # Only sync secrets if SUPABASE_ACCESS_TOKEN (used locally) is present in the runner secrets.
+          if [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ]; then
+            echo "SUPABASE_ACCESS_TOKEN not provided; skipping secret sync to Supabase"
+          else
+            echo "Syncing runtime secrets to Supabase environment..."
+            supabase secrets set ANTHROPIC_API_KEY="${{ secrets.ANTHROPIC_API_KEY }}"
+            supabase secrets set SUPABASE_URL="$SUPABASE_URL"
+            supabase secrets set SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
+            supabase secrets set SUPABASE_SERVICE_ROLE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+            supabase secrets set ENABLE_AI_PRICING=true
+            supabase secrets set ENABLE_FRONTEND_SYNC=true
+            supabase secrets set ENABLE_MARKET_INTELLIGENCE=true
+          fi
 
-    - name: Deploy all functions
-      shell: bash
-      run: |
-        set -euo pipefail
-        if [ -d "supabase/functions" ]; then
-          for dir in supabase/functions/*; do
-            [ -d "$dir" ] || continue
-            fn=$(basename "$dir")
-            echo "Deploying function: $fn"
-            supabase functions deploy "$fn" --no-verify-jwt | cat
-          done
-        else
-          echo "supabase/functions directory not found" >&2
-          exit 1
-        fi
+      - name: Deploy all functions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d "supabase/functions" ]; then
+            for dir in supabase/functions/*; do
+              [ -d "$dir" ] || continue
+              fn=$(basename "$dir")
+              echo "Deploying function: $fn"
+              supabase functions deploy "$fn" --no-verify-jwt | cat
+            done
+          else
+            echo "supabase/functions directory not found" >&2
+            exit 1
+          fi
 
-    - name: Verify deployed functions
-      run: supabase functions list | cat
+      - name: Verify deployed functions
+        run: supabase functions list | cat
 
   integration-tests:
     name: Integration tests (post-migration)
@@ -201,67 +201,67 @@ jobs:
     environment: ${{ inputs.environment || 'production' }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Select environment and export secrets
-      shell: bash
-      run: |
-        if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
-          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
-          echo "SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID_STAGING }}.supabase.co" >> $GITHUB_ENV
-          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}" >> $GITHUB_ENV
-        else
-          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
-          echo "SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co" >> $GITHUB_ENV
-          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }}" >> $GITHUB_ENV
-        fi
+      - name: Select environment and export secrets
+        shell: bash
+        run: |
+          if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
+            echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
+            echo "SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID_STAGING }}.supabase.co" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}" >> $GITHUB_ENV
+          else
+            echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
+            echo "SUPABASE_URL=https://${{ secrets.SUPABASE_PROJECT_ID }}.supabase.co" >> $GITHUB_ENV
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+            echo "DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }}" >> $GITHUB_ENV
+          fi
 
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
-    - name: Install node-fetch v2 (for CommonJS tests)
-      run: npm install node-fetch@2
+      - name: Install node-fetch v2 (for CommonJS tests)
+        run: npm install node-fetch@2
 
-    - name: Run apartments upsert integration test
-      env:
-        SUPABASE_URL: ${{ env.SUPABASE_URL }}
-        SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
-      run: node scripts/integration_test_apartments_upsert.js
+      - name: Run apartments upsert integration test
+        env:
+          SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/integration_test_apartments_upsert.js
 
-    - name: Run RPC v2 integration test
-      env:
-        SUPABASE_URL: ${{ env.SUPABASE_URL }}
-        SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
-      run: node scripts/integration_test_rpc_v2.js
+      - name: Run RPC v2 integration test
+        env:
+          SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/integration_test_rpc_v2.js
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-    - name: Install Python deps
-      run: |
-        python -m pip install --upgrade pip
-        pip install psycopg2-binary python-dotenv
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install psycopg2-binary python-dotenv
 
-    - name: Compute POSTGRES_URI and run direct SQL verification
-      shell: bash
-      env:
-        DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        PROJECT_REF: ${{ env.PROJECT_REF }}
-      run: |
-        if [ -n "$DB_PASSWORD" ] && [ -n "$PROJECT_REF" ]; then
-          export POSTGRES_URI="postgresql://postgres:${DB_PASSWORD}@db.${PROJECT_REF}.supabase.co:5432/postgres?sslmode=require"
-          echo "POSTGRES_URI=$POSTGRES_URI" >> $GITHUB_ENV
-          python scripts/run_direct_sql.py
-        else
-          echo "DB credentials not available; skipping direct SQL verification"
-        fi
+      - name: Compute POSTGRES_URI and run direct SQL verification
+        shell: bash
+        env:
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          PROJECT_REF: ${{ env.PROJECT_REF }}
+        run: |
+          if [ -n "$DB_PASSWORD" ] && [ -n "$PROJECT_REF" ]; then
+            export POSTGRES_URI="postgresql://postgres:${DB_PASSWORD}@db.${PROJECT_REF}.supabase.co:5432/postgres?sslmode=require"
+            echo "POSTGRES_URI=$POSTGRES_URI" >> $GITHUB_ENV
+            python scripts/run_direct_sql.py
+          else
+            echo "DB credentials not available; skipping direct SQL verification"
+          fi
 
   generate-and-commit-types:
     name: Generate and commit TypeScript types
@@ -271,59 +271,64 @@ jobs:
       contents: write
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Install Supabase CLI
-      uses: supabase/setup-cli@v1
-      with:
-        version: latest
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
 
-    - name: Select environment
-      shell: bash
-      run: |
-        if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
-          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
-        else
-          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
-        fi
+      - name: Select environment
+        shell: bash
+        run: |
+          if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
+            echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
+          else
+            echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
+          fi
 
-    - name: Link Supabase project
-      run: supabase link --project-ref "$PROJECT_REF"
+      - name: Link Supabase project
+        run: supabase link --project-ref "$PROJECT_REF"
 
-    - name: Generate types (remote)
-      run: |
-        mkdir -p types
-        supabase gen types typescript --project-id "$PROJECT_REF" > types/supabase.ts
+      - name: Generate types (remote)
+        run: |
+          mkdir -p types
+          supabase gen types typescript --project-id "$PROJECT_REF" > types/supabase.ts
 
-    - name: Commit types if changed
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: "chore(types): update Supabase generated types [skip ci]"
-        file_pattern: |
-          types/supabase.ts
+      - name: Commit types if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(types): update Supabase generated types [skip ci]"
+          file_pattern: |
+            types/supabase.ts
 
   notify:
     name: Notify status
     runs-on: ubuntu-latest
-    needs: [validate-local-migrations, apply-remote-migrations, deploy-edge-functions, generate-and-commit-types]
+    needs: [
+      validate-local-migrations,
+      apply-remote-migrations,
+      deploy-edge-functions,
+      generate-and-commit-types,
+    ]
     if: always()
 
     steps:
-    - name: Report
-      shell: bash
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      run: |
-        echo "validate-local-migrations: ${{ needs.validate-local-migrations.result }}"
-        echo "apply-remote-migrations: ${{ needs.apply-remote-migrations.result }}"
-        echo "deploy-edge-functions: ${{ needs.deploy-edge-functions.result }}"
-        echo "generate-and-commit-types: ${{ needs.generate-and-commit-types.result }}"
-        if [ -n "$SLACK_WEBHOOK_URL" ]; then
-          STATUS="Migrations(local:${{ needs.validate-local-migrations.result }}, remote:${{ needs.apply-remote-migrations.result }}) | Functions:${{ needs.deploy-edge-functions.result }} | Types:${{ needs.generate-and-commit-types.result }}"
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{\"text\":\"Supabase deploy: ${STATUS} (commit ${{ github.sha }})\"}" \
-            "$SLACK_WEBHOOK_URL"
-        fi
+      - name: Report
+        shell: bash
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          echo "validate-local-migrations: ${{ needs.validate-local-migrations.result }}"
+          echo "apply-remote-migrations: ${{ needs.apply-remote-migrations.result }}"
+          echo "deploy-edge-functions: ${{ needs.deploy-edge-functions.result }}"
+          echo "generate-and-commit-types: ${{ needs.generate-and-commit-types.result }}"
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            STATUS="Migrations(local:${{ needs.validate-local-migrations.result }}, remote:${{ needs.apply-remote-migrations.result }}) | Functions:${{ needs.deploy-edge-functions.result }} | Types:${{ needs.generate-and-commit-types.result }}"
+            curl -X POST -H 'Content-type: application/json' \
+              --data "{\"text\":\"Supabase deploy: ${STATUS} (commit ${{ github.sha }})\"}" \
+              "$SLACK_WEBHOOK_URL"
+          fi

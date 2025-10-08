@@ -2,7 +2,7 @@
 
 /**
  * Direct Claude API Test
- * 
+ *
  * This test calls Claude API directly to test the apartment scraping
  * functionality without needing the Supabase function server.
  */
@@ -57,7 +57,8 @@ Extract the following fields from HTML and return ONLY valid JSON:
 
 Return valid JSON. Use null for missing fields.`;
 
-  const userMessage = `Extract apartment data from this apartments.com page HTML:\n\n${SAMPLE_HTML}`;
+  const userMessage =
+    `Extract apartment data from this apartments.com page HTML:\n\n${SAMPLE_HTML}`;
 
   console.log("📝 Test Data:");
   console.log(`   HTML Length: ${SAMPLE_HTML.length} characters`);
@@ -73,7 +74,7 @@ Return valid JSON. Use null for missing fields.`;
       headers: {
         "Content-Type": "application/json",
         "x-api-key": anthropicKey,
-        "anthropic-version": "2023-06-01"
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
         model: "claude-3-haiku-20240307",
@@ -83,10 +84,10 @@ Return valid JSON. Use null for missing fields.`;
         messages: [
           {
             role: "user",
-            content: userMessage
-          }
-        ]
-      })
+            content: userMessage,
+          },
+        ],
+      }),
     });
 
     const duration = Date.now() - startTime;
@@ -121,14 +122,14 @@ Return valid JSON. Use null for missing fields.`;
     // Display extracted data
     console.log("📊 Extracted Apartment Data:");
     console.log("============================");
-    console.log(`Name: ${parsed.name || 'N/A'}`);
-    console.log(`Address: ${parsed.address || 'N/A'}`);
-    console.log(`City: ${parsed.city || 'N/A'}`);
-    console.log(`State: ${parsed.state || 'N/A'}`);
-    console.log(`Price: $${parsed.current_price || 'N/A'}`);
-    console.log(`Bedrooms: ${parsed.bedrooms || 'N/A'}`);
-    console.log(`Bathrooms: ${parsed.bathrooms || 'N/A'}`);
-    
+    console.log(`Name: ${parsed.name || "N/A"}`);
+    console.log(`Address: ${parsed.address || "N/A"}`);
+    console.log(`City: ${parsed.city || "N/A"}`);
+    console.log(`State: ${parsed.state || "N/A"}`);
+    console.log(`Price: $${parsed.current_price || "N/A"}`);
+    console.log(`Bedrooms: ${parsed.bedrooms || "N/A"}`);
+    console.log(`Bathrooms: ${parsed.bathrooms || "N/A"}`);
+
     if (parsed.free_rent_concessions) {
       console.log(`Concessions: ${parsed.free_rent_concessions}`);
     }
@@ -160,35 +161,74 @@ Return valid JSON. Use null for missing fields.`;
     console.log();
     console.log(`💡 Cost per property: $${totalCost.toFixed(4)}`);
     console.log(`📈 100 properties estimate: $${(totalCost * 100).toFixed(2)}`);
-    console.log(`📊 1000 properties estimate: $${(totalCost * 1000).toFixed(2)}`);
+    console.log(
+      `📊 1000 properties estimate: $${(totalCost * 1000).toFixed(2)}`,
+    );
 
     // Validation check
     console.log();
     console.log("🔍 Validation Results:");
     console.log("=====================");
-    
+
     const validations = [
-      { field: 'name', expected: 'Luxury Downtown Apartments', actual: parsed.name, critical: true },
-      { field: 'city', expected: 'Austin', actual: parsed.city, critical: true },
-      { field: 'state', expected: 'TX', actual: parsed.state, critical: true },
-      { field: 'current_price', expected: 2800, actual: parsed.current_price, critical: true },
-      { field: 'bedrooms', expected: 2, actual: parsed.bedrooms, critical: true },
-      { field: 'bathrooms', expected: 2, actual: parsed.bathrooms, critical: true },
-      { field: 'application_fee', expected: 75, actual: parsed.application_fee, critical: false },
-      { field: 'admin_fee_waived', expected: true, actual: parsed.admin_fee_waived, critical: false }
+      {
+        field: "name",
+        expected: "Luxury Downtown Apartments",
+        actual: parsed.name,
+        critical: true,
+      },
+      {
+        field: "city",
+        expected: "Austin",
+        actual: parsed.city,
+        critical: true,
+      },
+      { field: "state", expected: "TX", actual: parsed.state, critical: true },
+      {
+        field: "current_price",
+        expected: 2800,
+        actual: parsed.current_price,
+        critical: true,
+      },
+      {
+        field: "bedrooms",
+        expected: 2,
+        actual: parsed.bedrooms,
+        critical: true,
+      },
+      {
+        field: "bathrooms",
+        expected: 2,
+        actual: parsed.bathrooms,
+        critical: true,
+      },
+      {
+        field: "application_fee",
+        expected: 75,
+        actual: parsed.application_fee,
+        critical: false,
+      },
+      {
+        field: "admin_fee_waived",
+        expected: true,
+        actual: parsed.admin_fee_waived,
+        critical: false,
+      },
     ];
 
     let passedValidations = 0;
     let criticalPassed = 0;
     let totalCritical = 0;
 
-    validations.forEach(validation => {
+    validations.forEach((validation) => {
       const passed = validation.actual == validation.expected;
-      const icon = passed ? '✅' : '❌';
-      const criticalMark = validation.critical ? ' (Critical)' : '';
-      
-      console.log(`${icon} ${validation.field}: ${validation.actual} (expected: ${validation.expected})${criticalMark}`);
-      
+      const icon = passed ? "✅" : "❌";
+      const criticalMark = validation.critical ? " (Critical)" : "";
+
+      console.log(
+        `${icon} ${validation.field}: ${validation.actual} (expected: ${validation.expected})${criticalMark}`,
+      );
+
       if (passed) passedValidations++;
       if (validation.critical) {
         totalCritical++;
@@ -200,23 +240,36 @@ Return valid JSON. Use null for missing fields.`;
     const criticalAccuracy = (criticalPassed / totalCritical) * 100;
 
     console.log();
-    console.log(`📈 Overall Accuracy: ${passedValidations}/${validations.length} (${overallAccuracy.toFixed(1)}%)`);
-    console.log(`🎯 Critical Fields: ${criticalPassed}/${totalCritical} (${criticalAccuracy.toFixed(1)}%)`);
+    console.log(
+      `📈 Overall Accuracy: ${passedValidations}/${validations.length} (${
+        overallAccuracy.toFixed(1)
+      }%)`,
+    );
+    console.log(
+      `🎯 Critical Fields: ${criticalPassed}/${totalCritical} (${
+        criticalAccuracy.toFixed(1)
+      }%)`,
+    );
 
     if (criticalAccuracy >= 90) {
       console.log("🎉 Excellent! Claude is performing exceptionally well.");
       console.log("✅ Ready for production deployment!");
     } else if (criticalAccuracy >= 80) {
-      console.log("👍 Good performance. Minor adjustments may improve accuracy.");
+      console.log(
+        "👍 Good performance. Minor adjustments may improve accuracy.",
+      );
     } else {
-      console.log("⚠️  Performance needs improvement. Consider prompt optimization.");
+      console.log(
+        "⚠️  Performance needs improvement. Consider prompt optimization.",
+      );
     }
 
     console.log();
     console.log("🚀 Claude Integration Test Completed Successfully!");
     console.log("💡 Claude is significantly more cost-effective than GPT-4");
-    console.log(`💰 ~${(totalCost * 100).toFixed(0)}% cheaper than GPT-4 for this task`);
-
+    console.log(
+      `💰 ~${(totalCost * 100).toFixed(0)}% cheaper than GPT-4 for this task`,
+    );
   } catch (error) {
     console.error(`❌ Error calling Claude API: ${error.message}`);
   }

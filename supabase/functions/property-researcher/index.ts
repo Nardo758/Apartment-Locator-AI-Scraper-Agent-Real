@@ -2,7 +2,7 @@
 // supabase/functions/property-researcher/index.ts
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.0';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.0";
 
 interface PropertyIntelligence {
   property_name: string;
@@ -36,16 +36,16 @@ interface ClaudeResponse {
 
 serve(async (req: Request) => {
   try {
-    console.log('🧠 Property researcher started');
-    
+    console.log("🧠 Property researcher started");
+
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
-    
-    const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY');
+
+    const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!anthropicKey) {
-      throw new Error('ANTHROPIC_API_KEY not configured');
+      throw new Error("ANTHROPIC_API_KEY not configured");
     }
 
     // Parse request
@@ -53,47 +53,52 @@ serve(async (req: Request) => {
       property_source_id,
       url,
       property_name,
-      mode = 'single_analysis',
+      mode = "single_analysis",
       batch_size = 20,
-      force_refresh = false
+      force_refresh = false,
     } = await req.json();
 
-    console.log(`📋 Research mode: ${mode}, Property: ${property_name || 'batch'}`);
+    console.log(
+      `📋 Research mode: ${mode}, Property: ${property_name || "batch"}`,
+    );
 
     let results: any[] = [];
     let totalCost = 0;
 
-    if (mode === 'batch_analysis') {
+    if (mode === "batch_analysis") {
       // Batch analysis of properties needing intelligence
-      const properties = await getPropertiesNeedingIntelligence(supabase, batch_size);
-      console.log(`🔍 Found ${properties.length} properties needing intelligence`);
-      
+      const properties = await getPropertiesNeedingIntelligence(
+        supabase,
+        batch_size,
+      );
+      console.log(
+        `🔍 Found ${properties.length} properties needing intelligence`,
+      );
+
       for (const property of properties) {
         try {
           const result = await analyzePropertyWithClaude(
             supabase,
             property,
             anthropicKey,
-            force_refresh
+            force_refresh,
           );
           results.push(result);
           totalCost += result.cost || 0;
-          
+
           // Rate limiting
           await sleep(1000);
-          
         } catch (error) {
           console.error(`❌ Error analyzing ${property.url}:`, error);
           results.push({
             url: property.url,
             success: false,
             error: error.message,
-            cost: 0
+            cost: 0,
           });
         }
       }
-      
-    } else if (mode === 'enhance_existing' && property_source_id) {
+    } else if (mode === "enhance_existing" && property_source_id) {
       // Enhance existing property source with intelligence
       const result = await enhancePropertySource(
         supabase,
@@ -101,23 +106,22 @@ serve(async (req: Request) => {
         url,
         property_name,
         anthropicKey,
-        force_refresh
+        force_refresh,
       );
       results.push(result);
       totalCost += result.cost || 0;
-      
     } else if (url && property_name) {
       // Single property analysis
       const result = await analyzePropertyWithClaude(
         supabase,
         { url, property_name },
         anthropicKey,
-        force_refresh
+        force_refresh,
       );
       results.push(result);
       totalCost += result.cost || 0;
     } else {
-      throw new Error('Invalid request parameters');
+      throw new Error("Invalid request parameters");
     }
 
     // Record cost
@@ -125,59 +129,68 @@ serve(async (req: Request) => {
       await recordResearchCost(supabase, totalCost, {
         mode,
         properties_analyzed: results.length,
-        successful: results.filter(r => r.success).length
+        successful: results.filter((r) => r.success).length,
       });
     }
 
-    const successCount = results.filter(r => r.success).length;
-    console.log(`✅ Research complete: ${successCount}/${results.length} successful, $${totalCost} cost`);
+    const successCount = results.filter((r) => r.success).length;
+    console.log(
+      `✅ Research complete: ${successCount}/${results.length} successful, $${totalCost} cost`,
+    );
 
-    return new Response(JSON.stringify({
-      success: true,
-      mode,
-      results: results,
-      summary: {
-        total_analyzed: results.length,
-        successful: successCount,
-        failed: results.length - successCount,
-        total_cost: totalCost
+    return new Response(
+      JSON.stringify({
+        success: true,
+        mode,
+        results: results,
+        summary: {
+          total_analyzed: results.length,
+          successful: successCount,
+          failed: results.length - successCount,
+          total_cost: totalCost,
+        },
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
       },
-      timestamp: new Date().toISOString()
-    }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200
-    });
-
+    );
   } catch (error) {
-    console.error('❌ Property researcher error:', error);
-    
-    return new Response(JSON.stringify({
-      success: false,
-      error: error.message,
-      timestamp: new Date().toISOString()
-    }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500
-    });
+    console.error("❌ Property researcher error:", error);
+
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      },
+    );
   }
 });
 
 async function getPropertiesNeedingIntelligence(
   supabase: any,
-  batchSize: number
+  batchSize: number,
 ): Promise<any[]> {
   // Get property sources that haven't been analyzed by Claude or need refresh
   const { data, error } = await supabase
-    .from('property_sources')
-    .select('id, url, property_name, website_name, region, metadata')
-    .eq('is_active', true)
-    .or('claude_analyzed.is.null,claude_analyzed.eq.false,intelligence_last_updated.lt.' + 
-        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()) // 7 days old
-    .order('priority', { ascending: false })
+    .from("property_sources")
+    .select("id, url, property_name, website_name, region, metadata")
+    .eq("is_active", true)
+    .or(
+      "claude_analyzed.is.null,claude_analyzed.eq.false,intelligence_last_updated.lt." +
+        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    ) // 7 days old
+    .order("priority", { ascending: false })
     .limit(batchSize);
 
   if (error) {
-    console.error('Error getting properties needing intelligence:', error);
+    console.error("Error getting properties needing intelligence:", error);
     return [];
   }
 
@@ -188,20 +201,22 @@ async function analyzePropertyWithClaude(
   supabase: any,
   property: any,
   anthropicKey: string,
-  forceRefresh: boolean = false
+  forceRefresh: boolean = false,
 ): Promise<any> {
   try {
     // Check cache first unless force refresh
     if (!forceRefresh) {
       const cached = await getCachedIntelligence(supabase, property.url);
       if (cached && cached.confidence_score >= 75) {
-        console.log(`📚 Using cached intelligence for ${property.property_name}`);
+        console.log(
+          `📚 Using cached intelligence for ${property.property_name}`,
+        );
         return {
           url: property.url,
           success: true,
           cached: true,
           intelligence: cached,
-          cost: 0
+          cost: 0,
         };
       }
     }
@@ -211,7 +226,7 @@ async function analyzePropertyWithClaude(
     // Fetch property webpage
     const htmlContent = await fetchPropertyHTML(property.url);
     if (!htmlContent) {
-      throw new Error('Could not fetch property webpage');
+      throw new Error("Could not fetch property webpage");
     }
 
     // Analyze with Claude
@@ -219,7 +234,7 @@ async function analyzePropertyWithClaude(
       anthropicKey,
       property.url,
       property.property_name,
-      htmlContent
+      htmlContent,
     );
 
     // Store intelligence in database
@@ -228,13 +243,13 @@ async function analyzePropertyWithClaude(
     // Update property source with intelligence flags
     if (property.id) {
       await supabase
-        .from('property_sources')
+        .from("property_sources")
         .update({
           claude_analyzed: true,
           claude_confidence: intelligence.confidence_score,
-          intelligence_last_updated: new Date().toISOString()
+          intelligence_last_updated: new Date().toISOString(),
         })
-        .eq('id', property.id);
+        .eq("id", property.id);
     }
 
     return {
@@ -242,16 +257,15 @@ async function analyzePropertyWithClaude(
       success: true,
       cached: false,
       intelligence: intelligence,
-      cost: 0.015 // Estimated cost for Claude analysis
+      cost: 0.015, // Estimated cost for Claude analysis
     };
-
   } catch (error) {
     console.error(`❌ Error analyzing ${property.url}:`, error);
     return {
       url: property.url,
       success: false,
       error: error.message,
-      cost: 0
+      cost: 0,
     };
   }
 }
@@ -262,14 +276,14 @@ async function enhancePropertySource(
   url: string,
   propertyName: string,
   anthropicKey: string,
-  forceRefresh: boolean = false
+  forceRefresh: boolean = false,
 ): Promise<any> {
   try {
     // Get existing apartments for this property source
     const { data: apartments } = await supabase
-      .from('scraped_properties')
-      .select('*')
-      .eq('property_source_id', propertySourceId)
+      .from("scraped_properties")
+      .select("*")
+      .eq("property_source_id", propertySourceId)
       .limit(10);
 
     if (!apartments || apartments.length === 0) {
@@ -277,7 +291,7 @@ async function enhancePropertySource(
         supabase,
         { url, property_name: propertyName },
         anthropicKey,
-        forceRefresh
+        forceRefresh,
       );
     }
 
@@ -286,7 +300,7 @@ async function enhancePropertySource(
       supabase,
       { url, property_name: propertyName },
       anthropicKey,
-      forceRefresh
+      forceRefresh,
     );
 
     if (intelligence.success && intelligence.intelligence) {
@@ -299,34 +313,38 @@ async function enhancePropertySource(
         transit_access: intelligence.intelligence.transit_access,
         walk_score: intelligence.intelligence.walk_score,
         intelligence_confidence: intelligence.intelligence.confidence_score,
-        intelligence_source: 'claude',
-        researched_at: new Date().toISOString()
+        intelligence_source: "claude",
+        researched_at: new Date().toISOString(),
       };
 
       const { error } = await supabase
-        .from('scraped_properties')
+        .from("scraped_properties")
         .update(updateData)
-        .eq('property_source_id', propertySourceId);
+        .eq("property_source_id", propertySourceId);
 
       if (error) {
-        console.error('Error updating apartments with intelligence:', error);
+        console.error("Error updating apartments with intelligence:", error);
       } else {
-        console.log(`✅ Enhanced ${apartments.length} apartments with Claude intelligence`);
+        console.log(
+          `✅ Enhanced ${apartments.length} apartments with Claude intelligence`,
+        );
       }
     }
 
     return {
       ...intelligence,
-      apartments_enhanced: apartments.length
+      apartments_enhanced: apartments.length,
     };
-
   } catch (error) {
-    console.error(`❌ Error enhancing property source ${propertySourceId}:`, error);
+    console.error(
+      `❌ Error enhancing property source ${propertySourceId}:`,
+      error,
+    );
     return {
       property_source_id: propertySourceId,
       success: false,
       error: error.message,
-      cost: 0
+      cost: 0,
     };
   }
 }
@@ -335,8 +353,9 @@ async function fetchPropertyHTML(url: string): Promise<string | null> {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
     });
 
     if (!response.ok) {
@@ -345,7 +364,6 @@ async function fetchPropertyHTML(url: string): Promise<string | null> {
 
     const html = await response.text();
     return html.slice(0, 50000); // Limit to first 50k characters
-    
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
     return null;
@@ -356,10 +374,10 @@ async function callClaudeForPropertyAnalysis(
   anthropicKey: string,
   url: string,
   propertyName: string,
-  htmlContent: string
+  htmlContent: string,
 ): Promise<PropertyIntelligence> {
-  
-  const prompt = `Analyze this apartment property listing webpage and extract key property intelligence.
+  const prompt =
+    `Analyze this apartment property listing webpage and extract key property intelligence.
 
 Property URL: ${url}
 Property Name: ${propertyName}
@@ -395,22 +413,22 @@ Respond in JSON format:
 Be conservative with confidence scores. Only use high confidence (80+) when information is clearly stated.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
-        'anthropic-version': '2023-06-01'
+        "Content-Type": "application/json",
+        "x-api-key": anthropicKey,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 4000,
         temperature: 0.1,
         messages: [{
-          role: 'user',
-          content: prompt
-        }]
-      })
+          role: "user",
+          content: prompt,
+        }],
+      }),
     });
 
     if (!response.ok) {
@@ -419,15 +437,15 @@ Be conservative with confidence scores. Only use high confidence (80+) when info
 
     const result = await response.json();
     const content = result.content[0]?.text;
-    
+
     if (!content) {
-      throw new Error('No content in Claude response');
+      throw new Error("No content in Claude response");
     }
 
     // Parse JSON response
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('No JSON found in Claude response');
+      throw new Error("No JSON found in Claude response");
     }
 
     const claudeResponse: ClaudeResponse = JSON.parse(jsonMatch[0]);
@@ -437,23 +455,22 @@ Be conservative with confidence scores. Only use high confidence (80+) when info
       property_name: analysis.property_name || propertyName,
       year_built: analysis.year_built,
       unit_count: analysis.unit_count,
-      property_type: 'apartment', // Default for our use case
+      property_type: "apartment", // Default for our use case
       building_type: analysis.building_type,
       amenities: analysis.amenities,
       neighborhood: analysis.neighborhood,
       transit_access: analysis.transit_access,
       walk_score: analysis.walk_score,
       confidence_score: analysis.confidence || 50,
-      research_source: 'claude-3.5-sonnet',
+      research_source: "claude-3.5-sonnet",
       raw_research_data: {
         claude_response: claudeResponse,
         analysis_timestamp: new Date().toISOString(),
-        url: url
-      }
+        url: url,
+      },
     };
-
   } catch (error) {
-    console.error('Claude analysis error:', error);
+    console.error("Claude analysis error:", error);
     throw new Error(`Claude analysis failed: ${error.message}`);
   }
 }
@@ -461,10 +478,10 @@ Be conservative with confidence scores. Only use high confidence (80+) when info
 async function storePropertyIntelligence(
   supabase: any,
   url: string,
-  intelligence: PropertyIntelligence
+  intelligence: PropertyIntelligence,
 ): Promise<void> {
   const { error } = await supabase
-    .from('property_intelligence')
+    .from("property_intelligence")
     .upsert({
       source_url: url,
       property_name: intelligence.property_name,
@@ -479,26 +496,29 @@ async function storePropertyIntelligence(
       confidence_score: intelligence.confidence_score,
       research_timestamp: new Date().toISOString(),
       research_source: intelligence.research_source,
-      raw_research_data: intelligence.raw_research_data
+      raw_research_data: intelligence.raw_research_data,
     }, {
-      onConflict: 'source_url'
+      onConflict: "source_url",
     });
 
   if (error) {
-    console.error('Error storing property intelligence:', error);
+    console.error("Error storing property intelligence:", error);
     throw error;
   }
 }
 
 async function getCachedIntelligence(
   supabase: any,
-  url: string
+  url: string,
 ): Promise<PropertyIntelligence | null> {
   const { data, error } = await supabase
-    .from('property_intelligence')
-    .select('*')
-    .eq('source_url', url)
-    .gte('research_timestamp', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()) // 7 days
+    .from("property_intelligence")
+    .select("*")
+    .eq("source_url", url)
+    .gte(
+      "research_timestamp",
+      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    ) // 7 days
     .single();
 
   if (error || !data) {
@@ -517,27 +537,27 @@ async function getCachedIntelligence(
     walk_score: data.walk_score,
     confidence_score: data.confidence_score,
     research_source: data.research_source,
-    raw_research_data: data.raw_research_data
+    raw_research_data: data.raw_research_data,
   };
 }
 
 async function recordResearchCost(
   supabase: any,
   cost: number,
-  metadata: Record<string, any>
+  metadata: Record<string, any>,
 ): Promise<void> {
   const { error } = await supabase
-    .rpc('rpc_inc_scraping_costs', {
-      operation_type: 'claude_property_research',
+    .rpc("rpc_inc_scraping_costs", {
+      operation_type: "claude_property_research",
       cost_amount: cost,
-      metadata: metadata
+      metadata: metadata,
     });
 
   if (error) {
-    console.error('Error recording research cost:', error);
+    console.error("Error recording research cost:", error);
   }
 }
 
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -1,23 +1,26 @@
 import process from "node:process";
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: '.env.local' });
+const { createClient } = require("@supabase/supabase-js");
+require("dotenv").config({ path: ".env.local" });
 
 async function checkJobs() {
-  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+  );
 
   const { data: jobs, error } = await supabase
-    .from('scraping_queue')
-    .select('id, url, status, error')
-    .order('created_at', { ascending: false })
+    .from("scraping_queue")
+    .select("id, url, status, error")
+    .order("created_at", { ascending: false })
     .limit(10);
 
   if (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return;
   }
 
-  console.log('Recent jobs:');
-  jobs?.forEach(job => {
+  console.log("Recent jobs:");
+  jobs?.forEach((job) => {
     console.log(`${job.id}: ${job.status} - ${job.url?.substring(0, 50)}...`);
     if (job.error) console.log(`  Error: ${job.error.substring(0, 100)}...`);
   });
@@ -28,7 +31,7 @@ async function checkJobs() {
     return acc;
   }, {});
 
-  console.log('\nStatus counts:', statusCounts);
+  console.log("\nStatus counts:", statusCounts);
 }
 
 checkJobs().catch(console.error);

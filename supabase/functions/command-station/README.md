@@ -1,28 +1,30 @@
 # 🎯 Real Estate Scraper Command Station
 
-Central command and control interface for the real estate scraping system. Provides comprehensive monitoring, control, and configuration management capabilities.
+Central command and control interface for the real estate scraping system.
+Provides comprehensive monitoring, control, and configuration management
+capabilities.
 
 ## 🏗️ Architecture
 
 The Command Station is built with a modular architecture:
 
-  command-center/
-    ├── 🔧 index.ts             # Main command handler & routing
-    ├── 🎛️ dashboard.ts         # Real-time status monitoring
-    ├── ⚙️ controller.ts        # System control operations
-    ├── 📊 metrics.ts           # Performance tracking & analytics
-    ├── 🔐 config-manager.ts    # Configuration management
-    └── 📚 README.md            # This documentation
+command-center/ ├── 🔧 index.ts # Main command handler & routing ├── 🎛️
+dashboard.ts # Real-time status monitoring ├── ⚙️ controller.ts # System control
+operations ├── 📊 metrics.ts # Performance tracking & analytics ├── 🔐
+config-manager.ts # Configuration management └── 📚 README.md # This
+documentation
 
 ## 🚀 Quick Start
 
 ### 1. Deploy the Function
 
     # Deploy to Supabase
-  supabase functions deploy command-center --no-verify-jwt
+
+supabase functions deploy command-center --no-verify-jwt
 
     # Or deploy with verification (if auth is required)
-  supabase functions deploy command-center
+
+supabase functions deploy command-center
 
 ### 2. Basic Usage
 
@@ -36,43 +38,44 @@ The Command Station is built with a modular architecture:
     curl -X POST "https://your-project.supabase.co/functions/v1/command-center/run-now"
 
     # Get help
-  curl "<https://your-project.supabase.co/functions/v1/command-center/help>"
+
+curl "<https://your-project.supabase.co/functions/v1/command-center/help>"
 
 ## 📡 API Endpoints
 
 ### System Monitoring
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/status` | GET | Complete system dashboard |
-| `/metrics` | GET | Performance metrics |
-| `/health` | GET | System health check |
-| `/activity` | GET | Recent system activity |
+| Endpoint    | Method | Description               |
+| ----------- | ------ | ------------------------- |
+| `/status`   | GET    | Complete system dashboard |
+| `/metrics`  | GET    | Performance metrics       |
+| `/health`   | GET    | System health check       |
+| `/activity` | GET    | Recent system activity    |
 
 ### System Control
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/enable-scraping` | POST | Enable scraping system |
-| `/disable-scraping` | POST | Disable scraping system |
-| `/run-now` | POST | Trigger immediate batch |
-| `/emergency-stop` | POST | Emergency halt |
+| Endpoint            | Method | Description             |
+| ------------------- | ------ | ----------------------- |
+| `/enable-scraping`  | POST   | Enable scraping system  |
+| `/disable-scraping` | POST   | Disable scraping system |
+| `/run-now`          | POST   | Trigger immediate batch |
+| `/emergency-stop`   | POST   | Emergency halt          |
 
 ### Configuration
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/config` | GET | Get current configuration |
-| `/config` | POST | Update configuration |
-| `/export-config` | GET | Export configuration |
-| `/import-config` | POST | Import configuration |
+| Endpoint         | Method | Description               |
+| ---------------- | ------ | ------------------------- |
+| `/config`        | GET    | Get current configuration |
+| `/config`        | POST   | Update configuration      |
+| `/export-config` | GET    | Export configuration      |
+| `/import-config` | POST   | Import configuration      |
 
 ### Analytics
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/trends/{metric}` | GET | Metric trend data |
-| `/batch/{id}` | GET | Batch status |
+| Endpoint           | Method | Description       |
+| ------------------ | ------ | ----------------- |
+| `/trends/{metric}` | GET    | Metric trend data |
+| `/batch/{id}`      | GET    | Batch status      |
 
 ## 🎛️ System Status Dashboard
 
@@ -272,43 +275,48 @@ The Command Station requires these database tables:
 
 Required environment variables:
 
-  # Supabase
-  SUPABASE_URL=https://your-project.supabase.co
-  SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-  SUPABASE_ANON_KEY=your-anon-key
+# Supabase
 
-  # Claude/Anthropic
-  ANTHROPIC_API_KEY=your-anthropic-api-key
-  CLAUDE_MODEL=claude-3-haiku-20240307
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key SUPABASE_ANON_KEY=your-anon-key
 
-  # System
-  ENVIRONMENT=production
-  ENABLE_COST_TRACKING=true
+# Claude/Anthropic
+
+ANTHROPIC_API_KEY=your-anthropic-api-key CLAUDE_MODEL=claude-3-haiku-20240307
+
+# System
+
+ENVIRONMENT=production ENABLE_COST_TRACKING=true
 
 ## 🚀 Deployment
 
 ### Manual Deployment
 
-  # Navigate to project root
-  cd /path/to/your/project
+# Navigate to project root
 
-  # Deploy command station
-  supabase functions deploy command-center --no-verify-jwt
+cd /path/to/your/project
 
-  # Verify deployment
-  curl "https://your-project.supabase.co/functions/v1/command-center/health"
+# Deploy command station
+
+supabase functions deploy command-center --no-verify-jwt
+
+# Verify deployment
+
+curl "https://your-project.supabase.co/functions/v1/command-center/health"
 
 ### Automated Deployment
 
 Create a deployment script:
 
     #!/bin/bash
-  # deploy-command-center.sh
+
+# deploy-command-center.sh
 
     echo "🚀 Deploying Command Station..."
 
     # Deploy function
-  supabase functions deploy command-center --no-verify-jwt
+
+supabase functions deploy command-center --no-verify-jwt
 
     # Test deployment
     echo "🔍 Testing deployment..."
@@ -340,6 +348,7 @@ The Command Station provides built-in monitoring with configurable alerts:
 ### Health Checks
 
 Regular health checks monitor:
+
 - Database connectivity
 - Worker function availability
 - External API accessibility
@@ -351,28 +360,31 @@ Regular health checks monitor:
 
 1. **Function not responding**
 
-  # Check function logs
-  supabase functions logs command-center
+# Check function logs
+
+supabase functions logs command-center
 
 2. **Database connection errors**
 
-  # Verify environment variables
-  echo $SUPABASE_URL
-  echo $SUPABASE_SERVICE_ROLE_KEY
+# Verify environment variables
+
+echo $SUPABASE_URL echo $SUPABASE_SERVICE_ROLE_KEY
 
 3. **High error rates**
 
-  # Check system status
-  curl "https://your-project.supabase.co/functions/v1/command-center/status"
+# Check system status
 
-  # Get detailed metrics
-  curl "https://your-project.supabase.co/functions/v1/command-center/metrics"
+curl "https://your-project.supabase.co/functions/v1/command-center/status"
+
+# Get detailed metrics
+
+curl "https://your-project.supabase.co/functions/v1/command-center/metrics"
 
 ### Debug Mode
 
 Enable detailed logging by setting environment variable:
 
-  DEBUG=true
+DEBUG=true
 
 ## 📈 Performance Optimization
 
@@ -395,6 +407,7 @@ Enable detailed logging by setting environment variable:
 ### With Existing Workers
 
 The Command Station integrates with:
+
 - `ai-scraper-worker`: AI processing and cost tracking
 - `scraper-orchestrator`: Batch job coordination
 - `scraper-worker`: Data collection and processing
@@ -402,6 +415,7 @@ The Command Station integrates with:
 ### External Monitoring
 
 Integrate with external monitoring tools:
+
 - Export metrics to Grafana/Prometheus
 - Send alerts to Slack/Discord
 - Log to external logging services
@@ -410,7 +424,7 @@ Integrate with external monitoring tools:
 
 For complete API documentation, visit:
 
-  curl "https://your-project.supabase.co/functions/v1/command-center/help"
+curl "https://your-project.supabase.co/functions/v1/command-center/help"
 
 ## 🔄 Updates & Maintenance
 
@@ -436,7 +450,6 @@ To update the Command Station:
 
 ## 🆘 Support
 
-
 For issues or questions:
 
 1. Check the logs: `supabase functions logs command-center`
@@ -447,5 +460,6 @@ For issues or questions:
 
 4. Review configuration: `GET /config`
 
-The Command Station is designed to be self-monitoring and self-healing where possible. Most issues can be diagnosed through the built-in monitoring endpoints.
-
+The Command Station is designed to be self-monitoring and self-healing where
+possible. Most issues can be diagnosed through the built-in monitoring
+endpoints.

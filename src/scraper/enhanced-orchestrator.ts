@@ -1,10 +1,10 @@
 // Enhanced Scraper Orchestrator with Frontend Integration
 // src/scraper/enhanced-orchestrator.ts
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { getModelCost } from './costs';
-import { scraperFrontendIntegration } from './frontend-integration';
-import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { getModelCost } from "./costs";
+import { scraperFrontendIntegration } from "./frontend-integration";
+import type { FrontendProperty, ScrapedPropertyData } from "../types/frontend";
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;
@@ -41,15 +41,21 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Get properties to scrape using the new property_sources system
    */
-  async getPropertySourcesBatch(limit = 50, region?: string): Promise<ScrapingJob[]> {
+  async getPropertySourcesBatch(
+    limit = 50,
+    region?: string,
+  ): Promise<ScrapingJob[]> {
     // Call RPC and gracefully handle errors
-    const { data: sources, error } = await this.supabase.rpc('get_next_property_sources_batch', {
-      batch_size: limit,
-      region_filter: region,
-    });
+    const { data: sources, error } = await this.supabase.rpc(
+      "get_next_property_sources_batch",
+      {
+        batch_size: limit,
+        region_filter: region,
+      },
+    );
 
     if (error) {
-      console.error('Error getting property sources batch:', error);
+      console.error("Error getting property sources batch:", error);
       return [];
     }
 
@@ -64,8 +70,8 @@ export class EnhancedScrapingOrchestrator {
       expected_units: source.expected_units,
       metadata: source.metadata,
       should_scrape: true,
-      ai_model: 'gpt-4-turbo-preview',
-      processing_level: 'comprehensive',
+      ai_model: "gpt-4-turbo-preview",
+      processing_level: "comprehensive",
     }));
 
     return jobs;
@@ -74,16 +80,21 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Enhanced cost-optimized batch with frontend integration
    */
-  async getCostOptimizedBatchWithFrontend(weeklyTargetUSD = 300, region?: string): Promise<ScrapingJob[]> {
+  async getCostOptimizedBatchWithFrontend(
+    weeklyTargetUSD = 300,
+    region?: string,
+  ): Promise<ScrapingJob[]> {
     // First, get property sources (higher priority)
     const propertySourceJobs = await this.getPropertySourcesBatch(20, region);
-    
+
     // Then get individual properties for updates
-    const individualJobs = await this.getCostOptimizedBatch(weeklyTargetUSD * 0.7); // 70% for individual updates
-    
+    const individualJobs = await this.getCostOptimizedBatch(
+      weeklyTargetUSD * 0.7,
+    ); // 70% for individual updates
+
     // Combine and prioritize
     const allJobs = [...propertySourceJobs, ...individualJobs];
-    
+
     // Sort by priority and limit by cost
     return this.optimizeBatchByCost(allJobs, weeklyTargetUSD);
   }
@@ -93,28 +104,32 @@ export class EnhancedScrapingOrchestrator {
    */
   async getCostOptimizedBatch(weeklyTargetUSD = 300): Promise<ScrapingJob[]> {
     const highQuery = this.supabase
-      .from('scraped_properties')
-      .select('*')
-      .gte('priority_score', 70)
-      .order('priority_score', { ascending: false })
-      .limit(50000);
-      
-    const medQuery = this.supabase
-      .from('scraped_properties')
-      .select('*')
-      .gte('priority_score', 40)
-      .lt('priority_score', 70)
-      .order('priority_score', { ascending: false })
-      .limit(50000);
-      
-    const lowQuery = this.supabase
-      .from('scraped_properties')
-      .select('*')
-      .lt('priority_score', 40)
-      .order('priority_score', { ascending: false })
+      .from("scraped_properties")
+      .select("*")
+      .gte("priority_score", 70)
+      .order("priority_score", { ascending: false })
       .limit(50000);
 
-    const [highRes, medRes, lowRes] = await Promise.all([highQuery, medQuery, lowQuery]);
+    const medQuery = this.supabase
+      .from("scraped_properties")
+      .select("*")
+      .gte("priority_score", 40)
+      .lt("priority_score", 70)
+      .order("priority_score", { ascending: false })
+      .limit(50000);
+
+    const lowQuery = this.supabase
+      .from("scraped_properties")
+      .select("*")
+      .lt("priority_score", 40)
+      .order("priority_score", { ascending: false })
+      .limit(50000);
+
+    const [highRes, medRes, lowRes] = await Promise.all([
+      highQuery,
+      medQuery,
+      lowQuery,
+    ]);
     const highRows = (highRes.data || []) as ScrapingJob[];
     const medRows = (medRes.data || []) as ScrapingJob[];
     const lowRows = (lowRes.data || []) as ScrapingJob[];
@@ -142,8 +157,10 @@ export class EnhancedScrapingOrchestrator {
     const enriched = await Promise.all(selected.map(async (property) => ({
       ...property,
       should_scrape: await this.shouldScrapeProperty(property),
-      ai_model: (property.change_frequency ?? 0) > 30 ? 'gpt-3.5-turbo' : 'gpt-4-turbo-preview',
-      processing_level: property.stability_level ?? 'default'
+      ai_model: (property.change_frequency ?? 0) > 30
+        ? "gpt-3.5-turbo"
+        : "gpt-4-turbo-preview",
+      processing_level: property.stability_level ?? "default",
     })));
 
     return enriched;
@@ -152,9 +169,13 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Process scraping results with frontend integration
    */
-  async processScrapingResults(results: ScrapedPropertyData[], source: string, cost: number): Promise<ScrapingResult> {
+  async processScrapingResults(
+    results: ScrapedPropertyData[],
+    source: string,
+    cost: number,
+  ): Promise<ScrapingResult> {
     const startTime = Date.now();
-    
+
     const scrapingResult: ScrapingResult = {
       success: results.length > 0,
       properties: results,
@@ -163,29 +184,34 @@ export class EnhancedScrapingOrchestrator {
       metadata: {
         processed_at: new Date().toISOString(),
         total_properties: results.length,
-        source_breakdown: this.analyzeSourceBreakdown(results)
+        source_breakdown: this.analyzeSourceBreakdown(results),
       },
-      processing_time: 0 // Will be set below
+      processing_time: 0, // Will be set below
     };
 
     // Integrate with frontend data system
     try {
-      console.log('🔄 Integrating scraping results with frontend system...');
-      const frontendIntegration = await scraperFrontendIntegration.processScraperResults(scrapingResult);
+      console.log("🔄 Integrating scraping results with frontend system...");
+      const frontendIntegration = await scraperFrontendIntegration
+        .processScraperResults(scrapingResult);
       scrapingResult.frontend_integration = frontendIntegration;
-      
+
       // Update property source metrics
       await this.updatePropertySourceMetrics(results);
-      
-      console.log(`✅ Frontend integration complete: ${frontendIntegration.frontend_properties_created} properties processed`);
-      
+
+      console.log(
+        `✅ Frontend integration complete: ${frontendIntegration.frontend_properties_created} properties processed`,
+      );
     } catch (error) {
-      console.error('❌ Frontend integration error:', error);
-      const errMsg = (error && typeof error === 'object' && 'message' in (error as Record<string, unknown>)) ? String((error as Record<string, unknown>)['message']) : String(error);
+      console.error("❌ Frontend integration error:", error);
+      const errMsg = (error && typeof error === "object" &&
+          "message" in (error as Record<string, unknown>))
+        ? String((error as Record<string, unknown>)["message"])
+        : String(error);
       scrapingResult.frontend_integration = {
         processed: 0,
         errors: [errMsg],
-        frontend_properties_created: 0
+        frontend_properties_created: 0,
       };
     }
 
@@ -196,10 +222,12 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Update property source metrics based on scraping results
    */
-  private async updatePropertySourceMetrics(results: ScrapedPropertyData[]): Promise<void> {
+  private async updatePropertySourceMetrics(
+    results: ScrapedPropertyData[],
+  ): Promise<void> {
     // Group results by property source
     const sourceResults = new Map<number, any[]>();
-    
+
     for (const result of results) {
       const sourceId = result.property_source_id;
       if (sourceId) {
@@ -218,14 +246,13 @@ export class EnhancedScrapingOrchestrator {
         const totalCost = avgCost * unitsFound;
         const success = unitsFound > 0;
 
-        await this.supabase.rpc('update_property_source_metrics', {
+        await this.supabase.rpc("update_property_source_metrics", {
           source_id: sourceId,
           units_found: unitsFound,
           scrape_cost: totalCost,
           success: success,
-          error_message: success ? null : 'No properties found'
+          error_message: success ? null : "No properties found",
         });
-
       } catch (error) {
         console.error(`Error updating metrics for source ${sourceId}:`, error);
       }
@@ -235,27 +262,32 @@ export class EnhancedScrapingOrchestrator {
   /**
    * Analyze source breakdown for metadata
    */
-  private analyzeSourceBreakdown(results: ScrapedPropertyData[]): Record<string, number> {
+  private analyzeSourceBreakdown(
+    results: ScrapedPropertyData[],
+  ): Record<string, number> {
     const breakdown: Record<string, number> = {};
-    
+
     for (const result of results) {
-      const source = result.source || result.website_name || 'unknown';
+      const source = result.source || result.website_name || "unknown";
       breakdown[source] = (breakdown[source] || 0) + 1;
     }
-    
+
     return breakdown;
   }
 
   /**
    * Optimize batch by cost constraints
    */
-  private optimizeBatchByCost(jobs: ScrapingJob[], maxCost: number): ScrapingJob[] {
+  private optimizeBatchByCost(
+    jobs: ScrapingJob[],
+    maxCost: number,
+  ): ScrapingJob[] {
     // Sort by priority score descending
     jobs.sort((a, b) => (b.priority_score || 0) - (a.priority_score || 0));
-    
+
     let totalCost = 0;
     const selected: ScrapingJob[] = [];
-    
+
     for (const job of jobs) {
       const jobCost = this.estimateCostForJob(job);
       if (totalCost + jobCost <= maxCost) {
@@ -263,7 +295,7 @@ export class EnhancedScrapingOrchestrator {
         totalCost += jobCost;
       }
     }
-    
+
     return selected;
   }
 
@@ -271,14 +303,14 @@ export class EnhancedScrapingOrchestrator {
    * Estimate cost for a scraping job
    */
   private estimateCostForJob(job: ScrapingJob): number {
-    const model = String(job.ai_model ?? 'gpt-4-turbo-preview');
-    const processingLevel = String(job.processing_level ?? 'default');
-    
+    const model = String(job.ai_model ?? "gpt-4-turbo-preview");
+    const processingLevel = String(job.processing_level ?? "default");
+
     // Estimate tokens based on processing level
     let tokens = 3000; // default
-    if (processingLevel === 'minimal') tokens = 1000;
-    if (processingLevel === 'comprehensive') tokens = 5000;
-    
+    if (processingLevel === "minimal") tokens = 1000;
+    if (processingLevel === "comprehensive") tokens = 5000;
+
     return getModelCost(model) * tokens / 1000;
   }
 
@@ -295,9 +327,9 @@ export class EnhancedScrapingOrchestrator {
     try {
       // Check if this property is in high demand (has recent user searches/matches)
       const { data: recentActivity } = await this.supabase
-        .from('properties')
-        .select('match_score, updated_at')
-        .eq('external_id', property.external_id)
+        .from("properties")
+        .select("match_score, updated_at")
+        .eq("external_id", property.external_id)
         .single();
 
       if (recentActivity) {
@@ -313,14 +345,16 @@ export class EnhancedScrapingOrchestrator {
     // Original tier-based sampling logic
     const tierNum = this.calculateTier(property);
     if (tierNum >= 3) {
-      const externalId = String(property.external_id ?? '');
+      const externalId = String(property.external_id ?? "");
       const weekNumber = this.isoWeekNumber(new Date());
-      const seed = Number(Deno.env.get('SAMPLING_SEED') ?? 0);
-      if (!this.deterministicSample(externalId, weekNumber, 0.10, seed)) return false;
+      const seed = Number(Deno.env.get("SAMPLING_SEED") ?? 0);
+      if (!this.deterministicSample(externalId, weekNumber, 0.10, seed)) {
+        return false;
+      }
     }
 
     if (daysSinceLastScrape < recommended) return false;
-    if (property.status === 'leased' && daysSinceLastScrape < 30) return false;
+    if (property.status === "leased" && daysSinceLastScrape < 30) return false;
 
     return true;
   }
@@ -329,12 +363,12 @@ export class EnhancedScrapingOrchestrator {
    * Calculate tier for property
    */
   private calculateTier(property: ScrapingJob): number {
-    const rawTier = property['tier'];
+    const rawTier = property["tier"];
     if (rawTier !== undefined && rawTier !== null) {
       const tierNum = Number(rawTier);
       if (!Number.isNaN(tierNum)) return tierNum;
     }
-    
+
     const ps = Number(property.priority_score ?? 0);
     if (ps >= 70) return 1;
     if (ps >= 40) return 2;
@@ -356,7 +390,8 @@ export class EnhancedScrapingOrchestrator {
   private calculateStabilityScore(property: ScrapingJob): number {
     const priceChanges = Number(property.price_changes ?? 0);
     const daysOnMarket = Number(property.days_on_market ?? 9999);
-    let score = 100 - Math.min(priceChanges * 10, 50) - Math.min(daysOnMarket / 3, 50);
+    let score = 100 - Math.min(priceChanges * 10, 50) -
+      Math.min(daysOnMarket / 3, 50);
     return Math.max(0, Math.min(100, Math.round(score)));
   }
 
@@ -376,7 +411,12 @@ export class EnhancedScrapingOrchestrator {
     return Math.abs(hash);
   }
 
-  private deterministicSample(external_id: string, weekNumber: number, sampleRate: number, sampling_seed = 0): boolean {
+  private deterministicSample(
+    external_id: string,
+    weekNumber: number,
+    sampleRate: number,
+    sampling_seed = 0,
+  ): boolean {
     const key = `${external_id}_${weekNumber}_${sampling_seed}`;
     const hash = this.simpleHash(key);
     return (hash % 100) < Math.round(sampleRate * 100);
@@ -387,20 +427,26 @@ export class EnhancedScrapingOrchestrator {
     const dayNum = date.getUTCDay() || 7;
     date.setUTCDate(date.getUTCDate() + 4 - dayNum);
     const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-    const weekNo = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+    const weekNo = Math.ceil(
+      ((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
+    );
     return weekNo;
   }
 
   /**
    * Get frontend-ready properties for API responses
    */
-  async getFrontendProperties(filters: Record<string, unknown> = {}): Promise<FrontendProperty[]> {
-    return scraperFrontendIntegration.getFrontendProperties(filters as any) as Promise<FrontendProperty[]>;
+  async getFrontendProperties(
+    filters: Record<string, unknown> = {},
+  ): Promise<FrontendProperty[]> {
+    return scraperFrontendIntegration.getFrontendProperties(
+      filters as any,
+    ) as Promise<FrontendProperty[]>;
   }
 }
 
 // Export singleton instance
 export const enhancedScrapingOrchestrator = new EnhancedScrapingOrchestrator(
   // Supabase client would be injected here
-  {} as SupabaseClient
+  {} as SupabaseClient,
 );

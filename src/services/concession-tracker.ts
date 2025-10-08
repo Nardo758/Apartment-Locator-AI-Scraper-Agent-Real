@@ -9,75 +9,89 @@ export class ConcessionTracker {
       reduced_deposits: 0,
       average_discount: 0,
       concession_rate: 0,
-      total_discount_amount: 0
+      total_discount_amount: 0,
     };
 
     let totalDiscountSum = 0;
     let propertiesWithDiscounts = 0;
 
-    properties.forEach(property => {
+    properties.forEach((property) => {
       if (property.concessions_applied) {
         concessionStats.properties_with_concessions++;
-        
-        if (property.concession_details?.includes('free')) {
+
+        if (property.concession_details?.includes("free")) {
           concessionStats.free_rent_offers++;
         }
-        if (property.concession_details?.includes('waived')) {
+        if (property.concession_details?.includes("waived")) {
           concessionStats.waived_fees++;
         }
-        if (property.concession_details?.includes('deposit')) {
+        if (property.concession_details?.includes("deposit")) {
           concessionStats.reduced_deposits++;
         }
-        
+
         // Calculate discount percentage
         if (property.effective_rent && property.base_rent) {
-          const discount = ((property.base_rent - property.effective_rent) / property.base_rent) * 100;
+          const discount = ((property.base_rent - property.effective_rent) /
+            property.base_rent) * 100;
           totalDiscountSum += discount;
           propertiesWithDiscounts++;
-          concessionStats.total_discount_amount += (property.base_rent - property.effective_rent);
+          concessionStats.total_discount_amount += property.base_rent -
+            property.effective_rent;
         }
       }
     });
 
-    concessionStats.concession_rate = (concessionStats.properties_with_concessions / properties.length) * 100;
-    concessionStats.average_discount = propertiesWithDiscounts > 0 ? totalDiscountSum / propertiesWithDiscounts : 0;
+    concessionStats.concession_rate =
+      (concessionStats.properties_with_concessions / properties.length) * 100;
+    concessionStats.average_discount = propertiesWithDiscounts > 0
+      ? totalDiscountSum / propertiesWithDiscounts
+      : 0;
 
     return concessionStats;
   }
 
-  static async analyzeConcessionTrends(properties: any[], timeframe: 'week' | 'month' | 'quarter' = 'month') {
+  static async analyzeConcessionTrends(
+    properties: any[],
+    timeframe: "week" | "month" | "quarter" = "month",
+  ) {
     const now = new Date();
     const cutoffDate = new Date();
-    
+
     switch (timeframe) {
-      case 'week':
+      case "week":
         cutoffDate.setDate(now.getDate() - 7);
         break;
-      case 'month':
+      case "month":
         cutoffDate.setMonth(now.getMonth() - 1);
         break;
-      case 'quarter':
+      case "quarter":
         cutoffDate.setMonth(now.getMonth() - 3);
         break;
     }
 
-    const recentProperties = properties.filter(p => 
+    const recentProperties = properties.filter((p) =>
       new Date(p.last_seen_at || p.first_seen_at) >= cutoffDate
     );
 
     const currentStats = await this.trackMarketConcessions(recentProperties);
-    
+
     return {
       timeframe,
       period_start: cutoffDate.toISOString(),
       period_end: now.toISOString(),
       ...currentStats,
       trend_analysis: {
-        concession_adoption: currentStats.concession_rate > 50 ? 'high' : 
-                           currentStats.concession_rate > 25 ? 'medium' : 'low',
-        market_pressure: currentStats.average_discount > 10 ? 'high' : 
-                        currentStats.average_discount > 5 ? 'medium' : 'low'
-      }
+        concession_adoption: currentStats.concession_rate > 50
+          ? "high"
+          : currentStats.concession_rate > 25
+          ? "medium"
+          : "low",
+        market_pressure: currentStats.average_discount > 10
+          ? "high"
+          : currentStats.average_discount > 5
+          ? "medium"
+          : "low",
+      },
     };
   }
 
@@ -88,7 +102,9 @@ export class ConcessionTracker {
 
 🏢 Property Overview:
 • Total Properties Analyzed: ${stats.total_properties}
-• Properties with Concessions: ${stats.properties_with_concessions} (${stats.concession_rate.toFixed(1)}%)
+• Properties with Concessions: ${stats.properties_with_concessions} (${
+      stats.concession_rate.toFixed(1)
+    }%)
 
 💰 Concession Breakdown:
 • Free Rent Offers: ${stats.free_rent_offers}
@@ -100,10 +116,20 @@ export class ConcessionTracker {
 • Total Savings Offered: $${stats.total_discount_amount?.toLocaleString() || 0}
 
 🎯 Market Insights:
-• Concession Rate: ${stats.concession_rate > 50 ? 'HIGH COMPETITION' : 
-                   stats.concession_rate > 25 ? 'MODERATE COMPETITION' : 'LOW COMPETITION'}
-• Market Pressure: ${stats.average_discount > 10 ? 'LANDLORD-FAVORABLE' : 
-                   stats.average_discount > 5 ? 'BALANCED' : 'TENANT-FAVORABLE'}
+• Concession Rate: ${
+      stats.concession_rate > 50
+        ? "HIGH COMPETITION"
+        : stats.concession_rate > 25
+        ? "MODERATE COMPETITION"
+        : "LOW COMPETITION"
+    }
+• Market Pressure: ${
+      stats.average_discount > 10
+        ? "LANDLORD-FAVORABLE"
+        : stats.average_discount > 5
+        ? "BALANCED"
+        : "TENANT-FAVORABLE"
+    }
 
 Generated: ${new Date().toLocaleDateString()}
 `;
@@ -111,7 +137,11 @@ Generated: ${new Date().toLocaleDateString()}
     return report;
   }
 
-  static async saveConcessionAnalytics(supabase: any, stats: any, market: string = 'atlanta') {
+  static async saveConcessionAnalytics(
+    supabase: any,
+    stats: any,
+    market: string = "atlanta",
+  ) {
     try {
       const analyticsData = {
         market_name: market,
@@ -125,28 +155,29 @@ Generated: ${new Date().toLocaleDateString()}
         average_discount: stats.average_discount,
         total_discount_amount: stats.total_discount_amount,
         market_analysis: {
-          concession_adoption: stats.trend_analysis?.concession_adoption || 'unknown',
-          market_pressure: stats.trend_analysis?.market_pressure || 'unknown',
-          report: this.generateConcessionReport(stats)
-        }
+          concession_adoption: stats.trend_analysis?.concession_adoption ||
+            "unknown",
+          market_pressure: stats.trend_analysis?.market_pressure || "unknown",
+          report: this.generateConcessionReport(stats),
+        },
       };
 
       const { data, error } = await supabase
-        .from('concession_analytics')
-        .upsert(analyticsData, { 
-          onConflict: 'market_name,analysis_date',
-          ignoreDuplicates: false 
+        .from("concession_analytics")
+        .upsert(analyticsData, {
+          onConflict: "market_name,analysis_date",
+          ignoreDuplicates: false,
         });
 
       if (error) {
-        console.error('Failed to save concession analytics:', error);
+        console.error("Failed to save concession analytics:", error);
         return false;
       }
 
-      console.log('✅ Concession analytics saved successfully');
+      console.log("✅ Concession analytics saved successfully");
       return true;
     } catch (error) {
-      console.error('Error saving concession analytics:', error);
+      console.error("Error saving concession analytics:", error);
       return false;
     }
   }
@@ -155,9 +186,9 @@ Generated: ${new Date().toLocaleDateString()}
 // Helper function to extract concession value from text
 export function parseConcessionValue(concessionText: string): number {
   if (!concessionText) return 0;
-  
+
   const text = concessionText.toLowerCase();
-  
+
   // Match "X months free" patterns
   const monthsFreeMatch = text.match(/(\d+)\s*months?\s*free/);
   if (monthsFreeMatch) {
@@ -175,19 +206,23 @@ export function parseConcessionValue(concessionText: string): number {
   // Match dollar amounts
   const dollarMatch = text.match(/\$(\d+(?:,\d{3})*)/);
   if (dollarMatch) {
-    return parseInt(dollarMatch[1].replace(/,/g, ''));
+    return parseInt(dollarMatch[1].replace(/,/g, ""));
   }
 
   return 0;
 }
 
 // Enhanced effective rent calculation
-export function calculateEffectiveRent(baseRent: number, concessions: string[], leaseTerm: number = 12): number {
+export function calculateEffectiveRent(
+  baseRent: number,
+  concessions: string[],
+  leaseTerm: number = 12,
+): number {
   if (!concessions || concessions.length === 0) return baseRent;
 
   let totalDiscount = 0;
-  
-  concessions.forEach(concession => {
+
+  concessions.forEach((concession) => {
     const value = parseConcessionValue(concession);
     totalDiscount += value;
   });

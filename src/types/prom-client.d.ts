@@ -1,4 +1,4 @@
-declare module 'prom-client' {
+declare module "prom-client" {
   const client: any;
   export default client;
   export const Counter: any;

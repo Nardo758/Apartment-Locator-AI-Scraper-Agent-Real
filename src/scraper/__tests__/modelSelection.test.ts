@@ -2,43 +2,48 @@
  * @jest-environment node
  */
 
-import { getOptimalAIModel, optimizeAIPrompt } from '../modelSelection';
-import { calculateStabilityScore } from '../orchestrator';
+import { getOptimalAIModel, optimizeAIPrompt } from "../modelSelection";
+import { calculateStabilityScore } from "../orchestrator";
 
-jest.mock('../orchestrator', () => ({
+jest.mock("../orchestrator", () => ({
   calculateStabilityScore: jest.fn(),
 }));
 
-const mocked = calculateStabilityScore as jest.MockedFunction<typeof calculateStabilityScore>;
+const mocked = calculateStabilityScore as jest.MockedFunction<
+  typeof calculateStabilityScore
+>;
 
-describe('model selection', () => {
+describe("model selection", () => {
   afterEach(() => mocked.mockReset());
 
-  test('very stable -> cheap model', () => {
+  test("very stable -> cheap model", () => {
     mocked.mockReturnValue(0.9 as any);
-    expect(getOptimalAIModel({} as unknown)).toBe('gpt-3.5-turbo');
+    expect(getOptimalAIModel({} as unknown)).toBe("gpt-3.5-turbo");
   });
 
-  test('moderately stable -> balanced model', () => {
+  test("moderately stable -> balanced model", () => {
     mocked.mockReturnValue(0.6 as any);
-    expect(getOptimalAIModel({} as unknown)).toBe('gpt-3.5-turbo-16k');
+    expect(getOptimalAIModel({} as unknown)).toBe("gpt-3.5-turbo-16k");
   });
 
-  test('volatile -> best model', () => {
+  test("volatile -> best model", () => {
     mocked.mockReturnValue(0.2 as any);
-    expect(getOptimalAIModel({} as unknown)).toBe('gpt-4-turbo-preview');
+    expect(getOptimalAIModel({} as unknown)).toBe("gpt-4-turbo-preview");
   });
 
-  test('prompt compact for stable', () => {
+  test("prompt compact for stable", () => {
     mocked.mockReturnValue(0.85 as any);
-    const prompt = optimizeAIPrompt('<html>some content</html>', {} as unknown);
-    expect(prompt).toContain('Check ONLY for changes');
+    const prompt = optimizeAIPrompt("<html>some content</html>", {} as unknown);
+    expect(prompt).toContain("Check ONLY for changes");
     expect(prompt.length).toBeLessThan(6000);
   });
 
-  test('full extraction for volatile', () => {
+  test("full extraction for volatile", () => {
     mocked.mockReturnValue(0.1 as any);
-    const prompt = optimizeAIPrompt('<html>lots of content</html>', {} as unknown);
-    expect(prompt).toContain('Extract all apartment listing data');
+    const prompt = optimizeAIPrompt(
+      "<html>lots of content</html>",
+      {} as unknown,
+    );
+    expect(prompt).toContain("Extract all apartment listing data");
   });
 });

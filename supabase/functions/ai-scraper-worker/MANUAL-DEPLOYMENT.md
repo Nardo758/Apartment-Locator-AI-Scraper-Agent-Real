@@ -1,7 +1,9 @@
 # 🚀 Manual Deployment Guide
+
 ## Claude-Powered AI Apartment Scraper
 
-Since we can't install Supabase CLI in this demo environment, here's your complete manual deployment guide.
+Since we can't install Supabase CLI in this demo environment, here's your
+complete manual deployment guide.
 
 ---
 
@@ -37,6 +39,7 @@ supabase link --project-ref your-project-ref
 You need to copy these files to your local development environment:
 
 ### Core Function Files
+
 ```
 ai-scraper-worker/
 ├── index.ts                    # Main Claude-powered function
@@ -47,6 +50,7 @@ ai-scraper-worker/
 ```
 
 ### Supporting Files
+
 ```
 ├── deploy.md                  # Deployment documentation
 ├── monitoring-guide.md        # Monitoring setup
@@ -199,6 +203,7 @@ ORDER BY scraped_at DESC;
 ### 2. Set Up Alerts
 
 Create webhook endpoints or email alerts for:
+
 - Daily cost > $50
 - Success rate < 95%
 - Error rate > 5%
@@ -211,28 +216,31 @@ Create webhook endpoints or email alerts for:
 ### Single Property Scraping
 
 ```javascript
-const response = await fetch('https://your-project-ref.supabase.co/functions/v1/ai-scraper-worker', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json'
+const response = await fetch(
+  "https://your-project-ref.supabase.co/functions/v1/ai-scraper-worker",
+  {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      source: "apartments.com",
+      cleanHtml: propertyHtmlContent,
+      external_id: `apt-${propertyId}`,
+      source_url: propertyUrl,
+      source_name: "apartments.com",
+      scraping_job_id: jobId,
+    }),
   },
-  body: JSON.stringify({
-    source: 'apartments.com',
-    cleanHtml: propertyHtmlContent,
-    external_id: `apt-${propertyId}`,
-    source_url: propertyUrl,
-    source_name: 'apartments.com',
-    scraping_job_id: jobId
-  })
-});
+);
 
 const result = await response.json();
-if (result.status === 'ok') {
-  console.log('Property extracted:', result.data);
-  console.log('Cost:', result.usage.estimated_cost);
+if (result.status === "ok") {
+  console.log("Property extracted:", result.data);
+  console.log("Cost:", result.usage.estimated_cost);
 } else {
-  console.error('Extraction failed:', result.error);
+  console.error("Extraction failed:", result.error);
 }
 ```
 
@@ -241,7 +249,7 @@ if (result.status === 'ok') {
 ```javascript
 async function processBatch(properties) {
   const results = [];
-  
+
   for (const property of properties) {
     try {
       const result = await scrapeProperty(property);
@@ -249,11 +257,11 @@ async function processBatch(properties) {
     } catch (error) {
       results.push({ success: false, property, error: error.message });
     }
-    
+
     // Rate limiting
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
-  
+
   return results;
 }
 ```
@@ -286,6 +294,7 @@ supabase secrets set ENABLE_PERFORMANCE_LOGGING="true"
 ### Common Issues & Solutions
 
 #### 1. Function Not Responding
+
 ```bash
 # Check function logs
 supabase functions logs ai-scraper-worker --follow
@@ -295,6 +304,7 @@ supabase secrets list
 ```
 
 #### 2. Database Connection Issues
+
 ```sql
 -- Test database connection
 SELECT NOW();
@@ -304,6 +314,7 @@ SELECT * FROM apartments LIMIT 1;
 ```
 
 #### 3. Claude API Issues
+
 ```bash
 # Test Claude API directly
 curl -X POST "https://api.anthropic.com/v1/messages" \
@@ -318,18 +329,21 @@ curl -X POST "https://api.anthropic.com/v1/messages" \
 ## ✅ **Deployment Checklist**
 
 ### Pre-Deployment
+
 - [ ] Supabase CLI installed and logged in
 - [ ] Project created and linked
 - [ ] Claude API key ready
 - [ ] Database schema prepared
 
 ### Deployment
+
 - [ ] Database schema applied
 - [ ] Edge function deployed
 - [ ] Environment variables set
 - [ ] Test request successful
 
 ### Post-Deployment
+
 - [ ] Monitoring dashboard configured
 - [ ] Alerts set up
 - [ ] Performance benchmarks established
@@ -341,18 +355,20 @@ curl -X POST "https://api.anthropic.com/v1/messages" \
 
 Once deployed, your Claude-powered apartment scraper will:
 
-✅ **Process apartments at $0.0007 each** (98% cheaper than GPT-4)  
-✅ **Maintain 93%+ accuracy** across all property types  
-✅ **Handle 10,000+ properties/day** with auto-scaling  
-✅ **Provide real-time monitoring** of costs and performance  
+✅ **Process apartments at $0.0007 each** (98% cheaper than GPT-4)\
+✅ **Maintain 93%+ accuracy** across all property types\
+✅ **Handle 10,000+ properties/day** with auto-scaling\
+✅ **Provide real-time monitoring** of costs and performance
 
 ### **Next Steps:**
+
 1. **Start with small batches** (100-500 properties)
 2. **Monitor performance** in Supabase dashboard
 3. **Scale up gradually** based on results
 4. **Optimize costs** with usage patterns
 
-**🚀 Your AI apartment scraper is now revolutionizing data extraction at unprecedented cost efficiency!**
+**🚀 Your AI apartment scraper is now revolutionizing data extraction at
+unprecedented cost efficiency!**
 
 ---
 

@@ -1,11 +1,11 @@
 /**
  * Configuration Manager for Real Estate Scraper Command Center
- * 
+ *
  * Handles system configuration, settings persistence, and configuration broadcasting
  * to all worker functions and services.
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export interface SystemConfig {
   scrapingEnabled: boolean;
@@ -43,28 +43,28 @@ export class ConfigManager {
       claudeEnabled: true,
       batchSize: 50,
       dailyCostLimit: 50,
-      schedule: '0 0 * * 0', // Weekly Sunday at midnight
+      schedule: "0 0 * * 0", // Weekly Sunday at midnight
       maxConcurrentJobs: 5,
       enableCostTracking: true,
-      claudeModel: 'claude-3-haiku-20240307',
+      claudeModel: "claude-3-haiku-20240307",
       retryAttempts: 3,
       timeoutMs: 30000,
       alertThresholds: {
         dailyCost: 40, // Alert at 80% of daily limit
         errorRate: 0.15, // Alert if error rate > 15%
-        queueSize: 100 // Alert if queue size > 100
+        queueSize: 100, // Alert if queue size > 100
       },
       features: {
         autoRetry: true,
         smartBatching: true,
         costOptimization: true,
-        realTimeMonitoring: true
-      }
+        realTimeMonitoring: true,
+      },
     };
 
     // Initialize Supabase client
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
-    const SUPABASE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
+    const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     if (SUPABASE_URL && SUPABASE_KEY) {
       this.supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     }
@@ -109,9 +109,9 @@ export class ConfigManager {
 
     try {
       const { data, error } = await this.supabase
-        .from('system_config')
-        .select('*')
-        .eq('config_key', 'scraper_system')
+        .from("system_config")
+        .select("*")
+        .eq("config_key", "scraper_system")
         .single();
 
       if (data && !error) {
@@ -119,7 +119,7 @@ export class ConfigManager {
         this.config = { ...this.config, ...storedConfig };
       }
     } catch (error) {
-      console.warn('Failed to load config from database:', error);
+      console.warn("Failed to load config from database:", error);
       // Continue with default config
     }
   }
@@ -128,20 +128,20 @@ export class ConfigManager {
    * Save configuration to database
    */
   private async saveConfig(): Promise<void> {
-  if (!this.supabase) return;
-  try {
+    if (!this.supabase) return;
+    try {
       const { error } = await this.supabase
-        .from('system_config')
+        .from("system_config")
         .upsert({
-          config_key: 'scraper_system',
+          config_key: "scraper_system",
           config_value: this.config,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         });
       if (error) {
-        console.error('Failed to save config:', error);
+        console.error("Failed to save config:", error);
       }
     } catch (error) {
-      console.error('Error saving config:', error);
+      console.error("Error saving config:", error);
     }
   }
 
@@ -151,27 +151,33 @@ export class ConfigManager {
   private async broadcastConfigUpdate(): Promise<void> {
     if (!this.supabase) return;
     const workers = [
-      'ai-scraper-worker',
-      'scraper-orchestrator',
-      'scraper-worker'
+      "ai-scraper-worker",
+      "scraper-orchestrator",
+      "scraper-worker",
     ];
 
     // Send config update to each worker
     for (const worker of workers) {
       try {
-        const response = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/${worker}/config`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
-            'Content-Type': 'application/json'
+        const response = await fetch(
+          `${Deno.env.get("SUPABASE_URL")}/functions/v1/${worker}/config`,
+          {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              action: "update_config",
+              config: this.config,
+            }),
           },
-          body: JSON.stringify({
-            action: 'update_config',
-            config: this.config
-          })
-        });
+        );
         if (!response.ok) {
-          console.warn(`Failed to update config for ${worker}:`, response.status);
+          console.warn(
+            `Failed to update config for ${worker}:`,
+            response.status,
+          );
         }
       } catch (error) {
         console.warn(`Error broadcasting config to ${worker}:`, error);
@@ -181,14 +187,14 @@ export class ConfigManager {
     // Also broadcast via database pub/sub if available
     try {
       await this.supabase
-        .from('system_events')
+        .from("system_events")
         .insert({
-          event_type: 'config_update',
+          event_type: "config_update",
           event_data: this.config,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         });
     } catch (error) {
-      console.warn('Failed to broadcast config via pub/sub:', error);
+      console.warn("Failed to broadcast config via pub/sub:", error);
     }
   }
 
@@ -198,38 +204,41 @@ export class ConfigManager {
   private validateConfig(updates: Partial<SystemConfig>): void {
     if (updates.batchSize !== undefined) {
       if (updates.batchSize < 1 || updates.batchSize > 500) {
-        throw new Error('Batch size must be between 1 and 500');
+        throw new Error("Batch size must be between 1 and 500");
       }
     }
 
     if (updates.dailyCostLimit !== undefined) {
       if (updates.dailyCostLimit < 0 || updates.dailyCostLimit > 1000) {
-        throw new Error('Daily cost limit must be between $0 and $1000');
+        throw new Error("Daily cost limit must be between $0 and $1000");
       }
     }
 
     if (updates.maxConcurrentJobs !== undefined) {
       if (updates.maxConcurrentJobs < 1 || updates.maxConcurrentJobs > 20) {
-        throw new Error('Max concurrent jobs must be between 1 and 20');
+        throw new Error("Max concurrent jobs must be between 1 and 20");
       }
     }
 
     if (updates.schedule !== undefined) {
       // Basic cron validation - could be enhanced
-      const cronPattern = /^(\\*|[0-5]?[0-9]) (\\*|[0-1]?[0-9]|2[0-3]) (\\*|[0-2]?[0-9]|3[0-1]) (\\*|[0-1]?[0-2]) (\\*|[0-6])$/;
+      const cronPattern =
+        /^(\\*|[0-5]?[0-9]) (\\*|[0-1]?[0-9]|2[0-3]) (\\*|[0-2]?[0-9]|3[0-1]) (\\*|[0-1]?[0-2]) (\\*|[0-6])$/;
       if (!cronPattern.test(updates.schedule)) {
-        throw new Error('Invalid cron schedule format');
+        throw new Error("Invalid cron schedule format");
       }
     }
 
     if (updates.claudeModel !== undefined) {
       const validModels = [
-        'claude-3-haiku-20240307',
-        'claude-3-sonnet-20240229',
-        'claude-3-opus-20240229'
+        "claude-3-haiku-20240307",
+        "claude-3-sonnet-20240229",
+        "claude-3-opus-20240229",
       ];
       if (!validModels.includes(updates.claudeModel)) {
-        throw new Error(`Invalid Claude model. Must be one of: ${validModels.join(', ')}`);
+        throw new Error(
+          `Invalid Claude model. Must be one of: ${validModels.join(", ")}`,
+        );
       }
     }
   }
@@ -237,33 +246,35 @@ export class ConfigManager {
   /**
    * Get configuration for specific service
    */
-  getServiceConfig(service: 'scraper' | 'claude' | 'orchestrator'): Partial<SystemConfig> {
+  getServiceConfig(
+    service: "scraper" | "claude" | "orchestrator",
+  ): Partial<SystemConfig> {
     switch (service) {
-      case 'scraper':
+      case "scraper":
         return {
           scrapingEnabled: this.config.scrapingEnabled,
           batchSize: this.config.batchSize,
           maxConcurrentJobs: this.config.maxConcurrentJobs,
           retryAttempts: this.config.retryAttempts,
-          timeoutMs: this.config.timeoutMs
+          timeoutMs: this.config.timeoutMs,
         };
-      
-      case 'claude':
+
+      case "claude":
         return {
           claudeEnabled: this.config.claudeEnabled,
           claudeModel: this.config.claudeModel,
           enableCostTracking: this.config.enableCostTracking,
-          dailyCostLimit: this.config.dailyCostLimit
+          dailyCostLimit: this.config.dailyCostLimit,
         };
-      
-      case 'orchestrator':
+
+      case "orchestrator":
         return {
           scrapingEnabled: this.config.scrapingEnabled,
           schedule: this.config.schedule,
           batchSize: this.config.batchSize,
-          maxConcurrentJobs: this.config.maxConcurrentJobs
+          maxConcurrentJobs: this.config.maxConcurrentJobs,
         };
-      
+
       default:
         return this.config;
     }
@@ -299,53 +310,67 @@ export class ConfigManager {
       // Check daily cost limit
       const today = new Date().toISOString().slice(0, 10);
       const { data: costData } = await this.supabase
-        .from('scraping_costs')
-        .select('estimated_cost')
-        .eq('date', today)
+        .from("scraping_costs")
+        .select("estimated_cost")
+        .eq("date", today)
         .single();
 
       const dailyCost = costData?.estimated_cost || 0;
       if (dailyCost >= this.config.dailyCostLimit) {
-        violations.push(`Daily cost limit exceeded: $${dailyCost.toFixed(2)} >= $${this.config.dailyCostLimit}`);
+        violations.push(
+          `Daily cost limit exceeded: $${
+            dailyCost.toFixed(2)
+          } >= $${this.config.dailyCostLimit}`,
+        );
       } else if (dailyCost >= this.config.alertThresholds.dailyCost) {
-        warnings.push(`Daily cost approaching limit: $${dailyCost.toFixed(2)} (${(dailyCost / this.config.dailyCostLimit * 100).toFixed(1)}%)`);
+        warnings.push(
+          `Daily cost approaching limit: $${dailyCost.toFixed(2)} (${
+            (dailyCost / this.config.dailyCostLimit * 100).toFixed(1)
+          }%)`,
+        );
       }
 
       // Check queue size
       const { count: queueSize } = await this.supabase
-        .from('scraping_queue')
-        .select('*', { count: 'exact' })
-        .eq('status', 'pending');
+        .from("scraping_queue")
+        .select("*", { count: "exact" })
+        .eq("status", "pending");
 
       if (queueSize && queueSize >= this.config.alertThresholds.queueSize) {
         warnings.push(`Large queue size detected: ${queueSize} pending jobs`);
       }
 
       // Check error rate (last 24 hours)
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
+        .toISOString();
       const { data: errorData } = await this.supabase
-        .from('scraping_logs')
-        .select('status')
-        .gte('created_at', yesterday);
+        .from("scraping_logs")
+        .select("status")
+        .gte("created_at", yesterday);
 
       if (errorData && errorData.length > 0) {
-        const errorCount = errorData.filter(log => log.status === 'error').length;
+        const errorCount = errorData.filter((log) =>
+          log.status === "error"
+        ).length;
         const errorRate = errorCount / errorData.length;
-        
+
         if (errorRate >= this.config.alertThresholds.errorRate) {
-          warnings.push(`High error rate detected: ${(errorRate * 100).toFixed(1)}% (${errorCount}/${errorData.length})`);
+          warnings.push(
+            `High error rate detected: ${
+              (errorRate * 100).toFixed(1)
+            }% (${errorCount}/${errorData.length})`,
+          );
         }
       }
-
     } catch (error) {
-      console.error('Error checking operational limits:', error);
-      warnings.push('Unable to verify all operational limits');
+      console.error("Error checking operational limits:", error);
+      warnings.push("Unable to verify all operational limits");
     }
 
     return {
       withinLimits: violations.length === 0,
       violations,
-      warnings
+      warnings,
     };
   }
 
@@ -353,11 +378,15 @@ export class ConfigManager {
    * Export configuration for backup/audit
    */
   exportConfig(): string {
-    return JSON.stringify({
-      exportDate: new Date().toISOString(),
-      version: '1.0.0',
-      config: this.config
-    }, null, 2);
+    return JSON.stringify(
+      {
+        exportDate: new Date().toISOString(),
+        version: "1.0.0",
+        config: this.config,
+      },
+      null,
+      2,
+    );
   }
 
   /**
@@ -369,7 +398,7 @@ export class ConfigManager {
       if (importData.config) {
         await this.updateConfig(importData.config);
       } else {
-        throw new Error('Invalid configuration format');
+        throw new Error("Invalid configuration format");
       }
     } catch (error) {
       throw new Error(`Failed to import configuration: ${error}`);

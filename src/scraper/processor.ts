@@ -1,13 +1,19 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { ScrapingJob } from './orchestrator';
-import { syncToFrontendSchema } from './orchestrator';
-import { transformScrapedToFrontendFormat } from './data-transformer';
-import type { ScrapedPropertyData } from '../types/frontend';
-import { ScrapedPropertySchema, type ScrapedPropertyType } from '../schemas/scraped-property-schema';
-import { validationPassCounter, validationFailCounter, validationFailByReason } from '../observability/metrics';
-import process from 'node:process';
-import { startMetricsServer } from '../observability/server';
-
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { ScrapingJob } from "./orchestrator";
+import { syncToFrontendSchema } from "./orchestrator";
+import { transformScrapedToFrontendFormat } from "./data-transformer";
+import type { ScrapedPropertyData } from "../types/frontend";
+import {
+  ScrapedPropertySchema,
+  type ScrapedPropertyType,
+} from "../schemas/scraped-property-schema";
+import {
+  validationFailByReason,
+  validationFailCounter,
+  validationPassCounter,
+} from "../observability/metrics";
+import process from "node:process";
+import { startMetricsServer } from "../observability/server";
 
 type WorkerResult = {
   success: boolean;
@@ -19,19 +25,23 @@ type WorkerResult = {
   data?: any;
 };
 
-async function dispatchToWorker(workerUrl: string, payload: Record<string, unknown>, maxRetries = 2) {
+async function dispatchToWorker(
+  workerUrl: string,
+  payload: Record<string, unknown>,
+  maxRetries = 2,
+) {
   let attempt = 0;
   let lastErr: unknown = null;
   while (attempt <= maxRetries) {
     try {
-      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
       const res = await fetch(workerUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           // Required by Supabase Edge Functions for authenticated access
-          'Authorization': serviceKey ? `Bearer ${serviceKey}` : '',
-          'apikey': serviceKey || '',
+          "Authorization": serviceKey ? `Bearer ${serviceKey}` : "",
+          "apikey": serviceKey || "",
         },
         body: JSON.stringify(payload),
       });
@@ -49,30 +59,39 @@ async function dispatchToWorker(workerUrl: string, payload: Record<string, unkno
 
 // Start metrics server for long-running worker processes if enabled
 (() => {
-  const envEnable = String(process.env.ENABLE_METRICS || 'false').toLowerCase();
-  if (envEnable === 'true') {
+  const envEnable = String(process.env.ENABLE_METRICS || "false").toLowerCase();
+  if (envEnable === "true") {
     const port = Number(process.env.METRICS_PORT || 9090);
-    try { startMetricsServer({ port, enabled: true }); } catch (e) { console.error('Failed to start metrics server:', e); }
+    try {
+      startMetricsServer({ port, enabled: true });
+    } catch (e) {
+      console.error("Failed to start metrics server:", e);
+    }
   }
 })();
 
 export async function processBatchWithCostOptimization(
-  supabase: SupabaseClient, 
+  supabase: SupabaseClient,
   batch: ScrapingJob[],
-  options: { enableFrontendSync?: boolean; frontendTable?: string } = {}
+  options: { enableFrontendSync?: boolean; frontendTable?: string } = {},
 ) {
   const results: Array<Record<string, unknown>> = [];
   const frontendProperties: any[] = [];
-  const { enableFrontendSync = false, frontendTable = 'properties' } = options;
+  const { enableFrontendSync = false, frontendTable = "properties" } = options;
 
   for (const job of batch) {
     try {
       const startTime = Date.now();
 
       const priority = job.priority_score ? Number(job.priority_score) : 0;
-      const chosenModelKey = job.ai_model ? String(job.ai_model) : (priority >= 70 ? 'gpt-4-turbo-preview' : (priority >= 40 ? 'gpt-3.5-turbo-16k' : 'gpt-3.5-turbo'));
+      const chosenModelKey = job.ai_model
+        ? String(job.ai_model)
+        : (priority >= 70
+          ? "gpt-4-turbo-preview"
+          : (priority >= 40 ? "gpt-3.5-turbo-16k" : "gpt-3.5-turbo"));
 
-      const workerUrl = `${process.env.SUPABASE_URL}/functions/v1/scraper-worker`;
+      const workerUrl =
+        `${process.env.SUPABASE_URL}/functions/v1/scraper-worker`;
       const payload = {
         external_id: job.external_id,
         url: job.url,
@@ -80,10 +99,11 @@ export async function processBatchWithCostOptimization(
         ai_model: chosenModelKey,
       };
 
-      const workerResult = (await dispatchToWorker(workerUrl, payload, 2)) as WorkerResult;
+      const workerResult =
+        (await dispatchToWorker(workerUrl, payload, 2)) as WorkerResult;
       const duration = workerResult.duration ?? (Date.now() - startTime);
 
-      await supabase.rpc('update_scraping_metrics', {
+      await supabase.rpc("update_scraping_metrics", {
         p_external_id: job.external_id,
         p_success: workerResult.success === true,
         p_duration: duration,
@@ -92,91 +112,154 @@ export async function processBatchWithCostOptimization(
 
       // If worker returned usage metadata, record it
       try {
-  type UsageShape = { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number; estimated_cost?: number; model?: string };
-        const usage = ((workerResult as unknown) as { usage?: UsageShape })?.usage ?? null;
-        if (usage && typeof usage === 'object') {
+        type UsageShape = {
+          prompt_tokens?: number;
+          completion_tokens?: number;
+          total_tokens?: number;
+          estimated_cost?: number;
+          model?: string;
+        };
+        const usage =
+          ((workerResult as unknown) as { usage?: UsageShape })?.usage ?? null;
+        if (usage && typeof usage === "object") {
           const prompt = Number(usage.prompt_tokens ?? 0);
           const completion = Number(usage.completion_tokens ?? 0);
-          const model = String(usage.model ?? (chosenModelKey ?? 'gpt-3.5-turbo'));
-          const estimateModule = await import('./costs');
-          const estimateCostFromTokens = estimateModule.estimateCostFromTokens as (modelKey: string, promptTokens: number, completionTokens: number) => number;
-          const estimated = Number(usage.estimated_cost ?? estimateCostFromTokens(model, prompt, completion));
+          const model = String(
+            usage.model ?? (chosenModelKey ?? "gpt-3.5-turbo"),
+          );
+          const estimateModule = await import("./costs");
+          const estimateCostFromTokens = estimateModule
+            .estimateCostFromTokens as (
+              modelKey: string,
+              promptTokens: number,
+              completionTokens: number,
+            ) => number;
+          const estimated = Number(
+            usage.estimated_cost ??
+              estimateCostFromTokens(model, prompt, completion),
+          );
           const today = new Date().toISOString().slice(0, 10);
-          await supabase.rpc('rpc_inc_scraping_costs', {
+          await supabase.rpc("rpc_inc_scraping_costs", {
             p_date: today,
             p_properties_scraped: 1,
             p_ai_requests: 1,
             p_tokens_used: prompt + completion,
             p_estimated_cost: estimated,
-            p_details: { model, prompt_tokens: prompt, completion_tokens: completion },
+            p_details: {
+              model,
+              prompt_tokens: prompt,
+              completion_tokens: completion,
+            },
           });
         }
       } catch (e) {
-        console.error('Failed to record scraping cost in processor:', e);
+        console.error("Failed to record scraping cost in processor:", e);
       }
 
-      const newStatus = workerResult.success ? 'completed' : 'failed';
-      await supabase.from('scraping_queue').update({ status: newStatus, completed_at: new Date().toISOString() }).eq('external_id', job.external_id).eq('id', job.queue_id);
+      const newStatus = workerResult.success ? "completed" : "failed";
+      await supabase.from("scraping_queue").update({
+        status: newStatus,
+        completed_at: new Date().toISOString(),
+      }).eq("external_id", job.external_id).eq("id", job.queue_id);
 
       // If successful and frontend sync is enabled, prepare for transformation
       if (workerResult.success && enableFrontendSync && workerResult.data) {
         try {
           const scrapedDataRaw = {
             external_id: job.external_id,
-            property_id: String(job.property_id || job.external_id.split('_')[0] || ''),
-            unit_number: String(job.unit_number || job.external_id.split('_')[1] || '1'),
+            property_id: String(
+              job.property_id || job.external_id.split("_")[0] || "",
+            ),
+            unit_number: String(
+              job.unit_number || job.external_id.split("_")[1] || "1",
+            ),
             property_source_id: job.property_source_id,
-            source: String(job.source || 'unknown'),
-            website_name: String(workerResult.data.website_name || job.website_name || ''),
-            name: String(workerResult.data.name || job.name || ''),
-            address: String(workerResult.data.address || job.address || ''),
-            city: String(workerResult.data.city || job.city || ''),
-            state: String(workerResult.data.state || job.state || ''),
-            current_price: Number(workerResult.data.current_price || job.current_price || 0),
+            source: String(job.source || "unknown"),
+            website_name: String(
+              workerResult.data.website_name || job.website_name || "",
+            ),
+            name: String(workerResult.data.name || job.name || ""),
+            address: String(workerResult.data.address || job.address || ""),
+            city: String(workerResult.data.city || job.city || ""),
+            state: String(workerResult.data.state || job.state || ""),
+            current_price: Number(
+              workerResult.data.current_price || job.current_price || 0,
+            ),
             bedrooms: Number(workerResult.data.bedrooms || job.bedrooms || 0),
-            bathrooms: Number(workerResult.data.bathrooms || job.bathrooms || 1),
-            square_feet: workerResult.data.square_feet ? Number(workerResult.data.square_feet) : undefined,
-            listing_url: String(job.listing_url || job.url || ''),
-            status: String(job.status || 'active'),
-            free_rent_concessions: workerResult.data.free_rent_concessions ? String(workerResult.data.free_rent_concessions) : undefined,
-            application_fee: workerResult.data.application_fee ? Number(workerResult.data.application_fee) : undefined,
+            bathrooms: Number(
+              workerResult.data.bathrooms || job.bathrooms || 1,
+            ),
+            square_feet: workerResult.data.square_feet
+              ? Number(workerResult.data.square_feet)
+              : undefined,
+            listing_url: String(job.listing_url || job.url || ""),
+            status: String(job.status || "active"),
+            free_rent_concessions: workerResult.data.free_rent_concessions
+              ? String(workerResult.data.free_rent_concessions)
+              : undefined,
+            application_fee: workerResult.data.application_fee
+              ? Number(workerResult.data.application_fee)
+              : undefined,
             admin_fee_waived: Boolean(workerResult.data.admin_fee_waived),
-            admin_fee_amount: workerResult.data.admin_fee_amount ? Number(workerResult.data.admin_fee_amount) : undefined,
+            admin_fee_amount: workerResult.data.admin_fee_amount
+              ? Number(workerResult.data.admin_fee_amount)
+              : undefined,
           } as unknown;
 
           const parsed = ScrapedPropertySchema.safeParse(scrapedDataRaw);
           if (!parsed.success) {
             // classify as schema violation (non-retryable) and record for manual review
-            console.warn(`Schema validation failed for ${job.external_id}:`, parsed.error.format());
+            console.warn(
+              `Schema validation failed for ${job.external_id}:`,
+              parsed.error.format(),
+            );
             validationFailCounter.inc();
-            validationFailByReason.inc({ reason: 'zod_error' }, 1);
+            validationFailByReason.inc({ reason: "zod_error" }, 1);
             try {
-              await supabase.from('failed_scrapes').insert({ external_id: job.external_id, payload: scrapedDataRaw, error: parsed.error.flatten(), created_at: new Date().toISOString() });
+              await supabase.from("failed_scrapes").insert({
+                external_id: job.external_id,
+                payload: scrapedDataRaw,
+                error: parsed.error.flatten(),
+                created_at: new Date().toISOString(),
+              });
             } catch (dbErr) {
-              console.error('Failed to write schema violation to failed_scrapes:', dbErr);
+              console.error(
+                "Failed to write schema violation to failed_scrapes:",
+                dbErr,
+              );
             }
           } else {
             validationPassCounter.inc();
             const scrapedData = parsed.data as ScrapedPropertyType;
-            const frontendProperty = await transformScrapedToFrontendFormat(scrapedData as ScrapedPropertyData);
+            const frontendProperty = await transformScrapedToFrontendFormat(
+              scrapedData as ScrapedPropertyData,
+            );
             frontendProperties.push(frontendProperty);
           }
         } catch (transformError) {
-          console.error(`Error transforming property ${job.external_id} for frontend:`, transformError);
+          console.error(
+            `Error transforming property ${job.external_id} for frontend:`,
+            transformError,
+          );
         }
       }
 
-      results.push({ success: workerResult.success === true, job, result: workerResult });
-      } catch (err) {
-      await supabase.rpc('update_scraping_metrics', {
+      results.push({
+        success: workerResult.success === true,
+        job,
+        result: workerResult,
+      });
+    } catch (err) {
+      await supabase.rpc("update_scraping_metrics", {
         p_external_id: job.external_id,
         p_success: false,
         p_duration: 0,
         p_price_changed: false,
       });
 
-      const msg = (err && typeof err === 'object' && 'message' in (err as Record<string, unknown>))
-        ? String((err as Record<string, unknown>)['message'])
+      const msg = (err && typeof err === "object" &&
+          "message" in (err as Record<string, unknown>))
+        ? String((err as Record<string, unknown>)["message"])
         : String(err);
       results.push({ success: false, job, error: msg });
     }
@@ -185,26 +268,32 @@ export async function processBatchWithCostOptimization(
   // Sync to frontend schema if enabled and we have properties to sync
   if (enableFrontendSync && frontendProperties.length > 0) {
     try {
-      const syncResult = await syncToFrontendSchema(supabase, frontendProperties, frontendTable);
-      console.log(`Frontend sync completed: ${syncResult.success} success, ${syncResult.errors} errors`);
-      
+      const syncResult = await syncToFrontendSchema(
+        supabase,
+        frontendProperties,
+        frontendTable,
+      );
+      console.log(
+        `Frontend sync completed: ${syncResult.success} success, ${syncResult.errors} errors`,
+      );
+
       // Add sync results to the overall results
       results.push({
         frontend_sync: {
           enabled: true,
           properties_synced: syncResult.success,
           sync_errors: syncResult.errors,
-          details: syncResult.details
-        }
+          details: syncResult.details,
+        },
       });
     } catch (syncError) {
-      console.error('Error syncing to frontend schema:', syncError);
+      console.error("Error syncing to frontend schema:", syncError);
       results.push({
         frontend_sync: {
           enabled: true,
           error: String(syncError),
-          properties_attempted: frontendProperties.length
-        }
+          properties_attempted: frontendProperties.length,
+        },
       });
     }
   }
