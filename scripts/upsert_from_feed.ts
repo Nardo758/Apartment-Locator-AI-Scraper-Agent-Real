@@ -1,4 +1,4 @@
-import SupabaseClientWrapper from '../src/tools/supabaseClient';
+import SupabaseClientWrapper from "../src/tools/supabaseClient";
 
 // Minimal Apartment shape used by this script to avoid importing internal types
 type Apartment = {
@@ -16,24 +16,24 @@ type Apartment = {
   amenities?: string[];
   images?: string[];
 };
-import * as process from 'node:process';
+import * as process from "node:process";
 
 function scrapeApartments(): Apartment[] {
   // Replace this with real scraping logic or import an existing scraper.
   return [
     {
-      external_id: 'ts-example-1',
-      source: 'ts_example',
-      title: 'TS 1BR',
-      address: '1 TS Way',
-      city: 'Metropolis',
-      state: 'NY',
-      zip_code: '10001',
+      external_id: "ts-example-1",
+      source: "ts_example",
+      title: "TS 1BR",
+      address: "1 TS Way",
+      city: "Metropolis",
+      state: "NY",
+      zip_code: "10001",
       rent_price: 1500,
       bedrooms: 1,
       bathrooms: 1,
       square_feet: 650,
-      amenities: ['elevator', 'gym'],
+      amenities: ["elevator", "gym"],
     },
   ];
 }
@@ -45,17 +45,22 @@ async function main() {
 
   for (const apt of apartments) {
     if (dryRun) {
-      console.log('DRY_RUN payload:', apt);
+      console.log("DRY_RUN payload:", apt);
       continue;
     }
     const res = await supa.upsertApartment(apt);
-    console.log('Upserted:', res);
+    console.log("Upserted:", res);
   }
 
   if (!dryRun) {
-    const deactivated = await supa.deactivateOldListings('ts_example', 14);
-    console.log('Deactivated:', deactivated);
+    const deactivated = await supa.deactivateOldListings("ts_example", 14);
+    console.log("Deactivated:", deactivated);
   }
 }
 
-if (typeof require !== 'undefined' && require.main === module) main().catch((e) => { console.error(e); process.exit(1); });
+if (typeof require !== "undefined" && require.main === module) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

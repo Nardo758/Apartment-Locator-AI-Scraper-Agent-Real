@@ -4,18 +4,26 @@
 // For each queued row in scraping_queue: perform a GET to the URL (timeout 10s) and mark as completed/failed accordingly.
 
 import process from "node:process";
-const { createClient } = require('@supabase/supabase-js');
-const fetch = require('node-fetch');
+const { createClient } = require("@supabase/supabase-js");
+const fetch = require("node-fetch");
 
 (async () => {
-  const SUPABASE_URL = process.env.SUPABASE_URL || 'http://127.0.0.1:54321';
-  const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-  if (!KEY) { console.error('SUPABASE_SERVICE_ROLE_KEY not set'); process.exit(1); }
+  const SUPABASE_URL = process.env.SUPABASE_URL || "http://127.0.0.1:54321";
+  const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  if (!KEY) {
+    console.error("SUPABASE_SERVICE_ROLE_KEY not set");
+    process.exit(1);
+  }
   const supabase = createClient(SUPABASE_URL, KEY);
 
   try {
-    const { data: rows, error } = await supabase.from('scraping_queue').select('id,external_id,url,status').eq('status','queued').limit(50);
-    if (error) { console.error('Failed to fetch queued rows:', error); process.exit(1); }
+    const { data: rows, error } = await supabase.from("scraping_queue").select(
+      "id,external_id,url,status",
+    ).eq("status", "queued").limit(50);
+    if (error) {
+      console.error("Failed to fetch queued rows:", error);
+      process.exit(1);
+    }
     console.log(`Found ${rows.length} queued rows.`);
 
     for (const row of rows) {
@@ -23,21 +31,30 @@ const fetch = require('node-fetch');
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 10000);
-        const res = await fetch(row.url, { method: 'GET', signal: controller.signal });
+        const res = await fetch(row.url, {
+          method: "GET",
+          signal: controller.signal,
+        });
         clearTimeout(timeout);
         const ok = res.ok;
         const statusCode = res.status;
         console.log(` -> HTTP ${statusCode}`);
-        const newStatus = ok ? 'completed' : 'failed';
-        await supabase.from('scraping_queue').update({ status: newStatus, completed_at: new Date().toISOString() }).eq('id', row.id);
-      } catch (e) {
+        const newStatus = ok ? "completed" : "failed";
+        await supabase.from("scraping_queue").update({
+          status: newStatus,
+          completed_at: new Date().toISOString(),
+        }).eq("id", row.id);
+      } catch (_e) {
         console.warn(` -> Fetch error for ${row.external_id}:`, e.message || e);
-        await supabase.from('scraping_queue').update({ status: 'failed', completed_at: new Date().toISOString() }).eq('id', row.id);
+        await supabase.from("scraping_queue").update({
+          status: "failed",
+          completed_at: new Date().toISOString(),
+        }).eq("id", row.id);
       }
     }
 
-    console.log('Processing complete.');
-  } catch (e) {
-    console.error('Error processing queue:', e);
+    console.log("Processing complete.");
+  } catch (_e) {
+    console.error("Error processing queue:", e);
   }
 })();

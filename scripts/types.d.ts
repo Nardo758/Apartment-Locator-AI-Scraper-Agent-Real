@@ -1,1 +1,1 @@
-declare module 'node-geocoder';
+declare module "node-geocoder";

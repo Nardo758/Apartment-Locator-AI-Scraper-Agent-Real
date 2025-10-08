@@ -25,7 +25,7 @@ interface DeployConfig {
 
 async function validateConfig(): Promise<void> {
   console.log("🔍 Validating deployment configuration...");
-  
+
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -33,28 +33,32 @@ async function validateConfig(): Promise<void> {
   try {
     const configText = await Deno.readTextFile("deploy-control.json");
     const config: DeployConfig = JSON.parse(configText);
-    
+
     console.log("✅ deploy-control.json found and parsed successfully");
-    
+
     // Validate Supabase configuration
     if (!config.supabase?.projectId) {
       warnings.push("Supabase project ID not specified in config");
     }
-    
+
     // Validate scraper configuration
     if (config.scraper) {
-      if (config.scraper.batchSize && (config.scraper.batchSize < 1 || config.scraper.batchSize > 1000)) {
+      if (
+        config.scraper.batchSize &&
+        (config.scraper.batchSize < 1 || config.scraper.batchSize > 1000)
+      ) {
         errors.push("Batch size must be between 1 and 1000");
       }
-      
+
       if (config.scraper.dailyCostLimit && config.scraper.dailyCostLimit < 0) {
         errors.push("Daily cost limit cannot be negative");
       }
     }
-    
   } catch (error) {
     if (error instanceof Deno.errors.NotFound) {
-      warnings.push("deploy-control.json not found, using default configuration");
+      warnings.push(
+        "deploy-control.json not found, using default configuration",
+      );
     } else {
       errors.push(`Failed to parse deploy-control.json: ${error.message}`);
     }
@@ -63,7 +67,7 @@ async function validateConfig(): Promise<void> {
   // Check for required deployment files
   const requiredFiles = [
     "deno.json",
-    "src/main.ts"
+    "src/main.ts",
   ];
 
   for (const file of requiredFiles) {
@@ -80,7 +84,9 @@ async function validateConfig(): Promise<void> {
     await Deno.stat("supabase/config.toml");
     console.log("✅ Supabase configuration found");
   } catch {
-    warnings.push("supabase/config.toml not found - make sure Supabase is initialized");
+    warnings.push(
+      "supabase/config.toml not found - make sure Supabase is initialized",
+    );
   }
 
   // Check for database migrations
@@ -109,7 +115,11 @@ async function validateConfig(): Promise<void> {
       }
     }
     if (functions.length > 0) {
-      console.log(`✅ Found ${functions.length} Edge Function(s): ${functions.join(", ")}`);
+      console.log(
+        `✅ Found ${functions.length} Edge Function(s): ${
+          functions.join(", ")
+        }`,
+      );
     } else {
       warnings.push("No Edge Functions found");
     }
@@ -119,21 +129,21 @@ async function validateConfig(): Promise<void> {
 
   // Print results
   console.log("\n📊 Validation Results:");
-  
+
   if (warnings.length > 0) {
     console.log("\n⚠️  Warnings:");
-    warnings.forEach(warning => console.log(`   • ${warning}`));
+    warnings.forEach((warning) => console.log(`   • ${warning}`));
   }
-  
+
   if (errors.length > 0) {
     console.log("\n❌ Errors:");
-    errors.forEach(error => console.log(`   • ${error}`));
+    errors.forEach((error) => console.log(`   • ${error}`));
     console.log("\n💥 Configuration validation failed!");
     Deno.exit(1);
   }
-  
+
   console.log("\n✅ Configuration validation passed!");
-  
+
   if (warnings.length === 0) {
     console.log("🎉 No warnings - configuration is optimal!");
   }
