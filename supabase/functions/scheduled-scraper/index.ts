@@ -2,7 +2,7 @@
 // supabase/functions/scheduled-scraper/index.ts
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.0";
+import { createTypedClient } from "../../../src/lib/supabase-client";
 
 interface DeploymentConfig {
   scraping_enabled: boolean;
@@ -43,9 +43,9 @@ serve(async (req: Request) => {
     console.log("🚀 Scheduled scraper started");
 
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabase = createTypedClient(supabaseUrl, supabaseKey);
 
     // Parse request body
     const requestBody = await req.json().catch(() => ({}));
