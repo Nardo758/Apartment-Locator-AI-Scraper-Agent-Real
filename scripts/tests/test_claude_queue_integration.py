@@ -24,7 +24,11 @@ def run_query(q):
 
 def main():
     print('Calling claude-queue-builder...')
-    resp = requests.post(FUNC_URL, json={'test_mode': False}, timeout=30)
+    headers = {}
+    if os.environ.get('SUPABASE_SERVICE_ROLE_KEY'):
+        headers['Authorization'] = f"Bearer {os.environ.get('SUPABASE_SERVICE_ROLE_KEY')}"
+        headers['apikey'] = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
+    resp = requests.post(FUNC_URL, json={'test_mode': False}, headers=headers, timeout=30)
     print('Function status:', resp.status_code)
     print(resp.text)
 
