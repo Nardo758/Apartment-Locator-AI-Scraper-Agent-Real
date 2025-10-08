@@ -1,3 +1,4 @@
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 
 // Read Supabase credentials from environment variables. Avoid committing keys to source.

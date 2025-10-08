@@ -10,6 +10,7 @@ Implements the canonical JSONL schema and features:
 - writes immutable files to tmp/training_batches/<batch-id>.jsonl
 */
 
+import process from "node:process";
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');

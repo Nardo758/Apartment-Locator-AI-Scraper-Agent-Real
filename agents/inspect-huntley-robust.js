@@ -23,25 +23,25 @@ const path = require('path');
                     await el.click({ timeout: 2000 }).catch(()=>{});
                     await page.waitForTimeout(300);
                 }
-            } catch (e) {}
+            } catch (_e) { /* ignore overlay close failures */ }
         }
 
         // Scroll slowly to trigger lazy load
         for (let i=0;i<8;i++){
-            await page.evaluate(() => window.scrollBy(0, window.innerHeight/2));
+            await page.evaluate(() => globalThis.scrollBy(0, globalThis.innerHeight/2));
             await page.waitForTimeout(500);
         }
 
         // Wait for likely container selectors
         const candidateSelectors = ['.unit-card', '.floor-plan', '.floorplan-container', '.apartment-listing', 'article', 'section'];
-        let found = null;
+    let _found = null;
         for (const sel of candidateSelectors) {
             try {
                 await page.waitForSelector(sel, { timeout: 3000 });
                 found = sel;
                 console.log('Found candidate selector on page:', sel);
                 break;
-            } catch (e) {
+            } catch (_e) {
                 // not found, continue
             }
         }
@@ -75,8 +75,8 @@ const path = require('path');
         fs.writeFileSync(htmlPath, htmlSnippet, 'utf8');
         console.log('💾 Saved page HTML to', htmlPath);
 
-    } catch (e) {
-        console.error('Error during robust inspection:', e);
+    } catch (err) {
+        console.error('Error during robust inspection:', err);
     } finally {
         // keep browser open a bit for manual inspection then close
         await page.waitForTimeout(2000);

@@ -2,6 +2,7 @@
 
 import { ClaudeService } from './src/services/claude-service-node';
 import * as dotenv from 'dotenv';
+import process from "node:process";
 
 // Load environment variables from .env file
 try {

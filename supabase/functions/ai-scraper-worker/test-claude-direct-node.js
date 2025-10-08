@@ -1,4 +1,5 @@
 // test-claude-direct-node.js - Direct Claude API test using Node.js
+import process from "node:process";
 const fs = require('fs');
 const path = require('path');
 

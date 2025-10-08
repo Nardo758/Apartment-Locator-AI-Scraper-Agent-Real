@@ -19,7 +19,7 @@ async function testHuntleyInteractor() {
                     if (el && typeof el.remove === 'function') try { el.remove(); } catch(e) {}
                 });
             });
-        } catch (e) { /* ignore overlay close errors */ }
+    } catch (_e) { /* ignore overlay close errors */ }
 
         // Wait for floorplan container and scroll to trigger lazy load
         try {
@@ -29,7 +29,7 @@ async function testHuntleyInteractor() {
         }
 
         for (let i = 0; i < 6; i++) {
-            await page.evaluate(() => window.scrollBy(0, window.innerHeight * 0.6));
+            await page.evaluate(() => globalThis.scrollBy(0, globalThis.innerHeight * 0.6));
             await page.waitForTimeout(400);
         }
 
@@ -54,12 +54,12 @@ async function testHuntleyInteractor() {
         let clickResult = null;
         try {
             clickResult = await page.evaluate(async (containerId) => {
-                if (!window.RobustElementInteractor) throw new Error('RobustElementInteractor not available');
-                const interactor = new window.RobustElementInteractor({ timeout: 15000, logging: true });
+                if (!globalThis.RobustElementInteractor) throw new Error('RobustElementInteractor not available');
+                const interactor = new globalThis.RobustElementInteractor({ timeout: 15000, logging: true });
                 return await interactor.interact(`#${containerId}`, ['a.track-apply', 'a.floorplan-action-button', 'a[data-selenium-id^="floorplan-"]', 'a.btn-primary'], 'click');
             }, firstContainerId);
-        } catch (e) {
-            console.warn('Interactor click error:', e && e.message ? e.message : e);
+        } catch (_e) {
+            console.warn('Interactor click error:', _e && _e.message ? _e.message : _e);
         }
 
         console.log('✅ Click result:', clickResult);

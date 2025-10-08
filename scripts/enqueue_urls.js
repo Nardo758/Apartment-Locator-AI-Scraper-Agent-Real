@@ -1,6 +1,7 @@
 // scripts/enqueue_urls.js
 // Enqueue provided property URLs into scraping_queue with required fields
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const path = require('path');

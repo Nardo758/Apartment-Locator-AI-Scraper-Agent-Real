@@ -303,7 +303,7 @@ INSERT INTO "public"."worker_health" ("worker_name", "status", "last_ping", "ver
 	('ai-scraper-worker', 'healthy', '2025-10-02 21:45:37.308723+00', '1.0.0', '{"description": "AI processing worker"}'),
 	('scraper-orchestrator', 'healthy', '2025-10-02 21:45:37.308723+00', '1.0.0', '{"description": "Batch orchestration worker"}'),
 	('scraper-worker', 'healthy', '2025-10-02 21:45:37.308723+00', '1.0.0', '{"description": "Data collection worker"}'),
-	('command-station', 'healthy', '2025-10-02 21:45:37.308723+00', '1.0.0', '{"description": "Command and control interface"}');
+	('command-center', 'healthy', '2025-10-02 21:45:37.308723+00', '1.0.0', '{"description": "Command and control interface"}');
 
 
 --

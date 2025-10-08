@@ -2,6 +2,7 @@
 // Test integration with actual scraped data from your database
 
 import { readFileSync } from 'fs';
+import process from "node:process";
 
 // Test configuration
 const TEST_CONFIG = {

@@ -2,6 +2,7 @@
 // Minimal smoke test for the RPCs. Usage in PowerShell:
 // $env:SUPABASE_URL='https://...'; $env:SUPABASE_SERVICE_ROLE_KEY='...'; node ./scripts/test_rpc.js
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 
 const url = process.env.SUPABASE_URL;

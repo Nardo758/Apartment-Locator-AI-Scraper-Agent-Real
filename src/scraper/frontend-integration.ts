@@ -3,6 +3,7 @@
 
 import { frontendDataService } from '../services/frontend-data-service';
 import { createClient } from '@supabase/supabase-js';
+import process from "node:process";
 
 interface ScraperResult {
   success: boolean;

@@ -1,3 +1,4 @@
+import process from "node:process";
 (async ()=>{
   const SUPABASE_URL='http://127.0.0.1:54321';
   const KEY=process.env.SUPABASE_SERVICE_ROLE_KEY || '';

@@ -1,4 +1,14 @@
-// command-station/index.ts - MAIN COMMAND CENTER
+/*
+  ARCHIVE NOTICE
+  ----------------
+  This directory (`command-station/`) is an archived copy of the previous
+  Command Station implementation. The active function is `command-center` under
+  `supabase/functions/command-center/`. Do NOT deploy or reference the files
+  in this folder for production. They are preserved only for historical
+  reference.
+*/
+
+// command-center/index.ts - MAIN COMMAND CENTER
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 import { Dashboard } from './dashboard.ts'
 import { Controller } from './controller.ts'
@@ -58,7 +68,7 @@ serve(async (req: Request) => {
             'POST /config - Update configuration',
             'GET /health - Health check'
           ],
-          documentation: 'https://github.com/your-repo/docs/command-station.md'
+          documentation: 'https://github.com/your-repo/docs/command-center.md'
         }), {
           headers: { 'Content-Type': 'application/json' },
           status: 200

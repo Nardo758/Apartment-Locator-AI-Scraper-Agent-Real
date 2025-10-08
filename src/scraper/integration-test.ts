@@ -12,6 +12,7 @@ import {
   batchTransformProperties,
 } from './data-transformer';
 import type { ScrapedPropertyData as ScrapedPropertyDataType, FrontendProperty as FrontendPropertyType } from '../types/frontend';
+import process from "node:process";
 
 // Test configuration
 const TEST_CONFIG = {

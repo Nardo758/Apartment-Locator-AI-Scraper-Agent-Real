@@ -1,3 +1,4 @@
+import process from "node:process";
 const NodeGeocoder = require('node-geocoder');
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');

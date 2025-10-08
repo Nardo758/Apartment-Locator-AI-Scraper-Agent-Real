@@ -1,5 +1,6 @@
 import { ApartmentScraper } from './scraper/index';
 import { startMetricsServer } from './observability/server';
+import process from "node:process";
 
 async function main() {
     const enableMetrics = String(process.env.ENABLE_METRICS || 'false').toLowerCase() === 'true';

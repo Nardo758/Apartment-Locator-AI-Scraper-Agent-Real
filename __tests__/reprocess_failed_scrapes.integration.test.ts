@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import process from "node:process";
 
 // This integration test is skipped unless SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided.
 const SUPABASE_URL = process.env.SUPABASE_URL;

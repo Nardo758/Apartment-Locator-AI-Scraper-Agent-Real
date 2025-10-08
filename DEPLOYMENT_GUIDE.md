@@ -187,7 +187,7 @@ console.log(`Processed ${jobs.length} jobs, transformed ${frontendProperties?.le
 supabase functions deploy ai-scraper-worker
 
 # Deploy command station
-supabase functions deploy command-station
+  supabase functions deploy command-center
 
 # Deploy scraper orchestrator
 supabase functions deploy scraper-orchestrator
@@ -208,7 +208,7 @@ supabase secrets set DAILY_COST_LIMIT=50
 
 ```bash
 # Test command station
-curl "https://your-project.supabase.co/functions/v1/command-station/status"
+  curl "https://your-project.supabase.co/functions/v1/command-center/status"
 
 # Test AI scraper worker
 curl -X POST "https://your-project.supabase.co/functions/v1/ai-scraper-worker" \
@@ -216,7 +216,7 @@ curl -X POST "https://your-project.supabase.co/functions/v1/ai-scraper-worker" \
   -d '{"test": true}'
 
 # Test batch processing
-curl -X POST "https://your-project.supabase.co/functions/v1/command-station/run-now"
+curl -X POST "https://your-project.supabase.co/functions/v1/command-center/run-now"
 ```
 
 ## 📊 Step 7: Monitor Performance

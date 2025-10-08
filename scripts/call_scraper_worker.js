@@ -1,3 +1,4 @@
+import process from "node:process";
 (async () => {
   try {
     const url = 'http://127.0.0.1:54321/functions/v1/scraper-worker';

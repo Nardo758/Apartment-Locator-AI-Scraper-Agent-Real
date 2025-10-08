@@ -2,6 +2,7 @@
 // Triggers the Supabase edge function 'scraper-orchestrator' (POST)
 // Usage: node scripts/call_orchestrator_processor.js
 
+import process from "node:process";
 (async () => {
   try {
     // Load .env.local if present

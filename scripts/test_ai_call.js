@@ -1,3 +1,4 @@
+import process from "node:process";
 (async () => {
   try {
     const url = 'http://127.0.0.1:54321/functions/v1/ai-scraper-worker';
@@ -21,8 +22,8 @@
       console.log('Non-JSON response:');
       console.log(text);
     }
-  } catch (err) {
-    console.error('Request failed:', err);
-    process.exit(1);
-  }
+    } catch (_err) {
+      console.error('Request failed:', _err);
+      process.exit(1);
+    }
 })();

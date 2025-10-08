@@ -1,5 +1,6 @@
 import NodeGeocoder from 'node-geocoder';
 import { createClient } from '@supabase/supabase-js';
+import process from "node:process";
 
 // Usage: set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in env
 // Optional env:

@@ -6,7 +6,7 @@ Central command and control interface for the real estate scraping system. Provi
 
 The Command Station is built with a modular architecture:
 
-    command-station/
+  command-center/
     ├── 🔧 index.ts             # Main command handler & routing
     ├── 🎛️ dashboard.ts         # Real-time status monitoring
     ├── ⚙️ controller.ts        # System control operations
@@ -19,24 +19,24 @@ The Command Station is built with a modular architecture:
 ### 1. Deploy the Function
 
     # Deploy to Supabase
-    supabase functions deploy command-station --no-verify-jwt
+  supabase functions deploy command-center --no-verify-jwt
 
     # Or deploy with verification (if auth is required)
-    supabase functions deploy command-station
+  supabase functions deploy command-center
 
 ### 2. Basic Usage
 
     # Check system status
-    curl "https://your-project.supabase.co/functions/v1/command-station/status"
+    curl "https://your-project.supabase.co/functions/v1/command-center/status"
 
     # Enable scraping
-    curl -X POST "https://your-project.supabase.co/functions/v1/command-station/enable-scraping"
+    curl -X POST "https://your-project.supabase.co/functions/v1/command-center/enable-scraping"
 
     # Run immediate batch
-    curl -X POST "https://your-project.supabase.co/functions/v1/command-station/run-now"
+    curl -X POST "https://your-project.supabase.co/functions/v1/command-center/run-now"
 
     # Get help
-  curl "<https://your-project.supabase.co/functions/v1/command-station/help>"
+  curl "<https://your-project.supabase.co/functions/v1/command-center/help>"
 
 ## 📡 API Endpoints
 
@@ -160,7 +160,7 @@ The `/status` endpoint provides a comprehensive system overview:
 
 ### Update Configuration
 
-    curl -X POST "https://your-project.supabase.co/functions/v1/command-station/config" \
+    curl -X POST "https://your-project.supabase.co/functions/v1/command-center/config" \
       -H "Content-Type: application/json" \
       -d '{
         "batchSize": 25,
@@ -180,33 +180,33 @@ The `/status` endpoint provides a comprehensive system overview:
 ### Get Trend Data
 
     # Get 24-hour error rate trend
-    curl "https://your-project.supabase.co/functions/v1/command-station/trends/error_rate?range=24h&granularity=1h"
+    curl "https://your-project.supabase.co/functions/v1/command-center/trends/error_rate?range=24h&granularity=1h"
 
     # Get 7-day cost trend
-    curl "https://your-project.supabase.co/functions/v1/command-station/trends/daily_cost?range=7d&granularity=6h"
+    curl "https://your-project.supabase.co/functions/v1/command-center/trends/daily_cost?range=7d&granularity=6h"
 
 ## 🚨 Control Operations
 
 ### Enable/Disable System
 
     # Enable scraping
-    curl -X POST "https://your-project.supabase.co/functions/v1/command-station/enable-scraping"
+    curl -X POST "https://your-project.supabase.co/functions/v1/command-center/enable-scraping"
 
     # Disable scraping
-    curl -X POST "https://your-project.supabase.co/functions/v1/command-station/disable-scraping"
+    curl -X POST "https://your-project.supabase.co/functions/v1/command-center/disable-scraping"
 
 ### Batch Processing
 
     # Trigger immediate batch
-    curl -X POST "https://your-project.supabase.co/functions/v1/command-station/run-now"
+    curl -X POST "https://your-project.supabase.co/functions/v1/command-center/run-now"
 
     # Check batch status
-    curl "https://your-project.supabase.co/functions/v1/command-station/batch/batch_1234567890_abc123"
+    curl "https://your-project.supabase.co/functions/v1/command-center/batch/batch_1234567890_abc123"
 
 ### Emergency Operations
 
     # Emergency stop (halts all operations)
-    curl -X POST "https://your-project.supabase.co/functions/v1/command-station/emergency-stop"
+    curl -X POST "https://your-project.supabase.co/functions/v1/command-center/emergency-stop"
 
 ## 🔧 Database Schema Requirements
 
@@ -293,26 +293,26 @@ Required environment variables:
   cd /path/to/your/project
 
   # Deploy command station
-  supabase functions deploy command-station --no-verify-jwt
+  supabase functions deploy command-center --no-verify-jwt
 
   # Verify deployment
-  curl "https://your-project.supabase.co/functions/v1/command-station/health"
+  curl "https://your-project.supabase.co/functions/v1/command-center/health"
 
 ### Automated Deployment
 
 Create a deployment script:
 
     #!/bin/bash
-    # deploy-command-station.sh
+  # deploy-command-center.sh
 
     echo "🚀 Deploying Command Station..."
 
     # Deploy function
-    supabase functions deploy command-station --no-verify-jwt
+  supabase functions deploy command-center --no-verify-jwt
 
     # Test deployment
     echo "🔍 Testing deployment..."
-    HEALTH_CHECK=$(curl -s "https://your-project.supabase.co/functions/v1/command-station/health")
+    HEALTH_CHECK=$(curl -s "https://your-project.supabase.co/functions/v1/command-center/health")
 
     if echo "$HEALTH_CHECK" | grep -q "healthy"; then
       echo "✅ Command Station deployed successfully!"
@@ -322,7 +322,7 @@ Create a deployment script:
     fi
 
     echo "📊 Getting system status..."
-    curl "https://your-project.supabase.co/functions/v1/command-station/status" | jq '.'
+    curl "https://your-project.supabase.co/functions/v1/command-center/status" | jq '.'
 
     echo "🎯 Command Station is ready!"
 
@@ -352,7 +352,7 @@ Regular health checks monitor:
 1. **Function not responding**
 
   # Check function logs
-  supabase functions logs command-station
+  supabase functions logs command-center
 
 2. **Database connection errors**
 
@@ -363,10 +363,10 @@ Regular health checks monitor:
 3. **High error rates**
 
   # Check system status
-  curl "https://your-project.supabase.co/functions/v1/command-station/status"
+  curl "https://your-project.supabase.co/functions/v1/command-center/status"
 
   # Get detailed metrics
-  curl "https://your-project.supabase.co/functions/v1/command-station/metrics"
+  curl "https://your-project.supabase.co/functions/v1/command-center/metrics"
 
 ### Debug Mode
 
@@ -410,7 +410,7 @@ Integrate with external monitoring tools:
 
 For complete API documentation, visit:
 
-  curl "https://your-project.supabase.co/functions/v1/command-station/help"
+  curl "https://your-project.supabase.co/functions/v1/command-center/help"
 
 ## 🔄 Updates & Maintenance
 
@@ -426,7 +426,7 @@ To update the Command Station:
 
 1. Update the code
 
-2. Redeploy: `supabase functions deploy command-station`
+2. Redeploy: `supabase functions deploy command-center`
 
 3. Test: `curl .../health`
 
@@ -439,7 +439,7 @@ To update the Command Station:
 
 For issues or questions:
 
-1. Check the logs: `supabase functions logs command-station`
+1. Check the logs: `supabase functions logs command-center`
 
 2. Review system status: `GET /status`
 

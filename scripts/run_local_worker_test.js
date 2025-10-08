@@ -2,6 +2,7 @@
 // Executes the core upsert path of ai-scraper-worker locally using the service role key.
 // Usage: node scripts/run_local_worker_test.js [--frontendsync]
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js')
 const fs = require('fs')
 const path = require('path')

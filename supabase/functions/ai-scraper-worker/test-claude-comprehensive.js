@@ -1,4 +1,5 @@
 // test-claude-comprehensive.js - Comprehensive 100-property Claude test
+import process from "node:process";
 const fs = require('fs');
 
 // Realistic property scenarios based on actual rental websites

@@ -22,10 +22,10 @@ class PlaywrightInteractor {
 
         return await this.page.evaluate(async (args) => {
             // Use window.RobustElementInteractor defined by the injected script
-            if (!window.RobustElementInteractor) {
+            if (!globalThis.RobustElementInteractor) {
                 throw new Error('RobustElementInteractor not present in page context. Did you call injectInteractor()?');
             }
-            const interactor = new window.RobustElementInteractor({ timeout: args.timeout });
+            const interactor = new globalThis.RobustElementInteractor({ timeout: args.timeout });
             return await interactor.interact(args.containerSelector, args.elementSelectors, 'click');
         }, args);
     }
@@ -39,10 +39,10 @@ class PlaywrightInteractor {
         };
 
         return await this.page.evaluate(async (args) => {
-            if (!window.RobustElementInteractor) {
+            if (!globalThis.RobustElementInteractor) {
                 throw new Error('RobustElementInteractor not present in page context. Did you call injectInteractor()?');
             }
-            const interactor = new window.RobustElementInteractor({ timeout: args.timeout });
+            const interactor = new globalThis.RobustElementInteractor({ timeout: args.timeout });
             return await interactor.interact(args.containerSelector, args.elementSelectors, 'setValue', args.value);
         }, args);
     }

@@ -220,7 +220,7 @@ export class Controller {
         batch_id: batchId,
         batch_size: config.batchSize,
         estimated_duration: this.estimateBatchDuration(config.batchSize),
-        monitor_url: `/command-station/batch/${batchId}`,
+  monitor_url: `/command-center/batch/${batchId}`,
         warnings: limits.warnings
       }), {
         status: 200,

@@ -2,6 +2,7 @@
 // src/services/frontend-data-service.ts
 
 import { createClient } from '@supabase/supabase-js';
+import process from "node:process";
 
 interface ScrapedProperty {
   id: number;

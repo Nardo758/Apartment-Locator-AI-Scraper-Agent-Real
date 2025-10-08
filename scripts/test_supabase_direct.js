@@ -2,6 +2,7 @@
 // Usage: node scripts/test_supabase_direct.js
 // Optionally pass --upsert to perform a harmless upsert (not run by default)
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js')
 const fs = require('fs')
 const path = require('path')

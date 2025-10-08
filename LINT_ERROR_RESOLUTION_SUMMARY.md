@@ -16,17 +16,10 @@ This document summarizes the systematic resolution of TypeScript lint errors in 
 **Impact**: High - Improved type safety and code maintainability
 
 **Files Modified**:
-- `supabase/functions/ai-scraper-worker/index.ts`
-- `supabase/functions/command-station/config-manager.ts`
-- `supabase/functions/command-station/dashboard.ts`
-- `supabase/functions/command-station/metrics.ts`
-
-**Changes Made**:
-- Replaced all `any` types with proper TypeScript interfaces
 - Added `ScrapedPropertyData` interface for property data structures
-- Added `SystemEvent`, `BatchJob`, `ScrapeLog` interfaces for dashboard operations
-- Added `QueueMetric`, `Source`, `QualityRecord`, `CostRecord` interfaces for metrics
-- Improved Supabase client typing with proper generic types
+| `supabase/functions/command-center/config-manager.ts` | Fixed SupabaseClient typing | no-explicit-any |
+| `supabase/functions/command-center/dashboard.ts` | Added event/job interfaces | no-explicit-any |
+| `supabase/functions/command-center/metrics.ts` | Added metrics interfaces | no-explicit-any |
 
 ### 2. Prefer Const (`prefer-const`)
 **Errors Fixed**: 6
@@ -72,9 +65,9 @@ This document summarizes the systematic resolution of TypeScript lint errors in 
 | File | Changes | Primary Issues Fixed |
 |------|---------|---------------------|
 | `supabase/functions/ai-scraper-worker/index.ts` | Added interfaces, replaced any types | no-explicit-any |
-| `supabase/functions/command-station/config-manager.ts` | Fixed SupabaseClient typing | no-explicit-any |
-| `supabase/functions/command-station/dashboard.ts` | Added event/job interfaces | no-explicit-any |
-| `supabase/functions/command-station/metrics.ts` | Added metrics interfaces | no-explicit-any |
+| `supabase/functions/command-center/config-manager.ts` | Fixed SupabaseClient typing | no-explicit-any |
+| `supabase/functions/command-center/dashboard.ts` | Added event/job interfaces | no-explicit-any |
+| `supabase/functions/command-center/metrics.ts` | Added metrics interfaces | no-explicit-any |
 | `test-schema-deployment.mjs` | Removed unused imports | no-unused-vars |
 | `supabase/functions/ai-scraper-worker/test-single-property.ts` | Fixed error handling | no-unused-vars |
 | `supabase/functions/ai-scraper-worker/test-claude-single.ts` | Fixed error handling | no-unused-vars |

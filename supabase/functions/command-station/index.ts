@@ -343,10 +343,10 @@ function handleHelp(): Response {
     },
     
     examples: {
-      enable_scraping: 'curl -X POST https://your-project.supabase.co/functions/v1/command-station/enable-scraping',
-      get_status: 'curl https://your-project.supabase.co/functions/v1/command-station/status',
-      update_config: 'curl -X POST https://your-project.supabase.co/functions/v1/command-station/config -d \'{"batchSize": 25}\'',
-      run_batch: 'curl -X POST https://your-project.supabase.co/functions/v1/command-station/run-now'
+  enable_scraping: 'curl -X POST https://your-project.supabase.co/functions/v1/command-center/enable-scraping',
+  get_status: 'curl https://your-project.supabase.co/functions/v1/command-center/status',
+  update_config: 'curl -X POST https://your-project.supabase.co/functions/v1/command-center/config -d \'{"batchSize": 25}\'',
+  run_batch: 'curl -X POST https://your-project.supabase.co/functions/v1/command-center/run-now'
     },
     
     metrics_available: [

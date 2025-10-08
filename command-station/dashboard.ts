@@ -1,4 +1,11 @@
-// command-station/dashboard.ts
+/*
+  ARCHIVE NOTICE
+  ----------------
+  Archived copy - see `supabase/functions/command-center/` for the active
+  implementation.
+*/
+
+// command-center/dashboard.ts
 import { ConfigManager } from './config-manager.ts'
 
 export class Dashboard {

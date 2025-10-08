@@ -4,6 +4,8 @@
 //   node scripts/run_e2e_worker_test.js [FUNCTION_URL]
 // If FUNCTION_URL is omitted it defaults to http://127.0.0.1:54321/functions/v1/ai-scraper-worker
 
+import process from "node:process";
+import { Buffer } from "node:buffer";
 const http = require('http')
 const https = require('https')
 const { URL } = require('url')
@@ -32,7 +34,7 @@ if (!authHeader) {
         }
       }
     }
-  } catch (e) {
+  } catch (_e) {
     // ignore
   }
 }
@@ -71,7 +73,7 @@ async function postJson(urlString, obj) {
       res.on('end', () => {
         try {
           resolve({ status: res.statusCode, body: JSON.parse(data) })
-        } catch (e) {
+        } catch (_e) {
           resolve({ status: res.statusCode, body: data })
         }
       })
@@ -88,7 +90,7 @@ async function postJson(urlString, obj) {
     const res = await postJson(functionUrl, samplePayload)
     console.log('Status:', res.status)
     console.log('Response:', res.body)
-  } catch (e) {
-    console.error('Request failed:', e)
+  } catch (_e) {
+    console.error('Request failed:', _e)
   }
 })()

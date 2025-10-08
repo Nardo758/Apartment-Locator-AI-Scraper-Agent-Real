@@ -1,4 +1,11 @@
-// command-station/metrics.ts
+/*
+  ARCHIVE NOTICE
+  ----------------
+  Archived copy - see `supabase/functions/command-center/` for the active
+  implementation.
+*/
+
+// command-center/metrics.ts
 export class Metrics {
   static async getSystemMetrics(): Promise<Response> {
     try {

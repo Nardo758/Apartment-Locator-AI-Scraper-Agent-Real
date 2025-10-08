@@ -25,7 +25,7 @@ class RobustElementInteractor {
             const el0 = document.querySelector(selector);
             if (el0) return el0;
         } catch (e) {
-            // ignore invalid selector syntax
+              // ignore invalid selector syntax
         }
 
         // Conservative incremental scroll search to avoid skipping content
@@ -37,13 +37,13 @@ class RobustElementInteractor {
                 const el = document.querySelector(selector);
                 if (el) return el;
             } catch (e) {
-                // ignore invalid selector errors
+                 // ignore invalid selector errors
             }
 
             // If we've reached the bottom and still not found, break early
             const doc = document.scrollingElement || document.documentElement || document.body;
-            const maxScroll = (doc.scrollHeight || document.body.scrollHeight) - (window.innerHeight || 0);
-            const current = doc.scrollTop || window.pageYOffset || 0;
+            const maxScroll = (doc.scrollHeight || document.body.scrollHeight) - (globalThis.innerHeight || 0);
+            const current = doc.scrollTop || globalThis.pageYOffset || 0;
             if (current === lastScrollTop && current >= maxScroll) {
                 // no more content to reveal
                 break;
@@ -52,10 +52,10 @@ class RobustElementInteractor {
             lastScrollTop = current;
             // small incremental scroll
             try {
-                window.scrollBy({ top: step, left: 0, behavior: 'auto' });
+                globalThis.scrollBy({ top: step, left: 0, behavior: 'auto' });
             } catch (e) {
-                // fallback
-                window.scrollBy(0, step);
+                    // fallback
+                globalThis.scrollBy(0, step);
             }
 
             await this._sleep(stepDelay);
@@ -65,7 +65,7 @@ class RobustElementInteractor {
         try {
             return document.querySelector(selector);
         } catch (e) {
-            return null;
+              return null;
         }
     }
 
@@ -76,7 +76,7 @@ class RobustElementInteractor {
     isElementInteractable(element) {
         try {
             if (!element) return false;
-            const style = window.getComputedStyle(element);
+            const style = globalThis.getComputedStyle(element);
             const rect = element.getBoundingClientRect();
             return (
                 element.offsetParent !== null &&
@@ -124,7 +124,7 @@ class RobustElementInteractor {
                 const el = container.querySelector(selector);
                 if (el) return el;
             } catch (e) {
-                // ignore invalid selector
+                    // ignore invalid selector
                 continue;
             }
         }
@@ -142,7 +142,7 @@ class RobustElementInteractor {
                 const el = await strategy(container);
                 if (el) return el;
             } catch (e) {
-                // ignore
+                 // ignore
             }
         }
 
@@ -152,7 +152,7 @@ class RobustElementInteractor {
                 const el = document.querySelector(selector);
                 if (el) return el;
             } catch (e) {
-                continue;
+                 continue;
             }
         }
 
@@ -295,7 +295,7 @@ class RobustElementInteractor {
         try {
             await this._executeAction(element, action, value);
         } catch (e) {
-            return { ok: false, reason: 'action-failed', error: (e && e.message) || String(e), matchedSelector, href, dataAttrs, scoring };
+              return { ok: false, reason: 'action-failed', error: (e && e.message) || String(e), matchedSelector, href, dataAttrs, scoring };
         }
 
         // wait a moment for potential modal or navigation
@@ -371,7 +371,7 @@ class RobustElementInteractor {
 }
 
 // Expose for use in browser console or automation
-window.RobustElementInteractor = RobustElementInteractor;
+globalThis.RobustElementInteractor = RobustElementInteractor;
 
 /* Usage examples (copy/paste into browser console):
 

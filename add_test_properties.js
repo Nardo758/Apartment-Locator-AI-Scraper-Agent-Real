@@ -1,3 +1,4 @@
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 
 // Read Supabase runtime values from environment and fail fast if missing

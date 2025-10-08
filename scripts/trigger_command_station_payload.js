@@ -1,6 +1,7 @@
+import process from "node:process";
 (async () => {
   try {
-    const url = 'http://127.0.0.1:54321/functions/v1/command-station';
+  const url = 'http://127.0.0.1:54321/functions/v1/command-center';
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

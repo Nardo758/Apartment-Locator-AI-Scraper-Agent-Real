@@ -6,6 +6,7 @@ import {
   saveTransformedProperties,
 } from './data-transformer';
 import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
+import process from "node:process";
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;

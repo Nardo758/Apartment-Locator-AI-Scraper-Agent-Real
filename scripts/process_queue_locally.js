@@ -1,6 +1,7 @@
 // scripts/process_queue_locally.js
 // Process pending jobs by calling the scraper-worker edge function and updating metrics/queue
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const path = require('path');

@@ -1,4 +1,5 @@
 // preflight-check-node.js - Simple pre-flight check using Node.js
+import process from "node:process";
 const fs = require('fs');
 const path = require('path');
 

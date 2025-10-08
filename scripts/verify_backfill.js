@@ -2,6 +2,7 @@
 // Usage (PowerShell):
 // Get-Content .env | ForEach-Object { if ($_ -match '^\s*([^#=]+)=(.*)$') { $name=$matches[1]; $value=$matches[2]; Set-Item -Path env:$name -Value $value } }; node ./scripts/verify_backfill.js
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

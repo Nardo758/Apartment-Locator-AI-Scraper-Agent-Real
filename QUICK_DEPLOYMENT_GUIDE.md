@@ -255,7 +255,7 @@ Once the schema is deployed, update your functions:
 ```bash
 # Update your scraper functions with the new integration
 supabase functions deploy ai-scraper-worker
-supabase functions deploy command-station
+supabase functions deploy command-center
 ```
 
 ## ✅ Test the Integration
@@ -265,7 +265,7 @@ supabase functions deploy command-station
 node test-real-integration.mjs
 
 # Test specific functions
-curl "https://your-project.supabase.co/functions/v1/command-station/status"
+curl "https://your-project.supabase.co/functions/v1/command-center/status"
 ```
 
 ## 🎯 What Happens Next

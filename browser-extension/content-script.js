@@ -32,7 +32,7 @@ class NavigationRecorder {
             'thehuntley.com', 'hanoverbuckheadvillage.com', 'altaporter.com'
         ];
 
-        const currentDomain = window.location.hostname.toLowerCase();
+        const currentDomain = globalThis.location.hostname.toLowerCase();
         const isRentalSite = rentalDomains.some(domain => currentDomain.includes(domain));
 
         if (isRentalSite) {
@@ -85,7 +85,7 @@ class NavigationRecorder {
         chrome.runtime.sendMessage({
             type: 'RECORDING_STARTED',
             sessionId: this.sessionId,
-            url: window.location.href
+            url: globalThis.location.href
         });
     }
 
@@ -120,7 +120,7 @@ class NavigationRecorder {
                 type: 'click',
                 selector: selector,
                 timestamp: Date.now(),
-                url: window.location.href,
+                url: globalThis.location.href,
                 elementText: e.target.textContent?.trim() || '',
                 elementTag: e.target.tagName.toLowerCase(),
                 elementId: e.target.id || '',
@@ -150,7 +150,7 @@ class NavigationRecorder {
                 type: 'form_submit',
                 selector: selector,
                 timestamp: Date.now(),
-                url: window.location.href,
+                url: globalThis.location.href,
                 formAction: e.target.action || '',
                 formMethod: e.target.method || 'get'
             };
@@ -173,7 +173,7 @@ class NavigationRecorder {
                 type: 'input_change',
                 selector: selector,
                 timestamp: Date.now(),
-                url: window.location.href,
+                url: globalThis.location.href,
                 inputType: e.target.type || '',
                 inputName: e.target.name || '',
                 inputValue: e.target.value || ''
@@ -194,7 +194,7 @@ class NavigationRecorder {
                 type: 'navigation',
                 selector: '',
                 timestamp: Date.now(),
-                url: window.location.href,
+                url: globalThis.location.href,
                 targetUrl: e.target.href || '',
                 navigationType: 'link_click'
             };
@@ -277,13 +277,13 @@ class NavigationRecorder {
             sessionId: this.sessionId,
             startTime: this.startTime,
             endTime: Date.now(),
-            url: window.location.href,
+            url: globalThis.location.href,
             actions: this.actions,
             metadata: {
                 userAgent: navigator.userAgent,
                 viewport: {
-                    width: window.innerWidth,
-                    height: window.innerHeight
+                    width: globalThis.innerWidth,
+                    height: globalThis.innerHeight
                 },
                 timestamp: new Date().toISOString()
             }
@@ -297,4 +297,4 @@ class NavigationRecorder {
 const recorder = new NavigationRecorder();
 
 // Make it available globally for debugging
-window.navigationRecorder = recorder;
+globalThis.navigationRecorder = recorder;

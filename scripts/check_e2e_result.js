@@ -2,6 +2,7 @@
 // Usage (PowerShell):
 // Get-Content .env | ForEach-Object { if (/^\s*([^#=]+)=(.*)$/.test($_)) { $m=RegExp.$1; $v=RegExp.$2; $env:$m=$v } }; node ./scripts/check_e2e_result.js
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

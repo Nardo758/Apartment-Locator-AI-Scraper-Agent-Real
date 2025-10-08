@@ -95,7 +95,7 @@ async function main() {
   log(colors.blue, '\n⚡ Test 4: Edge Functions');
 
   const functionDirs = [
-    'supabase/functions/command-station',
+    'supabase/functions/command-center',
     'supabase/functions/ai-scraper-worker',
     'supabase/functions/property-researcher',
     'supabase/functions/scheduled-scraper'

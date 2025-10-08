@@ -1,4 +1,5 @@
 // test-claude-internal.js - Direct Claude test using internal API access
+import process from "node:process";
 const fs = require('fs');
 
 // Sample property HTML data for testing

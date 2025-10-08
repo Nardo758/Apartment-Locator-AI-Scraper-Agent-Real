@@ -1,4 +1,11 @@
-// command-station/controller.ts
+/*
+  ARCHIVE NOTICE
+  ----------------
+  This file is part of the archived `command-station/` directory. The
+  canonical implementation lives under `supabase/functions/command-center/`.
+*/
+
+// command-center/controller.ts
 import { ConfigManager } from './config-manager.ts'
 
 export class Controller {
@@ -72,7 +79,7 @@ export class Controller {
         batch_id: results.batchId,
         batch_size: this.config.batchSize,
         estimated_duration: '5-10 minutes',
-        monitor_url: '/command-station/metrics',
+  monitor_url: '/command-center/metrics',
         timestamp: new Date().toISOString(),
         details: results
       }), {

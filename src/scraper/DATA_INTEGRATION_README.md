@@ -465,7 +465,7 @@ if (monitor.errorRate > 0.05) {  // 5% error rate threshold
 
 ## 🔗 Related Documentation
 
-- [Command Station README](../command-station/README.md)
+- [Command Center README](../command-center/README.md)
 - [Scraper Architecture](../../docs/architecture.md)
 - [API Documentation](../../docs/api.md)
 - [Database Schema](../../docs/database-schema.md)

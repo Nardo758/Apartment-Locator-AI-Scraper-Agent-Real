@@ -1,6 +1,4 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-// postgres client for local DB fallback
-import { Client as PgClient } from 'https://deno.land/x/postgres@v0.17.0/mod.ts';
 
 // Allow the host process (CI or local dev) to control the port used by the function
 // server. Defaults to 54321 which the integration tests expect.
@@ -122,21 +120,14 @@ serve(async (req: Request) => {
     ];
 
   // If SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are present, persist each candidate
-  const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || new URL(req.url).origin.replace(':54321','');
-  // Accept service key from environment OR allow passing via Authorization / apikey header for local testing
-  const headerKey = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || req.headers.get('apikey') || req.headers.get('x-supabase-service-role-key');
-  const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || headerKey;
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || new URL(req.url).origin.replace(':54321','');
+    // Accept service key from environment OR allow passing via Authorization / apikey header for local testing
+    const headerKey = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || req.headers.get('apikey') || req.headers.get('x-supabase-service-role-key');
+    const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || headerKey;
+  // No local fallback: function always uses the Supabase/PostgREST RPC in production.
 
     const results: Array<Record<string, any>> = [];
 
-    // helper: compute SHA-1 hex digest for a stable external_id
-    async function sha1hex(input: string) {
-      const enc = new TextEncoder();
-      const data = enc.encode(input || '');
-      const hash = await crypto.subtle.digest('SHA-1', data);
-      const arr = Array.from(new Uint8Array(hash));
-      return arr.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
 
     for (const c of candidates) {
       try {
@@ -151,8 +142,6 @@ serve(async (req: Request) => {
         const snippet = (c.raw_data && c.raw_data.snippet) ? c.raw_data.snippet : '';
         const detectedType = c.website_type ?? detectWebsiteType(c.property_url, snippet, c.property_name);
         const confidence = (typeof c.confidence_score === 'number') ? c.confidence_score : calculateConfidenceScore(snippet, c, detectedType);
-
-        const external_id = await sha1hex(c.property_url || c.url || String(Date.now()));
 
         const body = {
           p_property_name: c.property_name,
@@ -172,72 +161,10 @@ serve(async (req: Request) => {
           p_enqueue_for_scraping: false
         };
 
-        // If a plain Postgres URI is provided, use a local DB fallback to persist records directly
-        const POSTGRES_URI = Deno.env.get('POSTGRES_URI');
-        if (POSTGRES_URI) {
-          // local DB fallback: insert into property_sources, property_discovery and optionally scraping_queue
-          const client = new PgClient(POSTGRES_URI);
-          let lastQuery = null;
-          let lastParams: any[] = [];
-          try {
-            await client.connect();
-            await client.queryArray('BEGIN');
-            // upsert property_sources by url
-            // Build metadata JSONB in SQL to avoid JSON parsing issues from client parameterization
-            lastQuery = `INSERT INTO property_sources (url, property_name, metadata, created_at) VALUES ($1, $2, jsonb_build_object('website_type', $3::text), NOW()) ON CONFLICT (url) DO UPDATE SET property_name = EXCLUDED.property_name RETURNING id`;
-            lastParams = [c.property_url || c.url, c.property_name || null, detectedType];
-            const propsRes = await client.queryObject({ text: lastQuery, args: lastParams });
-            const propSourceIdRaw = propsRes.rows && propsRes.rows[0] && propsRes.rows[0].id ? propsRes.rows[0].id : null;
-            const propSourceId = (propSourceIdRaw === null || propSourceIdRaw === undefined) ? null : Number(propSourceIdRaw);
-
-            // Upsert into property_discovery using the DB helper function to ensure schema compatibility
-            lastQuery = `SELECT public.upsert_property_discovery($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) AS id`;
-            lastParams = [
-              c.property_name || null,
-              c.property_url || c.url || null,
-              (c.year_built === undefined) ? null : c.year_built,
-              (c.total_units === undefined) ? null : c.total_units,
-              c.property_type || null,
-              c.management_company || null,
-              c.address || null,
-              c.city || null,
-              c.state || null,
-              c.zip_code || null,
-              confidence,
-              c.website_complexity || 'unknown',
-              c.priority_level || 'medium',
-              c.website_type || 'unknown'
-            ];
-            const discRes = await client.queryObject({ text: lastQuery, args: lastParams });
-            const discoveryIdRaw = discRes.rows && discRes.rows[0] && discRes.rows[0].id ? discRes.rows[0].id : null;
-            const discoveryId = (discoveryIdRaw === null || discoveryIdRaw === undefined) ? null : Number(discoveryIdRaw);
-
-            // Use the same atomic RPC as production to upsert scraped_properties and enqueue in a single transaction.
-            // This avoids issues with GENERATED external_id columns and FK ordering in local copies.
-            lastQuery = `SELECT public.rpc_upsert_property_and_enqueue($1::jsonb, $2::int, $3::int, $4::jsonb) AS res`;
-            lastParams = [JSON.stringify({
-              property_id: external_id,
-              unit_number: '',
-              source: detectedType || 'discovery',
-              name: c.property_name || null,
-              address: c.address || null,
-              city: c.city || null,
-              state: c.state || null,
-              listing_url: c.property_url || c.url || null
-            }), propSourceId, (typeof c.priority_level === 'number') ? c.priority_level : null, discoveryId ? JSON.stringify({ discovery_id: discoveryId }) : null];
-            const atomicRes = await client.queryObject({ text: lastQuery, args: lastParams });
-            // atomic RPC returns a jsonb; no further action required for enqueue
-            const atomicResult = atomicRes.rows && atomicRes.rows[0] ? atomicRes.rows[0].res : null;
-
-            await client.queryArray('COMMIT');
-            results.push({ url: c.url, status: 'persisted_local', property_source_id: propSourceId, discovery_id: discoveryId });
-          } catch (errLocal) {
-            try { await client.queryArray('ROLLBACK'); } catch (_) {}
-            results.push({ url: c.url, status: 'local_db_error', message: String(errLocal), lastQuery, lastParams });
-          } finally {
-            await client.end();
-          }
-        } else {
+  // If a plain Postgres URI is provided and local fallback is enabled, use a local DB fallback to persist records directly
+        // Persist discovery and source through PostgREST RPC
+        // (Production path) Call the upsert_property_discovery_and_source RPC on PostgREST
+        
           const resp = await fetch(rpcUrl, {
             method: 'POST',
             headers: {
@@ -259,9 +186,10 @@ serve(async (req: Request) => {
             // Use atomic RPC to upsert scraped_properties and enqueue in one step
             try {
               const rpcAtomicUrl = `${SUPABASE_URL}/rest/v1/rpc/rpc_upsert_property_and_enqueue`;
-              const scrapedRecord = {
-                property_id: external_id,
-                unit_number: '',
+                // Use property name + unit number as canonical identifier for the scraped record
+                const scrapedRecord = {
+                property_id: c.property_name || (c.property_id ?? null),
+                unit_number: c.unit_number || '',
                 source: detectedType || (c.website || 'discovery'),
                 name: c.property_name || null,
                 address: c.address || null,
@@ -303,12 +231,8 @@ serve(async (req: Request) => {
       }
     }
 
-  // Mask key parts for debugging without printing full secrets
-  const envKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-  const maskedEnv = envKey ? `${envKey.slice(0,8)}...${envKey.slice(-6)}` : null;
-  const maskedHeader = headerKey ? `${headerKey.slice(0,8)}...${headerKey.slice(-6)}` : null;
-
-  const payload = { status: 'ok', source: 'claude-queue-builder', persisted: results, debug: { env_has_key: !!envKey, header_has_key: !!headerKey, masked_env_key: maskedEnv, masked_header_key: maskedHeader } };
+  // Minimal response payload: indicate success and whether a service key was present.
+  const payload = { status: 'ok', source: 'claude-queue-builder', persisted: results, debug: { env_has_key: !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'), header_has_key: !!headerKey } };
   const replacer = (_k: string, v: any) => (typeof v === 'bigint' ? v.toString() : v);
   return new Response(JSON.stringify(payload, replacer), { headers: { 'Content-Type': 'application/json' } });
 

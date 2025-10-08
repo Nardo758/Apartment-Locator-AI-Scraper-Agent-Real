@@ -3,6 +3,7 @@
 // Simulate processing queued scraping jobs without calling worker functions.
 // For each queued row in scraping_queue: perform a GET to the URL (timeout 10s) and mark as completed/failed accordingly.
 
+import process from "node:process";
 const { createClient } = require('@supabase/supabase-js');
 const fetch = require('node-fetch');
 

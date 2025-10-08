@@ -32,7 +32,7 @@ jobs:
       run: supabase start | cat
 
     - name: Apply migrations (local reset)
-  run: supabase db reset --yes | cat
+      run: supabase db reset --yes | cat
 
     - name: Generate types (local)
       run: |
@@ -146,30 +146,34 @@ jobs:
       shell: bash
       run: |
         if [ "${{ github.event.inputs.environment || 'production' }}" = "staging" ]; then
-          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID_STAGING }}" >> $GITHUB_ENV
+          echo "PROJECT_REF=${SUPABASE_PROJECT_ID_STAGING}" >> $GITHUB_ENV
         else
-          echo "PROJECT_REF=${{ secrets.SUPABASE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "PROJECT_REF=${SUPABASE_PROJECT_ID}" >> $GITHUB_ENV
         fi
+      env:
+        SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        SUPABASE_PROJECT_ID_STAGING: ${{ secrets.SUPABASE_PROJECT_ID_STAGING }}
 
     - name: Link Supabase project
       run: supabase link --project-ref "$PROJECT_REF"
 
     - name: Set environment secrets in Supabase
-      if: env.SUPABASE_ACCESS_TOKEN != ''
       env:
         SUPABASE_URL: https://${PROJECT_REF}.supabase.co
-        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       run: |
-        echo "Syncing runtime secrets to Supabase environment..."
-        supabase secrets set ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
-        supabase secrets set SUPABASE_URL="$SUPABASE_URL"
-        supabase secrets set SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
-        supabase secrets set SUPABASE_SERVICE_ROLE_KEY="$SUPABASE_SERVICE_ROLE_KEY"
-        supabase secrets set ENABLE_AI_PRICING=true
-        supabase secrets set ENABLE_FRONTEND_SYNC=true
-        supabase secrets set ENABLE_MARKET_INTELLIGENCE=true
+        # Only sync secrets if SUPABASE_ACCESS_TOKEN (used locally) is present in the runner secrets.
+        if [ -z "${{ secrets.SUPABASE_ACCESS_TOKEN }}" ]; then
+          echo "SUPABASE_ACCESS_TOKEN not provided; skipping secret sync to Supabase"
+        else
+          echo "Syncing runtime secrets to Supabase environment..."
+          supabase secrets set ANTHROPIC_API_KEY="${{ secrets.ANTHROPIC_API_KEY }}"
+          supabase secrets set SUPABASE_URL="$SUPABASE_URL"
+          supabase secrets set SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
+          supabase secrets set SUPABASE_SERVICE_ROLE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+          supabase secrets set ENABLE_AI_PRICING=true
+          supabase secrets set ENABLE_FRONTEND_SYNC=true
+          supabase secrets set ENABLE_MARKET_INTELLIGENCE=true
+        fi
 
     - name: Deploy all functions
       shell: bash
@@ -309,6 +313,7 @@ jobs:
 
     steps:
     - name: Report
+      shell: bash
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       run: |

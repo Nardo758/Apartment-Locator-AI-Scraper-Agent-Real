@@ -1,6 +1,7 @@
 // Production Configuration for Data Integration Pipeline
 // This file contains runtime configuration that can be overridden by environment variables
 
+import process from "node:process";
 export interface ProductionConfig {
   // Database settings
   enableFrontendSync: boolean;

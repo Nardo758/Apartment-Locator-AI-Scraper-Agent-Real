@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { getCostOptimizedBatch } from '../src/scraper/orchestrator';
+import process from "node:process";
 
 async function main() {
   const SUPABASE_URL = process.env.SUPABASE_URL;

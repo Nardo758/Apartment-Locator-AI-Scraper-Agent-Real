@@ -1,0 +1,7 @@
+﻿deno : Checked 9 files
+At line:1 char:1
++ deno lint supabase/functions/command-center 2>&1 | Out-File deno_lint ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Checked 9 files:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

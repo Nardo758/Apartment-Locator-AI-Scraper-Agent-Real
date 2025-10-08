@@ -10,6 +10,7 @@ Requires env vars:
   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 */
 
+import process from "node:process";
 const fetch = require('node-fetch');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || '';

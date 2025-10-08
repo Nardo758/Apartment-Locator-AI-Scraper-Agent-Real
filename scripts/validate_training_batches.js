@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Validate JSONL training batch files and sidecar metadata
 
+import process from "node:process";
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');

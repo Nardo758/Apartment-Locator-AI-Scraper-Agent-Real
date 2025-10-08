@@ -1,6 +1,7 @@
 // test-complete-production.mjs
 // Complete production integration test
 
+import process from "node:process";
 console.log('🚀 Complete Production Integration Test');
 console.log('=' .repeat(50));
 

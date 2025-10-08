@@ -1,3 +1,4 @@
+import process from "node:process";
 (async ()=>{
   const { createClient } = require('@supabase/supabase-js');
   const SUPABASE_URL = 'http://127.0.0.1:54321';

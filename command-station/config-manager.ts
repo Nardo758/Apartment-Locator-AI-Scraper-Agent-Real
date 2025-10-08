@@ -1,4 +1,11 @@
-// command-station/config-manager.ts
+/*
+  ARCHIVE NOTICE
+  ----------------
+  Archived copy - see `supabase/functions/command-center/` for the active
+  implementation.
+*/
+
+// command-center/config-manager.ts
 export interface SystemConfig {
   scrapingEnabled: boolean
   claudeEnabled: boolean
@@ -259,7 +266,7 @@ export class ConfigManager {
     }
   }
 
-  private static validateConfig(config: any): void {
+  private static validateConfig(config: unknown): void {
     const errors: string[] = []
     
     // Required fields

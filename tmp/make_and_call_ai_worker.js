@@ -1,3 +1,5 @@
+import { Buffer } from "node:buffer";
+import process from "node:process";
 const crypto = require('crypto');
 const fetch = require('node-fetch');
 

@@ -2,6 +2,7 @@
 // Usage: node scripts/test_rpc_v2.js
 // If SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set, it will attempt to POST to your Supabase instance.
 
+import process from "node:process";
 const fetch = require('node-fetch');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || '';

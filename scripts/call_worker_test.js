@@ -1,6 +1,7 @@
 // scripts/call_worker_test.js
 // Calls the scraper-worker edge function with proper auth headers
 
+import process from "node:process";
 (async () => {
   try {
     // Load .env.local if present
@@ -11,7 +12,7 @@
       if (fs.existsSync(dotenvPath)) {
         require('dotenv').config({ path: dotenvPath });
       }
-    } catch {}
+    } catch (_e) { /* ignore */ }
 
     const url = `${process.env.SUPABASE_URL}/functions/v1/scraper-worker`;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

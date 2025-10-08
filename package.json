@@ -11,7 +11,8 @@
     "status": "supabase status",
     "deploy:all": "./deploy.sh",
     "test:rpc": "node ./scripts/test_rpc.js",
-    "test:claude": "ts-node test-claude-node.ts"
+    "test:claude": "ts-node test-claude-node.ts",
+    "populate": "node scripts/populate_queue.js"
   },
   "dependencies": {
     "prom-client": "^14.2.0",

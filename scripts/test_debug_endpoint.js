@@ -1,3 +1,4 @@
+import process from "node:process";
 const http = require('http')
 
 const secret = process.argv[2] || ''

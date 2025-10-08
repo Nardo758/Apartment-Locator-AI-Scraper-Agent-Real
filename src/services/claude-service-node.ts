@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import process from "node:process";
 
 export interface PropertyIntelligence {
   year_built: number | null;
