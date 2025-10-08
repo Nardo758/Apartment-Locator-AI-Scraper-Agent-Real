@@ -1,20 +1,35 @@
 // Scraper Frontend Integration
 // src/scraper/frontend-integration.ts
+// TODO(typing): Tighten these types further. Prefer per-symbol typing over
+// file-level suppressions; this file progressively replaces `any` with the
+// `ScrapedProperty` type and `Record<string, unknown>` where appropriate.
 
 import { frontendDataService } from "../services/frontend-data-service";
-import { createClient } from "@supabase/supabase-js";
+import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property";
+import { createTypedClient } from "../lib/supabase-client";
+import type Database from "../types/supabase-db";
 import process from "node:process";
 
 interface ScraperResult {
   success: boolean;
-  properties: any[];
+  properties: LocalScrapedProperty[];
   cost: number;
   source: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
+type LocalScrapedProperty = SharedScrapedProperty & {
+  id?: string;
+  external_id?: string;
+  name?: string;
+  current_price?: number;
+  bedrooms?: number;
+  square_feet?: number;
+  free_rent_concessions?: unknown;
+};
+
 export class ScraperFrontendIntegration {
-  private supabase;
+  private supabase: import("@supabase/supabase-js").SupabaseClient<Database> | null = null;
 
   constructor() {
     const deno = (globalThis as unknown as {
@@ -29,7 +44,9 @@ export class ScraperFrontendIntegration {
         "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required",
       );
     }
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    // Use the central typed client wrapper. We'll cast to the Database-typed
+    // SupabaseClient so downstream code can use typed Row definitions.
+    this.supabase = createTypedClient(supabaseUrl, supabaseKey);
   }
 
   /**
@@ -77,8 +94,8 @@ export class ScraperFrontendIntegration {
         `✅ Frontend integration complete: ${frontendPropertiesCreated} properties processed`,
       );
     } catch (_e) {
-      console.error("❌ Frontend integration error:", error);
-      errors.push(String(error));
+      console.error("❌ Frontend integration error:", _e);
+      errors.push(String(_e));
     }
 
     return {
@@ -91,43 +108,43 @@ export class ScraperFrontendIntegration {
   /**
    * Upsert scraped properties to the scraped_properties table
    */
-  private async upsertScrapedProperties(properties: any[]): Promise<any[]> {
-    const scrapedProperties = [];
+  private async upsertScrapedProperties(properties: LocalScrapedProperty[]): Promise<LocalScrapedProperty[]> {
+    const scrapedProperties: LocalScrapedProperty[] = [];
 
     for (const property of properties) {
       try {
-        // Transform raw scraper data to scraped_properties format
-        const scrapedProperty = {
-          external_id: property.id ||
-            `${property.source}_${Date.now()}_${Math.random()}`,
-          property_id: property.property_id || property.id?.split("_")[0] ||
-            "unknown",
-          unit_number: property.unit_number || property.unit || "1",
-          source: property.source || "unknown",
-          name: property.title || property.name || "Unknown Property",
-          address: property.address || "",
-          unit: property.unit || null,
-          city: property.city || "",
-          state: property.state || "",
-          current_price: property.price || property.rent || 0,
-          bedrooms: property.bedrooms || 0,
-          bathrooms: property.bathrooms || 1.0,
-          square_feet: property.sqft || property.square_feet || null,
-          free_rent_concessions: property.concessions || property.specials ||
-            null,
-          application_fee: property.application_fee || null,
-          admin_fee_waived: property.admin_fee_waived || false,
-          admin_fee_amount: property.admin_fee || null,
-          security_deposit: property.security_deposit || null,
-          listing_url: property.url || property.listing_url || "",
+  const p = property as LocalScrapedProperty;
+        // Transform raw scraper data to scraped_properties format (use safe conversions)
+        const idStr = String(p["id"] ?? "");
+        const sourceStr = String(p["source"] ?? "unknown");
+        const scrapedProperty: Record<string, unknown> = {
+          external_id: idStr || `${sourceStr}_${Date.now()}_${Math.random()}`,
+          property_id: idStr ? (idStr.split("_")[0] || "unknown") : "unknown",
+          unit_number: String(p["unit_number"] ?? p["unit"] ?? "1"),
+          source: sourceStr,
+          name: String(p["title"] ?? p["name"] ?? "Unknown Property"),
+          address: String(p["address"] ?? ""),
+          unit: p["unit"] ?? null,
+          city: String(p["city"] ?? ""),
+          state: String(p["state"] ?? ""),
+          current_price: Number(p["price"] ?? p["rent"] ?? 0),
+          bedrooms: Number(p["bedrooms"] ?? 0),
+          bathrooms: Number(p["bathrooms"] ?? 1.0),
+          square_feet: p["sqft"] ?? p["square_feet"] ?? null,
+          free_rent_concessions: p["concessions"] ?? p["specials"] ?? null,
+          application_fee: p["application_fee"] ?? null,
+          admin_fee_waived: Boolean(p["admin_fee_waived"] ?? false),
+          admin_fee_amount: p["admin_fee"] ?? null,
+          security_deposit: p["security_deposit"] ?? null,
+          listing_url: String(p["url"] ?? p["listing_url"] ?? ""),
           scraped_at: new Date().toISOString(),
           status: "active",
         };
 
         // Upsert to scraped_properties
-        const { data, error } = await this.supabase
+          const { data, error } = await this.supabase!
           .from("scraped_properties")
-          .upsert(scrapedProperty, {
+          .upsert(scrapedProperty as any, {
             onConflict: "external_id",
             ignoreDuplicates: false,
           })
@@ -137,10 +154,10 @@ export class ScraperFrontendIntegration {
         if (error) {
           console.error("Error upserting scraped property:", error);
         } else {
-          scrapedProperties.push(data);
+          scrapedProperties.push(data as LocalScrapedProperty);
         }
       } catch (_e) {
-        console.error("Error processing property:", error);
+        console.error("Error processing property:", _e);
       }
     }
 
@@ -151,14 +168,14 @@ export class ScraperFrontendIntegration {
    * Update market intelligence based on scraped data
    */
   private async updateMarketIntelligence(
-    scrapedProperties: any[],
+    scrapedProperties: LocalScrapedProperty[],
   ): Promise<void> {
     try {
       // Group properties by location
       const locationGroups = new Map<string, any[]>();
 
       for (const property of scrapedProperties) {
-        const location = `${property.city}, ${property.state}`;
+        const location = `${String(property.city ?? '')}, ${String(property.state ?? '')}`;
         if (!locationGroups.has(location)) {
           locationGroups.set(location, []);
         }
@@ -170,7 +187,7 @@ export class ScraperFrontendIntegration {
         await this.updateLocationIntelligence(location, properties);
       }
     } catch (_e) {
-      console.error("Error updating market intelligence:", error);
+      console.error("Error updating market intelligence:", _e);
     }
   }
 
@@ -179,14 +196,12 @@ export class ScraperFrontendIntegration {
    */
   private async updateLocationIntelligence(
     location: string,
-    properties: any[],
+    properties: LocalScrapedProperty[],
   ): Promise<void> {
     try {
       // Calculate market metrics
-      const prices = properties.map((p) => p.current_price).filter((p) =>
-        p > 0
-      );
-      const sqfts = properties.map((p) => p.square_feet).filter((s) => s > 0);
+      const prices = properties.map((p) => Number(p.current_price ?? 0)).filter((p) => p > 0);
+      const sqfts = properties.map((p) => Number(p.square_feet ?? 0)).filter((s) => s > 0);
 
       if (prices.length === 0) return;
 
@@ -206,7 +221,7 @@ export class ScraperFrontendIntegration {
 
       // Calculate concession prevalence
       const propertiesWithConcessions = properties.filter((p) =>
-        p.free_rent_concessions
+        Boolean(p.free_rent_concessions)
       ).length;
       const concessionPrevalence =
         (propertiesWithConcessions / properties.length) * 100;
@@ -255,7 +270,7 @@ export class ScraperFrontendIntegration {
         `📊 Updated market intelligence for ${location}: ${properties.length} properties, avg rent $${averageRent}`,
       );
     } catch (_e) {
-      console.error(`Error updating intelligence for ${location}:`, error);
+      console.error(`Error updating intelligence for ${location}:`, _e);
     }
   }
 
@@ -264,7 +279,7 @@ export class ScraperFrontendIntegration {
    */
   private async calculateMarketVelocity(
     location: string,
-    properties: any[],
+    properties: LocalScrapedProperty[],
   ): Promise<"hot" | "normal" | "slow" | "stale"> {
     try {
       // Get historical data for comparison
@@ -276,18 +291,16 @@ export class ScraperFrontendIntegration {
         .limit(1)
         .single();
 
-      const currentConcessionRate = properties.filter((p) =>
-        p.free_rent_concessions
-      ).length / properties.length;
+      const currentConcessionRate = properties.filter((p) => Boolean(p.free_rent_concessions)).length / Math.max(1, properties.length);
 
       if (historicalData) {
         // Compare current vs historical concession rates
         if (
-          currentConcessionRate > historicalData.concession_prevalence * 1.5
+          currentConcessionRate > (historicalData.concession_prevalence ?? 0) * 1.5
         ) {
           return "stale"; // High concessions indicate slow market
         } else if (
-          currentConcessionRate < historicalData.concession_prevalence * 0.5
+          currentConcessionRate < (historicalData.concession_prevalence ?? 0) * 0.5
         ) {
           return "hot"; // Low concessions indicate hot market
         }
@@ -299,7 +312,7 @@ export class ScraperFrontendIntegration {
       if (currentConcessionRate < 0.05) return "hot";
       return "normal";
     } catch (_e) {
-      console.warn("Error calculating market velocity:", error);
+      console.warn("Error calculating market velocity:", _e);
       return "normal";
     }
   }
@@ -319,12 +332,12 @@ export class ScraperFrontendIntegration {
    * Calculate bedroom distribution
    */
   private calculateBedroomDistribution(
-    properties: any[],
+    properties: LocalScrapedProperty[],
   ): Record<string, number> {
     const distribution: Record<string, number> = {};
 
     for (const property of properties) {
-      const bedrooms = property.bedrooms?.toString() || "0";
+      const bedrooms = String(property.bedrooms ?? 0);
       distribution[bedrooms] = (distribution[bedrooms] || 0) + 1;
     }
 
@@ -334,18 +347,16 @@ export class ScraperFrontendIntegration {
   /**
    * Analyze concession types
    */
-  private analyzeConcessionTypes(properties: any[]): Record<string, number> {
+  private analyzeConcessionTypes(properties: LocalScrapedProperty[]): Record<string, number> {
     const concessionTypes: Record<string, number> = {};
 
     for (const property of properties) {
       if (property.free_rent_concessions) {
-        const concession = property.free_rent_concessions.toLowerCase();
+        const concession = String(property.free_rent_concessions ?? "").toLowerCase();
         if (concession.includes("month free")) {
-          concessionTypes["free_rent"] = (concessionTypes["free_rent"] || 0) +
-            1;
+          concessionTypes["free_rent"] = (concessionTypes["free_rent"] || 0) + 1;
         } else if (concession.includes("deposit")) {
-          concessionTypes["reduced_deposit"] =
-            (concessionTypes["reduced_deposit"] || 0) + 1;
+          concessionTypes["reduced_deposit"] = (concessionTypes["reduced_deposit"] || 0) + 1;
         } else {
           concessionTypes["other"] = (concessionTypes["other"] || 0) + 1;
         }
@@ -359,10 +370,10 @@ export class ScraperFrontendIntegration {
    * Generate market recommendations
    */
   private generateMarketRecommendations(
-    properties: any[],
+    properties: LocalScrapedProperty[],
     concessionPrevalence: number,
-  ): Record<string, any> {
-    const recommendations: Record<string, any> = {};
+  ): Record<string, unknown> {
+    const recommendations: Record<string, unknown> = {};
 
     if (concessionPrevalence > 20) {
       recommendations.negotiation = {
@@ -379,7 +390,7 @@ export class ScraperFrontendIntegration {
     }
 
     // Price recommendations
-    const prices = properties.map((p) => p.current_price).filter((p) => p > 0);
+  const prices = properties.map((p) => Number(p.current_price ?? 0)).filter((p) => p > 0);
     if (prices.length > 0) {
       const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
       recommendations.pricing = {
@@ -423,13 +434,13 @@ export class ScraperFrontendIntegration {
           } catch (_e) {
             console.error(
               `Error updating match scores for user ${user.user_id}:`,
-              error,
+              _e,
             );
           }
         }
       }
     } catch (_e) {
-      console.error("Error scheduling match score updates:", error);
+      console.error("Error scheduling match score updates:", _e);
     }
   }
 
@@ -447,7 +458,7 @@ export class ScraperFrontendIntegration {
     radius_km?: number;
     user_id?: string;
     limit?: number;
-  } = {}): Promise<any[]> {
+  } = {}): Promise<Record<string, unknown>[]> {
     try {
       let query = this.supabase
         .from("properties")
@@ -500,9 +511,9 @@ export class ScraperFrontendIntegration {
         return [];
       }
 
-      return data || [];
+      return (data as Record<string, unknown>[]) || [];
     } catch (_e) {
-      console.error("Error in getFrontendProperties:", error);
+      console.error("Error in getFrontendProperties:", _e);
       return [];
     }
   }
