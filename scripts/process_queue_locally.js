@@ -39,7 +39,7 @@ async function dispatchToWorker(workerUrl, payload, maxRetries = 2) {
       if (!res.ok) throw new Error(`Worker responded ${res.status}`);
       return await res.json();
     } catch (_e) {
-      lastErr = err;
+      lastErr = _e;
       attempt++;
       await new Promise((r) => setTimeout(r, 200 * attempt));
     }
@@ -116,12 +116,12 @@ async function dispatchToWorker(workerUrl, payload, maxRetries = 2) {
             .update({
               status: "failed",
               completed_at: new Date().toISOString(),
-              error: String(e),
+              error: String(_e),
             })
             .eq("external_id", job.external_id)
             .eq("id", job.id);
-        } catch {}
-        console.error(`FAILED: ${job.external_id} -> ${e}`);
+        } catch (_e2) { /* ignore */ }
+        console.error(`FAILED: ${job.external_id} -> ${_e}`);
       }
     }
 

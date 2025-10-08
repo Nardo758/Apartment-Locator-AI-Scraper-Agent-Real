@@ -14,11 +14,13 @@ async function main() {
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  // deno-lint-ignore no-explicit-any -- supabase client has complex types; narrow in a follow-up
   const batch = await getCostOptimizedBatch(supabase as any, 270);
   console.log("Selected batch size:", batch.length);
 
   // Compute estimated cost using local estimator
   const { estimateScrapingCost } = await import("../src/scraper/costs");
+  // deno-lint-ignore no-explicit-any -- batch shape will be typed in a follow-up PR
   const est = estimateScrapingCost(batch as any);
   console.log("Estimated weekly cost for selected batch: $", est.toFixed(2));
 

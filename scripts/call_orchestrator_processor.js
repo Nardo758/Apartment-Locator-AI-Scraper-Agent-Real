@@ -13,7 +13,7 @@ import process from "node:process";
       if (fs.existsSync(dotenvPath)) {
         require("dotenv").config({ path: dotenvPath });
       }
-    } catch {}
+    } catch (_e) { /* ignore */ }
 
     const baseUrl = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -37,7 +37,7 @@ import process from "node:process";
     console.log("HTTP", res.status);
     const text = await res.text();
     console.log(text);
-  } catch (_e) {
+  } catch (err) {
     console.error(err);
     process.exit(1);
   }

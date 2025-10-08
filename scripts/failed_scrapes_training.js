@@ -84,7 +84,7 @@ function normalizeErrorType(err) {
   }
 }
 
-function redactPII(obj, options = {}) {
+function redactPII(_obj, options = {}) {
   // global redact: emails and phones anywhere
   const emailRE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
   const phoneRE =
@@ -93,7 +93,7 @@ function redactPII(obj, options = {}) {
   function walk(value) {
     if (value === null || value === undefined) return value;
     if (typeof value === "string") {
-      let out = value.replace(emailRE, "[REDACTED_EMAIL]").replace(
+      const out = value.replace(emailRE, "[REDACTED_EMAIL]").replace(
         phoneRE,
         "[REDACTED_PHONE]",
       );

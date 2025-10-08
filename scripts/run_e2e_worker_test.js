@@ -54,7 +54,7 @@ const samplePayload = {
   source_url: "https://example.com/test-listing",
 };
 
-async function postJson(urlString, obj) {
+function postJson(urlString, obj) {
   const urlObj = new URL(urlString);
   const body = JSON.stringify(obj);
   const isHttps = urlObj.protocol === "https:";
