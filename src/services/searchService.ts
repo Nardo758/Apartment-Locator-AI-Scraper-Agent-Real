@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../lib/supabase-client";
 import * as process from "node:process";
 import type { Apartment } from "../types";
 
@@ -26,7 +26,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL ||
   "https://jdymvpasjsdbryatscux.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ||
   process.env.SUPABASE_ANON_KEY || "test-key";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
 export interface SearchFilters {
   city?: string;
