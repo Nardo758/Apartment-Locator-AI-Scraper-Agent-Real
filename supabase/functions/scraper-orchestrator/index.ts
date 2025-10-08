@@ -1,12 +1,12 @@
 // scraper-orchestrator/index.ts
 import { serve } from "std/http/server.ts";
-import { createClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../../../src/lib/supabase-client.ts";
 import { runProcessor } from "./processor.ts";
 import { recommendedConfig as _recommendedConfig } from "../openai_config.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const _supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Website type detection using AI
 export async function detectWebsiteType(

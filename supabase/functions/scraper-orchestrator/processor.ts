@@ -1,6 +1,5 @@
 // Thin wrapper for Deno runtime to call the shared processor logic.
-import { createClient } from "@supabase/supabase-js";
-import type { SupabaseClient as _SupabaseClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../../../src/lib/supabase-client.ts";
 import { detectWebsiteType, processPropertyByType } from "./index.ts";
 
 interface ExtractedApartment {
@@ -33,7 +32,7 @@ type WorkerResult = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
 export async function runProcessor() {
   const { data: batch, error } = await supabase.rpc("get_next_scraping_batch", {

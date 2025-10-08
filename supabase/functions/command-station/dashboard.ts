@@ -5,7 +5,8 @@
  * and real-time alerts for the scraping system.
  */
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../../../src/lib/supabase-client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { configManager } from "./config-manager.ts";
 import { controller } from "./controller.ts";
 
@@ -108,7 +109,7 @@ export class Dashboard {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
     const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
     if (SUPABASE_URL && SUPABASE_KEY) {
-      this.supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      this.supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY) as SupabaseClient;
     }
   }
 

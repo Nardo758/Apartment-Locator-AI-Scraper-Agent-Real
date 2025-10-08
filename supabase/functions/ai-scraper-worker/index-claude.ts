@@ -1,6 +1,6 @@
 // ai-scraper-worker/index-claude.ts - Claude/Anthropic version
 import { serve } from "std/http/server.ts";
-import { createClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../../../src/lib/supabase-client";
 
 // Validate AI-extracted fields
 function validateAiResult(result: Record<string, unknown>): boolean {
@@ -259,7 +259,7 @@ Return valid JSON. Use null for missing fields. Be thorough in searching all pag
       const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
       const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
       if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes("demo")) {
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
         const apartmentData = {
           external_id: external_id ||
@@ -326,7 +326,7 @@ Return valid JSON. Use null for missing fields. Be thorough in searching all pag
         const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
         const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
         if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes("demo")) {
-          const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+          const sb = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
           const today = new Date().toISOString().slice(0, 10);
           await sb.rpc("rpc_inc_scraping_costs", {
             p_date: today,

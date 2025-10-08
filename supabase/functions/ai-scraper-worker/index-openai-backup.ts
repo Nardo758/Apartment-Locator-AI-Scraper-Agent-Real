@@ -1,7 +1,7 @@
 // ai-scraper-worker/index.ts
 import { serve } from "std/http/server.ts";
 import { recommendedConfig } from "../openai_config.ts";
-import { createClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../../../src/lib/supabase-client";
 // Validate AI-extracted fields
 function validateAiResult(result: Record<string, unknown>): boolean {
   const requiredFields = ["name", "address", "city", "state", "current_price"];
@@ -201,7 +201,7 @@ serve(async (req: Request) => {
       const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
       const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
       if (SUPABASE_URL && SUPABASE_KEY) {
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
         const apartmentData = {
           external_id: external_id ||
@@ -286,7 +286,7 @@ serve(async (req: Request) => {
           Deno.env.get("SUPABASE_ANON_KEY") || "";
         if (SUPABASE_URL && SUPABASE_KEY) {
           try {
-            const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+            const sb = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
             const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
             await sb.rpc("rpc_inc_scraping_costs", {
               p_date: today,

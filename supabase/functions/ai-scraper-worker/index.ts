@@ -1,6 +1,6 @@
 // ai-scraper-worker/index.ts - Updated with Frontend Integration
 import { serve } from "std/http/server.ts";
-import { createClient } from "@supabase/supabase-js";
+import { createTypedClient } from "../../../src/lib/supabase-client";
 
 // Import concession services
 import { ConcessionDetector } from "./enhanced-concession-detector.ts";
@@ -930,7 +930,7 @@ serve(async (req: Request) => {
       const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
       if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes("demo")) {
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Enhanced apartment data with concession support
         const concessions = Array.isArray(result.concessions)
@@ -1136,7 +1136,7 @@ serve(async (req: Request) => {
         const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
         const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
         if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes("demo")) {
-          const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+    const sb = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
           const today = new Date().toISOString().slice(0, 10);
           await sb.rpc("rpc_inc_scraping_costs", {
             p_date: today,
