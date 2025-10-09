@@ -21,7 +21,14 @@ export function detectSignificantChanges(oldData: Record<string, unknown>, newDa
 async function logScrapingActivity(supabase: SupabaseClient<Database>, externalId: string, event: string, payload: Record<string, unknown>) {
   // best-effort logging; swallow errors
   try {
-    await supabase.from('scraping_logs').insert({ external_id: externalId, event, payload, created_at: new Date().toISOString() });
+    // Use the generated types: 'scraping_logs' has columns (level, message, meta, job_id, created_at, id)
+    const row: import('../../types/supabase').TablesInsert<'scraping_logs'> = {
+      level: 'info',
+      message: event,
+      meta: payload as unknown as import('../../types/supabase').Json,
+      created_at: new Date().toISOString(),
+    };
+    await supabase.from('scraping_logs').insert(row);
   } catch (_err) {
     // ignore logging failures
   }
@@ -42,7 +49,10 @@ async function logSignificantChanges(supabase: SupabaseClient<Database>, externa
 export async function updatePropertyWithHistory(supabase: SupabaseClient<Database>, externalId: string, payload: Record<string, unknown>) {
   // Attempt RPC first
   try {
-    const { data, error } = await supabase.rpc('rpc_update_property_with_history', { p_external_id: externalId, p_payload: payload });
+    const { data, error } = await supabase.rpc('rpc_update_property_with_history', {
+      p_external_id: externalId,
+      p_payload: payload as unknown as import('../../types/supabase').Json,
+    });
     if (error) throw error;
     return data;
   } catch (_rpcErr) {

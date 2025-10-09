@@ -41,7 +41,12 @@ export class SupabaseClientWrapper {
       if (v === undefined) delete payload[k];
     }
 
-  const result = await this.client.from('apartments').upsert(payload, { onConflict: 'external_id' }) as PostgrestResponse<unknown>
+    // Cast to TablesInsert<'apartments'> at the boundary to satisfy supabase-js types
+    // while still allowing us to build the payload ergonomically.
+    const insertPayload = payload as unknown as import('../../types/supabase').TablesInsert<'apartments'>
+    const result = await this.client
+      .from('apartments')
+      .upsert(insertPayload, { onConflict: 'external_id' }) as PostgrestResponse<unknown>
   // result.data may be null; narrow safely
   const data = result.data
   const error = result.error

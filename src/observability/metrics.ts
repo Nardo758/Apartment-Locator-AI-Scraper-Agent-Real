@@ -38,16 +38,20 @@ export const validationFailByReason = wrapCounter(_validationFailByReason, (labe
   failByReasonMap[reason] = (failByReasonMap[reason] || 0) + increment;
 });
 
-export function getMetrics(): Promise<string> {
-  // Try to delegate to prom-client if available, otherwise synthesize minimal metrics output
+export async function getMetrics(): Promise<string> {
+  // Prefer prom-client if available and non-empty; otherwise synthesize from local counters
   try {
     // @ts-ignore
-    if (promClient && promClient.register && typeof promClient.register.metrics === 'function') {
+    const hasRegister = !!(promClient && promClient.register && typeof promClient.register.metrics === 'function');
+    if (hasRegister) {
       // @ts-ignore
-      return promClient.register.metrics();
+      const text: string = await promClient.register.metrics();
+      if (text && text.trim().length > 0) {
+        return text;
+      }
     }
-  } catch (e) {
-    // fall through to synthesize
+  } catch {
+    // ignore and fall back to synthesized output
   }
 
   let out = '';
@@ -56,7 +60,7 @@ export function getMetrics(): Promise<string> {
   for (const r of Object.keys(failByReasonMap)) {
     out += `validation_fail_by_reason{reason="${r}"} ${failByReasonMap[r]}\n`;
   }
-  return Promise.resolve(out);
+  return out;
 }
 
 // @ts-ignore

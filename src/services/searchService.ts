@@ -48,10 +48,12 @@ export class SearchService {
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
-    let qb = this.client
+    // Work with a narrowed interface to avoid leaking supabase-js generic builder types
+    const base = this.client
       .from('apartments')
       .select('*', { count: 'exact' })
-      .eq('is_active', true) as QueryBuilder
+      .eq('is_active', true) as unknown as QueryBuilder
+    let qb = base
 
     if (filters.city) qb = qb.eq('city', filters.city)
     if (typeof filters.minPrice === 'number') qb = qb.gte('rent_price', filters.minPrice)
