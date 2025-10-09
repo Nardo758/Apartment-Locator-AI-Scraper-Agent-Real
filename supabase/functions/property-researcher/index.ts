@@ -3,6 +3,15 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.0";
+// Prefer typed wrapper when running in repo context; fallback to createClient URL import
+let createTypedClient: any = undefined;
+try {
+  // When this file runs inside the repository or during testing, the local wrapper is available
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  createTypedClient = (await import("../../../src/lib/supabase-client")).createTypedClient;
+} catch {
+  // ignore - fallback to remote createClient
+}
 
 interface PropertyIntelligence {
   property_name: string;
@@ -39,9 +48,9 @@ serve(async (req: Request) => {
     console.log("🧠 Property researcher started");
 
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabase = (createTypedClient || createClient)(supabaseUrl, supabaseKey);
 
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!anthropicKey) {

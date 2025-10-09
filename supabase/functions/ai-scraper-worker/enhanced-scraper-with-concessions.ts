@@ -1,6 +1,14 @@
 // Enhanced Main Scraper with Concession Focus
 import { serve } from "std/http/server.ts";
 import { createClient } from "@supabase/supabase-js";
+let createTypedClient: any = undefined;
+try {
+  // local typed wrapper for repo conversions
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  createTypedClient = require("../../../src/lib/supabase-client").createTypedClient;
+} catch {
+  // ignore - fallback to upstream createClient
+}
 import { ClaudeService } from "../../../src/services/claude-service.ts";
 import { ConcessionDetector } from "../../../src/services/enhanced-concession-detector.ts";
 import { ConcessionTracker } from "../../../src/services/concession-tracker.ts";
@@ -186,7 +194,7 @@ async function handleScrapingRequest(req: Request): Promise<Response> {
     const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
     if (SUPABASE_URL && SUPABASE_KEY) {
-      const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      const supabase = (createTypedClient || createClient)(SUPABASE_URL, SUPABASE_KEY);
 
       // Save apartments with concession data
       for (const apartment of scrapingResult.apartments) {
