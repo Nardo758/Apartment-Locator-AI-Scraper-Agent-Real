@@ -3,14 +3,20 @@
 // Get-Content .env | ForEach-Object { if ($_ -match '^\s*([^#=]+)=(.*)$') { $name=$matches[1]; $value=$matches[2]; Set-Item -Path env:$name -Value $value } }; node ./scripts/insert_test_job.js
 
 import process from "node:process";
-const { createClient } = require("@supabase/supabase-js");
+let createTypedClient;
+let createClient;
+try {
+  ({ createTypedClient } = require("../src/lib/supabase-client"));
+} catch (e) {
+  ({ createClient } = require("@supabase/supabase-js"));
+}
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) {
   console.error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
-const supabase = createClient(url, key);
+const supabase = (createTypedClient || createClient)(url, key);
 
 (async function () {
   try {
@@ -56,7 +62,7 @@ const supabase = createClient(url, key);
     console.log("Inserted scraping_queue row", qData && qData[0]);
 
     console.log("E2E test job inserted. external_id =", externalId);
-  } catch (_e) {
+  } catch (err) {
     console.error("Unexpected", err);
   }
 })();

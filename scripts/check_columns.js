@@ -1,15 +1,22 @@
 // scripts/check_columns.js
 import process from "node:process";
-const { createClient } = require("@supabase/supabase-js");
+let createTypedClient;
+let createClient;
+try {
+  ({ createTypedClient } = require("../src/lib/supabase-client"));
+} catch (e) {
+  ({ createClient } = require("@supabase/supabase-js"));
+}
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) {
   console.error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
-const supabase = createClient(url, key);
+const supabase = (createTypedClient || createClient)(url, key);
+
 (async function () {
-  const { _data, error } = await supabase
+  const { data, error } = await supabase
     .from("scraping_queue")
     .select("priority_tier, last_change_date, change_frequency")
     .limit(1);
