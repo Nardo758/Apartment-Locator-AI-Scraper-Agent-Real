@@ -1,5 +1,5 @@
 // Thin wrapper for Deno runtime to call the shared processor logic.
-import { createTypedClient } from "../../../src/lib/supabase-client.ts";
+import { createTypedClient } from "../shared/supabase-client.ts";
 import { detectWebsiteType, processPropertyByType } from "./index.ts";
 
 interface ExtractedApartment {

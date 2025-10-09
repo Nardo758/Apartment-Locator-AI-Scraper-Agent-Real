@@ -46,7 +46,8 @@ async function checkEnvVars(): Promise<boolean> {
 
     return hasAnthropicKey && hasSupabaseUrl && hasSupabaseKey;
   } catch (error) {
-    console.log(`   • Error reading .env.local: ${error}`);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error(`   • Error reading .env.local: ${msg}`);
     return false;
   }
 }
@@ -93,7 +94,8 @@ async function checkClaude(): Promise<boolean> {
 
     return isValid;
   } catch (error) {
-    console.log(`   • Claude API connection failed: ${error}`);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error(`   • Claude API connection failed: ${msg}`);
     return false;
   }
 }
@@ -135,7 +137,8 @@ async function checkSupabase(): Promise<boolean> {
 
     return isValid;
   } catch (error) {
-    console.log(`   • Supabase connection failed: ${error}`);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error(`   • Supabase connection failed: ${msg}`);
     return false;
   }
 }
@@ -173,7 +176,8 @@ async function checkFunctionServer(): Promise<boolean> {
 
     return isRunning;
   } catch (error) {
-    console.log(`   • Function server check failed: ${error}`);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error(`   • Function server check failed: ${msg}`);
     return false;
   }
 }

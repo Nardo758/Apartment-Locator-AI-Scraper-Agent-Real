@@ -1,4 +1,4 @@
-import { estimateCostFromTokens } from "../costs";
+import { estimateCostFromTokens } from "../costs.ts";
 
 test("estimateCostFromTokens computes reasonable values", () => {
   const cost1 = estimateCostFromTokens("gpt-3.5-turbo", 1000, 500);

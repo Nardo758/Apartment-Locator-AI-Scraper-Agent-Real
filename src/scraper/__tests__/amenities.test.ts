@@ -1,4 +1,4 @@
-import { extractAmenities } from "../amenities";
+import { extractAmenities } from "../amenities.ts";
 
 describe("amenities parser", () => {
   test("extracts building amenities and unit features", () => {

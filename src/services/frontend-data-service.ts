@@ -2,9 +2,10 @@
 // src/services/frontend-data-service.ts
 
 import process from "node:process";
-import { createTypedClient } from "../lib/supabase-client";
-import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property";
-import type Database from "../types/supabase-db";
+import { createTypedClient } from "../lib/supabase-client.ts";
+import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property.ts";
+import type Database from "../types/supabase-db.ts";
+import { typedUpsert } from "../lib/typed-upsert.ts";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 interface FrontendProperty {
@@ -407,12 +408,15 @@ export class FrontendDataService {
         );
 
         // Upsert to properties table
-        const { error } = await this.supabase
-          .from("properties")
-          .upsert(frontendProperty as any, {
+        const { error } = await typedUpsert(
+          this.supabase,
+          "properties",
+          frontendProperty as Database["public"]["Tables"]["properties"]["Insert"],
+          {
             onConflict: "external_id",
             ignoreDuplicates: false,
-          });
+          },
+        );
 
         if (error) {
           console.error("Error upserting property:", error);
@@ -461,15 +465,18 @@ export class FrontendDataService {
           concession_trend: property.savings > 0 ? "increasing" : "none",
         };
 
-        await this.supabase
-          .from("apartment_iq_data")
-          .upsert({
+        await typedUpsert(
+          this.supabase,
+          "apartment_iq_data",
+          ({
             property_id: propertyDataRow.id,
             ...iqData,
-          } as any, {
+          } as Database["public"]["Tables"]["apartment_iq_data"]["Insert"]),
+          {
             onConflict: "property_id",
             ignoreDuplicates: false,
-          });
+          },
+        );
       }
     } catch (_e) {
       console.error("Error upserting ApartmentIQ data:", _e);

@@ -24,6 +24,7 @@ try {
     const module = await import('./index.ts');
     console.log('\n Successful import');
     console.log('Exports:', Object.keys(module));
-} catch (error) {
-    console.log('\n Import error:', error.message);
+} catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.log('\n Import error:', msg);
 }

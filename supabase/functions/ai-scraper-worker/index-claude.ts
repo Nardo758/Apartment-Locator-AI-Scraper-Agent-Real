@@ -1,6 +1,9 @@
 // ai-scraper-worker/index-claude.ts - Claude/Anthropic version
 import { serve } from "std/http/server.ts";
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
+import type { ScrapedPropertiesRow } from "../../../src/types/supabase-db.ts";
+import type Database from "../../../src/types/supabase-db.ts";
+import { typedUpsert } from "../shared/typed-upsert.ts";
 
 // Validate AI-extracted fields
 function validateAiResult(result: Record<string, unknown>): boolean {
@@ -291,9 +294,12 @@ Return valid JSON. Use null for missing fields. Be thorough in searching all pag
           ),
         );
 
-        const { data, error } = await supabase
-          .from("apartments")
-          .upsert(cleanData, { onConflict: "external_id" });
+        const { data, error } = await typedUpsert(
+          supabase,
+          "apartments",
+          [cleanData] as Database["public"]["Tables"]["apartments"]["Insert"][],
+          { onConflict: "external_id" },
+        );
 
         if (error) {
           console.error("Failed to save apartment:", error);
@@ -340,7 +346,7 @@ Return valid JSON. Use null for missing fields. Be thorough in searching all pag
               output_tokens: outputTokens,
               provider: "anthropic",
             },
-          });
+          } as any);
         }
       }
     } catch (e) {

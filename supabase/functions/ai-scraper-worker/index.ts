@@ -1,6 +1,9 @@
 // ai-scraper-worker/index.ts - Updated with Frontend Integration
 import { serve } from "std/http/server.ts";
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../../../src/lib/supabase-client.ts";
+import type { ScrapedPropertiesRow, PropertiesRow } from "../../../src/types/supabase-db.ts";
+import type Database from "../../../src/types/supabase-db.ts";
+import { typedUpsert } from "../shared/typed-upsert.ts";
 
 // Import concession services
 import { ConcessionDetector } from "./enhanced-concession-detector.ts";
@@ -665,7 +668,8 @@ async function intelligentPropertyExtraction(
 
     return extractedData;
   } catch (error) {
-    console.error("❌ Intelligent extraction failed:", error);
+    const msg = (await import("../shared/error.ts")).errMsg(error);
+    console.error("❌ Intelligent extraction failed:", msg);
     console.log("🔄 Falling back to basic extraction...");
 
     // Fallback to basic extraction if smart extraction fails
@@ -982,9 +986,12 @@ serve(async (req: Request) => {
         );
 
         // Save to legacy table (scraped_properties, not apartments)
-        const { error: apartmentError } = await supabase
-          .from("scraped_properties")
-          .upsert(cleanData, { onConflict: "external_id" });
+        const { error: apartmentError } = await typedUpsert(
+          supabase,
+          "apartments",
+          [cleanData] as Database["public"]["Tables"]["apartments"]["Insert"][],
+          { onConflict: "external_id" },
+        );
 
         if (apartmentError) {
           console.error("Failed to save to apartments table:", apartmentError);
@@ -998,7 +1005,7 @@ serve(async (req: Request) => {
             // Transform scraped data to frontend format
             const scrapedForTransform = {
               ...result,
-              external_id: external_id || apartmentData.external_id,
+              external_id: external_id || (apartmentData as any).external_id,
               listing_url: source_url || url,
               source: source,
             };
@@ -1020,9 +1027,12 @@ serve(async (req: Request) => {
                 attempt <= maxAttempts && !saved;
                 attempt++
               ) {
-                const { error: propertiesError } = await supabase
-                  .from("properties")
-                  .upsert(propertiesPayload, { onConflict: "external_id" });
+                  const { data: propertiesData, error: propertiesError } = await typedUpsert(
+                    supabase,
+                    "properties",
+                    [propertiesPayload] as Database["public"]["Tables"]["properties"]["Insert"][],
+                    { onConflict: "external_id" },
+                  );
 
                 if (!propertiesError) {
                   console.log(
@@ -1039,9 +1049,7 @@ serve(async (req: Request) => {
                   propertiesError,
                 );
 
-                const msg = (propertiesError &&
-                  (propertiesError.message || propertiesError.msg ||
-                    "")) as string;
+                const msg = (await import("../shared/error.ts")).errMsg(propertiesError);
 
                 // Handle missing column errors reported by PostgREST (PGRST204)
                 // Example message: "Could not find the 'admin_fee_amount' column of 'properties' in the schema cache"
@@ -1151,7 +1159,7 @@ serve(async (req: Request) => {
               provider: "anthropic",
               frontend_sync: Deno.env.get("ENABLE_FRONTEND_SYNC") === "true",
             },
-          });
+          } as any);
         }
       }
     } catch (e) {

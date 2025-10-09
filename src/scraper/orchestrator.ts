@@ -1,11 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getModelCost } from "./costs";
+import { getModelCost } from "./costs.ts";
 import {
   batchTransformProperties,
   saveTransformedProperties,
   transformScrapedToFrontendFormat,
-} from "./data-transformer";
-import type { FrontendProperty, ScrapedPropertyData } from "../types/frontend";
+} from "./data-transformer.ts";
+import type { FrontendProperty, ScrapedPropertyData } from "../types/frontend.ts";
 import process from "node:process";
 
 export type ScrapingJob = Record<string, unknown> & {

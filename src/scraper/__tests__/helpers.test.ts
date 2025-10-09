@@ -1,7 +1,7 @@
 import {
   calculateStabilityScore,
   getRecommendedFrequency,
-} from "../orchestrator";
+} from "../orchestrator.ts";
 
 describe("stability helpers", () => {
   test("calculateStabilityScore clamps and scales", () => {

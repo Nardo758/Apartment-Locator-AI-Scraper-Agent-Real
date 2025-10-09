@@ -1,7 +1,11 @@
 // ai-scraper-worker/index.ts
 import { serve } from "std/http/server.ts";
 import { recommendedConfig } from "../openai_config.ts";
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
+import type { ScrapedPropertiesRow } from "../../../src/types/supabase-db.ts";
+import type Database from "../../../src/types/supabase-db.ts";
+import { typedUpsert } from "../shared/typed-upsert.ts";
+
 // Validate AI-extracted fields
 function validateAiResult(result: Record<string, unknown>): boolean {
   const requiredFields = ["name", "address", "city", "state", "current_price"];
@@ -233,9 +237,12 @@ serve(async (req: Request) => {
           ),
         );
 
-        const { data, error } = await supabase
-          .from("apartments")
-          .upsert(cleanData, { onConflict: "external_id" });
+        const { data, error } = await typedUpsert(
+          supabase,
+          "apartments",
+          [cleanData] as Database["public"]["Tables"]["apartments"]["Insert"][],
+          { onConflict: "external_id" },
+        );
 
         if (error) {
           console.error("Failed to save apartment:", error);
@@ -299,7 +306,7 @@ serve(async (req: Request) => {
                 prompt_tokens: promptTokens,
                 completion_tokens: completionTokens,
               },
-            });
+            } as any);
           } catch (e) {
             console.error("Failed to record scraping cost via RPC:", e);
           }

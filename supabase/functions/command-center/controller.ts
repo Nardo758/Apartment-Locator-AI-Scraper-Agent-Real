@@ -6,7 +6,7 @@
  */
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
 import { configManager, SystemConfig } from "./config-manager.ts";
 
 export interface BatchResult {

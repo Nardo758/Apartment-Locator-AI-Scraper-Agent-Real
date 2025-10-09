@@ -8,7 +8,11 @@ let createTypedClient: any = undefined;
 try {
   // When this file runs inside the repository or during testing, the local wrapper is available
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  createTypedClient = (await import("../../../src/lib/supabase-client")).createTypedClient;
+  try {
+    createTypedClient = (await import("../shared/supabase-client.ts")).createTypedClient;
+  } catch {
+    createTypedClient = (await import("../../../src/lib/supabase-client.ts")).createTypedClient;
+  }
 } catch {
   // ignore - fallback to remote createClient
 }
@@ -97,12 +101,12 @@ serve(async (req: Request) => {
 
           // Rate limiting
           await sleep(1000);
-        } catch (error) {
-          console.error(`❌ Error analyzing ${property.url}:`, error);
+        } catch (e) {
+          console.error(`❌ Error analyzing ${property.url}:`, e instanceof Error ? e.message : String(e));
           results.push({
             url: property.url,
             success: false,
-            error: error.message,
+            error: e instanceof Error ? e.message : String(e),
             cost: 0,
           });
         }
@@ -165,13 +169,13 @@ serve(async (req: Request) => {
         status: 200,
       },
     );
-  } catch (error) {
-    console.error("❌ Property researcher error:", error);
+  } catch (e) {
+    console.error("❌ Property researcher error:", e instanceof Error ? e.message : String(e));
 
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: e instanceof Error ? e.message : String(e),
         timestamp: new Date().toISOString(),
       }),
       {
@@ -268,12 +272,13 @@ async function analyzePropertyWithClaude(
       intelligence: intelligence,
       cost: 0.015, // Estimated cost for Claude analysis
     };
-  } catch (error) {
-    console.error(`❌ Error analyzing ${property.url}:`, error);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error(`❌ Error analyzing ${property.url}:`, msg);
     return {
       url: property.url,
       success: false,
-      error: error.message,
+      error: msg,
       cost: 0,
     };
   }
@@ -344,15 +349,16 @@ async function enhancePropertySource(
       ...intelligence,
       apartments_enhanced: apartments.length,
     };
-  } catch (error) {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
     console.error(
       `❌ Error enhancing property source ${propertySourceId}:`,
-      error,
+      msg,
     );
     return {
       property_source_id: propertySourceId,
       success: false,
-      error: error.message,
+      error: msg,
       cost: 0,
     };
   }
@@ -478,9 +484,10 @@ Be conservative with confidence scores. Only use high confidence (80+) when info
         url: url,
       },
     };
-  } catch (error) {
-    console.error("Claude analysis error:", error);
-    throw new Error(`Claude analysis failed: ${error.message}`);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error("Claude analysis error:", msg);
+    throw new Error(`Claude analysis failed: ${msg}`);
   }
 }
 

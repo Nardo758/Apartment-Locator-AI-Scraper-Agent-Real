@@ -18,4 +18,4 @@ export interface ScraperOptions {
   };
 }
 
-export type { Apartment } from "./apartment";
+export type { Apartment } from "./apartment.ts";

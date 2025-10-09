@@ -2,13 +2,22 @@
 import { serve } from "std/http/server.ts";
 import { createClient } from "@supabase/supabase-js";
 let createTypedClient: any = undefined;
+// Prefer the local shared wrapper; if not available, try the repo-level wrapper via dynamic import.
+// If both imports fail, fall back to the upstream createClient at call sites.
 try {
-  // local typed wrapper for repo conversions
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  createTypedClient = require("../../../src/lib/supabase-client").createTypedClient;
+  const local = await import("../shared/supabase-client.ts").catch(() => null);
+  if (local && typeof local.createTypedClient === "function") {
+    createTypedClient = local.createTypedClient;
+  } else {
+    const repoMod = await import("../../../src/lib/supabase-client.ts").catch(() => null);
+    if (repoMod && typeof repoMod.createTypedClient === "function") {
+      createTypedClient = repoMod.createTypedClient;
+    }
+  }
 } catch {
-  // ignore - fallback to upstream createClient
+  // ignore - we'll use createClient fallback where needed
 }
+import type { ScrapedPropertiesRow } from "../../../src/types/supabase-db.ts";
 import { ClaudeService } from "../../../src/services/claude-service.ts";
 import { ConcessionDetector } from "../../../src/services/enhanced-concession-detector.ts";
 import { ConcessionTracker } from "../../../src/services/concession-tracker.ts";
@@ -67,8 +76,8 @@ async function enhancedScrapeWithConcessions(job: any) {
         total_apartments: apartmentsWithConcessions.length,
       },
     };
-  } catch (error) {
-    console.error("Primary source scraping failed:", error);
+  } catch (e) {
+    console.error("Primary source scraping failed:", e instanceof Error ? e.message : String(e));
     // Fallback to secondary sources if primary fails
     return await fallbackToSecondarySources(job);
   }
@@ -88,9 +97,9 @@ async function fetchPropertyWebsite(url: string): Promise<string> {
     }
 
     return await response.text();
-  } catch (error) {
-    console.error("Failed to fetch property website:", error);
-    throw error;
+  } catch (e) {
+    console.error("Failed to fetch property website:", e instanceof Error ? e.message : String(e));
+    throw e;
   }
 }
 
@@ -139,8 +148,8 @@ Return JSON array with this structure for each apartment:
         amenities: [],
       },
     ];
-  } catch (error) {
-    console.error("Failed to extract listings:", error);
+  } catch (e) {
+    console.error("Failed to extract listings:", e instanceof Error ? e.message : String(e));
     return [];
   }
 }
@@ -236,7 +245,7 @@ async function handleScrapingRequest(req: Request): Promise<Response> {
 
         const { error } = await supabase
           .from("apartments")
-          .upsert(cleanData, { onConflict: "external_id" });
+          .upsert(cleanData as Partial<ScrapedPropertiesRow>, { onConflict: "external_id" });
 
         if (error) {
           console.error("Failed to save apartment:", error);
@@ -269,7 +278,7 @@ async function handleScrapingRequest(req: Request): Promise<Response> {
           "atlanta",
         );
       } catch (analyticsError) {
-        console.error("Failed to save concession analytics:", analyticsError);
+        console.error("Failed to save concession analytics:", analyticsError instanceof Error ? analyticsError.message : String(analyticsError));
       }
     }
 
@@ -293,12 +302,12 @@ async function handleScrapingRequest(req: Request): Promise<Response> {
         headers: { "content-type": "application/json" },
       },
     );
-  } catch (error) {
-    console.error("Scraping request failed:", error);
+  } catch (e) {
+    console.error("Scraping request failed:", e instanceof Error ? e.message : String(e));
     return new Response(
       JSON.stringify({
         status: "error",
-        message: error.message,
+        message: e instanceof Error ? e.message : String(e),
         timestamp: new Date().toISOString(),
       }),
       {

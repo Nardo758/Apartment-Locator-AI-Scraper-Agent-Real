@@ -72,11 +72,12 @@ export class ClaudeService {
       }
       const intelligence = this.parseClaudeResponse(text ?? "");
       return { success: true, data: intelligence };
-    } catch (_e) {
-      console.error("Claude analysis error:", error);
+    } catch (e) {
+      // Narrow the unknown error and log safely
+      console.error("Claude analysis error:", e instanceof Error ? e.message : String(e));
       return {
         success: false,
-        error: error instanceof Error ? error.message : String(error),
+        error: e instanceof Error ? e.message : String(e),
         data: this.getDefaultResponse(),
       };
     }
@@ -161,8 +162,8 @@ IMPORTANT: If concessions or free rent are mentioned ANYWHERE in the content, th
       }
 
       throw new Error("No JSON found in Claude response");
-    } catch (_e) {
-      console.error("JSON parsing error:", error);
+    } catch (e) {
+      console.error("JSON parsing error:", e instanceof Error ? e.message : String(e));
       return this.getDefaultResponse();
     }
   }

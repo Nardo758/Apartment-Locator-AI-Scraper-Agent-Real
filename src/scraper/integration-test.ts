@@ -6,15 +6,15 @@ import {
   getScrapingBatchWithTransformation,
   type ScrapingJob,
   syncToFrontendSchema,
-} from "./orchestrator";
+} from "./orchestrator.ts";
 import {
   batchTransformProperties,
   transformScrapedToFrontendFormat,
-} from "./data-transformer";
+} from "./data-transformer.ts";
 import type {
   FrontendProperty as FrontendPropertyType,
   ScrapedPropertyData as ScrapedPropertyDataType,
-} from "../types/frontend";
+} from "../types/frontend.ts";
 import process from "node:process";
 
 // Test configuration

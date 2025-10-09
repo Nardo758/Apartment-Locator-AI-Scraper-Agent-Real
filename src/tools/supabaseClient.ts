@@ -1,6 +1,6 @@
 import { PostgrestResponse, SupabaseClient as SClient } from "@supabase/supabase-js";
-import { createTypedClient } from "../lib/supabase-client";
-import type { Apartment } from "../types";
+import { createTypedClient } from "../lib/supabase-client.ts";
+import type { Apartment } from "../types/index.ts";
 import * as process from "node:process";
 
 // Apartment type moved to src/types/apartment.ts

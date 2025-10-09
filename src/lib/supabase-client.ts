@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type Database from "../types/supabase-db";
+import type Database from "../types/supabase-db.ts";
 
 /**
  * Centralized factory that returns a Supabase client typed with our

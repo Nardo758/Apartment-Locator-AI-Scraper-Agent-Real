@@ -6,7 +6,7 @@
  */
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
 
 interface ScrapeLog {
   status?: string;

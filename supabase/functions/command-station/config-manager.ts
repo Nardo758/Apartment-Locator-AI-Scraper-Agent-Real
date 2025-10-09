@@ -5,7 +5,7 @@
  * to all worker functions and services.
  */
 
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface SystemConfig {

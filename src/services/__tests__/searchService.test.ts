@@ -1,4 +1,4 @@
-import { SearchService } from "../searchService";
+import { SearchService } from "../searchService.ts";
 
 describe("SearchService", () => {
   test("basic filters do not throw", async () => {

@@ -1,19 +1,19 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { ScrapingJob } from "./orchestrator";
-import { syncToFrontendSchema } from "./orchestrator";
-import { transformScrapedToFrontendFormat } from "./data-transformer";
-import type { ScrapedPropertyData } from "../types/frontend";
+import type { ScrapingJob } from "./orchestrator.ts";
+import { syncToFrontendSchema } from "./orchestrator.ts";
+import { transformScrapedToFrontendFormat } from "./data-transformer.ts";
+import type { ScrapedPropertyData } from "../types/frontend.ts";
 import {
   ScrapedPropertySchema,
   type ScrapedPropertyType,
-} from "../schemas/scraped-property-schema";
+} from "../schemas/scraped-property-schema.ts";
 import {
   validationFailByReason,
   validationFailCounter,
   validationPassCounter,
-} from "../observability/metrics";
+} from "../observability/metrics.ts";
 import process from "node:process";
-import { startMetricsServer } from "../observability/server";
+import { startMetricsServer } from "../observability/server.ts";
 
 type WorkerResult = {
   success: boolean;
@@ -127,7 +127,7 @@ export async function processBatchWithCostOptimization(
           const model = String(
             usage.model ?? (chosenModelKey ?? "gpt-3.5-turbo"),
           );
-          const estimateModule = await import("./costs");
+          const estimateModule = await import("./costs.ts");
           const estimateCostFromTokens = estimateModule
             .estimateCostFromTokens as (
               modelKey: string,

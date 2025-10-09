@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "lib": ["deno.ns", "deno.window"],
-    "strict": true
+    "strict": true,
+    "allowImportingTsExtensions": true
   },
   "tasks": {
     "scrape": {

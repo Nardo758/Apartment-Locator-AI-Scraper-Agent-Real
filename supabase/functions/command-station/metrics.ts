@@ -5,7 +5,7 @@
  * and system monitoring capabilities.
  */
 
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 interface ScrapeLog {
@@ -692,8 +692,9 @@ export class Metrics {
         ? tokensUsed / requestsToday
         : 0;
 
-      // Calculate cost effectiveness (successful extractions per dollar)
-      const costEffectiveness = cost > 0 ? recentLogs?.length / cost || 0 : 0;
+  // Calculate cost effectiveness (successful extractions per dollar)
+  const recentCount = recentLogs ? recentLogs.length : 0;
+  const costEffectiveness = cost > 0 ? recentCount / cost || 0 : 0;
 
       return {
         requests_today: requestsToday,
@@ -706,7 +707,8 @@ export class Metrics {
         },
       };
     } catch (error) {
-      console.error("Error getting Claude metrics:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error getting Claude metrics:", msg);
       return {
         requests_today: 0,
         avg_confidence: 0,

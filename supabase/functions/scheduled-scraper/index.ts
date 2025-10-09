@@ -2,7 +2,7 @@
 // supabase/functions/scheduled-scraper/index.ts
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
 
 interface DeploymentConfig {
   scraping_enabled: boolean;
@@ -188,18 +188,16 @@ serve(async (req: Request) => {
           );
           break;
         }
-      } catch (error) {
-        console.error(
-          `❌ Error processing ${propertySource.property_name}:`,
-          error,
-        );
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error(`❌ Error processing ${propertySource.property_name}:`, msg);
 
         const errorResult: ScrapingResult = {
           source_id: propertySource.id,
           properties_found: 0,
           cost: 0,
           success: false,
-          error: error.message,
+            error: msg,
           intelligence_added: false,
         };
 
@@ -212,7 +210,7 @@ serve(async (req: Request) => {
           0,
           0,
           false,
-          error.message,
+            msg,
         );
       }
     }
@@ -270,13 +268,13 @@ serve(async (req: Request) => {
         status: 200,
       },
     );
-  } catch (error) {
-    console.error("❌ Scheduled scraper error:", error);
+  } catch (e) {
+      console.error("❌ Scheduled scraper error:", e instanceof Error ? e.message : String(e));
 
     return new Response(
       JSON.stringify({
         status: "error",
-        message: error.message,
+        message: e instanceof Error ? e.message : String(e),
         timestamp: new Date().toISOString(),
       }),
       {
@@ -415,10 +413,10 @@ async function processPropertySource(
             `🧠 Claude intelligence added for ${source.property_name}`,
           );
         }
-      } catch (error) {
+      } catch (e) {
         console.warn(
           `⚠️ Claude intelligence failed for ${source.property_name}:`,
-          error,
+          e instanceof Error ? e.message : String(e),
         );
       }
     }
@@ -431,13 +429,14 @@ async function processPropertySource(
       error: scraperResult.error,
       intelligence_added: intelligenceAdded,
     };
-  } catch (error) {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
     return {
       source_id: source.id,
       properties_found: 0,
       cost: 0,
       success: false,
-      error: error.message,
+      error: msg,
       intelligence_added: false,
     };
   }

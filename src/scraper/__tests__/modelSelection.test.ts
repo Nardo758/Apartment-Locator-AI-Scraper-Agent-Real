@@ -2,8 +2,8 @@
  * @jest-environment node
  */
 
-import { getOptimalAIModel, optimizeAIPrompt } from "../modelSelection";
-import { calculateStabilityScore } from "../orchestrator";
+import { getOptimalAIModel, optimizeAIPrompt } from "../modelSelection.ts";
+import { calculateStabilityScore } from "../orchestrator.ts";
 
 jest.mock("../orchestrator", () => ({
   calculateStabilityScore: jest.fn(),

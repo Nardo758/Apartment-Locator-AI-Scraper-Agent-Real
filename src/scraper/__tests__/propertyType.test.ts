@@ -1,4 +1,4 @@
-import { classifyPropertyType } from "../propertyType";
+import { classifyPropertyType } from "../propertyType.ts";
 
 describe("property type classifier", () => {
   test("identifies condo", () => {

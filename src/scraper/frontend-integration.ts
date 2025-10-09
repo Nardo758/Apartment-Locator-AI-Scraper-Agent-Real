@@ -4,10 +4,12 @@
 // file-level suppressions; this file progressively replaces `any` with the
 // `ScrapedProperty` type and `Record<string, unknown>` where appropriate.
 
-import { frontendDataService } from "../services/frontend-data-service";
-import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property";
-import { createTypedClient } from "../lib/supabase-client";
-import type Database from "../types/supabase-db";
+import { frontendDataService } from "../services/frontend-data-service.ts";
+import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property.ts";
+import { createTypedClient } from "../lib/supabase-client.ts";
+import type Database from "../types/supabase-db.ts";
+import { typedUpsert } from "../lib/typed-upsert.ts";
+import { errMsg } from "../lib/error.ts";
 import process from "node:process";
 
 interface ScraperResult {
@@ -142,20 +144,21 @@ export class ScraperFrontendIntegration {
         };
 
         // Upsert to scraped_properties
-          const { data, error } = await this.supabase!
-          .from("scraped_properties")
-          .upsert(scrapedProperty as any, {
-            onConflict: "external_id",
-            ignoreDuplicates: false,
-          })
-          .select()
-          .single();
-
-        if (error) {
-          console.error("Error upserting scraped property:", error);
-        } else {
-          scrapedProperties.push(data as LocalScrapedProperty);
-        }
+          try {
+            const { data, error } = await typedUpsert(
+              this.supabase!,
+              "scraped_properties",
+              scrapedProperty as Database["public"]["Tables"]["scraped_properties"]["Insert"],
+              { onConflict: "external_id", ignoreDuplicates: false },
+            );
+            if (error) {
+              console.error("Error upserting scraped property:", errMsg(error));
+            } else {
+              scrapedProperties.push(data as LocalScrapedProperty);
+            }
+          } catch (e) {
+            console.error("Error upserting scraped property:", errMsg(e));
+          }
       } catch (_e) {
         console.error("Error processing property:", _e);
       }

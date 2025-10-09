@@ -1,22 +1,22 @@
-import { SCRAPING_STRATEGY } from "./priority";
-import type { CostPriority, ScrapingStrategy, ScrapingTier } from "./priority";
+import { SCRAPING_STRATEGY } from "./priority.ts";
+import type { CostPriority, ScrapingStrategy, ScrapingTier } from "./priority.ts";
 import {
   calculateStabilityScore,
   getDaysSince,
   getRecommendedFrequency,
   getScrapingBatch,
   shouldScrapeProperty,
-} from "./orchestrator";
-import { processScrapingResult } from "./processResult";
+} from "./orchestrator.ts";
+import { processScrapingResult } from "./processResult.ts";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import * as market from "./market";
-import { extractAmenities } from "./amenities";
-import { classifyPropertyType } from "./propertyType";
-import { computeAiPricing } from "../lib/pricing-engine";
+import * as market from "./market.ts";
+import { extractAmenities } from "./amenities.ts";
+import { classifyPropertyType } from "./propertyType.ts";
+import { computeAiPricing } from "../lib/pricing-engine.ts";
 import {
   ClaudeService,
   type PropertyIntelligence,
-} from "../services/claude-service";
+} from "../services/claude-service.ts";
 
 export { SCRAPING_STRATEGY };
 export type { CostPriority, ScrapingStrategy, ScrapingTier };

@@ -142,8 +142,9 @@ async function analyzeFunction(): Promise<void> {
       `   3. 🚀 Start function server: supabase functions serve ai-scraper-worker`,
     );
     console.log(`   4. 📖 Read full guide: cat README.md`);
-  } catch (error) {
-    console.error("❌ Error analyzing function:", error);
+  } catch (e) {
+    const msg = (await import("../shared/error.ts")).errMsg(e);
+    console.error("❌ Error analyzing function:", msg);
   }
 }
 

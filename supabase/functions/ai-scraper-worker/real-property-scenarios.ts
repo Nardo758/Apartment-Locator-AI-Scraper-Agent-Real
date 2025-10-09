@@ -64,13 +64,13 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         
         <section class="lease-terms">
           <div class="fees">
-            <div class="application-fee">Application fee: ${{
+            <div class="application-fee">Application fee: {{
       APPLICATION_FEE,
     }}</div>
-            <div class="admin-fee">Admin fee: ${{
+            <div class="admin-fee">Admin fee: {{
       ADMIN_FEE,
     }} {{ADMIN_FEE_WAIVED}}</div>
-            <div class="pet-fee">Pet deposit: ${{
+            <div class="pet-fee">Pet deposit: {{
       PET_DEPOSIT,
     }} (refundable)</div>
           </div>
@@ -111,8 +111,8 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
           </address>
         </div>
         
-        <div class="rent-info">
-          <span class="monthly-rent">${{ MONTHLY_RENT }}</span>
+          <div class="rent-info">
+          <span class="monthly-rent">{{ MONTHLY_RENT }}</span>
           <span class="rent-label">per month</span>
         </div>
         
@@ -174,11 +174,11 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         <section class="rental-pricing">
           <div class="monthly-rent">
             <span class="price-label">Monthly Rent:</span>
-            <span class="price-amount">${{ MONTHLY_RENT }}</span>
+            <span class="price-amount">{{ MONTHLY_RENT }}</span>
           </div>
           <div class="security-deposit">
             <span class="deposit-label">Security Deposit:</span>
-            <span class="deposit-amount">${{ SECURITY_DEPOSIT }}</span>
+            <span class="deposit-amount">{{ SECURITY_DEPOSIT }}</span>
           </div>
         </section>
         
@@ -236,8 +236,8 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         
         <section class="rental-terms">
           <div class="fees-and-deposits">
-            <p>Application fee: ${{ APPLICATION_FEE }} per adult applicant</p>
-            <p>Pet deposit: ${{ PET_DEPOSIT }} ({{PET_POLICY}})</p>
+            <p>Application fee: {{ APPLICATION_FEE }} per adult applicant</p>
+            <p>Pet deposit: {{ PET_DEPOSIT }} ({{PET_POLICY}})</p>
             <p>{{ADMIN_FEE_INFO}}</p>
           </div>
           <div class="lease-terms">
@@ -357,15 +357,15 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
           <div class="rate-structure">
             <div class="monthly-rate">
               <span class="rate-label">Monthly Rate:</span>
-              <span class="rate-amount">${{ MONTHLY_RATE }}</span>
+              <span class="rate-amount">{{ MONTHLY_RATE }}</span>
             </div>
             <div class="weekly-rate">
               <span class="rate-label">Weekly Rate:</span>
-              <span class="rate-amount">${{ WEEKLY_RATE }}</span>
+              <span class="rate-amount">{{ WEEKLY_RATE }}</span>
             </div>
             <div class="nightly-rate">
               <span class="rate-label">Nightly Rate:</span>
-              <span class="rate-amount">${{ NIGHTLY_RATE }}</span>
+              <span class="rate-amount">{{ NIGHTLY_RATE }}</span>
             </div>
           </div>
         </div>

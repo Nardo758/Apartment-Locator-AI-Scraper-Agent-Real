@@ -61,12 +61,13 @@ serve(async (req: Request) => {
 
     return response;
   } catch (error) {
-    console.error("Command Station error:", error);
+    const msg = (await import("./../shared/error.ts")).errMsg(error);
+    console.error("Command Station error:", msg);
 
     const errorResponse = new Response(
       JSON.stringify({
         error: "Internal server error",
-        message: String(error),
+        message: msg,
         timestamp: new Date().toISOString(),
       }),
       {

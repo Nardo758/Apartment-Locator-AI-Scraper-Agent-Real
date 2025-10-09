@@ -6,7 +6,8 @@
  */
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
+import type { RecentActivity, Dashboard } from "../shared/types.ts";
 import { configManager } from "./config-manager.ts";
 import { controller } from "./controller.ts";
 

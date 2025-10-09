@@ -6,7 +6,7 @@ import type {
   ApartmentIQData,
   FrontendProperty,
   ScrapedPropertyData,
-} from "../types/frontend";
+} from "../types/frontend.ts";
 
 /**
  * Transform scraped data to match frontend requirements

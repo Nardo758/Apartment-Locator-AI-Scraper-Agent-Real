@@ -40,8 +40,6 @@ async function testClaudeDirect(): Promise<void> {
     console.error("❌ ANTHROPIC_API_KEY not set");
     return;
   }
-
-  console.log("✅ Claude API key found");
   console.log(`🔧 Using model: claude-3-haiku-20240307`);
   console.log();
 
@@ -114,8 +112,9 @@ Return valid JSON. Use null for missing fields.`;
     try {
       parsed = JSON.parse(content);
       console.log("✅ Valid JSON returned");
-    } catch (error) {
-      console.error("❌ Failed to parse JSON:", error.message);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error("❌ Failed to parse JSON:", msg);
       return;
     }
 
@@ -270,8 +269,9 @@ Return valid JSON. Use null for missing fields.`;
     console.log(
       `💰 ~${(totalCost * 100).toFixed(0)}% cheaper than GPT-4 for this task`,
     );
-  } catch (error) {
-    console.error(`❌ Error calling Claude API: ${error.message}`);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(`❌ Error calling Claude API: ${msg}`);
   }
 }
 

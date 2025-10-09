@@ -25,8 +25,9 @@ export export interface SystemEventData {
  * triggering immediate batches, and managing worker coordination.
  */
 
-import { createTypedClient } from "../../../src/lib/supabase-client";
-import type Database from "../../../src/types/supabase-db";
+import { createTypedClient } from "../shared/supabase-client.ts";
+import type { QueueItem, CostItem, SystemEventData } from "../shared/types.ts";
+import type Database from "../../../src/types/supabase-db.ts";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { configManager, SystemConfig } from "./config-manager.ts";
 
@@ -131,11 +132,12 @@ export class Controller {
         },
       );
     } catch (error) {
-      console.error("Error enabling scraping:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error enabling scraping:", msg);
       return new Response(
         JSON.stringify({
           status: "error",
-          message: `Failed to enable scraping: ${error}`,
+          message: `Failed to enable scraping: ${msg}`,
         }),
         {
           status: 500,
@@ -176,11 +178,12 @@ export class Controller {
         },
       );
     } catch (error) {
-      console.error("Error disabling scraping:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error disabling scraping:", msg);
       return new Response(
         JSON.stringify({
           status: "error",
-          message: `Failed to disable scraping: ${error}`,
+          message: `Failed to disable scraping: ${msg}`,
         }),
         {
           status: 500,
@@ -253,11 +256,12 @@ export class Controller {
         },
       );
     } catch (error) {
-      console.error("Error starting immediate batch:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error starting immediate batch:", msg);
       return new Response(
         JSON.stringify({
           status: "error",
-          message: `Failed to start batch: ${error}`,
+          message: `Failed to start batch: ${msg}`,
         }),
         {
           status: 500,
@@ -294,11 +298,12 @@ export class Controller {
         },
       );
     } catch (error) {
-      console.error("Error updating configuration:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error updating configuration:", msg);
       return new Response(
         JSON.stringify({
           status: "error",
-          message: `Failed to update configuration: ${error}`,
+          message: `Failed to update configuration: ${msg}`,
         }),
         {
           status: 400,
@@ -348,7 +353,8 @@ export class Controller {
         costs: costStatus,
       };
     } catch (error) {
-      console.error("Error getting system status:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error getting system status:", msg);
       return {
         scraping: {
           enabled: config.scrapingEnabled,
@@ -391,7 +397,8 @@ export class Controller {
         errors: data.errors || [],
       };
     } catch (error) {
-      console.error("Error getting batch status:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error getting batch status:", msg);
       return null;
     }
   }
@@ -426,11 +433,12 @@ export class Controller {
         },
       );
     } catch (error) {
-      console.error("Error during emergency stop:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error during emergency stop:", msg);
       return new Response(
         JSON.stringify({
           status: "error",
-          message: `Emergency stop failed: ${error}`,
+          message: `Emergency stop failed: ${msg}`,
         }),
         {
           status: 500,
@@ -462,7 +470,8 @@ export class Controller {
 
       return counts;
     } catch (error) {
-      console.error("Error getting queue status:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error getting queue status:", msg);
       return { pending: 0, processing: 0, failed: 0 };
     }
   }
@@ -535,16 +544,18 @@ export class Controller {
         .select("estimated_cost")
         .gte("date", monthStart);
 
+      const weekArr = (weekData as unknown as Array<{ estimated_cost?: number }>) || [];
+      const monthArr = (monthData as unknown as Array<{ estimated_cost?: number }>) || [];
+
       return {
         today: todayData?.estimated_cost || 0,
-        thisWeek: weekData?.reduce((sum: number, item: CostItem) =>
-          sum + (item.estimated_cost || 0), 0) || 0,
-        thisMonth: monthData?.reduce((sum: number, item: CostItem) =>
-          sum + (item.estimated_cost || 0), 0) || 0,
+        thisWeek: weekArr.reduce((sum: number, item) => sum + Number(item?.estimated_cost || 0), 0) || 0,
+        thisMonth: monthArr.reduce((sum: number, item) => sum + Number(item?.estimated_cost || 0), 0) || 0,
         limit: config.dailyCostLimit,
       };
     } catch (error) {
-      console.error("Error getting cost status:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error getting cost status:", msg);
       return {
         today: 0,
         thisWeek: 0,
@@ -635,12 +646,13 @@ export class Controller {
         );
       }
     } catch (error) {
-      console.error("Error triggering batch processing:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error triggering batch processing:", msg);
       // Update batch status to failed
       if (this.supabase) {
         await this.supabase
           .from("batch_jobs")
-          .update({ status: "failed", errors: [String(error)] })
+          .update({ status: "failed", errors: [msg] })
           .eq("batch_id", batchId);
       }
       throw error;
@@ -668,7 +680,8 @@ export class Controller {
 
       return data?.length || 0;
     } catch (error) {
-      console.error("Error cancelling pending jobs:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error cancelling pending jobs:", msg);
       return 0;
     }
   }
@@ -685,7 +698,8 @@ export class Controller {
 
       return data?.length || 0;
     } catch (error) {
-      console.error("Error cancelling all jobs:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error cancelling all jobs:", msg);
       return 0;
     }
   }
@@ -705,7 +719,8 @@ export class Controller {
           created_at: new Date().toISOString(),
         });
     } catch (error) {
-      console.error("Error logging system event:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error logging system event:", msg);
     }
   }
 }

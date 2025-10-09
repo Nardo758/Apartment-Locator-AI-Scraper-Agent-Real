@@ -37,7 +37,7 @@ export class ApiCostTracker {
   private alerts: ((cost: number, threshold: number) => void)[] = [];
 
   // Current pricing as of 2024 (per 1M tokens)
-  private readonly PRICING = {
+  private readonly PRICING: Record<string, Record<string, { input: number; output: number }>> = {
     openai: {
       "gpt-4-turbo-preview": { input: 10.00, output: 30.00 },
       "gpt-4-turbo": { input: 10.00, output: 30.00 },

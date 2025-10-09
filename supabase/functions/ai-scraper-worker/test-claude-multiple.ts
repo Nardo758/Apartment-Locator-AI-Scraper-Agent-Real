@@ -159,15 +159,9 @@ Extract the following fields from HTML and return ONLY valid JSON:
 - name, address, city, state (2 letters)
 - current_price (number only, no symbols)
 - bedrooms, bathrooms (numbers)
-- free_rent_concessions (text description)
-- application_fee (number or null)
-- admin_fee_waived (boolean)
-- admin_fee_amount (number or null)
+- free_rent_concessions (text description)`;
 
-Return valid JSON. Use null for missing fields.`;
-
-  const userMessage =
-    `Extract apartment data from this rental website HTML:\n\n${property.html}`;
+  const userMessage = `Extract apartment data from this rental website HTML:\n\n${property.html}`;
 
   const startTime = Date.now();
 
@@ -203,50 +197,33 @@ Return valid JSON. Use null for missing fields.`;
 
     const result = await response.json();
     const content = result.content?.[0]?.text || "";
-    const usage = result.usage;
-    const tokens = usage.input_tokens + usage.output_tokens;
-    const cost = ((usage.input_tokens * 0.80) + (usage.output_tokens * 4.00)) /
-      1000000;
+    const usage = result.usage || { input_tokens: 0, output_tokens: 0 };
+    const tokens = (usage.input_tokens || 0) + (usage.output_tokens || 0);
+    const cost = ((usage.input_tokens || 0) * 0.8 + (usage.output_tokens || 0) * 4.0) / 1_000_000;
 
     // Parse JSON
     let parsed: any;
     try {
       parsed = JSON.parse(content);
-    } catch (error) {
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
       return {
         success: false,
         accuracy: 0,
         cost,
         duration,
         tokens,
-        errors: [`JSON parse error: ${error.message}`],
+        errors: [`JSON parse error: ${msg}`],
       };
     }
 
-    // Check accuracy
     const validations = [
       { field: "name", expected: property.expected.name, actual: parsed.name },
       { field: "city", expected: property.expected.city, actual: parsed.city },
-      {
-        field: "state",
-        expected: property.expected.state,
-        actual: parsed.state,
-      },
-      {
-        field: "current_price",
-        expected: property.expected.current_price,
-        actual: parsed.current_price,
-      },
-      {
-        field: "bedrooms",
-        expected: property.expected.bedrooms,
-        actual: parsed.bedrooms,
-      },
-      {
-        field: "bathrooms",
-        expected: property.expected.bathrooms,
-        actual: parsed.bathrooms,
-      },
+      { field: "state", expected: property.expected.state, actual: parsed.state },
+      { field: "current_price", expected: property.expected.current_price, actual: parsed.current_price },
+      { field: "bedrooms", expected: property.expected.bedrooms, actual: parsed.bedrooms },
+      { field: "bathrooms", expected: property.expected.bathrooms, actual: parsed.bathrooms },
     ];
 
     let correctFields = 0;
@@ -256,9 +233,7 @@ Return valid JSON. Use null for missing fields.`;
       if (validation.actual == validation.expected) {
         correctFields++;
       } else {
-        errors.push(
-          `${validation.field}: got ${validation.actual}, expected ${validation.expected}`,
-        );
+        errors.push(`${validation.field}: got ${validation.actual}, expected ${validation.expected}`);
       }
     });
 
@@ -272,14 +247,15 @@ Return valid JSON. Use null for missing fields.`;
       tokens,
       errors,
     };
-  } catch (error) {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
     return {
       success: false,
       accuracy: 0,
       cost: 0,
       duration: Date.now() - startTime,
       tokens: 0,
-      errors: [error.message],
+      errors: [msg],
     };
   }
 }

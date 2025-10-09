@@ -1,5 +1,5 @@
-import { ApartmentScraper } from "./scraper/index";
-import { startMetricsServer } from "./observability/server";
+import { ApartmentScraper } from "./scraper/index.ts";
+import { startMetricsServer } from "./observability/server.ts";
 import process from "node:process";
 
 async function main() {

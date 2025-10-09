@@ -2,7 +2,7 @@
 // Mock Deno.env.get for Node test environment (some modules reference Deno.env)
 (globalThis as any).Deno = { env: { get: (_: string) => undefined } };
 
-import { scrapePropertyComplete } from "../index";
+import { scrapePropertyComplete } from "../index.ts";
 
 // Minimal mocked supabase client that returns a first_seen_at for the property lookup
 function makeMockSupabase(firstSeen?: string | null) {

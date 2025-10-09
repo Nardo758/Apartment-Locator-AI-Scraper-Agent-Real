@@ -5,7 +5,8 @@
  * and real-time alerts for the scraping system.
  */
 
-import { createTypedClient } from "../../../src/lib/supabase-client";
+import { createTypedClient } from "../shared/supabase-client.ts";
+import type { RecentActivity } from "../shared/types.ts";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { configManager } from "./config-manager.ts";
 import { controller } from "./controller.ts";
@@ -66,17 +67,7 @@ export interface DashboardStatus {
   };
 }
 
-export interface RecentActivity {
-  timestamp: string;
-  type:
-    | "batch_started"
-    | "batch_completed"
-    | "config_changed"
-    | "error"
-    | "alert";
-  message: string;
-  details?: Record<string, unknown>;
-}
+// Use `RecentActivity` from shared types; local duplicate removed.
 
 // Define interfaces
 interface SystemEvent {
@@ -221,7 +212,8 @@ export class Dashboard {
                   ? "batch_completed" as const
                   : "error" as const,
                 message: `Batch ${batch.processed_count} properties processed`,
-                details: batch,
+                // BatchJob may not strictly match RecentActivity.details; cast conservatively
+                details: batch as any,
               })),
           );
         }
@@ -243,11 +235,12 @@ export class Dashboard {
         },
       );
     } catch (error) {
-      console.error("Error getting recent activity:", error);
+      const msg = (await import("../shared/error.ts")).errMsg(error);
+      console.error("Error getting recent activity:", msg);
       return new Response(
         JSON.stringify({
           error: "Failed to retrieve recent activity",
-          message: String(error),
+          message: msg,
         }),
         {
           status: 500,

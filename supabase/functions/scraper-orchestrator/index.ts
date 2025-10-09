@@ -1,6 +1,6 @@
 // scraper-orchestrator/index.ts
 import { serve } from "std/http/server.ts";
-import { createTypedClient } from "../../../src/lib/supabase-client.ts";
+import { createTypedClient } from "../shared/supabase-client.ts";
 import { runProcessor } from "./processor.ts";
 import { recommendedConfig as _recommendedConfig } from "../openai_config.ts";
 

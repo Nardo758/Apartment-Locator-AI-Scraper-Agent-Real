@@ -1,6 +1,6 @@
 import http from "http";
 import type { IncomingMessage, ServerResponse } from "http";
-import { getMetrics } from "./metrics";
+import { getMetrics } from "./metrics.ts";
 import process from "node:process";
 
 export interface MetricsServerOptions {

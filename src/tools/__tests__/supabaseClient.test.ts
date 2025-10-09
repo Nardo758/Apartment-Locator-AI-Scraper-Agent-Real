@@ -16,7 +16,7 @@ jest.mock("@supabase/supabase-js", () => {
   };
 });
 
-import SupabaseClientWrapper from "../../tools/supabaseClient";
+import SupabaseClientWrapper from "../../tools/supabaseClient.ts";
 
 test("upsertApartment returns row", async () => {
   process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";

@@ -135,13 +135,13 @@ class EnvironmentValidator {
           `Minimum required: ${minVersion}`,
         );
       }
-    } catch (error) {
+    } catch (e) {
       this.addResult(
         "System",
         "Deno",
         "fail",
         "Failed to check Deno version",
-        error.message,
+        e instanceof Error ? e.message : String(e),
       );
     }
 
@@ -207,8 +207,8 @@ class EnvironmentValidator {
             `Status: ${response.status}`,
           );
         }
-      } catch (error) {
-        if (error.name === "AbortError") {
+      } catch (e) {
+        if (e instanceof Error && e.name === "AbortError") {
           this.addResult(
             "Network",
             endpoint.name,
@@ -222,7 +222,7 @@ class EnvironmentValidator {
             endpoint.name,
             "fail",
             "Network connectivity failed",
-            error.message,
+            e instanceof Error ? e.message : String(e),
           );
         }
       }
@@ -272,13 +272,13 @@ class EnvironmentValidator {
             `Status: ${response.status}`,
           );
         }
-      } catch (error) {
+      } catch (e) {
         this.addResult(
           "API Access",
           "OpenAI",
           "fail",
           "OpenAI API request failed",
-          error.message,
+          e instanceof Error ? e.message : String(e),
         );
       }
     }
@@ -321,13 +321,13 @@ class EnvironmentValidator {
             `Status: ${response.status}`,
           );
         }
-      } catch (error) {
+      } catch (e) {
         this.addResult(
           "API Access",
           "Supabase",
           "fail",
           "Supabase API request failed",
-          error.message,
+          e instanceof Error ? e.message : String(e),
         );
       }
     }
@@ -350,7 +350,7 @@ class EnvironmentValidator {
         "Function server is running",
         `Status: ${response.status}`,
       );
-    } catch (error) {
+    } catch (e) {
       this.addResult(
         "Local Function",
         "Server Status",

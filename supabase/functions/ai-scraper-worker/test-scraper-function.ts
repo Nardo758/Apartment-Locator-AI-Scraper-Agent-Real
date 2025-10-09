@@ -1,5 +1,6 @@
 // test-scraper-function.ts
-import { handler } from "./index.ts";
+// index.ts exports named handlers; import the request handler directly by name if available.
+import { handleScrapingRequest as handler } from "./enhanced-scraper-with-concessions.ts";
 
 async function testScraper() {
   console.log(" Testing AI Scraper Edge Function");
@@ -28,8 +29,9 @@ async function testScraper() {
     console.log(" Function executed successfully");
     console.log("Status:", response.status);
     console.log("Response:", JSON.stringify(result, null, 2));
-  } catch (error) {
-    console.log(" Function error:", error.message);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.log(" Function error:", msg);
     console.log(
       " This might be expected if the function needs specific environment variables",
     );

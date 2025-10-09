@@ -1,6 +1,6 @@
-import { createTypedClient } from "../lib/supabase-client";
+import { createTypedClient } from "../lib/supabase-client.ts";
 import * as process from "node:process";
-import type { Apartment } from "../types";
+import type { Apartment } from "../types/index.ts";
 
 // Minimal supabase-like interface for the methods used by SearchService
 interface QueryBuilder {

@@ -170,14 +170,16 @@ Generated: ${new Date().toLocaleDateString()}
         });
 
       if (error) {
-        console.error("Failed to save concession analytics:", error);
+        const msg = (await import("../shared/error.ts")).errMsg(error);
+        console.error("Failed to save concession analytics:", msg);
         return false;
       }
 
       console.log("✅ Concession analytics saved successfully");
       return true;
-    } catch (error) {
-      console.error("Error saving concession analytics:", error);
+    } catch (e) {
+      const msg = (await import("../shared/error.ts")).errMsg(e);
+      console.error("Error saving concession analytics:", msg);
       return false;
     }
   }
