@@ -1,4 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '../../types/supabase.ts'
 import * as process from 'node:process'
 import type { Apartment } from '../types'
 
@@ -13,13 +14,11 @@ interface QueryBuilder {
   range: (from: number, to: number) => Promise<{ data: Apartment[] | null; error: unknown; count: number | null }>
 }
 
-interface SupabaseLike {
-  from: (table: string) => QueryBuilder
-}
+type SupabaseLike = Pick<SupabaseClient<Database>, 'from'>
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jdymvpasjsdbryatscux.supabase.co'
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || 'test-key'
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
 
 export interface SearchFilters {
   city?: string

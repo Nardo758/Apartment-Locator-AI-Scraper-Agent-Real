@@ -2,7 +2,9 @@
 // src/scraper/frontend-integration.ts
 
 import { frontendDataService } from '../services/frontend-data-service';
-import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
 
 interface ScraperResult {
   success: boolean;
@@ -13,16 +15,10 @@ interface ScraperResult {
 }
 
 export class ScraperFrontendIntegration {
-  private supabase;
+  private supabase: SupabaseClient<Database>;
 
   constructor() {
-    const deno = (globalThis as unknown as { Deno?: { env?: { get: (k: string) => string | undefined } } }).Deno;
-    const supabaseUrl = deno?.env?.get('SUPABASE_URL') ?? process.env.SUPABASE_URL ?? '';
-    const supabaseKey = deno?.env?.get('SUPABASE_SERVICE_ROLE_KEY') ?? process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required');
-    }
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.supabase = createTypedClient();
   }
 
   /**
@@ -105,14 +101,12 @@ export class ScraperFrontendIntegration {
         };
 
         // Upsert to scraped_properties
-        const { data, error } = await this.supabase
-          .from('scraped_properties')
-          .upsert(scrapedProperty, {
-            onConflict: 'external_id',
-            ignoreDuplicates: false
-          })
-          .select()
-          .single();
+        const { data, error } = await typedUpsert(
+          this.supabase,
+          'scraped_properties',
+          scrapedProperty,
+          { onConflict: 'external_id', ignoreDuplicates: false }
+        ).select().single();
 
         if (error) {
           console.error('Error upserting scraped property:', error);
@@ -206,12 +200,12 @@ export class ScraperFrontendIntegration {
       };
 
       // Upsert market intelligence
-      await this.supabase
-        .from('market_intelligence')
-        .upsert(marketIntelligence, {
-          onConflict: 'location',
-          ignoreDuplicates: false
-        });
+      await typedUpsert(
+        this.supabase,
+        'market_intelligence',
+        marketIntelligence,
+        { onConflict: 'location', ignoreDuplicates: false }
+      );
 
       console.log(`📊 Updated market intelligence for ${location}: ${properties.length} properties, avg rent $${averageRent}`);
 

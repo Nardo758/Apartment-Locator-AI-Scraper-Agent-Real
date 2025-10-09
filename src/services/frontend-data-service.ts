@@ -1,7 +1,9 @@
 // Frontend Data Service - Bridge between scraper and frontend schema
 // src/services/frontend-data-service.ts
 
-import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
 
 interface ScrapedProperty {
   id: number;
@@ -83,10 +85,10 @@ interface ApartmentIQData {
 }
 
 export class FrontendDataService {
-  private supabase;
+  private supabase: SupabaseClient<Database>;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+  constructor(supabaseUrl?: string, supabaseKey?: string) {
+    this.supabase = createTypedClient(supabaseUrl, supabaseKey);
   }
 
   /**
@@ -381,12 +383,12 @@ export class FrontendDataService {
         const frontendProperty = await this.transformScrapedToFrontend(scrapedProperty);
         
         // Upsert to properties table
-        const { error } = await this.supabase
-          .from('properties')
-          .upsert(frontendProperty, {
-            onConflict: 'external_id',
-            ignoreDuplicates: false
-          });
+        const { error } = await typedUpsert(
+          this.supabase,
+          'properties',
+          frontendProperty,
+          { onConflict: 'external_id', ignoreDuplicates: false }
+        );
 
         if (error) {
           console.error('Error upserting property:', error);
@@ -430,15 +432,12 @@ export class FrontendDataService {
           concession_trend: property.savings > 0 ? 'increasing' : 'none'
         };
 
-        await this.supabase
-          .from('apartment_iq_data')
-          .upsert({
-            property_id: propertyData.id,
-            ...iqData
-          }, {
-            onConflict: 'property_id',
-            ignoreDuplicates: false
-          });
+        await typedUpsert(
+          this.supabase,
+          'apartment_iq_data',
+          { property_id: propertyData.id, ...iqData },
+          { onConflict: 'property_id', ignoreDuplicates: false }
+        );
       }
     } catch (error) {
       console.error('Error upserting ApartmentIQ data:', error);

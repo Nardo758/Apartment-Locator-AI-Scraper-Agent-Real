@@ -2,6 +2,7 @@
 // Data transformation pipeline for converting scraper data to frontend schema
 
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
 import type { ScrapedPropertyData, FrontendProperty, ApartmentIQData } from '../types/frontend';
 
 /**
@@ -419,7 +420,7 @@ export async function batchTransformProperties(
  * Save transformed properties to the new frontend schema
  */
 export async function saveTransformedProperties(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   frontendProperties: FrontendProperty[],
   targetTable: string = 'properties'
 ): Promise<{ success: number; errors: number }> {
@@ -430,10 +431,7 @@ export async function saveTransformedProperties(
     try {
       const { error } = await supabase
         .from(targetTable)
-        .upsert(property, { 
-          onConflict: 'external_id',
-          ignoreDuplicates: false 
-        });
+        .upsert(property as any, { onConflict: 'external_id', ignoreDuplicates: false });
       
       if (error) {
         console.error(`Error saving property ${property.external_id}:`, error);

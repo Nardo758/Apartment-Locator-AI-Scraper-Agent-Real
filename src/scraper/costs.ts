@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
 
 export function estimateCostFromTokens(modelKey: string, promptTokens: number, completionTokens: number) {
   const MODEL_PRICING: Record<string, { prompt: number; completion: number }> = {
@@ -11,7 +12,7 @@ export function estimateCostFromTokens(modelKey: string, promptTokens: number, c
   return Number(estimated.toFixed(6));
 }
 
-export async function recordDailyScrapingCost(supabase: SupabaseClient, params: { promptTokens?: number; completionTokens?: number; estimatedCost?: number; model?: string }) {
+export async function recordDailyScrapingCost(supabase: SupabaseClient<Database>, params: { promptTokens?: number; completionTokens?: number; estimatedCost?: number; model?: string }) {
   try {
     const promptTokens = Number(params.promptTokens ?? 0);
     const completionTokens = Number(params.completionTokens ?? 0);
