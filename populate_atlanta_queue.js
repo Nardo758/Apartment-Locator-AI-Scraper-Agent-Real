@@ -1,6 +1,14 @@
 import process from "node:process";
-const { createClient } = require("@supabase/supabase-js");
 const fs = require("fs");
+let createTypedClient;
+let createClient;
+try {
+  // Prefer the typed wrapper when available
+  ({ createTypedClient } = require("./src/lib/supabase-client"));
+} catch (e) {
+  // Fallback to upstream createClient from supabase-js
+  ({ createClient } = require("@supabase/supabase-js"));
+}
 
 // Read Supabase credentials from environment variables. Do NOT commit keys to source.
 const SUPABASE_URL = process.env.SUPABASE_URL ||
@@ -15,7 +23,10 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const supabase = (createTypedClient || createClient)(
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY,
+);
 
 async function populateAtlantaScrapingQueue() {
   try {
