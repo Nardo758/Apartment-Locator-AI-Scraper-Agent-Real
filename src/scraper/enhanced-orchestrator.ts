@@ -202,7 +202,7 @@ export class EnhancedScrapingOrchestrator {
       console.log(
         `✅ Frontend integration complete: ${frontendIntegration.frontend_properties_created} properties processed`,
       );
-    } catch (_e) {
+    } catch (error) {
       console.error("❌ Frontend integration error:", error);
       const errMsg = (error && typeof error === "object" &&
           "message" in (error as Record<string, unknown>))
@@ -253,7 +253,7 @@ export class EnhancedScrapingOrchestrator {
           success: success,
           error_message: success ? null : "No properties found",
         });
-      } catch (_e) {
+      } catch (error) {
         console.error(`Error updating metrics for source ${sourceId}:`, error);
       }
     }

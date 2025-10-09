@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+const { createTypedClient } = require("../src/lib/supabase-client");
 import { backfillZipCodes, generateZipReport } from "./backfill_zip_codes.js";
 import { geocodePropertiesOnce } from "./geocode_properties.js";
 import fs from "fs";
@@ -29,9 +29,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-  auth: { persistSession: false },
-});
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 /**
  * Get current status of location data population
@@ -61,7 +59,7 @@ async function getLocationStatus() {
     }
 
     return data[0];
-  } catch (_e) {
+  } catch (err) {
     console.error("❌ Error getting location status:", err);
     return null;
   }

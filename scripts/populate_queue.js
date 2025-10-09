@@ -6,7 +6,7 @@
  */
 
 import process from "node:process";
-const { createClient } = require("@supabase/supabase-js");
+const { createTypedClient } = require("../src/lib/supabase-client");
 const fs = require("fs");
 const path = require("path");
 
@@ -18,7 +18,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 async function main() {
   const region = process.argv[2] || "all";
@@ -47,7 +47,7 @@ async function main() {
         },
       ];
     }
-  } catch (_e) {
+  } catch (err) {
     console.error("Failed to load sources.json:", err.message);
     process.exit(1);
   }
@@ -116,7 +116,7 @@ async function main() {
           } (${batch.length} items)`,
         );
       }
-    } catch (_e) {
+    } catch (err) {
       console.error(
         "Unexpected error when inserting batch:",
         err.message || err,

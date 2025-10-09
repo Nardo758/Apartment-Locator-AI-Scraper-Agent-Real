@@ -1,4 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
+const { createTypedClient } = require("../src/lib/supabase-client");
 import process from "node:process";
 
 const SUPABASE_URL =
@@ -11,7 +11,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function populateScrapingQueue() {
   // Get all apartments that don't have a pending/processing job in scraping_queue

@@ -16,7 +16,7 @@ const patterns = {
 
 console.log(' Structure analysis:');
 for (const [pattern, exists] of Object.entries(patterns)) {
-    console.log(  :, exists);
+    console.log(pattern + ':', exists);
 }
 
 // Try different import approaches

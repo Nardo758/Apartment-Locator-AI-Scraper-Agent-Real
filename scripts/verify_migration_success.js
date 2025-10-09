@@ -1,4 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
+const { createTypedClient } = require("../src/lib/supabase-client");
 const fs = require("fs");
 import process from "node:process";
 
@@ -27,9 +27,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-  auth: { persistSession: false },
-});
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 /**
  * Verify migration success by checking all expected changes
@@ -122,7 +120,7 @@ async function verifyMigrationSuccess() {
         }
       }
     }
-  } catch (_e) {
+  } catch (err) {
     results.push({
       test: "Column verification",
       status: "❌ FAIL",

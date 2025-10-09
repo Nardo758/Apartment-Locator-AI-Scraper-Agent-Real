@@ -2,7 +2,8 @@
 // Process pending jobs by calling the scraper-worker edge function and updating metrics/queue
 
 import process from "node:process";
-const { createClient } = require("@supabase/supabase-js");
+// Use the centralized typed Supabase client factory
+const { createTypedClient } = require("../src/lib/supabase-client");
 const fs = require("fs");
 const path = require("path");
 
@@ -20,7 +21,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function dispatchToWorker(workerUrl, payload, maxRetries = 2) {
   let attempt = 0;
@@ -102,7 +103,7 @@ async function dispatchToWorker(workerUrl, payload, maxRetries = 2) {
         console.log(
           `${newStatus.toUpperCase()}: ${job.external_id} (${duration}ms)`,
         );
-      } catch (_e) {
+      } catch (err) {
         failed++;
         try {
           await supabase.rpc("update_scraping_metrics", {
@@ -116,17 +117,17 @@ async function dispatchToWorker(workerUrl, payload, maxRetries = 2) {
             .update({
               status: "failed",
               completed_at: new Date().toISOString(),
-              error: String(_e),
+              error: String(err),
             })
             .eq("external_id", job.external_id)
             .eq("id", job.id);
-        } catch (_e2) { /* ignore */ }
-        console.error(`FAILED: ${job.external_id} -> ${_e}`);
+        } catch (err2) { /* ignore */ }
+        console.error(`FAILED: ${job.external_id} -> ${err}`);
       }
     }
 
     console.log(`Done. Success: ${success}, Failed: ${failed}`);
-  } catch (_e) {
+  } catch (err) {
     console.error(err);
     process.exit(1);
   }

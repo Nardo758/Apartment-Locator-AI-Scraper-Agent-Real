@@ -90,7 +90,7 @@ export async function computeAiPricing(
           return result;
         }
       }
-    } catch (_e) {
+    } catch (err) {
       // keep working on error and fall back to heuristic
       // eslint-disable-next-line no-console
       console.warn(

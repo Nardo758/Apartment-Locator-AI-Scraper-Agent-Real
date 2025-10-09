@@ -1,26 +1,11 @@
 // Frontend Data Service - Bridge between scraper and frontend schema
 // src/services/frontend-data-service.ts
 
-import { createClient } from "@supabase/supabase-js";
 import process from "node:process";
-
-interface ScrapedProperty {
-  id: number;
-  external_id: string;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  current_price: number;
-  bedrooms: number;
-  bathrooms: number;
-  square_feet?: number;
-  listing_url: string;
-  property_source_id?: number;
-  scraped_at: string;
-  free_rent_concessions?: string;
-  // Add other scraped fields as needed
-}
+import { createTypedClient } from "../lib/supabase-client";
+import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property";
+import type Database from "../types/supabase-db";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 interface FrontendProperty {
   external_id: string;
@@ -84,22 +69,24 @@ interface ApartmentIQData {
 }
 
 export class FrontendDataService {
-  private supabase;
+  // Use the Supabase client typed with our Database generic. This enables
+  // better safety at call sites without requiring pervasive local casts.
+  private supabase: SupabaseClient<Database>;
 
   constructor(supabaseUrl: string, supabaseKey: string) {
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.supabase = createTypedClient(supabaseUrl, supabaseKey);
   }
 
   /**
    * Transform scraped property data to frontend format
    */
   async transformScrapedToFrontend(
-    scrapedProperty: ScrapedProperty,
+    scrapedProperty: SharedScrapedProperty,
   ): Promise<FrontendProperty> {
     // Calculate AI-enhanced pricing
     const aiPrice = await this.calculateAIPrice(scrapedProperty);
     const effectivePrice = await this.calculateEffectivePrice(scrapedProperty);
-    const savings = scrapedProperty.current_price - effectivePrice;
+  const savings = Number(scrapedProperty.current_price ?? 0) - effectivePrice;
 
     // Extract features and amenities
     const features = this.extractFeatures(scrapedProperty);
@@ -111,30 +98,30 @@ export class FrontendDataService {
 
     // Get coordinates if available
     const coordinates = await this.getCoordinates(
-      scrapedProperty.address,
-      scrapedProperty.city,
-      scrapedProperty.state,
+      String(scrapedProperty.address ?? ""),
+      String(scrapedProperty.city ?? ""),
+      String(scrapedProperty.state ?? ""),
     );
 
     return {
-      external_id: scrapedProperty.external_id,
-      name: scrapedProperty.name,
-      address: scrapedProperty.address,
-      city: scrapedProperty.city,
-      state: scrapedProperty.state,
+      external_id: String(scrapedProperty.external_id ?? `ext_${Date.now()}`),
+      name: String(scrapedProperty.name ?? scrapedProperty.title ?? "Unknown Property"),
+      address: String(scrapedProperty.address ?? ""),
+      city: String(scrapedProperty.city ?? ""),
+      state: String(scrapedProperty.state ?? ""),
       zip: undefined, // Extract from address if needed
       latitude: coordinates?.latitude,
       longitude: coordinates?.longitude,
-      bedrooms: scrapedProperty.bedrooms,
-      bathrooms: scrapedProperty.bathrooms,
-      sqft: scrapedProperty.square_feet || 0,
+      bedrooms: Number(scrapedProperty.bedrooms ?? 0),
+      bathrooms: Number(scrapedProperty.bathrooms ?? 1),
+      sqft: Number(scrapedProperty.square_feet ?? scrapedProperty.sqft ?? 0),
       year_built: undefined, // Would come from property intelligence
       property_type: "apartment",
-      original_price: scrapedProperty.current_price,
+      original_price: Number(scrapedProperty.current_price ?? scrapedProperty.price ?? scrapedProperty.rent ?? 0),
       ai_price: aiPrice,
       effective_price: effectivePrice,
-      rent_per_sqft: scrapedProperty.square_feet
-        ? effectivePrice / scrapedProperty.square_feet
+      rent_per_sqft: (Number(scrapedProperty.square_feet ?? scrapedProperty.sqft ?? 0) > 0)
+        ? effectivePrice / Number(scrapedProperty.square_feet ?? scrapedProperty.sqft ?? 1)
         : undefined,
       savings: Math.max(0, savings),
       match_score: undefined, // Calculated per user
@@ -148,19 +135,19 @@ export class FrontendDataService {
       pet_policy: this.extractPetPolicy(scrapedProperty),
       parking: this.extractParkingInfo(scrapedProperty),
       apartment_iq_data: await this.generateApartmentIQData(scrapedProperty),
-      property_source_id: scrapedProperty.property_source_id,
-      scraped_property_id: scrapedProperty.id,
+      property_source_id: scrapedProperty.property_source_id ? Number(scrapedProperty.property_source_id) : undefined,
+      scraped_property_id: Number(scrapedProperty.id ?? 0),
       is_active: true,
-      source_url: scrapedProperty.listing_url,
+      source_url: String(scrapedProperty.listing_url ?? ""),
       images: [], // Would be populated by image scraper
-      last_scraped: scrapedProperty.scraped_at,
+      last_scraped: scrapedProperty.scraped_at ? String(scrapedProperty.scraped_at) : undefined,
     };
   }
 
   /**
    * Calculate AI-enhanced price using market intelligence
    */
-  private async calculateAIPrice(property: ScrapedProperty): Promise<number> {
+  private async calculateAIPrice(property: SharedScrapedProperty): Promise<number> {
     try {
       // Get market data for the area
       const { data: marketData } = await this.supabase
@@ -170,50 +157,49 @@ export class FrontendDataService {
         .order("calculated_at", { ascending: false })
         .limit(1)
         .single();
+      const marketRow = marketData as Database['public']['Tables']['market_intelligence']['Row'] | null;
 
-      if (marketData && property.square_feet) {
+      if (marketRow && Number(property.square_feet ?? 0) > 0) {
         // Use market rent per sqft as baseline
-        const marketPrice = marketData.rent_per_sqft * property.square_feet;
+        const marketPrice = Number(marketRow.rent_per_sqft ?? 0) * Number(property.square_feet ?? 0);
 
         // Apply adjustments based on property characteristics
         let adjustedPrice = marketPrice;
 
         // Bedroom premium/discount
-        if (property.bedrooms >= 3) {
+        if (Number(property.bedrooms ?? 0) >= 3) {
           adjustedPrice *= 1.05; // 5% premium for 3+ bedrooms
-        } else if (property.bedrooms === 0) {
+        } else if (Number(property.bedrooms ?? 0) === 0) {
           adjustedPrice *= 0.85; // 15% discount for studios
         }
 
         // Bathroom adjustments
-        if (property.bathrooms >= 2) {
+        if (Number(property.bathrooms ?? 0) >= 2) {
           adjustedPrice *= 1.03; // 3% premium for 2+ bathrooms
         }
 
         return Math.round(adjustedPrice);
-      }
+        }
     } catch (_e) {
-      console.warn("AI price calculation failed, using original price:", error);
+      console.warn("AI price calculation failed, using original price:", _e);
     }
 
-    return property.current_price;
+    return Number(property.current_price ?? 0);
   }
 
   /**
    * Calculate effective price accounting for concessions
    */
   private async calculateEffectivePrice(
-    property: ScrapedProperty,
+    property: SharedScrapedProperty,
   ): Promise<number> {
-    let effectivePrice = property.current_price;
+  let effectivePrice = Number(property.current_price ?? 0);
 
     // Apply concession discounts
     if (property.free_rent_concessions) {
-      const concessionValue = this.parseConcessionValue(
-        property.free_rent_concessions,
-      );
+      const concessionValue = this.parseConcessionValue(String(property.free_rent_concessions));
       effectivePrice = Math.round(
-        property.current_price * (1 - concessionValue),
+        Number(property.current_price ?? 0) * (1 - concessionValue),
       );
     }
 
@@ -250,17 +236,17 @@ export class FrontendDataService {
   /**
    * Extract features from scraped data
    */
-  private extractFeatures(property: ScrapedProperty): string[] {
+  private extractFeatures(property: SharedScrapedProperty): string[] {
     const features: string[] = [];
 
     // Add bedroom/bathroom info as features
-    if (property.bedrooms === 0) {
+      if (Number(property.bedrooms ?? 0) === 0) {
       features.push("Studio");
     }
-    if (property.bathrooms >= 2) {
+    if (Number(property.bathrooms ?? 0) >= 2) {
       features.push("Multiple Bathrooms");
     }
-    if (property.square_feet && property.square_feet > 1200) {
+    if (Number(property.square_feet ?? 0) > 1200) {
       features.push("Spacious");
     }
 
@@ -271,7 +257,7 @@ export class FrontendDataService {
   /**
    * Extract amenities from scraped data
    */
-  private extractAmenities(property: ScrapedProperty): string[] {
+  private extractAmenities(property: SharedScrapedProperty): string[] {
     const amenities: string[] = [];
 
     // This would be enhanced based on your scraped data structure
@@ -294,7 +280,7 @@ export class FrontendDataService {
   /**
    * Extract pet policy information
    */
-  private extractPetPolicy(property: ScrapedProperty): string | undefined {
+  private extractPetPolicy(property: SharedScrapedProperty): string | undefined {
     // Add logic to extract pet policy from scraped data
     return "Contact for pet policy";
   }
@@ -302,7 +288,7 @@ export class FrontendDataService {
   /**
    * Extract parking information
    */
-  private extractParkingInfo(property: ScrapedProperty): string | undefined {
+  private extractParkingInfo(property: SharedScrapedProperty): string | undefined {
     // Add logic to extract parking info from scraped data
     return "Parking available";
   }
@@ -311,7 +297,7 @@ export class FrontendDataService {
    * Calculate market velocity based on recent data
    */
   private async calculateMarketVelocity(
-    property: ScrapedProperty,
+    property: SharedScrapedProperty,
   ): Promise<"hot" | "normal" | "slow" | "stale"> {
     try {
       // Get recent market intelligence for the area
@@ -322,12 +308,13 @@ export class FrontendDataService {
         .order("calculated_at", { ascending: false })
         .limit(1)
         .single();
+      const marketRow = marketData as Database['public']['Tables']['market_intelligence']['Row'] | null;
 
-      if (marketData) {
-        return marketData.market_velocity;
+      if (marketRow) {
+        return (marketRow.market_velocity as unknown) as "hot" | "normal" | "slow" | "stale";
       }
     } catch (_e) {
-      console.warn("Market velocity calculation failed:", error);
+      console.warn("Market velocity calculation failed:", _e);
     }
 
     return "normal";
@@ -337,25 +324,26 @@ export class FrontendDataService {
    * Calculate days vacant/on market
    */
   private async calculateDaysVacant(
-    property: ScrapedProperty,
+    property: SharedScrapedProperty,
   ): Promise<number> {
     try {
       // Check when this property was first seen
       const { data: firstSeen } = await this.supabase
         .from("scraped_properties")
         .select("first_seen_at")
-        .eq("external_id", property.external_id)
+        .eq("external_id", String(property.external_id ?? ""))
         .single();
+      const firstSeenRow = firstSeen as Database['public']['Tables']['scraped_properties']['Row'] | null;
 
-      if (firstSeen?.first_seen_at) {
+      if (firstSeenRow?.first_seen_at) {
         const daysDiff = Math.floor(
-          (new Date().getTime() - new Date(firstSeen.first_seen_at).getTime()) /
+          (new Date().getTime() - new Date(firstSeenRow.first_seen_at).getTime()) /
             (1000 * 60 * 60 * 24),
         );
         return Math.max(0, daysDiff);
       }
     } catch (_e) {
-      console.warn("Days vacant calculation failed:", error);
+      console.warn("Days vacant calculation failed:", _e);
     }
 
     return 0;
@@ -378,10 +366,10 @@ export class FrontendDataService {
    * Generate comprehensive ApartmentIQ data
    */
   private async generateApartmentIQData(
-    property: ScrapedProperty,
+    property: SharedScrapedProperty,
   ): Promise<Record<string, any>> {
-    const effectiveRent = await this.calculateEffectivePrice(property);
-    const concessionValue = property.current_price - effectiveRent;
+  const effectiveRent = await this.calculateEffectivePrice(property);
+  const concessionValue = Number(property.current_price ?? 0) - effectiveRent;
 
     return {
       current_rent: property.current_price,
@@ -389,7 +377,7 @@ export class FrontendDataService {
       effective_rent: effectiveRent,
       concession_value: concessionValue,
       concession_type: property.free_rent_concessions ? "rent_discount" : null,
-      concession_urgency: concessionValue > property.current_price * 0.1
+      concession_urgency: concessionValue > Number(property.current_price ?? 0) * 0.1
         ? "aggressive"
         : "none",
       days_on_market: await this.calculateDaysVacant(property),
@@ -408,7 +396,7 @@ export class FrontendDataService {
    * Bulk transform and upsert scraped properties to frontend format
    */
   async bulkTransformAndUpsert(
-    scrapedProperties: ScrapedProperty[],
+    scrapedProperties: SharedScrapedProperty[],
   ): Promise<number> {
     let processedCount = 0;
 
@@ -421,7 +409,7 @@ export class FrontendDataService {
         // Upsert to properties table
         const { error } = await this.supabase
           .from("properties")
-          .upsert(frontendProperty, {
+          .upsert(frontendProperty as any, {
             onConflict: "external_id",
             ignoreDuplicates: false,
           });
@@ -435,7 +423,7 @@ export class FrontendDataService {
           await this.upsertApartmentIQData(frontendProperty);
         }
       } catch (_e) {
-        console.error("Error transforming property:", error);
+        console.error("Error transforming property:", _e);
       }
     }
 
@@ -455,8 +443,9 @@ export class FrontendDataService {
         .select("id")
         .eq("external_id", property.external_id)
         .single();
+      const propertyDataRow = propertyData as Database['public']['Tables']['properties']['Row'] | null;
 
-      if (propertyData) {
+      if (propertyDataRow) {
         const iqData: Partial<ApartmentIQData> = {
           current_rent: property.original_price,
           original_rent: property.original_price,
@@ -475,15 +464,15 @@ export class FrontendDataService {
         await this.supabase
           .from("apartment_iq_data")
           .upsert({
-            property_id: propertyData.id,
+            property_id: propertyDataRow.id,
             ...iqData,
-          }, {
+          } as any, {
             onConflict: "property_id",
             ignoreDuplicates: false,
           });
       }
     } catch (_e) {
-      console.error("Error upserting ApartmentIQ data:", error);
+      console.error("Error upserting ApartmentIQ data:", _e);
     }
   }
 
@@ -498,26 +487,27 @@ export class FrontendDataService {
         .select("id")
         .eq("is_active", true);
 
-      if (properties) {
-        for (const property of properties) {
+      const propertiesList = properties as Array<{ id: string }> | null;
+      if (propertiesList) {
+        for (const property of propertiesList) {
           // Use the database function to calculate match score
-          const { data: matchScore } = await this.supabase
+          const { data: matchScore } = (await (this.supabase as any)
             .rpc("calculate_property_match_score", {
               property_id_param: property.id,
               user_id_param: userId,
-            });
+            })) as any;
 
           if (matchScore !== null) {
             // Update the property with the match score
-            await this.supabase
+            await (this.supabase as any)
               .from("properties")
-              .update({ match_score: matchScore })
+              .update({ match_score: matchScore } as any)
               .eq("id", property.id);
           }
         }
       }
     } catch (_e) {
-      console.error("Error calculating match scores:", error);
+      console.error("Error calculating match scores:", _e);
     }
   }
 }

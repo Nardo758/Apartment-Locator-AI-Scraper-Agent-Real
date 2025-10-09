@@ -48,7 +48,7 @@ async function dispatchToWorker(
       if (!res.ok) throw new Error(`Worker responded ${res.status}`);
       const data = await res.json();
       return data as WorkerResult;
-    } catch (_e) {
+    } catch (err) {
       lastErr = err;
       attempt++;
       await new Promise((r) => setTimeout(r, 200 * attempt));
@@ -64,7 +64,7 @@ async function dispatchToWorker(
     const port = Number(process.env.METRICS_PORT || 9090);
     try {
       startMetricsServer({ port, enabled: true });
-    } catch (_e) {
+    } catch (e) {
       console.error("Failed to start metrics server:", e);
     }
   }
@@ -152,7 +152,7 @@ export async function processBatchWithCostOptimization(
             },
           });
         }
-      } catch (_e) {
+      } catch (e) {
         console.error("Failed to record scraping cost in processor:", e);
       }
 
@@ -249,7 +249,7 @@ export async function processBatchWithCostOptimization(
         job,
         result: workerResult,
       });
-    } catch (_e) {
+    } catch (err) {
       await supabase.rpc("update_scraping_metrics", {
         p_external_id: job.external_id,
         p_success: false,

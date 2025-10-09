@@ -1,4 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
+const { createTypedClient } = require("../src/lib/supabase-client");
 const fs = require("fs");
 import process from "node:process";
 
@@ -30,9 +30,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 const batchSize = Number(process.env.BATCH_SIZE || 100);
 const dryRun = !!process.env.DRY_RUN;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-  auth: { persistSession: false },
-});
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 /**
  * Extract ZIP codes from existing address strings
@@ -141,7 +139,7 @@ async function backfillZipCodes() {
       if (properties.length < batchSize) {
         hasMore = false;
       }
-    } catch (_e) {
+    } catch (err) {
       console.error(`❌ Error processing batch at offset ${offset}:`, err);
       break;
     }

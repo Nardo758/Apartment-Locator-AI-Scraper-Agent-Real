@@ -45,7 +45,13 @@ async function initSupabase() {
     }
 
     if (createClient && SUPABASE_URL && SUPABASE_KEY) {
-      supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      // Use our typed wrapper if available in the project (local dev)
+      try {
+        const { createTypedClient } = await import("../src/lib/supabase-client");
+        supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
+      } catch (_e) {
+        supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
     }
   } catch (_e) {
     // supabase client not installed or import failed; script will still parse CSV and write a JSON output

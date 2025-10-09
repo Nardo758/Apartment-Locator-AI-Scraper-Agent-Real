@@ -3,7 +3,7 @@
 // Usage: node scripts/run_local_worker_test.js [--frontendsync]
 
 import process from "node:process";
-const { createClient } = require("@supabase/supabase-js");
+const { createTypedClient } = require("../src/lib/supabase-client");
 const fs = require("fs");
 const path = require("path");
 
@@ -24,7 +24,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   process.exit(1);
 }
 
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function upsertTest() {
   const externalId = `local-run-${Date.now()}`;

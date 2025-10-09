@@ -60,7 +60,7 @@ export async function runIntegrationTest(): Promise<void> {
     await testDataQuality(supabase);
 
     console.log("\n✅ All integration tests completed successfully!");
-  } catch (_e) {
+  } catch (error) {
     console.error("❌ Integration test failed:", error);
     throw error;
   }
@@ -108,7 +108,7 @@ async function testSchemaVerification(supabase: any): Promise<void> {
     }
 
     console.log("✅ Schema verification completed");
-  } catch (_e) {
+  } catch (error) {
     console.log("⚠️  Schema verification skipped:", String(error));
   }
 }
@@ -185,7 +185,7 @@ async function testDataTransformation(): Promise<void> {
     );
 
     console.log("✅ Data transformation test completed");
-  } catch (_e) {
+  } catch (error) {
     console.error("❌ Data transformation test failed:", error);
     throw error;
   }
@@ -271,7 +271,7 @@ async function testBatchProcessingWithSync(supabase: any): Promise<void> {
     }
 
     console.log("✅ Batch processing test completed");
-  } catch (_e) {
+  } catch (error) {
     console.error("❌ Batch processing test failed:", error);
     throw error;
   }
@@ -324,7 +324,7 @@ async function testGeographicSearch(supabase: any): Promise<void> {
     }
 
     console.log("✅ Geographic search test completed");
-  } catch (_e) {
+  } catch (error) {
     console.log("⚠️  Geographic search test skipped:", String(error));
   }
 }
@@ -386,7 +386,7 @@ async function testAiPriceCalculation(supabase: any): Promise<void> {
     }
 
     console.log("✅ AI price calculation test completed");
-  } catch (_e) {
+  } catch (error) {
     console.log("⚠️  AI price calculation test skipped:", String(error));
   }
 }
@@ -500,7 +500,7 @@ async function testDataQuality(supabase: any): Promise<void> {
     }
 
     console.log("✅ Data quality assessment completed");
-  } catch (_e) {
+  } catch (error) {
     console.log("⚠️  Data quality assessment failed:", String(error));
   }
 }

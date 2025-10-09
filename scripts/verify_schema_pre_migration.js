@@ -1,4 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
+const { createTypedClient } = require("../src/lib/supabase-client");
 const fs = require("fs");
 import process from "node:process";
 
@@ -27,9 +27,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-  auth: { persistSession: false },
-});
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 /**
  * Verify database schema before location fields migration
@@ -63,7 +61,7 @@ async function verifyPreMigration() {
         details: "Table accessible",
       });
     }
-  } catch (_e) {
+  } catch (err) {
     results.push({
       test: "scraped_properties table exists",
       status: "❌ FAIL",
@@ -74,7 +72,7 @@ async function verifyPreMigration() {
 
   // Check current table structure
   try {
-    const { _data, error } = await supabase.rpc("exec_sql", {
+    const { data, error } = await supabase.rpc("exec_sql", {
       sql: `
         SELECT column_name, data_type, is_nullable, column_default
         FROM information_schema.columns 
@@ -119,7 +117,7 @@ async function verifyPreMigration() {
         }
       }
     }
-  } catch (_e) {
+  } catch (err) {
     results.push({
       test: "Table structure query",
       status: "❌ FAIL",
@@ -130,7 +128,7 @@ async function verifyPreMigration() {
 
   // Check table size and estimate migration impact
   try {
-    const { _data, error } = await supabase
+    const { data, error } = await supabase
       .from("scraped_properties")
       .select("id", { count: "exact", head: true });
 
@@ -151,7 +149,7 @@ async function verifyPreMigration() {
           `${rowCount} rows, estimated additional space: ~${estimatedSpace}MB`,
       });
     }
-  } catch (_e) {
+  } catch (err) {
     results.push({
       test: "Table size check",
       status: "❌ FAIL",

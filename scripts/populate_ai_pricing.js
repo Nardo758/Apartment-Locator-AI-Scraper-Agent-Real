@@ -1,6 +1,6 @@
 import process from "node:process";
 const fs = require("fs");
-const { createClient } = require("@supabase/supabase-js");
+const { createTypedClient } = require("../src/lib/supabase-client");
 
 // Load .env.local if present
 const envFile = ".env.local";
@@ -30,9 +30,7 @@ const batchSize = Number(process.env.BATCH_SIZE || 200);
 const dryRun = !!process.env.DRY_RUN;
 const computePercentile = !!process.env.COMPUTE_PERCENTILE;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-  auth: { persistSession: false },
-});
+const supabase = createTypedClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 function computePricingHeuristic(property) {
   const currentPrice = typeof property.current_price === "number"
@@ -124,7 +122,7 @@ async function runBackfill() {
           } else if (pr && pr.percentile_rank !== undefined) {
             percentile = pr.percentile_rank;
           }
-        } catch (_e) {
+        } catch (err) {
           console.warn(
             "Failed computing percentile for",
             p.external_id,
