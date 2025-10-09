@@ -45,11 +45,11 @@ async function initSupabase() {
     }
 
     if (createClient && SUPABASE_URL && SUPABASE_KEY) {
-      // Use our typed wrapper if available in the project (local dev)
+      // Prefer our local typed wrapper; fall back to the upstream createClient.
       try {
         const { createTypedClient } = await import("../src/lib/supabase-client");
         supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
-      } catch (_e) {
+      } catch (_err) {
         supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
       }
     }

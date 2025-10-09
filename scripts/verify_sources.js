@@ -1,17 +1,23 @@
-const { createClient } = require("@supabase/supabase-js");
 import process from "node:process";
 
 const SUPABASE_URL =
-  process.argv.find((arg) => arg.startsWith("--url=")).split("=")[1];
+  process.argv.find((arg) => arg.startsWith("--url="))?.split("=")[1];
 const SUPABASE_KEY =
-  process.argv.find((arg) => arg.startsWith("--key=")).split("=")[1];
+  process.argv.find((arg) => arg.startsWith("--key="))?.split("=")[1];
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.error("Missing --url or --key");
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+let supabase;
+try {
+  const { createTypedClient } = require("../src/lib/supabase-client");
+  supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
+} catch (_err) {
+  const { createClient } = require("@supabase/supabase-js");
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 async function verifySources() {
   // Count total rows
@@ -27,7 +33,7 @@ async function verifySources() {
   console.log(`Total sources in table: ${count}`);
 
   // Get first 5 rows
-  const { _data, error } = await supabase
+  const { data, error } = await supabase
     .from("sources")
     .select("name, url, priority")
     .limit(5);

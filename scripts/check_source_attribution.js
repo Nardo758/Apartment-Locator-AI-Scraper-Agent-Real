@@ -1,5 +1,4 @@
 // scripts/check_source_attribution.js
-import { createClient } from "@supabase/supabase-js";
 import process from "node:process";
 
 const url = process.env.SUPABASE_URL;
@@ -8,12 +7,21 @@ if (!url || !key) {
   console.error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
-const supabase = createClient(url, key);
+let supabase;
+try {
+  const { createTypedClient } = require("../src/lib/supabase-client");
+  supabase = createTypedClient(url, key);
+} catch (_err) {
+  // fallback when typed wrapper isn't available
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { createClient } = require("@supabase/supabase-js");
+  supabase = createClient(url, key);
+}
 
 (async function () {
   console.log("Checking apartments with source attribution...\n");
 
-  const { _data, error } = await supabase
+  const { data, error } = await supabase
     .from("apartments")
     .select(
       "title, rent_price, bedrooms, bathrooms, source_url, source_name, scraping_job_id, created_at",
