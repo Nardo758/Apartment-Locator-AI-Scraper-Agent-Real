@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
 import * as market from './market';
 import { extractAmenities } from './amenities';
 import { classifyPropertyType } from './propertyType';
@@ -17,7 +18,7 @@ export function detectSignificantChanges(oldData: Record<string, unknown>, newDa
   return changes;
 }
 
-async function logScrapingActivity(supabase: SupabaseClient, externalId: string, event: string, payload: Record<string, unknown>) {
+async function logScrapingActivity(supabase: SupabaseClient<Database>, externalId: string, event: string, payload: Record<string, unknown>) {
   // best-effort logging; swallow errors
   try {
     await supabase.from('scraping_logs').insert({ external_id: externalId, event, payload, created_at: new Date().toISOString() });
@@ -26,7 +27,7 @@ async function logScrapingActivity(supabase: SupabaseClient, externalId: string,
   }
 }
 
-async function logSignificantChanges(supabase: SupabaseClient, externalId: string, changes: unknown[]) {
+async function logSignificantChanges(supabase: SupabaseClient<Database>, externalId: string, changes: unknown[]) {
   try {
     await supabase.from('scraping_change_logs').insert({ external_id: externalId, changes: JSON.stringify(changes), created_at: new Date().toISOString() });
   } catch (_err) {
@@ -38,7 +39,7 @@ async function logSignificantChanges(supabase: SupabaseClient, externalId: strin
  * Update a property using the server-side RPC `rpc_update_property_with_history` if available,
  * otherwise fall back to a direct update and separately insert price_history when price changed.
  */
-export async function updatePropertyWithHistory(supabase: SupabaseClient, externalId: string, payload: Record<string, unknown>) {
+export async function updatePropertyWithHistory(supabase: SupabaseClient<Database>, externalId: string, payload: Record<string, unknown>) {
   // Attempt RPC first
   try {
     const { data, error } = await supabase.rpc('rpc_update_property_with_history', { p_external_id: externalId, p_payload: payload });
@@ -74,7 +75,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient, extern
  * Process the scraping result by performing change-only updates when no significant changes
  * and full updates (with history) when significant changes are detected.
  */
-export async function processScrapingResult(supabase: SupabaseClient, oldData: Record<string, unknown>, newData: Record<string, unknown>) {
+export async function processScrapingResult(supabase: SupabaseClient<Database>, oldData: Record<string, unknown>, newData: Record<string, unknown>) {
   const changes = detectSignificantChanges(oldData, newData);
 
   if (changes.length === 0) {

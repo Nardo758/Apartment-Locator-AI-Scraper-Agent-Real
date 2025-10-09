@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase';
 import type { ScrapingJob } from './orchestrator';
 import { syncToFrontendSchema } from './orchestrator';
 import { transformScrapedToFrontendFormat } from './data-transformer';
@@ -57,7 +58,7 @@ async function dispatchToWorker(workerUrl: string, payload: Record<string, unkno
 })();
 
 export async function processBatchWithCostOptimization(
-  supabase: SupabaseClient, 
+  supabase: SupabaseClient<Database>, 
   batch: ScrapingJob[],
   options: { enableFrontendSync?: boolean; frontendTable?: string } = {}
 ) {

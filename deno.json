@@ -1,7 +1,10 @@
 {
     "compilerOptions": {
         "lib": ["deno.ns", "deno.window"],
-        "strict": true
+    "strict": true,
+    "types": [
+      "./types/test-globals.d.ts"
+    ]
     },
     "tasks": {
         "scrape": {

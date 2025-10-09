@@ -3,6 +3,7 @@ import type { ScrapingStrategy, ScrapingTier, CostPriority } from './priority';
 import { getScrapingBatch, shouldScrapeProperty, getDaysSince, calculateStabilityScore, getRecommendedFrequency } from './orchestrator';
 import { processScrapingResult } from './processResult';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
 import * as market from './market';
 import { extractAmenities } from './amenities';
 import { classifyPropertyType } from './propertyType';
@@ -37,7 +38,7 @@ export async function enhanceWithClaudeIntelligence(url: string, htmlContent: st
 
 // Enrich scraped property data with market intelligence. Accepts a Supabase client
 // to fetch an existing property record by external_id so we can preserve first_seen_at.
-export async function scrapePropertyWithMarketData(supabase: SupabaseClient, propertyData: Record<string, unknown>) {
+export async function scrapePropertyWithMarketData(supabase: SupabaseClient<Database>, propertyData: Record<string, unknown>) {
     const concessions = market.extractConcessions((propertyData['description'] as string) ?? '');
     let firstSeen: string | null = null;
     const externalId = propertyData['external_id'] as string | undefined;
@@ -62,7 +63,7 @@ export async function scrapePropertyWithMarketData(supabase: SupabaseClient, pro
 }
 
 // Final enhanced scraping function: runs enhanced scraping, market enrichment, amenities parsing and classification.
-export async function scrapePropertyComplete(supabase: SupabaseClient, propertyData: Record<string, unknown>, htmlContent?: string) {
+export async function scrapePropertyComplete(supabase: SupabaseClient<Database>, propertyData: Record<string, unknown>, htmlContent?: string) {
     // Phase 1: Basic enhancements
     const phase1Data = scrapePropertyEnhanced(propertyData);
     // Phase 2: Market intelligence (needs supabase to lookup first_seen)

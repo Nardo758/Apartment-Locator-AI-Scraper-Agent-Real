@@ -2,6 +2,7 @@
 // src/scraper/enhanced-orchestrator.ts
 
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
 import { getModelCost } from './costs';
 import { scraperFrontendIntegration } from './frontend-integration';
 import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
@@ -36,7 +37,7 @@ export type ScrapingResult = {
  * Enhanced orchestrator that integrates with frontend data requirements
  */
 export class EnhancedScrapingOrchestrator {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(private supabase: SupabaseClient<Database>) {}
 
   /**
    * Get properties to scrape using the new property_sources system
