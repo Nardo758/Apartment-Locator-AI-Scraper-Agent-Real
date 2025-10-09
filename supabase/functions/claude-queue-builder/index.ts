@@ -115,7 +115,7 @@ serve(async (req: Request) => {
         confidence_score: 0.92,
         website_complexity: 'simple',
         priority_level: 'high'
-        ,website_type: 'entrada'
+        , website_type: 'entrada'
       }
     ];
 
