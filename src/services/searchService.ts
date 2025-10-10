@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '../../types/supabase.ts.ts'
+import type { Database } from '../../types/supabase.ts.ts.ts'
 import * as process from 'node:process'
-import type { Apartment } from '../types.ts'
+import type { Apartment } from '../types.ts.ts'
 
 // Minimal supabase-like interface for the methods used by SearchService
 interface QueryBuilder {

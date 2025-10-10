@@ -1,13 +1,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
-import type { ScrapingJob } from './orchestrator.ts';
-import { syncToFrontendSchema } from './orchestrator.ts';
-import { transformScrapedToFrontendFormat } from './data-transformer.ts';
-import type { ScrapedPropertyData } from '../types/frontend.ts';
-import { ScrapedPropertySchema, type ScrapedPropertyType } from '../schemas/scraped-property-schema.ts';
-import { validationPassCounter, validationFailCounter, validationFailByReason } from '../observability/metrics.ts';
+import type { Database } from '../../types/supabase.ts.ts';
+import type { ScrapingJob } from './orchestrator.ts.ts';
+import { syncToFrontendSchema } from './orchestrator.ts.ts';
+import { transformScrapedToFrontendFormat } from './data-transformer.ts.ts';
+import type { ScrapedPropertyData } from '../types/frontend.ts.ts';
+import { ScrapedPropertySchema, type ScrapedPropertyType } from '../schemas/scraped-property-schema.ts.ts';
+import { validationPassCounter, validationFailCounter, validationFailByReason } from '../observability/metrics.ts.ts';
 import process from 'node:process';
-import { startMetricsServer } from '../observability/server.ts';
+import { startMetricsServer } from '../observability/server.ts.ts';
 
 
 type WorkerResult = {

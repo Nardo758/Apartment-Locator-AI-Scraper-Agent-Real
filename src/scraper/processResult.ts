@@ -1,9 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../types/database.types.ts.ts';
 import { errMsg } from '@shared/error.ts';
-import * as market from './market.ts';
-import { extractAmenities } from './amenities.ts';
-import { classifyPropertyType } from './propertyType.ts';
+import * as market from './market.ts.ts';
+import { extractAmenities } from './amenities.ts.ts';
+import { classifyPropertyType } from './propertyType.ts.ts';
 
 // Minimal helpers: detectSignificantChanges, log helpers are intentionally small and pluggable.
 export function detectSignificantChanges(

@@ -2,8 +2,8 @@
 // Data transformation pipeline for converting scraper data to frontend schema
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts.ts';
-import type { ScrapedPropertyData, FrontendProperty, ApartmentIQData } from '../types/frontend.ts';
+import type { Database } from '../../types/supabase.ts.ts.ts';
+import type { ScrapedPropertyData, FrontendProperty, ApartmentIQData } from '../types/frontend.ts.ts';
 
 /**
  * Transform scraped data to match frontend requirements

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
-import { getModelCost } from './costs.ts';
+import type { Database } from '../types/database.types.ts.ts';
+import { getModelCost } from './costs.ts.ts';
 import {
   batchTransformProperties,
   saveTransformedProperties,
