@@ -3,7 +3,7 @@ import type { ScrapingStrategy, ScrapingTier, CostPriority } from './priority';
 import { getScrapingBatch, shouldScrapeProperty, getDaysSince, calculateStabilityScore, getRecommendedFrequency } from './orchestrator';
 import { processScrapingResult } from './processResult';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@types/database.types.ts';
+import type { Database } from '../types/database.types.ts';
 import * as market from './market';
 import { extractAmenities } from './amenities';
 import { classifyPropertyType } from './propertyType';
@@ -93,16 +93,6 @@ export async function scrapePropertyComplete(supabase: SupabaseClient<Database>,
     // Phase 3: Amenities and classification
     const amenities = extractAmenities((propertyData['description'] as string) ?? '');
     const propertyType = classifyPropertyType(propertyData['name'] as string | undefined, propertyData['description'] as string | undefined);
-
-    // Phase 4: Claude AI intelligence (if HTML content is available)
-    let claudeIntelligence = null;
-    if (htmlContent && propertyData['url'] && propertyData['name']) {
-        claudeIntelligence = await enhanceWithClaudeIntelligence(
-            propertyData['url'] as string,
-            htmlContent,
-            propertyData['name'] as string
-        );
-    }
 
   // Phase 4: Claude AI intelligence (if HTML content is available)
   let claudeIntelligence = null;
