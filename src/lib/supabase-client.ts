@@ -1,5 +1,5 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "../types/database.types";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import type { Database } from "../types/database.types.ts";
 
 /**
  * Centralized factory that returns a Supabase client typed with our

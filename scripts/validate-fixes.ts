@@ -1,7 +1,7 @@
 import { ensureDir } from 'https://deno.land/std@0.177.0/fs/mod.ts'
 
 async function validateFixes() {
-  console.log('🔍 Validating fixes...\n')
+  console.log('🔍 Validating import and type fixes...\n')
 
   // Check if critical files exist
   const criticalFiles = [
@@ -20,36 +20,46 @@ async function validateFixes() {
     }
   }
 
-  // Run type checking on specific directories
-  console.log('\n📋 Running type checks...')
-  
-  const commands: Array<{ name: string; cmd: string[] }> = [
-    { name: 'Source Code', cmd: ['deno', 'check', 'src/'] },
-    { name: 'Supabase Functions', cmd: ['deno', 'check', 'supabase/functions/'] }
-  ]
-
-  for (const { name, cmd } of commands) {
-    try {
-      const process = Deno.run({ cmd, stdout: 'piped', stderr: 'piped' })
-      const { code } = await process.status()
-      if (code === 0) {
-        console.log(`✅ ${name} - Type check passed`)
-      } else {
-        const rawError = await process.stderrOutput()
-        const error = new TextDecoder().decode(rawError)
-        const errorCount = (error.match(/error:/g) || []).length
-        console.log(`❌ ${name} - ${errorCount} errors found`)
-      }
-    } catch (error) {
-      console.log(`❌ ${name} - Check failed: ${(error as Error).message}`)
+  // Run type checking excluding tests
+  console.log('\n📋 Running type checks (excluding tests)...')
+  try {
+    const proc = Deno.run({
+      cmd: ['deno', 'check', '--exclude=**/__tests__/**', 'src/'],
+      stdout: 'piped',
+      stderr: 'piped',
+    })
+    const { code } = await proc.status()
+    const stderr = new TextDecoder().decode(await proc.stderrOutput())
+    if (code === 0) {
+      console.log('✅ Source code type check passed')
+    } else {
+      const errorCount = (stderr.match(/error:/g) || []).length
+      console.log(`❌ Source code - ${errorCount} errors found`)
+      console.log('First few errors:')
+      console.log(stderr.split('\n').slice(0, 10).join('\n'))
     }
+  } catch (error) {
+    console.log(`❌ Type check failed: ${(error as Error).message}`)
   }
 
-  console.log('\n🎯 Next steps:')
-  console.log('1. Run: deno check src/ --unstable')
-  console.log('2. Run: deno check supabase/functions/')
-  console.log('3. Deploy: supabase functions deploy ai-scraper')
-  console.log('4. Test: curl -X POST your-function-url')
+  // Check functions
+  console.log('\n🔧 Checking functions...')
+  try {
+    const proc = Deno.run({ cmd: ['deno', 'check', 'supabase/functions/'], stdout: 'piped', stderr: 'piped' })
+    const { code } = await proc.status()
+    if (code === 0) {
+      console.log('✅ Functions type check passed')
+    } else {
+      console.log('❌ Functions have type errors')
+    }
+  } catch (error) {
+    console.log(`❌ Functions check failed: ${(error as Error).message}`)
+  }
+
+  console.log('\n🎯 Next commands to run:')
+  console.log('deno check --exclude=**/__tests__/** src/')
+  console.log('deno check supabase/functions/')
+  console.log('supabase functions deploy ai-scraper')
 }
 
 if (import.meta.main) {

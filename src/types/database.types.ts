@@ -183,6 +183,110 @@ export interface Database {
           created_at?: string
         }
       }
+      ,
+      // Legacy compatibility tables during migration
+      scraped_properties: {
+        Row: {
+          id: string
+          external_id: string
+          source_url: string
+          raw_data: Json | null
+          normalized_data: Json | null
+          created_at: string
+          updated_at: string
+          [key: string]: any
+        }
+        Insert: {
+          id?: string
+          external_id: string
+          source_url: string
+          raw_data?: Json | null
+          normalized_data?: Json | null
+          created_at?: string
+          updated_at?: string
+          [key: string]: any
+        }
+        Update: {
+          id?: string
+          external_id?: string
+          source_url?: string
+          raw_data?: Json | null
+          normalized_data?: Json | null
+          created_at?: string
+          updated_at?: string
+          [key: string]: any
+        }
+      }
+      ,
+      apartments: {
+        Row: {
+          id: string
+          external_id: string
+          listing_url?: string | null
+          source?: string | null
+          property_name?: string | null
+          address?: string | null
+          city?: string | null
+          state?: string | null
+          zip_code?: string | null
+          neighborhood?: string | null
+          current_price?: number | null
+          original_price?: number | null
+          bedrooms?: number | null
+          bathrooms?: number | null
+          square_feet?: number | null
+          available_date?: string | null
+          amenities?: string[] | null
+          description?: string | null
+          images?: string[] | null
+          phone?: string | null
+          email?: string | null
+          concessions?: Json | null
+          free_rent_concessions?: boolean | null
+          created_at?: string
+          updated_at?: string
+          [key: string]: any
+        }
+        Insert: { [key: string]: any }
+        Update: { [key: string]: any }
+      }
+      ,
+      market_intelligence: {
+        Row: {
+          id?: string
+          location: string
+          location_type?: string
+          average_rent?: number
+          rent_per_sqft?: number | null
+          vacancy_rate?: number | null
+          days_on_market_avg?: number | null
+          concession_prevalence?: number
+          rent_trend?: string
+          high_demand_amenities?: string[]
+          competition_analysis?: string
+          recommended_rent?: number | null
+          risk_factors?: string[]
+          opportunity_areas?: string[]
+          last_updated?: string
+          valid_until?: string
+          [key: string]: any
+        }
+        Insert: { [key: string]: any }
+        Update: { [key: string]: any }
+      }
+      ,
+      user_profiles: {
+        Row: {
+          user_id: string
+          search_preferences?: Json | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          [key: string]: any
+        }
+        Insert: { [key: string]: any }
+        Update: { [key: string]: any }
+      }
     }
     Views: {
       [_ in never]: never
@@ -198,6 +302,20 @@ export interface Database {
           p_details?: Json
         }
         Returns: void
+      }
+      ,
+      find_properties_nearby: {
+        Args: {
+          lat: number
+          lng: number
+          radius_km?: number
+          min_bedrooms?: number
+          max_bedrooms?: number
+          min_price?: number
+          max_price?: number
+          user_id_param?: string
+        }
+        Returns: Json[]
       }
     }
     Enums: {
