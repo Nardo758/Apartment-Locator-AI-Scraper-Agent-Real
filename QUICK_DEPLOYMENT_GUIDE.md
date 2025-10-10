@@ -3,11 +3,13 @@
 ## Option 1: Supabase Dashboard (Recommended)
 
 ### Step 1: Open Supabase Dashboard
+
 1. Go to [https://supabase.com/dashboard](https://supabase.com/dashboard)
 2. Select your project
 3. Go to **SQL Editor**
 
 ### Step 2: Execute Schema Migration
+
 Copy and paste this SQL into the SQL Editor:
 
 ```sql
@@ -198,6 +200,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 ### Step 3: Verify Deployment
+
 Run this verification query in SQL Editor:
 
 ```sql
@@ -255,7 +258,7 @@ Once the schema is deployed, update your functions:
 ```bash
 # Update your scraper functions with the new integration
 supabase functions deploy ai-scraper-worker
-supabase functions deploy command-station
+supabase functions deploy command-center
 ```
 
 ## ✅ Test the Integration
@@ -265,7 +268,7 @@ supabase functions deploy command-station
 node test-real-integration.mjs
 
 # Test specific functions
-curl "https://your-project.supabase.co/functions/v1/command-station/status"
+curl "https://your-project.supabase.co/functions/v1/command-center/status"
 ```
 
 ## 🎯 What Happens Next
@@ -278,6 +281,7 @@ After successful deployment:
 4. ✅ **Data transformation pipeline** operational
 
 Your scraper will now automatically:
+
 - Transform scraped data to frontend format
 - Calculate AI-enhanced pricing
 - Generate market intelligence
@@ -294,4 +298,5 @@ If you encounter any issues:
 
 ---
 
-**🎉 Once deployed, your real estate scraper will have AI-powered data integration!**
+**🎉 Once deployed, your real estate scraper will have AI-powered data
+integration!**

@@ -1,0 +1,74 @@
+[
+  {
+    "dir": "src",
+    "count": 113
+  },
+  {
+    "dir": "supabase",
+    "count": 71
+  },
+  {
+    "dir": "command-station",
+    "count": 54
+  },
+  {
+    "dir": "agents",
+    "count": 34
+  },
+  {
+    "dir": "test-real-integration.mjs\u001b[0m\u001b[0m\u001b[33m",
+    "count": 13
+  },
+  {
+    "dir": "scripts",
+    "count": 12
+  },
+  {
+    "dir": "test-schema-deployment.ts\u001b[0m\u001b[0m\u001b[33m",
+    "count": 10
+  },
+  {
+    "dir": "test-schema-deployment.mjs\u001b[0m\u001b[0m\u001b[33m",
+    "count": 8
+  },
+  {
+    "dir": "browser-extension",
+    "count": 8
+  },
+  {
+    "dir": "test-frontend-integration.ts\u001b[0m\u001b[0m\u001b[33m",
+    "count": 6
+  },
+  {
+    "dir": "tmp",
+    "count": 5
+  },
+  {
+    "dir": "__tests__",
+    "count": 4
+  },
+  {
+    "dir": "trigger_atlanta_scraping.js\u001b[0m\u001b[0m\u001b[33m",
+    "count": 3
+  },
+  {
+    "dir": "utils",
+    "count": 3
+  },
+  {
+    "dir": "test-complete-production.mjs\u001b[0m\u001b[0m\u001b[33m",
+    "count": 2
+  },
+  {
+    "dir": "app",
+    "count": 2
+  },
+  {
+    "dir": "test-claude-node.ts\u001b[0m\u001b[0m\u001b[33m",
+    "count": 1
+  },
+  {
+    "dir": "populate_atlanta_queue.js\u001b[0m\u001b[0m\u001b[33m",
+    "count": 1
+  }
+]

@@ -1,15 +1,18 @@
 // scraper-orchestrator/index.ts
 import { serve } from "std/http/server.ts";
-import { createClient } from "@supabase/supabase-js";
-import { runProcessor } from './processor.ts';
+import { createTypedClient } from "../shared/supabase-client.ts";
+import { runProcessor } from "./processor.ts";
 import { recommendedConfig as _recommendedConfig } from "../openai_config.ts";
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
-const SUPABASE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
+const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const _supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Website type detection using AI
-export async function detectWebsiteType(html: string, url: string): Promise<string> {
+export async function detectWebsiteType(
+  html: string,
+  url: string,
+): Promise<string> {
   const prompt = `Analyze this real estate website and classify its type:
 
 URL: ${url}
@@ -46,17 +49,25 @@ Return only the classification word, nothing else.`;
     });
 
     if (!response.ok) {
-      console.warn(`OpenAI API error: ${response.status}, defaulting to unknown`);
+      console.warn(
+        `OpenAI API error: ${response.status}, defaulting to unknown`,
+      );
       return "unknown";
     }
 
     const data = await response.json();
-    const classification = data.choices?.[0]?.message?.content?.trim() || "unknown";
+    const classification = data.choices?.[0]?.message?.content?.trim() ||
+      "unknown";
 
     // Validate the response is one of our expected types
-    const validTypes = ["property_marketing", "listing_aggregator", "property_manager", "brokerage", "unknown"];
+    const validTypes = [
+      "property_marketing",
+      "listing_aggregator",
+      "property_manager",
+      "brokerage",
+      "unknown",
+    ];
     return validTypes.includes(classification) ? classification : "unknown";
-
   } catch (error) {
     console.warn("Error detecting website type:", error);
     return "unknown";
@@ -64,8 +75,12 @@ Return only the classification word, nothing else.`;
 }
 
 // Processing router for different website types
-export async function processPropertyByType(url: string, html: string, websiteType: string) {
-  switch(websiteType) {
+export async function processPropertyByType(
+  url: string,
+  html: string,
+  websiteType: string,
+) {
+  switch (websiteType) {
     case "property_marketing":
       return await extractFromMarketingSite(html, url);
 
@@ -86,7 +101,8 @@ export async function processPropertyByType(url: string, html: string, websiteTy
 // Extraction strategies for different website types
 
 async function extractFromMarketingSite(html: string, url: string) {
-  const prompt = `You are given the HTML content of a property marketing website. Analyze this HTML directly to extract apartment unit information.
+  const prompt =
+    `You are given the HTML content of a property marketing website. Analyze this HTML directly to extract apartment unit information.
 
 URL: ${url}
 This is a SINGLE PROPERTY marketing website. Find all available unit types, floor plans, and pricing information in the provided HTML.
@@ -122,7 +138,8 @@ ${html.substring(0, 10000)}`;
 }
 
 async function extractFromAggregator(html: string, _url: string) {
-  const prompt = `EXTRACT INDIVIDUAL APARTMENT LISTINGS from this rentals website.
+  const prompt =
+    `EXTRACT INDIVIDUAL APARTMENT LISTINGS from this rentals website.
 
 This site contains MULTIPLE apartment listings. Extract each unique unit.
 
@@ -142,7 +159,8 @@ HTML: ${html.substring(0, 12000)}`;
 }
 
 async function extractFromPropertyManager(html: string, _url: string) {
-  const prompt = `EXTRACT APARTMENT LISTINGS from this property management website.
+  const prompt =
+    `EXTRACT APARTMENT LISTINGS from this property management website.
 
 This site manages MULTIPLE PROPERTIES. Extract individual apartment units from all properties shown.
 
@@ -162,7 +180,8 @@ HTML: ${html.substring(0, 12000)}`;
 }
 
 async function extractFromBrokerage(html: string, _url: string) {
-  const prompt = `EXTRACT APARTMENT LISTINGS from this real estate brokerage website.
+  const prompt =
+    `EXTRACT APARTMENT LISTINGS from this real estate brokerage website.
 
 Look for rental listings, for-lease properties, and apartment rentals.
 
@@ -241,14 +260,22 @@ async function callAI(prompt: string) {
 }
 
 // Dispatch to a scraper worker function. The worker is another Supabase Function we will add.
-async function _dispatchToWorker(workerUrl: string, payload: Record<string, unknown>, maxRetries = 2) {
+async function _dispatchToWorker(
+  workerUrl: string,
+  payload: Record<string, unknown>,
+  maxRetries = 2,
+) {
   let attempt = 0;
   let lastErr: unknown = null;
   while (attempt <= maxRetries) {
     try {
       const res = await fetch(workerUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${SUPABASE_KEY}`, apikey: SUPABASE_KEY },
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          apikey: SUPABASE_KEY,
+        },
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`Worker responded ${res.status}`);
@@ -269,23 +296,35 @@ async function _dispatchToWorker(workerUrl: string, payload: Record<string, unkn
 serve(async (req) => {
   try {
     // Allow POST to trigger a run, GET for a health check
-    if (req.method === 'GET') {
-      return new Response(JSON.stringify({ status: 'ok', message: 'orchestrator running' }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      });
+    if (req.method === "GET") {
+      return new Response(
+        JSON.stringify({ status: "ok", message: "orchestrator running" }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      );
     }
 
-    if (req.method === 'POST') {
+    if (req.method === "POST") {
       const results = await runProcessor();
-      return new Response(JSON.stringify({ processed: Array.isArray(results) ? results.length : 0, results }), {
-        status: 200,
-        headers: { 'content-type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          processed: Array.isArray(results) ? results.length : 0,
+          results,
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      );
     }
 
-    return new Response('Method not allowed', { status: 405 });
+    return new Response("Method not allowed", { status: 405 });
   } catch (err) {
-    return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { 'content-type': 'application/json' } });
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
   }
 });

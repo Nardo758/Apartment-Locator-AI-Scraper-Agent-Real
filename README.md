@@ -1,12 +1,15 @@
 # Apartment Locator AI Scraper Agent
 
-A comprehensive apartment rental data scraping system with intelligent learning capabilities. The system can automatically learn navigation patterns from human demonstrations and adapt to different rental website structures.
+A comprehensive apartment rental data scraping system with intelligent learning
+capabilities. The system can automatically learn navigation patterns from human
+demonstrations and adapt to different rental website structures.
 
 ## Features
 
 ## Usage
 
     python enhanced_scraper.py extract https://www.apartments.com/example
+
 ## Supabase push helper
 
 If you want to push a saved scrape result to Supabase, use the helper script:
@@ -18,19 +21,25 @@ To actually push, set these environment variables and omit --dry-run:
     SUPABASE_URL
     SUPABASE_SERVICE_ROLE_KEY
 
-The script will call the RPC rpc_bulk_upsert_properties_v2 by default (accepts extended fields such as amenities, AI-derived pricing, and provenance). Modify the --rpc argument to change.
+The script will call the RPC rpc_bulk_upsert_properties_v2 by default (accepts
+extended fields such as amenities, AI-derived pricing, and provenance). Modify
+the --rpc argument to change.
 
 ### Core Scraping Engine
 
-- **Template-Based Scraping**: Intelligent platform detection with customizable templates
-- **Universal Navigation Flow**: 3-step rental process (Floor Plans → Unit Selection → Pricing Details)
-- **Multi-Stage Data Extraction**: Pricing details, unit information, and floorplan data
+- **Template-Based Scraping**: Intelligent platform detection with customizable
+  templates
+- **Universal Navigation Flow**: 3-step rental process (Floor Plans → Unit
+  Selection → Pricing Details)
+- **Multi-Stage Data Extraction**: Pricing details, unit information, and
+  floorplan data
 - **Human-Like Behavior**: Randomized timing and interactions to avoid detection
 - **Supabase Integration**: Cloud database storage with real-time sync
 
 ### Watch and Learn System 🧠
 
-- **Interactive Training**: Learn navigation patterns by watching human demonstrations
+- **Interactive Training**: Learn navigation patterns by watching human
+  demonstrations
 - **Browser Extension**: Chrome extension for recording user interactions
 - **Playback Learning**: Parse and learn from Playwright codegen recordings
 - **Human-in-the-Loop**: Request human guidance when automatic extraction fails
@@ -39,7 +48,8 @@ The script will call the RPC rpc_bulk_upsert_properties_v2 by default (accepts e
 ### Advanced Capabilities
 
 - **Smart Selector Generation**: Automatically generates unique CSS selectors
-- **Fallback Strategies**: Multiple extraction methods with intelligent retry logic
+- **Fallback Strategies**: Multiple extraction methods with intelligent retry
+  logic
 - **Error Recovery**: Comprehensive exception handling and logging
 - **Batch Processing**: Process multiple URLs with progress tracking
 - **Data Validation**: Built-in validation and cleaning of extracted data
@@ -133,14 +143,13 @@ The script will call the RPC rpc_bulk_upsert_properties_v2 by default (accepts e
 
 1. Record a session using the Chrome extension
 2. Export the session as JSON
-3. Import into the learning system:
-    from agents.learning_system import PlaybackLearner
+3. Import into the learning system: from agents.learning_system import
+   PlaybackLearner
 
-    learner = PlaybackLearner()
-    with open('session_export.json', 'r') as f:
-        session_data = json.load(f)
+   learner = PlaybackLearner() with open('session_export.json', 'r') as f:
+   session_data = json.load(f)
 
-    learned_path = learner.learn_from_session_data(session_data)
+   learned_path = learner.learn_from_session_data(session_data)
 
 ## Configuration
 
@@ -157,26 +166,17 @@ The script will call the RPC rpc_bulk_upsert_properties_v2 by default (accepts e
 ### Template Configuration
 
 Templates are defined in `agents/website_templates.py`. Add new templates:
-    ONE_OFF_TEMPLATES = {
-        "yoursite.com": {
-            "navigation": {
-                "floorplans": "header a[href*='floorplans']",
-                "units": "[data-unit]",
-                "apply": ".apply-btn"
-            },
-            "extraction": {
-                "price": ".price",
-                "bedrooms": ".beds",
-                "bathrooms": ".baths"
-            }
-        }
-    }
+ONE_OFF_TEMPLATES = { "yoursite.com": { "navigation": { "floorplans": "header
+a[href*='floorplans']", "units": "[data-unit]", "apply": ".apply-btn" },
+"extraction": { "price": ".price", "bedrooms": ".beds", "bathrooms": ".baths" }
+} }
 
 ## API Reference
 
 ### LearningEnhancedRentalDataAgent
 
-- `extract_rental_data_with_learning(url, enable_learning=True)`: Extract with learning
+- `extract_rental_data_with_learning(url, enable_learning=True)`: Extract with
+  learning
 - `start_learning_session(url)`: Start interactive learning
 - `retry_with_guidance(url, selector)`: Retry with human-provided selector
 
@@ -283,7 +283,9 @@ This project is licensed under the MIT License. See LICENSE file for details.
 
 ## Security Note
 
-This tool is for research and personal use only. Respect website terms of service and robots.txt files. Use responsibly and avoid overloading servers with requests.
+This tool is for research and personal use only. Respect website terms of
+service and robots.txt files. Use responsibly and avoid overloading servers with
+requests.
 
 ## 🔒 Security & Code Quality
 
@@ -303,6 +305,7 @@ This tool is for research and personal use only. Respect website terms of servic
 
 1. Use a local `.env.local` copied from `.env.local.template` for secrets.
 2. Run `python -m venv .venv && .\.venv\Scripts\Activate.ps1` and install deps.
-3. Use the Playwright scraper in `scripts/` with `--dry-run` to validate extractions before pushing.
-4. If pushing from CI, store secrets in GitHub repository Secrets and use the provided workflows.
-
+3. Use the Playwright scraper in `scripts/` with `--dry-run` to validate
+   extractions before pushing.
+4. If pushing from CI, store secrets in GitHub repository Secrets and use the
+   provided workflows.

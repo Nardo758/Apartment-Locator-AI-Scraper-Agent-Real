@@ -1,15 +1,27 @@
-const { createClient } = require('@supabase/supabase-js');
 import process from "node:process";
 
-const SUPABASE_URL = process.env.SUPABASE_URL || process.argv.find(arg => arg.startsWith('--url=')).split('=')[1];
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.argv.find(arg => arg.startsWith('--key=')).split('=')[1];
+const SUPABASE_URL = process.env.SUPABASE_URL ||
+  process.argv.find((arg) => arg.startsWith("--url="))?.split("=")[1];
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.argv.find((arg) => arg.startsWith("--key="))?.split("=")[1];
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+  console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Prefer typed wrapper when available in workspace
+let supabase;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { createTypedClient } = require("../src/lib/supabase-client");
+  supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
+} catch (_err) {
+  // fallback to direct import
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { createClient } = require("@supabase/supabase-js");
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 async function createSourcesTable() {
   const sql = `
@@ -23,12 +35,12 @@ async function createSourcesTable() {
     );
   `;
 
-  const { error } = await supabase.rpc('exec_sql', { sql });
+  const { error } = await supabase.rpc("exec_sql", { sql });
 
   if (error) {
-    console.error('Error creating table:', error);
+    console.error("Error creating table:", error);
   } else {
-    console.log('Sources table created or already exists.');
+    console.log("Sources table created or already exists.");
   }
 }
 

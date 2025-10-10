@@ -1,16 +1,17 @@
 # 📊 Monitoring & Scaling Guide
+
 ## Claude-Powered AI Apartment Scraper
 
 ### 🎯 Key Performance Indicators (KPIs)
 
-| Metric | Target | Alert Threshold | Critical Threshold |
-|--------|--------|-----------------|-------------------|
-| **Success Rate** | >95% | <95% | <90% |
-| **Response Time** | <3s | >3s | >5s |
-| **Daily Cost** | <$50 | >$50 | >$100 |
-| **Accuracy Rate** | >90% | <90% | <85% |
-| **Error Rate** | <5% | >5% | >10% |
-| **Token Usage** | Baseline +20% | +50% | +100% |
+| Metric            | Target        | Alert Threshold | Critical Threshold |
+| ----------------- | ------------- | --------------- | ------------------ |
+| **Success Rate**  | >95%          | <95%            | <90%               |
+| **Response Time** | <3s           | >3s             | >5s                |
+| **Daily Cost**    | <$50          | >$50            | >$100              |
+| **Accuracy Rate** | >90%          | <90%            | <85%               |
+| **Error Rate**    | <5%           | >5%             | >10%               |
+| **Token Usage**   | Baseline +20% | +50%            | +100%              |
 
 ---
 
@@ -83,22 +84,25 @@ LIMIT 20;
 ```javascript
 // Daily cost monitoring
 const COST_ALERTS = {
-  daily_budget: 50.00,      // Alert if daily cost > $50
-  weekly_budget: 300.00,    // Alert if weekly cost > $300
-  monthly_budget: 1200.00,  // Alert if monthly cost > $1200
-  
+  daily_budget: 50.00, // Alert if daily cost > $50
+  weekly_budget: 300.00, // Alert if weekly cost > $300
+  monthly_budget: 1200.00, // Alert if monthly cost > $1200
+
   // Per-property cost spike
   cost_per_property: 0.002, // Alert if >$0.002 per property
-  
+
   // Token usage spike
-  token_spike_threshold: 1.5 // Alert if 50% above baseline
+  token_spike_threshold: 1.5, // Alert if 50% above baseline
 };
 
 // Implementation example
 async function checkCostAlerts() {
   const dailyCost = await getDailyCost();
   if (dailyCost > COST_ALERTS.daily_budget) {
-    await sendAlert('COST_ALERT', `Daily cost $${dailyCost} exceeded budget $${COST_ALERTS.daily_budget}`);
+    await sendAlert(
+      "COST_ALERT",
+      `Daily cost $${dailyCost} exceeded budget $${COST_ALERTS.daily_budget}`,
+    );
   }
 }
 ```
@@ -108,13 +112,13 @@ async function checkCostAlerts() {
 ```javascript
 // Performance monitoring
 const PERFORMANCE_ALERTS = {
-  success_rate_threshold: 0.95,    // Alert if <95%
-  response_time_threshold: 3000,   // Alert if >3s
-  error_rate_threshold: 0.05,      // Alert if >5%
-  
+  success_rate_threshold: 0.95, // Alert if <95%
+  response_time_threshold: 3000, // Alert if >3s
+  error_rate_threshold: 0.05, // Alert if >5%
+
   // Volume alerts
-  low_volume_threshold: 100,       // Alert if <100 properties/day
-  high_volume_threshold: 10000,    // Alert if >10k properties/day
+  low_volume_threshold: 100, // Alert if <100 properties/day
+  high_volume_threshold: 10000, // Alert if >10k properties/day
 };
 ```
 
@@ -135,7 +139,7 @@ await logPerformanceMetric({
   responseTime,
   tokenCount: usage.total_tokens,
   success: true,
-  timestamp: new Date()
+  timestamp: new Date(),
 });
 ```
 
@@ -163,12 +167,12 @@ ORDER BY hour DESC;
 
 ### Traffic-Based Scaling
 
-| Daily Properties | Recommended Setup | Expected Cost | Notes |
-|-----------------|-------------------|---------------|-------|
-| **1-1,000** | Single instance | $0.72-$72 | Standard setup |
-| **1,000-10,000** | Load balancing | $72-$720 | Monitor rate limits |
-| **10,000-50,000** | Auto-scaling | $720-$3,600 | Batch optimization |
-| **50,000+** | Multi-region | $3,600+ | Enterprise setup |
+| Daily Properties  | Recommended Setup | Expected Cost | Notes               |
+| ----------------- | ----------------- | ------------- | ------------------- |
+| **1-1,000**       | Single instance   | $0.72-$72     | Standard setup      |
+| **1,000-10,000**  | Load balancing    | $72-$720      | Monitor rate limits |
+| **10,000-50,000** | Auto-scaling      | $720-$3,600   | Batch optimization  |
+| **50,000+**       | Multi-region      | $3,600+       | Enterprise setup    |
 
 ### Horizontal Scaling Strategy
 
@@ -178,18 +182,18 @@ const SCALING_CONFIG = {
   low_volume: {
     batch_size: 1,
     concurrent_requests: 1,
-    delay_ms: 1000
+    delay_ms: 1000,
   },
   medium_volume: {
     batch_size: 5,
     concurrent_requests: 3,
-    delay_ms: 500
+    delay_ms: 500,
   },
   high_volume: {
     batch_size: 10,
     concurrent_requests: 5,
-    delay_ms: 200
-  }
+    delay_ms: 200,
+  },
 };
 
 // Auto-scaling logic
@@ -210,16 +214,16 @@ function getOptimalConfig(dailyVolume: number) {
 // Optimized Claude configuration for production
 const OPTIMIZED_CLAUDE_CONFIG = {
   model: "claude-3-haiku-20240307", // Most cost-effective
-  max_tokens: 1000,                 // Reduced for apartment data
-  temperature: 0.1,                 // Consistent results
-  timeout: 20000,                   // Faster timeout
+  max_tokens: 1000, // Reduced for apartment data
+  temperature: 0.1, // Consistent results
+  timeout: 20000, // Faster timeout
 };
 
 // Connection pooling and reuse
 const httpClient = new HTTPClient({
   keepAlive: true,
   maxSockets: 10,
-  timeout: 20000
+  timeout: 20000,
 });
 ```
 
@@ -267,6 +271,7 @@ $$ LANGUAGE plpgsql;
 ### Common Issues & Solutions
 
 #### High Response Times
+
 ```bash
 # Check Claude API status
 curl -I https://api.anthropic.com/v1/messages
@@ -279,6 +284,7 @@ SELECT * FROM pg_stat_activity WHERE state = 'active';
 ```
 
 #### Cost Spikes
+
 ```sql
 -- Identify expensive requests
 SELECT 
@@ -293,6 +299,7 @@ ORDER BY estimated_cost DESC;
 ```
 
 #### Accuracy Issues
+
 ```sql
 -- Analyze validation failures
 SELECT 
@@ -316,19 +323,22 @@ ORDER BY failure_count DESC;
 const DASHBOARD_WIDGETS = [
   {
     title: "Daily Properties Scraped",
-    query: "SELECT SUM(properties_scraped) FROM scraping_costs WHERE date = CURRENT_DATE",
-    type: "number"
+    query:
+      "SELECT SUM(properties_scraped) FROM scraping_costs WHERE date = CURRENT_DATE",
+    type: "number",
   },
   {
     title: "Success Rate (7 days)",
-    query: "SELECT AVG(success_rate) FROM scraping_costs WHERE date >= CURRENT_DATE - 7",
-    type: "percentage"
+    query:
+      "SELECT AVG(success_rate) FROM scraping_costs WHERE date >= CURRENT_DATE - 7",
+    type: "percentage",
   },
   {
     title: "Daily Cost",
-    query: "SELECT SUM(estimated_cost) FROM scraping_costs WHERE date = CURRENT_DATE",
-    type: "currency"
-  }
+    query:
+      "SELECT SUM(estimated_cost) FROM scraping_costs WHERE date = CURRENT_DATE",
+    type: "currency",
+  },
 ];
 ```
 
@@ -338,14 +348,14 @@ const DASHBOARD_WIDGETS = [
 // Webhook alerts
 async function sendWebhookAlert(alertType: string, message: string) {
   await fetch(process.env.WEBHOOK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       alert_type: alertType,
       message: message,
       timestamp: new Date().toISOString(),
-      service: 'claude-ai-scraper'
-    })
+      service: "claude-ai-scraper",
+    }),
   });
 }
 
@@ -355,7 +365,7 @@ async function sendEmailAlert(subject: string, body: string) {
   await emailService.send({
     to: process.env.ALERT_EMAIL,
     subject: `[AI Scraper Alert] ${subject}`,
-    body: body
+    body: body,
   });
 }
 ```
@@ -366,33 +376,33 @@ async function sendEmailAlert(subject: string, body: string) {
 
 ### Expected Performance Ranges
 
-| Metric | Excellent | Good | Acceptable | Poor |
-|--------|-----------|------|------------|------|
-| **Success Rate** | >98% | 95-98% | 90-95% | <90% |
-| **Response Time** | <1.5s | 1.5-3s | 3-5s | >5s |
-| **Cost per Property** | <$0.0005 | $0.0005-0.001 | $0.001-0.002 | >$0.002 |
-| **Accuracy** | >95% | 90-95% | 85-90% | <85% |
+| Metric                | Excellent | Good          | Acceptable   | Poor    |
+| --------------------- | --------- | ------------- | ------------ | ------- |
+| **Success Rate**      | >98%      | 95-98%        | 90-95%       | <90%    |
+| **Response Time**     | <1.5s     | 1.5-3s        | 3-5s         | >5s     |
+| **Cost per Property** | <$0.0005  | $0.0005-0.001 | $0.001-0.002 | >$0.002 |
+| **Accuracy**          | >95%      | 90-95%        | 85-90%       | <85%    |
 
 ### Optimization Targets
 
 ```typescript
 // Performance targets by volume
 const PERFORMANCE_TARGETS = {
-  low_volume: {    // <1k properties/day
+  low_volume: { // <1k properties/day
     response_time: 1000,
     success_rate: 0.98,
-    cost_per_property: 0.0007
+    cost_per_property: 0.0007,
   },
   medium_volume: { // 1k-10k properties/day
     response_time: 2000,
     success_rate: 0.96,
-    cost_per_property: 0.0008
+    cost_per_property: 0.0008,
   },
-  high_volume: {   // >10k properties/day
+  high_volume: { // >10k properties/day
     response_time: 3000,
     success_rate: 0.95,
-    cost_per_property: 0.001
-  }
+    cost_per_property: 0.001,
+  },
 };
 ```
 
@@ -401,18 +411,21 @@ const PERFORMANCE_TARGETS = {
 ## 🚀 Scaling Roadmap
 
 ### Phase 1: Foundation (0-1k properties/day)
+
 - ✅ Single Claude instance
 - ✅ Basic monitoring
 - ✅ Cost tracking
 - ✅ Error logging
 
 ### Phase 2: Growth (1k-10k properties/day)
+
 - 🔄 Load balancing
 - 🔄 Advanced monitoring
 - 🔄 Automated alerts
 - 🔄 Performance optimization
 
 ### Phase 3: Scale (10k+ properties/day)
+
 - 📋 Multi-region deployment
 - 📋 Auto-scaling groups
 - 📋 Advanced caching
@@ -423,18 +436,21 @@ const PERFORMANCE_TARGETS = {
 ## ✅ Monitoring Checklist
 
 ### Daily Monitoring Tasks
+
 - [ ] Check success rate (target: >95%)
 - [ ] Review daily costs (budget: <$50)
 - [ ] Monitor error logs
 - [ ] Verify data quality
 
 ### Weekly Monitoring Tasks
+
 - [ ] Analyze performance trends
 - [ ] Review cost efficiency
 - [ ] Update scaling parameters
 - [ ] Optimize problematic patterns
 
 ### Monthly Monitoring Tasks
+
 - [ ] Performance benchmark review
 - [ ] Cost optimization analysis
 - [ ] Scaling strategy adjustment
@@ -442,4 +458,5 @@ const PERFORMANCE_TARGETS = {
 
 ---
 
-🎯 **Your Claude-powered scraper is now equipped with enterprise-grade monitoring and scaling capabilities!**
+🎯 **Your Claude-powered scraper is now equipped with enterprise-grade
+monitoring and scaling capabilities!**

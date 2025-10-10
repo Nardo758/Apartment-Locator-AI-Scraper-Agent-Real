@@ -14,12 +14,12 @@ export class ConcessionDetector {
       /special\s*offer/gi,
       /promotion/gi,
       /discount/gi,
-      /concession/gi
+      /concession/gi,
     ];
 
     const foundConcessions: string[] = [];
-    
-    concessionPatterns.forEach(pattern => {
+
+    concessionPatterns.forEach((pattern) => {
       const matches = html.match(pattern);
       if (matches) {
         foundConcessions.push(...matches);
@@ -36,12 +36,12 @@ export class ConcessionDetector {
       { pattern: /promotion[s]?.*?(?=<|$)/gi, name: "promotions" },
       { pattern: /concession[s]?.*?(?=<|$)/gi, name: "concessions" },
       { pattern: /limited.*?offer.*?(?=<|$)/gi, name: "limited_offers" },
-      { pattern: /move[-\s]*in.*?(?=<|$)/gi, name: "move_in_specials" }
+      { pattern: /move[-\s]*in.*?(?=<|$)/gi, name: "move_in_specials" },
     ];
 
     const context: any = {};
-    
-    contextSections.forEach(section => {
+
+    contextSections.forEach((section) => {
       const matches = html.match(section.pattern);
       if (matches) {
         context[section.name] = matches;
@@ -51,7 +51,10 @@ export class ConcessionDetector {
     return context;
   }
 
-  static calculateNetEffectiveRent(baseRent: number, freeRentOffer: string): number {
+  static calculateNetEffectiveRent(
+    baseRent: number,
+    freeRentOffer: string,
+  ): number {
     // Parse "1 month free on 13-month lease" type offers
     const match = freeRentOffer.match(/(\d+)\s*month/);
     if (match) {
@@ -71,12 +74,17 @@ export class ConcessionDetector {
     }
 
     // Higher confidence if we found specific free rent offers
-    if (intelligence.free_rent_offers && intelligence.free_rent_offers.length > 0) {
+    if (
+      intelligence.free_rent_offers && intelligence.free_rent_offers.length > 0
+    ) {
       confidence += 0.2;
     }
 
     // Higher confidence if we found pricing structure
-    if (intelligence.base_rent_by_unit && Object.keys(intelligence.base_rent_by_unit).length > 0) {
+    if (
+      intelligence.base_rent_by_unit &&
+      Object.keys(intelligence.base_rent_by_unit).length > 0
+    ) {
       confidence += 0.1;
     }
 
@@ -85,27 +93,32 @@ export class ConcessionDetector {
   }
 
   static applyConcessionPricing(apartments: any[], intelligence: any): any[] {
-    return apartments.map(apt => {
+    return apartments.map((apt) => {
       const baseRent = apt.rent_price || apt.current_price;
       let effectiveRent = baseRent;
-      let concessionText = '';
-      
+      let concessionText = "";
+
       // Calculate effective rent based on concessions
-      if (intelligence.free_rent_offers && intelligence.free_rent_offers.length > 0) {
+      if (
+        intelligence.free_rent_offers &&
+        intelligence.free_rent_offers.length > 0
+      ) {
         const freeRent = intelligence.free_rent_offers[0];
         effectiveRent = this.calculateNetEffectiveRent(baseRent, freeRent);
         concessionText = `Net Effective Rent: $${effectiveRent} (${freeRent})`;
       }
-      
+
       return {
         ...apt,
         base_rent: baseRent,
         effective_rent: effectiveRent,
         net_effective_rent: effectiveRent,
-        concessions_applied: intelligence.concessions && intelligence.concessions.length > 0,
-        concession_details: concessionText || intelligence.concessions?.join(', '),
+        concessions_applied: intelligence.concessions &&
+          intelligence.concessions.length > 0,
+        concession_details: concessionText ||
+          intelligence.concessions?.join(", "),
         intelligence_confidence: intelligence.confidence_score,
-        data_source: 'property_website_primary'
+        data_source: "property_website_primary",
       };
     });
   }

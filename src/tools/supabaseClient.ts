@@ -18,7 +18,7 @@ export class SupabaseClientWrapper {
   async upsertApartment(apartment: Apartment) {
     const payload: Record<string, unknown> = {
       external_id: apartment.external_id,
-      source: apartment.source || 'unknown',
+      source: apartment.source || "unknown",
       title: apartment.title,
       address: apartment.address,
       city: apartment.city,
@@ -56,8 +56,11 @@ export class SupabaseClientWrapper {
   }
 
   async deactivateOldListings(source: string, cutoffDays = 7) {
-    const cutoff = new Date(Date.now() - cutoffDays * 24 * 3600 * 1000).toISOString();
-    const { data, error } = await this.client.from('apartments').update({ is_active: false }).eq('source', source).lt('scraped_at', cutoff).select();
+    const cutoff = new Date(Date.now() - cutoffDays * 24 * 3600 * 1000)
+      .toISOString();
+    const { data, error } = await this.client.from("apartments").update({
+      is_active: false,
+    }).eq("source", source).lt("scraped_at", cutoff).select();
     if (error) throw error;
     return Array.isArray(data) ? data.length : 0;
   }

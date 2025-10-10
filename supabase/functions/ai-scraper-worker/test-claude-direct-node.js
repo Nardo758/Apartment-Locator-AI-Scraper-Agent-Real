@@ -1,20 +1,21 @@
 // test-claude-direct-node.js - Direct Claude API test using Node.js
-const fs = require('fs');
-const path = require('path');
+import process from "node:process";
+const fs = require("fs");
+const path = require("path");
 
 // Load environment variables from .env.local
 function loadEnv() {
-  const envPath = path.join(__dirname, '.env.local');
+  const envPath = path.join(__dirname, ".env.local");
   if (fs.existsSync(envPath)) {
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const lines = envContent.split('\n');
-    
+    const envContent = fs.readFileSync(envPath, "utf8");
+    const lines = envContent.split("\n");
+
     for (const line of lines) {
       const trimmed = line.trim();
-      if (trimmed && !trimmed.startsWith('#')) {
-        const [key, ...valueParts] = trimmed.split('=');
+      if (trimmed && !trimmed.startsWith("#")) {
+        const [key, ...valueParts] = trimmed.split("=");
         if (key && valueParts.length > 0) {
-          process.env[key.trim()] = valueParts.join('=').trim();
+          process.env[key.trim()] = valueParts.join("=").trim();
         }
       }
     }
@@ -24,8 +25,8 @@ function loadEnv() {
 // Sample property HTML data for testing
 const testProperties = [
   {
-    id: 'test-1',
-    source: 'apartments.com',
+    id: "test-1",
+    source: "apartments.com",
     html: `
       <div class="property-info">
         <h1>Sunset Gardens Apartment</h1>
@@ -35,11 +36,11 @@ const testProperties = [
         <div class="fees">Application Fee: $75</div>
         <div class="specials">First month free with 12-month lease</div>
       </div>
-    `
+    `,
   },
   {
-    id: 'test-2', 
-    source: 'zillow.com',
+    id: "test-2",
+    source: "zillow.com",
     html: `
       <section class="rental-info">
         <h2>Modern Downtown Loft</h2>
@@ -48,11 +49,11 @@ const testProperties = [
         <div class="bedroom-info">1 bedroom, 1 bathroom</div>
         <div class="admin-fee">Admin fee waived for new residents</div>
       </section>
-    `
+    `,
   },
   {
-    id: 'test-3',
-    source: 'rent.com', 
+    id: "test-3",
+    source: "rent.com",
     html: `
       <div class="listing">
         <div class="title">Riverside Apartments</div>
@@ -61,18 +62,18 @@ const testProperties = [
         <div class="layout">3 bedrooms, 2 bathrooms</div>
         <div class="deposit-info">No application fee • $200 admin fee</div>
       </div>
-    `
-  }
+    `,
+  },
 ];
 
 async function testClaudeExtraction(property) {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  if (!anthropicKey || anthropicKey.includes('your-actual-claude-key-here')) {
-    throw new Error('ANTHROPIC_API_KEY not properly configured');
+  if (!anthropicKey || anthropicKey.includes("your-actual-claude-key-here")) {
+    throw new Error("ANTHROPIC_API_KEY not properly configured");
   }
 
-  const claudeModel = process.env.CLAUDE_MODEL || 'claude-3-haiku-20240307';
-  
+  const claudeModel = process.env.CLAUDE_MODEL || "claude-3-haiku-20240307";
+
   const systemPrompt = `You are an expert web scraper for apartment rental data.
 Extract the following fields from HTML and return ONLY valid JSON:
 - name, address, city, state (2 letters)
@@ -85,7 +86,8 @@ Extract the following fields from HTML and return ONLY valid JSON:
 
 Return valid JSON. Use null for missing fields.`;
 
-  const userMessage = `Extract apartment data from this ${property.source} page HTML:\n\n${property.html}`;
+  const userMessage =
+    `Extract apartment data from this ${property.source} page HTML:\n\n${property.html}`;
 
   const claudeBody = {
     model: claudeModel,
@@ -95,20 +97,20 @@ Return valid JSON. Use null for missing fields.`;
     messages: [
       {
         role: "user",
-        content: userMessage
-      }
-    ]
+        content: userMessage,
+      },
+    ],
   };
 
   const startTime = Date.now();
-  
+
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-key": anthropicKey,
-        "anthropic-version": "2023-06-01"
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify(claudeBody),
     });
@@ -118,7 +120,9 @@ Return valid JSON. Use null for missing fields.`;
     const responseTime = endTime - startTime;
 
     if (!response.ok) {
-      throw new Error(`Claude API error: ${aiResponse.error?.message || 'Unknown error'}`);
+      throw new Error(
+        `Claude API error: ${aiResponse.error?.message || "Unknown error"}`,
+      );
     }
 
     // Extract usage information for cost tracking
@@ -129,12 +133,15 @@ Return valid JSON. Use null for missing fields.`;
 
     // Extract content from Claude response
     let content = "";
-    if (aiResponse.content && Array.isArray(aiResponse.content) && aiResponse.content.length > 0) {
+    if (
+      aiResponse.content && Array.isArray(aiResponse.content) &&
+      aiResponse.content.length > 0
+    ) {
       content = aiResponse.content[0].text || "";
     }
 
     if (!content) {
-      throw new Error('Claude returned empty response');
+      throw new Error("Claude returned empty response");
     }
 
     // Parse JSON response
@@ -147,13 +154,16 @@ Return valid JSON. Use null for missing fields.`;
 
     // Calculate cost estimate for Claude
     const CLAUDE_PRICING = {
-      'claude-3-haiku-20240307': { input: 0.80, output: 4.00 },
-      'claude-3-sonnet-20240229': { input: 15.00, output: 75.00 },
-      'claude-3-opus-20240229': { input: 75.00, output: 225.00 }
+      "claude-3-haiku-20240307": { input: 0.80, output: 4.00 },
+      "claude-3-sonnet-20240229": { input: 15.00, output: 75.00 },
+      "claude-3-opus-20240229": { input: 75.00, output: 225.00 },
     };
 
-    const pricing = CLAUDE_PRICING[claudeModel] || CLAUDE_PRICING['claude-3-haiku-20240307'];
-    const estimatedCost = ((inputTokens * pricing.input) + (outputTokens * pricing.output)) / 1000000;
+    const pricing = CLAUDE_PRICING[claudeModel] ||
+      CLAUDE_PRICING["claude-3-haiku-20240307"];
+    const estimatedCost =
+      ((inputTokens * pricing.input) + (outputTokens * pricing.output)) /
+      1000000;
 
     return {
       success: true,
@@ -166,21 +176,20 @@ Return valid JSON. Use null for missing fields.`;
         total_tokens: totalTokens,
         estimated_cost: Number(estimatedCost.toFixed(6)),
         model: claudeModel,
-        provider: 'anthropic'
+        provider: "anthropic",
       },
-      response_time_ms: responseTime
+      response_time_ms: responseTime,
     };
-
   } catch (error) {
     const endTime = Date.now();
     const responseTime = endTime - startTime;
-    
+
     return {
       success: false,
       property_id: property.id,
       source: property.source,
       error: error.message,
-      response_time_ms: responseTime
+      response_time_ms: responseTime,
     };
   }
 }
@@ -188,19 +197,25 @@ Return valid JSON. Use null for missing fields.`;
 async function runTest() {
   console.log("🧪 CLAUDE API DIRECT TEST");
   console.log("========================");
-  
+
   // Load environment variables
   loadEnv();
-  
+
   // Check API key
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  if (!anthropicKey || anthropicKey.includes('your-actual-claude-key-here')) {
+  if (!anthropicKey || anthropicKey.includes("your-actual-claude-key-here")) {
     console.error("❌ ANTHROPIC_API_KEY not properly configured in .env.local");
-    console.error("   Please update .env.local with your actual Claude API key");
+    console.error(
+      "   Please update .env.local with your actual Claude API key",
+    );
     process.exit(1);
   }
 
-  console.log(`✅ Using Claude model: ${process.env.CLAUDE_MODEL || 'claude-3-haiku-20240307'}`);
+  console.log(
+    `✅ Using Claude model: ${
+      process.env.CLAUDE_MODEL || "claude-3-haiku-20240307"
+    }`,
+  );
   console.log(`📊 Testing ${testProperties.length} sample properties...\n`);
 
   const results = [];
@@ -210,77 +225,97 @@ async function runTest() {
 
   for (let i = 0; i < testProperties.length; i++) {
     const property = testProperties[i];
-    console.log(`🏠 Testing property ${i + 1}/${testProperties.length}: ${property.id} (${property.source})`);
-    
+    console.log(
+      `🏠 Testing property ${
+        i + 1
+      }/${testProperties.length}: ${property.id} (${property.source})`,
+    );
+
     const result = await testClaudeExtraction(property);
     results.push(result);
-    
+
     totalTime += result.response_time_ms;
-    
+
     if (result.success) {
       successCount++;
       totalCost += result.usage.estimated_cost;
-      
+
       console.log(`   ✅ Success - ${result.response_time_ms}ms`);
       console.log(`   💰 Cost: $${result.usage.estimated_cost.toFixed(6)}`);
-      console.log(`   🏷️  Name: ${result.data.name || 'N/A'}`);
-      console.log(`   📍 Address: ${result.data.address || 'N/A'}`);
-      console.log(`   💵 Price: $${result.data.current_price || 'N/A'}`);
-      console.log(`   🛏️  Beds/Baths: ${result.data.bedrooms || 0}/${result.data.bathrooms || 0}`);
+      console.log(`   🏷️  Name: ${result.data.name || "N/A"}`);
+      console.log(`   📍 Address: ${result.data.address || "N/A"}`);
+      console.log(`   💵 Price: $${result.data.current_price || "N/A"}`);
+      console.log(
+        `   🛏️  Beds/Baths: ${result.data.bedrooms || 0}/${
+          result.data.bathrooms || 0
+        }`,
+      );
     } else {
       console.log(`   ❌ Failed - ${result.response_time_ms}ms`);
       console.log(`   🚨 Error: ${result.error}`);
     }
     console.log("");
-    
+
     // Add small delay to be respectful to the API
     if (i < testProperties.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 
   // Summary
   console.log("📈 TEST SUMMARY");
   console.log("===============");
-  console.log(`✅ Success Rate: ${successCount}/${testProperties.length} (${Math.round(successCount/testProperties.length*100)}%)`);
+  console.log(
+    `✅ Success Rate: ${successCount}/${testProperties.length} (${
+      Math.round(successCount / testProperties.length * 100)
+    }%)`,
+  );
   console.log(`💰 Total Cost: $${totalCost.toFixed(6)}`);
-  console.log(`⏱️  Total Time: ${(totalTime/1000).toFixed(1)}s`);
-  console.log(`📊 Avg Response Time: ${Math.round(totalTime/testProperties.length)}ms`);
-  
+  console.log(`⏱️  Total Time: ${(totalTime / 1000).toFixed(1)}s`);
+  console.log(
+    `📊 Avg Response Time: ${Math.round(totalTime / testProperties.length)}ms`,
+  );
+
   if (successCount === testProperties.length) {
-    console.log("\n🎉 ALL TESTS PASSED! Claude integration is working perfectly.");
+    console.log(
+      "\n🎉 ALL TESTS PASSED! Claude integration is working perfectly.",
+    );
     console.log("🚀 Ready for production use with real property data.");
   } else {
-    console.log(`\n⚠️  ${testProperties.length - successCount} tests failed. Please check the errors above.`);
+    console.log(
+      `\n⚠️  ${
+        testProperties.length - successCount
+      } tests failed. Please check the errors above.`,
+    );
   }
 
   // Save detailed results
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const resultsFile = `test-results-${timestamp}.json`;
-  
+
   const detailedResults = {
     timestamp: new Date().toISOString(),
-    model: process.env.CLAUDE_MODEL || 'claude-3-haiku-20240307',
+    model: process.env.CLAUDE_MODEL || "claude-3-haiku-20240307",
     summary: {
       total_tests: testProperties.length,
       successful: successCount,
       failed: testProperties.length - successCount,
-      success_rate: Math.round(successCount/testProperties.length*100),
+      success_rate: Math.round(successCount / testProperties.length * 100),
       total_cost: Number(totalCost.toFixed(6)),
-      total_time_seconds: Number((totalTime/1000).toFixed(1)),
-      avg_response_time_ms: Math.round(totalTime/testProperties.length)
+      total_time_seconds: Number((totalTime / 1000).toFixed(1)),
+      avg_response_time_ms: Math.round(totalTime / testProperties.length),
     },
-    results: results
+    results: results,
   };
-  
+
   fs.writeFileSync(resultsFile, JSON.stringify(detailedResults, null, 2));
   console.log(`\n📄 Detailed results saved to: ${resultsFile}`);
 }
 
 // Run the test
 if (require.main === module) {
-  runTest().catch(error => {
-    console.error('Test failed:', error);
+  runTest().catch((error) => {
+    console.error("Test failed:", error);
     process.exit(1);
   });
 }

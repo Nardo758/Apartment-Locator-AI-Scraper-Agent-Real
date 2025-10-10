@@ -2,10 +2,10 @@
 
 /**
  * Unit tests for the AI scraper validation function
- * 
+ *
  * This script tests the validateAiResult function directly without needing
  * to run the full Supabase Edge Function server.
- * 
+ *
  * Usage: deno run --allow-read test-validation.ts
  */
 
@@ -29,8 +29,12 @@ function validateAiResult(result: Record<string, unknown>): boolean {
 
     const bedrooms = Number(result["bedrooms"] ?? 0);
     const bathrooms = Number(result["bathrooms"] ?? 0);
-    if (!Number.isFinite(bedrooms) || bedrooms < 0 || bedrooms > 10) return false;
-    if (!Number.isFinite(bathrooms) || bathrooms < 0 || bathrooms > 10) return false;
+    if (!Number.isFinite(bedrooms) || bedrooms < 0 || bedrooms > 10) {
+      return false;
+    }
+    if (!Number.isFinite(bathrooms) || bathrooms < 0 || bathrooms > 10) {
+      return false;
+    }
   } catch {
     return false;
   }
@@ -53,19 +57,19 @@ const testCases = [
       free_rent_concessions: "First month free",
       application_fee: 50,
       admin_fee_waived: true,
-      admin_fee_amount: null
+      admin_fee_amount: null,
     },
-    expected: true
+    expected: true,
   },
   {
     name: "Missing required field (name)",
     data: {
       address: "123 Main Street",
-      city: "Austin", 
+      city: "Austin",
       state: "TX",
-      current_price: 2500
+      current_price: 2500,
     },
-    expected: false
+    expected: false,
   },
   {
     name: "Empty string in required field",
@@ -73,10 +77,10 @@ const testCases = [
       name: "",
       address: "123 Main Street",
       city: "Austin",
-      state: "TX", 
-      current_price: 2500
+      state: "TX",
+      current_price: 2500,
     },
-    expected: false
+    expected: false,
   },
   {
     name: "Invalid price (too high)",
@@ -85,31 +89,31 @@ const testCases = [
       address: "123 Rich Street",
       city: "Beverly Hills",
       state: "CA",
-      current_price: 60000
+      current_price: 60000,
     },
-    expected: false
+    expected: false,
   },
   {
     name: "Invalid price (negative)",
     data: {
       name: "Weird Place",
-      address: "123 Strange Street", 
+      address: "123 Strange Street",
       city: "Oddville",
       state: "NY",
-      current_price: -100
+      current_price: -100,
     },
-    expected: false
+    expected: false,
   },
   {
     name: "Invalid state (too long)",
     data: {
       name: "Nice Apartment",
       address: "123 Good Street",
-      city: "Somewhere", 
+      city: "Somewhere",
       state: "California",
-      current_price: 2000
+      current_price: 2000,
     },
-    expected: false
+    expected: false,
   },
   {
     name: "Invalid state (not letters)",
@@ -118,9 +122,9 @@ const testCases = [
       address: "123 Good Street",
       city: "Somewhere",
       state: "C1",
-      current_price: 2000
+      current_price: 2000,
     },
-    expected: false
+    expected: false,
   },
   {
     name: "Invalid bedrooms (too many)",
@@ -130,22 +134,22 @@ const testCases = [
       city: "Largetown",
       state: "TX",
       current_price: 5000,
-      bedrooms: 15
+      bedrooms: 15,
     },
-    expected: false
+    expected: false,
   },
   {
     name: "Valid with minimal data",
     data: {
       name: "Simple Studio",
       address: "456 Basic Ave",
-      city: "Simpletown", 
+      city: "Simpletown",
       state: "OR",
       current_price: 1200,
       bedrooms: 0,
-      bathrooms: 1
+      bathrooms: 1,
     },
-    expected: true
+    expected: true,
   },
   {
     name: "Valid with all optional fields",
@@ -153,30 +157,30 @@ const testCases = [
       name: "Full Feature Apartment",
       address: "789 Complete Street",
       city: "Fulltown",
-      state: "WA", 
+      state: "WA",
       current_price: 3000,
       bedrooms: 3,
       bathrooms: 2.5,
       free_rent_concessions: "Two months free rent with 12-month lease",
       application_fee: 75,
       admin_fee_waived: false,
-      admin_fee_amount: 200
+      admin_fee_amount: 200,
     },
-    expected: true
-  }
+    expected: true,
+  },
 ];
 
 function runValidationTests(): void {
   console.log("🧪 Running AI Result Validation Tests");
-  console.log("=" .repeat(50));
-  
+  console.log("=".repeat(50));
+
   let passed = 0;
   let failed = 0;
-  
+
   testCases.forEach((testCase, index) => {
     const result = validateAiResult(testCase.data);
     const success = result === testCase.expected;
-    
+
     if (success) {
       passed++;
       console.log(`✅ Test ${index + 1}: ${testCase.name}`);
@@ -187,32 +191,38 @@ function runValidationTests(): void {
       console.log(`   Data: ${JSON.stringify(testCase.data, null, 2)}`);
     }
   });
-  
+
   console.log("\n📊 TEST SUMMARY");
-  console.log("=" .repeat(30));
+  console.log("=".repeat(30));
   console.log(`Total Tests: ${testCases.length}`);
-  console.log(`Passed: ${passed} (${((passed / testCases.length) * 100).toFixed(1)}%)`);
-  console.log(`Failed: ${failed} (${((failed / testCases.length) * 100).toFixed(1)}%)`);
-  
+  console.log(
+    `Passed: ${passed} (${((passed / testCases.length) * 100).toFixed(1)}%)`,
+  );
+  console.log(
+    `Failed: ${failed} (${((failed / testCases.length) * 100).toFixed(1)}%)`,
+  );
+
   if (failed === 0) {
     console.log("\n🎉 All validation tests passed!");
   } else {
-    console.log(`\n⚠️  ${failed} test(s) failed. Please review the validation logic.`);
+    console.log(
+      `\n⚠️  ${failed} test(s) failed. Please review the validation logic.`,
+    );
   }
 }
 
 // Deno test format
 Deno.test("AI Result Validation Tests", () => {
   console.log("🧪 Running AI Result Validation Tests");
-  console.log("=" .repeat(50));
-  
+  console.log("=".repeat(50));
+
   let passed = 0;
   let failed = 0;
-  
+
   testCases.forEach((testCase, index) => {
     const result = validateAiResult(testCase.data);
     const success = result === testCase.expected;
-    
+
     if (success) {
       passed++;
       console.log(`✅ Test ${index + 1}: ${testCase.name}`);
@@ -224,17 +234,23 @@ Deno.test("AI Result Validation Tests", () => {
       throw new Error(`Test failed: ${testCase.name}`);
     }
   });
-  
+
   console.log("\n📊 TEST SUMMARY");
-  console.log("=" .repeat(30));
+  console.log("=".repeat(30));
   console.log(`Total Tests: ${testCases.length}`);
-  console.log(`Passed: ${passed} (${((passed / testCases.length) * 100).toFixed(1)}%)`);
-  console.log(`Failed: ${failed} (${((failed / testCases.length) * 100).toFixed(1)}%)`);
-  
+  console.log(
+    `Passed: ${passed} (${((passed / testCases.length) * 100).toFixed(1)}%)`,
+  );
+  console.log(
+    `Failed: ${failed} (${((failed / testCases.length) * 100).toFixed(1)}%)`,
+  );
+
   if (failed === 0) {
     console.log("\n🎉 All validation tests passed!");
   } else {
-    console.log(`\n⚠️  ${failed} test(s) failed. Please review the validation logic.`);
+    console.log(
+      `\n⚠️  ${failed} test(s) failed. Please review the validation logic.`,
+    );
   }
 });
 

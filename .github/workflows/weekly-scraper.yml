@@ -110,59 +110,29 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Deno
-      uses: denoland/setup-deno@v1
+    - name: Setup Node.js (for populate script)
+      uses: actions/setup-node@v4
       with:
-        deno-version: '2.x'
+        node-version: '18'
 
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/deno
-        key: ${{ runner.os }}-deno-${{ hashFiles('**/import_map.json', '**/deno.json') }}
-        restore-keys: |
-          ${{ runner.os }}-deno-
+    - name: Install Node dependencies
+      run: |
+        npm ci
 
-    - name: Populate queue for ${{ matrix.region }}
+    - name: Populate queue for ${{ matrix.region }} (node script)
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        REGION: ${{ matrix.region }}
+        DRY_RUN: ${{ inputs.dry_run }}
       run: |
-        echo "🚀 Populating scraping queue for region: ${{ matrix.region }}"
+        echo "🚀 Populating scraping queue for region: $REGION"
 
-        if [ "${{ inputs.dry_run }}" == "true" ]; then
+        if [ "$DRY_RUN" == "true" ]; then
           echo "🧪 Running in dry-run mode"
-          export DRY_RUN=true
         fi
 
-        # Set region-specific configuration
-        export TARGET_REGION="${{ matrix.region }}"
-        export ENABLE_AI_PRICING=true
-        export ENABLE_FRONTEND_SYNC=true
-        export ENABLE_MARKET_INTELLIGENCE=true
-        export BATCH_SIZE=50
-
-        # Call command-station Edge Function to populate queue
-        # This will add scraping jobs to the queue for the specified region
-        RESPONSE=$(curl -s -X POST "$SUPABASE_URL/functions/v1/command-station" \
-          -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
-          -H "Content-Type: application/json" \
-          -d "{
-            \"action\": \"populate_queue\",
-            \"region\": \"${{ matrix.region }}\",
-            \"batch_size\": 50,
-            \"dry_run\": ${{ inputs.dry_run == 'true' && 'true' || 'false' }}
-          }")
-
-        # Check if the request was successful
-        if echo "$RESPONSE" | grep -q '"status":"success"'; then
-          echo "✅ Queue populated successfully for ${{ matrix.region }}"
-          echo "Response: $RESPONSE"
-        else
-          echo "❌ Failed to populate queue for ${{ matrix.region }}"
-          echo "Response: $RESPONSE"
-          exit 1
-        fi
+        node scripts/populate_queue.js "$REGION" "$DRY_RUN"
 
     - name: Generate region report
       if: always()
@@ -209,8 +179,8 @@ jobs:
 
         echo "🔄 Triggering batch processing for queued jobs..."
 
-        # Call command-station to start processing the queue
-        RESPONSE=$(curl -s -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/command-station" \
+  # Call command-center to start processing the queue
+          RESPONSE=$(curl -s -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/command-center" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
           -H "Content-Type: application/json" \
           -d "{

@@ -6,7 +6,7 @@
   "expected_schema_changes": {
     "new_columns": [
       {
-        "column_name": "latitude", 
+        "column_name": "latitude",
         "data_type": "numeric",
         "is_nullable": "YES",
         "numeric_precision": 10,
@@ -15,7 +15,7 @@
       },
       {
         "column_name": "longitude",
-        "data_type": "numeric", 
+        "data_type": "numeric",
         "is_nullable": "YES",
         "numeric_precision": 11,
         "numeric_scale": 8,
@@ -24,7 +24,7 @@
       {
         "column_name": "zip_code",
         "data_type": "character varying",
-        "is_nullable": "YES", 
+        "is_nullable": "YES",
         "character_maximum_length": 10,
         "column_comment": "Property ZIP/postal code extracted from address or geocoding"
       }
@@ -36,7 +36,7 @@
       "indexdef": "CREATE INDEX idx_scraped_properties_location ON public.scraped_properties USING btree (latitude, longitude) WHERE ((latitude IS NOT NULL) AND (longitude IS NOT NULL))"
     },
     {
-      "indexname": "idx_scraped_properties_zip_code", 
+      "indexname": "idx_scraped_properties_zip_code",
       "indexdef": "CREATE INDEX idx_scraped_properties_zip_code ON public.scraped_properties USING btree (zip_code) WHERE (zip_code IS NOT NULL)"
     }
   ],
@@ -47,7 +47,7 @@
       "check_clause": "((latitude IS NULL) OR ((latitude >= (-90)) AND (latitude <= 90)))"
     },
     {
-      "constraint_name": "check_longitude_range", 
+      "constraint_name": "check_longitude_range",
       "constraint_type": "CHECK",
       "check_clause": "((longitude IS NULL) OR ((longitude >= (-180)) AND (longitude <= 180)))"
     }
@@ -78,7 +78,7 @@
         },
         {
           "case": "Invalid longitude (<-180)",
-          "query": "UPDATE scraped_properties SET longitude = -181.0 WHERE id = (SELECT id FROM scraped_properties LIMIT 1)", 
+          "query": "UPDATE scraped_properties SET longitude = -181.0 WHERE id = (SELECT id FROM scraped_properties LIMIT 1)",
           "expected_result": "CHECK constraint violation"
         }
       ]
@@ -86,7 +86,7 @@
   },
   "migration_verification_steps": [
     "1. Verify all new columns exist with correct data types",
-    "2. Confirm indexes were created and are active", 
+    "2. Confirm indexes were created and are active",
     "3. Validate constraints are enforced",
     "4. Test data insertion and updates work correctly",
     "5. Confirm existing data and functionality is unaffected",
@@ -94,21 +94,21 @@
   ],
   "success_criteria": {
     "schema": "All 3 new columns (latitude, longitude, zip_code) exist with correct types and constraints",
-    "indexes": "2 new indexes created for location-based queries", 
+    "indexes": "2 new indexes created for location-based queries",
     "constraints": "2 check constraints active for coordinate validation",
     "compatibility": "Existing queries and inserts continue to work",
     "geocoding": "geocode_properties.js script runs without errors"
   },
   "rollback_indicators": [
     "Migration fails to apply completely",
-    "Existing functionality breaks", 
+    "Existing functionality breaks",
     "Constraint violations prevent normal operations",
     "Performance degrades significantly",
     "Index creation fails"
   ],
   "post_migration_tasks": [
     "Run verification scripts to confirm success",
-    "Execute backfill scripts to populate location data", 
+    "Execute backfill scripts to populate location data",
     "Monitor database performance with new indexes",
     "Update application code to use location features",
     "Set up ongoing geocoding for new properties"
@@ -116,12 +116,12 @@
   "sample_data_structure": {
     "before_migration": {
       "id": 1,
-      "property_id": "PROP123", 
+      "property_id": "PROP123",
       "unit_number": "1A",
       "external_id": "PROP123_1A",
       "source": "apartments.com",
       "name": "Test Apartment",
-      "address": "123 Main St", 
+      "address": "123 Main St",
       "city": "New York",
       "state": "NY",
       "current_price": 2500,
@@ -132,12 +132,12 @@
     "after_migration": {
       "id": 1,
       "property_id": "PROP123",
-      "unit_number": "1A", 
+      "unit_number": "1A",
       "external_id": "PROP123_1A",
       "source": "apartments.com",
       "name": "Test Apartment",
       "address": "123 Main St",
-      "city": "New York", 
+      "city": "New York",
       "state": "NY",
       "current_price": 2500,
       "bedrooms": 2,
@@ -151,12 +151,12 @@
       "id": 1,
       "property_id": "PROP123",
       "unit_number": "1A",
-      "external_id": "PROP123_1A", 
+      "external_id": "PROP123_1A",
       "source": "apartments.com",
       "name": "Test Apartment",
       "address": "123 Main St",
       "city": "New York",
-      "state": "NY", 
+      "state": "NY",
       "current_price": 2500,
       "bedrooms": 2,
       "bathrooms": 2.0,

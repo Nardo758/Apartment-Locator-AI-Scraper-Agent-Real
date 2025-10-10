@@ -1,16 +1,17 @@
 # 🎯 Real Estate Scraper Command Station
 
-A centralized control plane for managing and monitoring your real estate scraping system. Built as a Supabase Edge Function with TypeScript/Deno.
+A centralized control plane for managing and monitoring your real estate
+scraping system. Built as a Supabase Edge Function with TypeScript/Deno.
 
 ## 🏗️ Architecture Overview
 
 ```
-command-station/
+command-station/  # ARCHIVED
 ├── 🔧 index.ts             # Main command handler & router
 ├── 🎛️ dashboard.ts         # System status monitoring
 ├── ⚙️ controller.ts        # System controls & operations  
 ├── 📊 metrics.ts           # Performance tracking
-├── 🔐 config-manager.ts    # Configuration management
+command-center/
 ├── 🚀 deploy.sh           # Deployment script
 └── 📖 README.md           # This file
 ```
@@ -18,12 +19,14 @@ command-station/
 ## ✨ Features
 
 ### 🎛️ System Control
+
 - **Enable/Disable Scraping** - Toggle scraping system on/off
 - **Immediate Batch Processing** - Trigger manual scraping runs
 - **Configuration Management** - Update system settings dynamically
 - **Emergency Stop** - Halt all operations instantly
 
 ### 📊 Real-time Monitoring
+
 - **System Health Dashboard** - Overall system status
 - **Performance Metrics** - Scraping speed, success rates, errors
 - **Cost Tracking** - Daily/monthly spend monitoring
@@ -31,6 +34,7 @@ command-station/
 - **Alert System** - Proactive issue detection
 
 ### 💰 Cost Management
+
 - **Daily Spend Limits** - Automatic cost control
 - **Per-Property Cost Analysis** - ROI tracking
 - **Claude Usage Optimization** - Token efficiency monitoring
@@ -52,28 +56,29 @@ chmod +x deploy.sh
 
 ```bash
 # System status dashboard
-curl "https://your-project.supabase.co/functions/v1/command-station/status"
+supabase functions deploy command-center --no-verify-jwt
 
 # Enable scraping
-curl -X POST "https://your-project.supabase.co/functions/v1/command-station/enable-scraping"
+curl -X POST "https://your-project.supabase.co/functions/v1/command-center/enable-scraping"
 
 # Get performance metrics  
-curl "https://your-project.supabase.co/functions/v1/command-station/metrics"
+curl "https://your-project.supabase.co/functions/v1/command-center/metrics"
 ```
 
 ## 📡 API Reference
 
 ### Core Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/status` | GET | System status dashboard |
-| `/enable-scraping` | POST | Enable scraping system |
-| `/disable-scraping` | POST | Disable scraping system |
-| `/run-now` | POST | Run immediate batch |
-| `/metrics` | GET | Performance metrics |
-| `/config` | GET/POST | Configuration management |
-| `/health` | GET | Health check |
+| Endpoint                                                  | Method   | Description              |
+| --------------------------------------------------------- | -------- | ------------------------ |
+| `/status`                                                 | GET      | System status dashboard  |
+| import { CommandCenter } from './command-center/index.ts' |          |                          |
+| `/disable-scraping`                                       | POST     | Disable scraping system  |
+| `/run-now`                                                | POST     | Run immediate batch      |
+| `/metrics`                                                | GET      | Performance metrics      |
+| `/config`                                                 | GET/POST | Configuration management |
+| `/health`                                                 | GET      | Health check             |
+| return await CommandCenter.handle(req)                    |          |                          |
 
 ### Status Response Example
 
@@ -88,13 +93,13 @@ curl "https://your-project.supabase.co/functions/v1/command-station/metrics"
   },
   "scraping": {
     "enabled": true,
-    "queue_size": 45,
+supabase functions logs command-center
     "last_completed": "2024-01-15T10:25:00Z",
     "next_scheduled": "2024-01-22T00:00:00Z",
     "success_rate": 0.97
   },
   "costs": {
-    "daily": 12.45,
+curl "https://your-project.supabase.co/functions/v1/command-center/metrics"
     "monthly": 234.56,
     "claude_usage": 8.20,
     "limit": 50.00,
@@ -106,7 +111,7 @@ curl "https://your-project.supabase.co/functions/v1/command-station/metrics"
     "average_confidence": 0.89,
     "error_rate": 0.02
   }
-}
+supabase functions deploy command-center --debug
 ```
 
 ### Metrics Response Example
@@ -125,7 +130,6 @@ curl "https://your-project.supabase.co/functions/v1/command-station/metrics"
     "properties_monitored": 25430,
     "new_listings_today": 156,
     "price_changes_today": 89,
-    "market_coverage": "87%",
     "data_freshness": "2h ago"
   },
   "costs": {
@@ -165,7 +169,7 @@ SCRAPE_SCHEDULE="0 0 * * 0"
 Update configuration via API:
 
 ```bash
-curl -X POST "https://your-project.supabase.co/functions/v1/command-station/config" \
+curl -X POST "https://your-project.supabase.co/functions/v1/command-center/config" \
   -H "Content-Type: application/json" \
   -d '{
     "batchSize": 75,
@@ -178,19 +182,19 @@ curl -X POST "https://your-project.supabase.co/functions/v1/command-station/conf
 
 ```typescript
 interface SystemConfig {
-  scrapingEnabled: boolean
-  claudeEnabled: boolean
-  batchSize: number              // 1-1000
-  dailyCostLimit: number         // USD
-  schedule: string               // Cron expression
-  maxRetries: number
-  timeoutMs: number
+  scrapingEnabled: boolean;
+  claudeEnabled: boolean;
+  batchSize: number; // 1-1000
+  dailyCostLimit: number; // USD
+  schedule: string; // Cron expression
+  maxRetries: number;
+  timeoutMs: number;
   alertThresholds: {
-    errorRate: number            // 0-1
-    responseTime: number         // milliseconds
-    costLimit: number            // USD
-    memoryUsage: number          // 0-1
-  }
+    errorRate: number; // 0-1
+    responseTime: number; // milliseconds
+    costLimit: number; // USD
+    memoryUsage: number; // 0-1
+  };
 }
 ```
 
@@ -201,10 +205,11 @@ interface SystemConfig {
 Deploy as a separate Supabase function:
 
 ```bash
-supabase functions deploy command-station --no-verify-jwt
+supabase functions deploy command-center --no-verify-jwt
 ```
 
 **Pros:**
+
 - Isolated concerns
 - Independent scaling
 - Easier debugging
@@ -216,18 +221,18 @@ Add to existing `ai-scraper-worker`:
 
 ```typescript
 // In ai-scraper-worker/index.ts
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
-import { CommandStation } from './command-station/index.ts'
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { CommandCenter } from "./command-center/index.ts";
 
 serve(async (req: Request) => {
-  const url = new URL(req.url)
-  
-  if (url.pathname.startsWith('/command-station')) {
-    return await CommandStation.handle(req)
+  const url = new URL(req.url);
+
+  if (url.pathname.startsWith("/command-center")) {
+    return await CommandCenter.handle(req);
   }
-  
+
   // ... existing worker logic
-})
+});
 ```
 
 ## 📊 Monitoring & Alerts
@@ -235,7 +240,7 @@ serve(async (req: Request) => {
 ### Alert Thresholds
 
 - **Error Rate**: > 5%
-- **Response Time**: > 5 seconds  
+- **Response Time**: > 5 seconds
 - **Daily Cost**: > 90% of limit
 - **Memory Usage**: > 80%
 
@@ -263,10 +268,10 @@ Configure webhook for alerts:
 supabase start
 
 # Deploy function locally
-supabase functions serve command-station
+supabase functions serve command-center
 
 # Test endpoints
-curl "http://localhost:54321/functions/v1/command-station/status"
+curl "http://localhost:54321/functions/v1/command-center/status"
 ```
 
 ### Adding New Endpoints
@@ -295,21 +300,24 @@ CREATE TABLE system_config (
 ### Common Issues
 
 **Function not responding:**
+
 ```bash
-# Check function logs
-supabase functions logs command-station
+# Check function logs (for active function use `command-center`)
+supabase functions logs command-center
 ```
 
 **Configuration not saving:**
+
 ```bash
 # Verify database permissions
 supabase db reset
 ```
 
 **High costs:**
+
 ```bash
 # Check current spend
-curl "https://your-project.supabase.co/functions/v1/command-station/metrics"
+curl "https://your-project.supabase.co/functions/v1/command-center/metrics"
 ```
 
 ### Debug Mode
@@ -321,7 +329,7 @@ Enable verbose logging:
 export DEBUG=true
 
 # Deploy with debug
-supabase functions deploy command-station --debug
+supabase functions deploy command-center --debug
 ```
 
 ## 🔒 Security
@@ -335,7 +343,7 @@ supabase functions deploy command-station --debug
 ### Best Practices
 
 1. **Rotate API Keys** regularly
-2. **Monitor access logs** for unusual activity  
+2. **Monitor access logs** for unusual activity
 3. **Set reasonable cost limits**
 4. **Use webhooks** for critical alerts
 5. **Regular backups** of configuration
@@ -374,6 +382,7 @@ MIT License - see LICENSE file for details
 
 ---
 
-**🎯 Happy Scraping!** 
+**🎯 Happy Scraping!**
 
-Built with ❤️ for real estate professionals who demand reliable, cost-effective property data.
+Built with ❤️ for real estate professionals who demand reliable, cost-effective
+property data.

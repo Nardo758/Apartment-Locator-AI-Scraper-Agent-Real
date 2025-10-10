@@ -31,7 +31,8 @@ supabase db push --include-all
 -- This file contains the complete schema migration
 ```
 
-Copy and paste the contents of `manual-deployment.sql` into your database client.
+Copy and paste the contents of `manual-deployment.sql` into your database
+client.
 
 ### Option C: Using psql Command Line
 
@@ -51,8 +52,11 @@ psql "your-database-url" -f verify-deployment.sql
 ```
 
 **Expected Results:**
-- ✅ 5 tables created: `properties`, `user_profiles`, `apartment_iq_data`, `rental_offers`, `market_intelligence`
-- ✅ 3 functions created: `search_properties_near_location`, `calculate_ai_price_estimate`, `calculate_effective_price`
+
+- ✅ 5 tables created: `properties`, `user_profiles`, `apartment_iq_data`,
+  `rental_offers`, `market_intelligence`
+- ✅ 3 functions created: `search_properties_near_location`,
+  `calculate_ai_price_estimate`, `calculate_effective_price`
 - ✅ All indexes and triggers created
 
 ## 🔧 Step 3: Configure Environment Variables
@@ -95,15 +99,15 @@ supabase secrets set ENABLE_MARKET_INTELLIGENCE=true
 ### A. Test Data Transformation
 
 ```typescript
-import { transformScrapedToFrontendFormat } from './src/scraper/data-transformer';
+import { transformScrapedToFrontendFormat } from "./src/scraper/data-transformer";
 
 // Test with sample data
 const testProperty = {
-  external_id: 'test_001',
-  name: 'Sample Apartment',
-  address: '123 Test St',
-  city: 'Austin',
-  state: 'TX',
+  external_id: "test_001",
+  name: "Sample Apartment",
+  address: "123 Test St",
+  city: "Austin",
+  state: "TX",
   current_price: 2500,
   bedrooms: 2,
   bathrooms: 2.0,
@@ -111,7 +115,7 @@ const testProperty = {
 };
 
 const frontendProperty = await transformScrapedToFrontendFormat(testProperty);
-console.log('Transformation successful:', frontendProperty);
+console.log("Transformation successful:", frontendProperty);
 ```
 
 ### B. Test Geographic Search
@@ -149,33 +153,37 @@ SELECT calculate_ai_price_estimate(
 
 ```typescript
 // In your scraper processor
-import { processBatchWithCostOptimization } from './src/scraper/processor';
+import { processBatchWithCostOptimization } from "./src/scraper/processor";
 
 const results = await processBatchWithCostOptimization(
   supabase,
   batch,
   {
-    enableFrontendSync: true,     // Enable frontend integration
-    frontendTable: 'properties'   // Target table
-  }
+    enableFrontendSync: true, // Enable frontend integration
+    frontendTable: "properties", // Target table
+  },
 );
 
-console.log('Frontend sync results:', results.find(r => r.frontend_sync));
+console.log("Frontend sync results:", results.find((r) => r.frontend_sync));
 ```
 
 ### Update Orchestrator for Enhanced Batching
 
 ```typescript
 // In your scraper orchestrator
-import { getScrapingBatchWithTransformation } from './src/scraper/orchestrator';
+import { getScrapingBatchWithTransformation } from "./src/scraper/orchestrator";
 
 const { jobs, frontendProperties } = await getScrapingBatchWithTransformation(
-  supabase, 
-  100,  // batch size
-  true  // enable frontend sync
+  supabase,
+  100, // batch size
+  true, // enable frontend sync
 );
 
-console.log(`Processed ${jobs.length} jobs, transformed ${frontendProperties?.length || 0} properties`);
+console.log(
+  `Processed ${jobs.length} jobs, transformed ${
+    frontendProperties?.length || 0
+  } properties`,
+);
 ```
 
 ## 🎯 Step 6: Production Deployment
@@ -187,7 +195,7 @@ console.log(`Processed ${jobs.length} jobs, transformed ${frontendProperties?.le
 supabase functions deploy ai-scraper-worker
 
 # Deploy command station
-supabase functions deploy command-station
+  supabase functions deploy command-center
 
 # Deploy scraper orchestrator
 supabase functions deploy scraper-orchestrator
@@ -208,7 +216,7 @@ supabase secrets set DAILY_COST_LIMIT=50
 
 ```bash
 # Test command station
-curl "https://your-project.supabase.co/functions/v1/command-station/status"
+  curl "https://your-project.supabase.co/functions/v1/command-center/status"
 
 # Test AI scraper worker
 curl -X POST "https://your-project.supabase.co/functions/v1/ai-scraper-worker" \
@@ -216,7 +224,7 @@ curl -X POST "https://your-project.supabase.co/functions/v1/ai-scraper-worker" \
   -d '{"test": true}'
 
 # Test batch processing
-curl -X POST "https://your-project.supabase.co/functions/v1/command-station/run-now"
+curl -X POST "https://your-project.supabase.co/functions/v1/command-center/run-now"
 ```
 
 ## 📊 Step 7: Monitor Performance
@@ -256,6 +264,7 @@ FROM properties;
 ### Common Issues
 
 **1. Schema Deployment Fails**
+
 ```sql
 -- Check for conflicting table names
 SELECT table_name FROM information_schema.tables 
@@ -267,6 +276,7 @@ AND table_name IN ('properties', 'user_profiles', 'apartment_iq_data');
 ```
 
 **2. Function Creation Fails**
+
 ```sql
 -- Check for existing functions
 SELECT routine_name FROM information_schema.routines 
@@ -278,6 +288,7 @@ AND routine_name LIKE '%search_properties%';
 ```
 
 **3. Permission Issues**
+
 ```sql
 -- Grant necessary permissions
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated;
@@ -286,15 +297,16 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated, service_
 ```
 
 **4. Data Transformation Errors**
+
 ```typescript
 // Enable debug logging
-process.env.DEBUG = 'true';
-process.env.VERBOSE_TRANSFORMATION = 'true';
+process.env.DEBUG = "true";
+process.env.VERBOSE_TRANSFORMATION = "true";
 
 // Test with minimal data first
 const minimalTest = {
-  external_id: 'debug_test',
-  name: 'Debug Property',
+  external_id: "debug_test",
+  name: "Debug Property",
   current_price: 2000,
   // ... only required fields
 };
@@ -303,21 +315,25 @@ const minimalTest = {
 ## 🎉 Success Criteria
 
 ✅ **Schema Deployed Successfully**
+
 - All 5 tables created
 - All 3 functions working
 - All indexes and triggers active
 
 ✅ **Data Integration Working**
+
 - Properties transforming correctly
 - AI pricing calculating accurately
 - Market intelligence generating
 
 ✅ **Performance Targets Met**
+
 - <1ms average transformation time
-- >95% success rate
+- 95% success rate
 - Geographic search responding <500ms
 
 ✅ **Production Ready**
+
 - Environment variables configured
 - Functions deployed and tested
 - Monitoring in place
@@ -333,4 +349,6 @@ If you encounter issues:
 
 ---
 
-**🎯 You're now ready for production!** Your real estate scraper has been upgraded with AI-enhanced pricing, market intelligence, and geographic search capabilities.
+**🎯 You're now ready for production!** Your real estate scraper has been
+upgraded with AI-enhanced pricing, market intelligence, and geographic search
+capabilities.

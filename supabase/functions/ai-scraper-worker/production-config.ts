@@ -1,6 +1,6 @@
 /**
  * Production Configuration for Claude-Powered AI Scraper
- * 
+ *
  * This file contains all production settings and configurations
  * for optimal performance and reliability.
  */
@@ -28,12 +28,12 @@ export const PRODUCTION_CONFIG = {
     alertThreshold: 50.00,
     dailyBudgetLimit: 100.00,
     trackingEnabled: true,
-    
+
     // Claude Haiku Pricing (per 1M tokens)
     pricing: {
       inputTokens: 0.80,
       outputTokens: 4.00,
-    }
+    },
   },
 
   // Validation Rules
@@ -73,15 +73,16 @@ export const PRODUCTION_CONFIG = {
 
   // Alert Thresholds
   alerts: {
-    successRate: 0.95,        // Alert if <95%
-    avgResponseTime: 3000,    // Alert if >3s
-    dailyCost: 50.00,         // Alert if >$50/day
-    errorRate: 0.05,          // Alert if >5% errors
-    tokenUsageSpike: 1.5,     // Alert if 50% above average
-  }
+    successRate: 0.95, // Alert if <95%
+    avgResponseTime: 3000, // Alert if >3s
+    dailyCost: 50.00, // Alert if >$50/day
+    errorRate: 0.05, // Alert if >5% errors
+    tokenUsageSpike: 1.5, // Alert if 50% above average
+  },
 } as const;
 
-export const CLAUDE_SYSTEM_PROMPT = `You are an expert web scraper for apartment rental data.
+export const CLAUDE_SYSTEM_PROMPT =
+  `You are an expert web scraper for apartment rental data.
 Extract the following fields from HTML and return ONLY valid JSON:
 - name, address, city, state (2 letters)
 - current_price (number only, no symbols)

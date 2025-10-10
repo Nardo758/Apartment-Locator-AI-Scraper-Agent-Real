@@ -1,10 +1,14 @@
 # Property Discovery Phase 1
 
-This directory contains the implementation for **Phase 1: Property Discovery** of the Apartment Scraper AI Agent System.
+This directory contains the implementation for **Phase 1: Property Discovery**
+of the Apartment Scraper AI Agent System.
 
 ## Overview
 
-Phase 1 focuses on building an initial database of apartment properties using the Property Discovery Agent. This agent discovers apartment communities, extracts basic property information, and stores it in the database with priority scoring.
+Phase 1 focuses on building an initial database of apartment properties using
+the Property Discovery Agent. This agent discovers apartment communities,
+extracts basic property information, and stores it in the database with priority
+scoring.
 
 ## Files
 
@@ -24,6 +28,7 @@ cp .env.example .env
 ```
 
 Edit `.env` with your actual API keys:
+
 - **SERP_API_KEY**: For property URL discovery
 - **ANTHROPIC_API_KEY**: For Claude AI property extraction
 - **SUPABASE_URL** & **SUPABASE_SERVICE_ROLE_KEY**: For database operations
@@ -37,6 +42,7 @@ python discovery_executor.py
 ```
 
 This will:
+
 - Discover 100-200 apartment properties in Atlanta, GA
 - Extract basic property information using Claude
 - Store properties in the database
@@ -108,7 +114,8 @@ Building initial database of apartment properties
 
 ## Demo Mode
 
-If API keys are not configured, the system runs in demo mode and simulates the discovery process with sample data.
+If API keys are not configured, the system runs in demo mode and simulates the
+discovery process with sample data.
 
 ## Database Schema
 
@@ -149,14 +156,17 @@ After Phase 1 completes:
 ### Common Issues
 
 **"Agents initialized successfully" but discovery fails:**
+
 - Check API keys are correctly set in `.env`
 - Verify Supabase connection and table permissions
 
 **Low property discovery count:**
+
 - SERP API rate limits or quota exceeded
 - Try different search queries or reduce DISCOVERY_MAX_PROPERTIES
 
 **Priority scores not updating:**
+
 - Check database permissions for priority_system
 - Verify properties_basic table has correct schema
 

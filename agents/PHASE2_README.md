@@ -1,10 +1,14 @@
 # Phase 2: Rental Data Extraction Pilot
 
-This directory contains the implementation for **Phase 2: Pilot Rental Data Extraction** of the Apartment Scraper AI Agent System.
+This directory contains the implementation for **Phase 2: Pilot Rental Data
+Extraction** of the Apartment Scraper AI Agent System.
 
 ## Overview
 
-Phase 2 focuses on testing the Rental Data Agent's vision-based extraction capabilities on the top 10 high-priority properties discovered in Phase 1. This pilot establishes baseline performance metrics and validates the end-to-end rental data extraction pipeline.
+Phase 2 focuses on testing the Rental Data Agent's vision-based extraction
+capabilities on the top 10 high-priority properties discovered in Phase 1. This
+pilot establishes baseline performance metrics and validates the end-to-end
+rental data extraction pipeline.
 
 ## Files
 
@@ -42,6 +46,7 @@ python agents/phase2_pilot.py
 ```
 
 This will:
+
 - Retrieve top 10 high-priority properties from Phase 1
 - Extract detailed rental data using GPT-4V vision analysis
 - Store rental units in the database
@@ -100,7 +105,8 @@ Testing vision-based rental extraction on top 10 high-priority properties
 
 ## Demo Mode
 
-If API keys are not configured, the system runs in demo mode and simulates the extraction process with realistic data patterns.
+If API keys are not configured, the system runs in demo mode and simulates the
+extraction process with realistic data patterns.
 
 ## Database Schema
 
@@ -148,14 +154,17 @@ The pilot tracks comprehensive metrics:
 Based on pilot results, assess:
 
 ### Excellent Performance (≥80% success)
+
 - Ready to scale to more properties
 - Proceed to Phase 3 hybrid approach
 
 ### Good Performance (60-79% success)
+
 - Consider optimizations for failed properties
 - Review error patterns and website compatibility
 
 ### Needs Improvement (<60% success)
+
 - Investigate extraction logic issues
 - Consider fallback strategies
 - Review vision model prompts and parameters
@@ -165,20 +174,24 @@ Based on pilot results, assess:
 ### Common Issues
 
 **"No properties found in database"**
+
 - Ensure Phase 1 has been run successfully
 - Check database connectivity and permissions
 
 **Vision API rate limits exceeded**
+
 - Reduce PILOT_MAX_PROPERTIES
 - Add delays between extractions
 - Consider batch processing
 
 **Browser automation failures**
+
 - Check playwright installation: `pip install playwright && playwright install`
 - Verify website accessibility
 - Review browser timeout settings
 
 **Low extraction success rate**
+
 - Review vision model prompts in rental_data_agent.py
 - Check website complexity vs. agent capabilities
 - Consider manual review of failed extractions

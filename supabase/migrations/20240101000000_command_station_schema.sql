@@ -249,7 +249,7 @@ VALUES
   ('ai-scraper-worker', 'healthy', '1.0.0', '{"description": "AI processing worker"}'::jsonb),
   ('scraper-orchestrator', 'healthy', '1.0.0', '{"description": "Batch orchestration worker"}'::jsonb),
   ('scraper-worker', 'healthy', '1.0.0', '{"description": "Data collection worker"}'::jsonb),
-  ('command-station', 'healthy', '1.0.0', '{"description": "Command and control interface"}'::jsonb)
+  ('command-center', 'healthy', '1.0.0', '{"description": "Command and control interface"}'::jsonb)
 ON CONFLICT (worker_name) DO UPDATE SET
   last_ping = NOW(),
   version = EXCLUDED.version,

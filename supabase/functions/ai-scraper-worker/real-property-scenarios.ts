@@ -1,6 +1,6 @@
 /**
  * Real Property Test Scenarios
- * 
+ *
  * This module contains realistic property listing HTML templates
  * that mirror actual apartment rental websites for comprehensive testing.
  */
@@ -64,9 +64,15 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         
         <section class="lease-terms">
           <div class="fees">
-            <div class="application-fee">Application fee: ${{APPLICATION_FEE}}</div>
-            <div class="admin-fee">Admin fee: ${{ADMIN_FEE}} {{ADMIN_FEE_WAIVED}}</div>
-            <div class="pet-fee">Pet deposit: ${{PET_DEPOSIT}} (refundable)</div>
+            <div class="application-fee">Application fee: {{
+      APPLICATION_FEE,
+    }}</div>
+            <div class="admin-fee">Admin fee: {{
+      ADMIN_FEE,
+    }} {{ADMIN_FEE_WAIVED}}</div>
+            <div class="pet-fee">Pet deposit: {{
+      PET_DEPOSIT,
+    }} (refundable)</div>
           </div>
           <div class="specials">
             <p class="special-offer">{{SPECIAL_OFFER}}</p>
@@ -74,9 +80,21 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         </section>
       </div>
     `,
-    expectedFields: ["name", "address", "city", "state", "current_price", "bedrooms", "bathrooms"],
+    expectedFields: [
+      "name",
+      "address",
+      "city",
+      "state",
+      "current_price",
+      "bedrooms",
+      "bathrooms",
+    ],
     priceRange: [3000, 8000],
-    commonIssues: ["Complex HTML structure", "Multiple price elements", "Amenity parsing"]
+    commonIssues: [
+      "Complex HTML structure",
+      "Multiple price elements",
+      "Amenity parsing",
+    ],
   },
 
   {
@@ -93,8 +111,8 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
           </address>
         </div>
         
-        <div class="rent-info">
-          <span class="monthly-rent">${{MONTHLY_RENT}}</span>
+          <div class="rent-info">
+          <span class="monthly-rent">{{ MONTHLY_RENT }}</span>
           <span class="rent-label">per month</span>
         </div>
         
@@ -122,9 +140,21 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         </div>
       </article>
     `,
-    expectedFields: ["name", "address", "city", "state", "current_price", "bedrooms", "bathrooms"],
+    expectedFields: [
+      "name",
+      "address",
+      "city",
+      "state",
+      "current_price",
+      "bedrooms",
+      "bathrooms",
+    ],
     priceRange: [800, 2500],
-    commonIssues: ["Minimal structured data", "Inconsistent formatting", "Missing fields"]
+    commonIssues: [
+      "Minimal structured data",
+      "Inconsistent formatting",
+      "Missing fields",
+    ],
   },
 
   {
@@ -144,11 +174,11 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         <section class="rental-pricing">
           <div class="monthly-rent">
             <span class="price-label">Monthly Rent:</span>
-            <span class="price-amount">${{MONTHLY_RENT}}</span>
+            <span class="price-amount">{{ MONTHLY_RENT }}</span>
           </div>
           <div class="security-deposit">
             <span class="deposit-label">Security Deposit:</span>
-            <span class="deposit-amount">${{SECURITY_DEPOSIT}}</span>
+            <span class="deposit-amount">{{ SECURITY_DEPOSIT }}</span>
           </div>
         </section>
         
@@ -206,8 +236,8 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         
         <section class="rental-terms">
           <div class="fees-and-deposits">
-            <p>Application fee: ${{APPLICATION_FEE}} per adult applicant</p>
-            <p>Pet deposit: ${{PET_DEPOSIT}} ({{PET_POLICY}})</p>
+            <p>Application fee: {{ APPLICATION_FEE }} per adult applicant</p>
+            <p>Pet deposit: {{ PET_DEPOSIT }} ({{PET_POLICY}})</p>
             <p>{{ADMIN_FEE_INFO}}</p>
           </div>
           <div class="lease-terms">
@@ -217,9 +247,21 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         </section>
       </div>
     `,
-    expectedFields: ["name", "address", "city", "state", "current_price", "bedrooms", "bathrooms"],
+    expectedFields: [
+      "name",
+      "address",
+      "city",
+      "state",
+      "current_price",
+      "bedrooms",
+      "bathrooms",
+    ],
     priceRange: [1500, 5000],
-    commonIssues: ["Detailed specs parsing", "Multiple fee types", "Feature categorization"]
+    commonIssues: [
+      "Detailed specs parsing",
+      "Multiple fee types",
+      "Feature categorization",
+    ],
   },
 
   {
@@ -279,9 +321,21 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         </div>
       </div>
     `,
-    expectedFields: ["name", "address", "city", "state", "current_price", "bedrooms", "bathrooms"],
+    expectedFields: [
+      "name",
+      "address",
+      "city",
+      "state",
+      "current_price",
+      "bedrooms",
+      "bathrooms",
+    ],
     priceRange: [1200, 4000],
-    commonIssues: ["Studio vs bedroom classification", "Loft-specific features", "Urban pricing variations"]
+    commonIssues: [
+      "Studio vs bedroom classification",
+      "Loft-specific features",
+      "Urban pricing variations",
+    ],
   },
 
   {
@@ -303,15 +357,15 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
           <div class="rate-structure">
             <div class="monthly-rate">
               <span class="rate-label">Monthly Rate:</span>
-              <span class="rate-amount">${{MONTHLY_RATE}}</span>
+              <span class="rate-amount">{{ MONTHLY_RATE }}</span>
             </div>
             <div class="weekly-rate">
               <span class="rate-label">Weekly Rate:</span>
-              <span class="rate-amount">${{WEEKLY_RATE}}</span>
+              <span class="rate-amount">{{ WEEKLY_RATE }}</span>
             </div>
             <div class="nightly-rate">
               <span class="rate-label">Nightly Rate:</span>
-              <span class="rate-amount">${{NIGHTLY_RATE}}</span>
+              <span class="rate-amount">{{ NIGHTLY_RATE }}</span>
             </div>
           </div>
         </div>
@@ -373,10 +427,22 @@ export const REAL_PROPERTY_SCENARIOS: PropertyScenario[] = [
         </div>
       </div>
     `,
-    expectedFields: ["name", "address", "city", "state", "current_price", "bedrooms", "bathrooms"],
+    expectedFields: [
+      "name",
+      "address",
+      "city",
+      "state",
+      "current_price",
+      "bedrooms",
+      "bathrooms",
+    ],
     priceRange: [2500, 12000],
-    commonIssues: ["Multiple rate types", "Corporate vs residential classification", "Service inclusions"]
-  }
+    commonIssues: [
+      "Multiple rate types",
+      "Corporate vs residential classification",
+      "Service inclusions",
+    ],
+  },
 ];
 
 export interface TestPropertyVariation {
@@ -413,19 +479,19 @@ export const CITY_VARIATIONS = [
   { city: "Nashville", state: "TN", zip: "37201", priceMultiplier: 1.0 },
   { city: "Phoenix", state: "AZ", zip: "85001", priceMultiplier: 0.9 },
   { city: "Atlanta", state: "GA", zip: "30301", priceMultiplier: 0.9 },
-  { city: "Dallas", state: "TX", zip: "75201", priceMultiplier: 0.8 }
+  { city: "Dallas", state: "TX", zip: "75201", priceMultiplier: 0.8 },
 ];
 
 export const SPECIAL_OFFERS = [
   "First month rent free with 12-month lease",
-  "Two months free rent with 24-month lease", 
+  "Two months free rent with 24-month lease",
   "No application fee this month",
   "Waived admin fee for qualified applicants",
   "Move-in ready - no security deposit required",
   "$500 off first month's rent",
   "Free parking for first 6 months",
   "Complimentary gym membership included",
-  "Pet deposit waived with approved application"
+  "Pet deposit waived with approved application",
 ];
 
 /**
@@ -434,21 +500,30 @@ export const SPECIAL_OFFERS = [
 export function generatePropertyVariation(
   scenario: PropertyScenario,
   cityIndex: number,
-  variationIndex: number
+  variationIndex: number,
 ): TestPropertyVariation {
   const city = CITY_VARIATIONS[cityIndex % CITY_VARIATIONS.length];
-  const basePrice = scenario.priceRange[0] + 
+  const basePrice = scenario.priceRange[0] +
     (scenario.priceRange[1] - scenario.priceRange[0]) * Math.random();
   const adjustedPrice = Math.round(basePrice * city.priceMultiplier);
-  
-  const bedrooms = scenario.type === "studio_loft" ? 0 : Math.floor(Math.random() * 4) + 1;
-  const bathrooms = bedrooms === 0 ? 1 : Math.max(1, bedrooms - Math.floor(Math.random() * 2));
-  const squareFeet = bedrooms === 0 ? 400 + Math.floor(Math.random() * 300) :
-    600 + (bedrooms * 300) + Math.floor(Math.random() * 400);
+
+  const bedrooms = scenario.type === "studio_loft"
+    ? 0
+    : Math.floor(Math.random() * 4) + 1;
+  const bathrooms = bedrooms === 0
+    ? 1
+    : Math.max(1, bedrooms - Math.floor(Math.random() * 2));
+  const squareFeet = bedrooms === 0
+    ? 400 + Math.floor(Math.random() * 300)
+    : 600 + (bedrooms * 300) + Math.floor(Math.random() * 400);
 
   return {
-    propertyName: `${scenario.description.split(' ')[0]} ${city.city} ${variationIndex}`,
-    streetAddress: `${100 + variationIndex} ${['Main', 'Oak', 'Pine', 'Elm', 'Park'][variationIndex % 5]} Street`,
+    propertyName: `${
+      scenario.description.split(" ")[0]
+    } ${city.city} ${variationIndex}`,
+    streetAddress: `${100 + variationIndex} ${
+      ["Main", "Oak", "Pine", "Elm", "Park"][variationIndex % 5]
+    } Street`,
     city: city.city,
     state: city.state,
     zip: city.zip,
@@ -456,13 +531,21 @@ export function generatePropertyVariation(
     bedrooms,
     bathrooms,
     squareFeet,
-    specialOffers: Math.random() > 0.6 ? [SPECIAL_OFFERS[variationIndex % SPECIAL_OFFERS.length]] : undefined,
+    specialOffers: Math.random() > 0.6
+      ? [SPECIAL_OFFERS[variationIndex % SPECIAL_OFFERS.length]]
+      : undefined,
     fees: {
-      application: Math.random() > 0.3 ? 50 + Math.floor(Math.random() * 100) : undefined,
-      admin: Math.random() > 0.4 ? 100 + Math.floor(Math.random() * 300) : undefined,
-      pet: Math.random() > 0.5 ? 200 + Math.floor(Math.random() * 300) : undefined,
-      security: adjustedPrice // Usually equal to one month's rent
-    }
+      application: Math.random() > 0.3
+        ? 50 + Math.floor(Math.random() * 100)
+        : undefined,
+      admin: Math.random() > 0.4
+        ? 100 + Math.floor(Math.random() * 300)
+        : undefined,
+      pet: Math.random() > 0.5
+        ? 200 + Math.floor(Math.random() * 300)
+        : undefined,
+      security: adjustedPrice, // Usually equal to one month's rent
+    },
   };
 }
 
@@ -470,71 +553,91 @@ export function generatePropertyVariation(
  * Fill a scenario template with property data
  */
 export function fillScenarioTemplate(
-  scenario: PropertyScenario, 
-  variation: TestPropertyVariation
+  scenario: PropertyScenario,
+  variation: TestPropertyVariation,
 ): string {
   let html = scenario.htmlTemplate;
-  
+
   // Basic replacements
   const replacements = {
-    '{{PROPERTY_NAME}}': variation.propertyName,
-    '{{STREET_ADDRESS}}': variation.streetAddress,
-    '{{CITY}}': variation.city,
-    '{{STATE}}': variation.state,
-    '{{ZIP}}': variation.zip,
-    '{{MONTHLY_RENT}}': variation.monthlyRent.toLocaleString(),
-    '{{BEDROOMS}}': variation.bedrooms.toString(),
-    '{{BATHROOMS}}': variation.bathrooms.toString(),
-    '{{SQUARE_FEET}}': variation.squareFeet.toLocaleString(),
-    '{{BEDROOM_LABEL}}': variation.bedrooms === 1 ? 'bedroom' : 'bedrooms',
-    '{{BATHROOM_LABEL}}': variation.bathrooms === 1 ? 'bathroom' : 'bathrooms',
-    '{{BEDROOM_PLURAL}}': variation.bedrooms === 1 ? '' : 's',
-    '{{BATHROOM_PLURAL}}': variation.bathrooms === 1 ? '' : 's',
-    '{{APPLICATION_FEE}}': variation.fees?.application?.toString() || '0',
-    '{{ADMIN_FEE}}': variation.fees?.admin?.toString() || '0',
-    '{{SECURITY_DEPOSIT}}': variation.fees?.security?.toString() || variation.monthlyRent.toString(),
-    '{{SPECIAL_OFFER}}': variation.specialOffers?.[0] || 'Contact for current specials'
+    "{{PROPERTY_NAME}}": variation.propertyName,
+    "{{STREET_ADDRESS}}": variation.streetAddress,
+    "{{CITY}}": variation.city,
+    "{{STATE}}": variation.state,
+    "{{ZIP}}": variation.zip,
+    "{{MONTHLY_RENT}}": variation.monthlyRent.toLocaleString(),
+    "{{BEDROOMS}}": variation.bedrooms.toString(),
+    "{{BATHROOMS}}": variation.bathrooms.toString(),
+    "{{SQUARE_FEET}}": variation.squareFeet.toLocaleString(),
+    "{{BEDROOM_LABEL}}": variation.bedrooms === 1 ? "bedroom" : "bedrooms",
+    "{{BATHROOM_LABEL}}": variation.bathrooms === 1 ? "bathroom" : "bathrooms",
+    "{{BEDROOM_PLURAL}}": variation.bedrooms === 1 ? "" : "s",
+    "{{BATHROOM_PLURAL}}": variation.bathrooms === 1 ? "" : "s",
+    "{{APPLICATION_FEE}}": variation.fees?.application?.toString() || "0",
+    "{{ADMIN_FEE}}": variation.fees?.admin?.toString() || "0",
+    "{{SECURITY_DEPOSIT}}": variation.fees?.security?.toString() ||
+      variation.monthlyRent.toString(),
+    "{{SPECIAL_OFFER}}": variation.specialOffers?.[0] ||
+      "Contact for current specials",
   };
-  
+
   // Apply all replacements
   Object.entries(replacements).forEach(([placeholder, value]) => {
-    html = html.replace(new RegExp(placeholder, 'g'), value);
+    html = html.replace(new RegExp(placeholder, "g"), value);
   });
-  
+
   // Handle remaining placeholders with sensible defaults
   const defaultReplacements: Record<string, string> = {
-    '{{SECURITY_DEPOSIT}}': variation.fees?.security?.toString() || variation.monthlyRent.toString(),
-    '{{PET_DEPOSIT}}': variation.fees?.pet?.toString() || '300',
-    '{{ADMIN_FEE_WAIVED}}': Math.random() > 0.5 ? '(waived for qualified applicants)' : '',
-    '{{UNIT_TYPE}}': variation.bedrooms === 0 ? 'Studio' : `${variation.bedrooms} Bedroom`,
-    '{{AVAILABILITY_DATE}}': 'immediately',
-    '{{FEE_INFO}}': variation.fees?.application ? `Application fee: $${variation.fees.application}` : 'No application fee',
-    '{{SPECIAL_FEATURE}}': 'In-unit laundry',
-    '{{APPLIANCE_PACKAGE}}': 'Stainless steel appliances',
-    '{{BUILDING_DESCRIPTION}}': 'Modern building in prime location',
-    '{{BUILDING_AMENITY_1}}': 'Fitness center',
-    '{{BUILDING_AMENITY_2}}': 'Rooftop deck',
-    '{{BUILDING_AMENITY_3}}': 'Concierge service',
-    '{{APPLICATION_FEE_TEXT}}': variation.fees?.application ? `Application fee: $${variation.fees.application}` : 'No application fee',
-    '{{ADMIN_FEE_TEXT}}': variation.fees?.admin ? `Admin fee: $${variation.fees.admin}` : 'No admin fee',
-    '{{MOVE_IN_SPECIAL}}': variation.specialOffers?.[0] || 'Contact for current specials'
+    "{{SECURITY_DEPOSIT}}": variation.fees?.security?.toString() ||
+      variation.monthlyRent.toString(),
+    "{{PET_DEPOSIT}}": variation.fees?.pet?.toString() || "300",
+    "{{ADMIN_FEE_WAIVED}}": Math.random() > 0.5
+      ? "(waived for qualified applicants)"
+      : "",
+    "{{UNIT_TYPE}}": variation.bedrooms === 0
+      ? "Studio"
+      : `${variation.bedrooms} Bedroom`,
+    "{{AVAILABILITY_DATE}}": "immediately",
+    "{{FEE_INFO}}": variation.fees?.application
+      ? `Application fee: $${variation.fees.application}`
+      : "No application fee",
+    "{{SPECIAL_FEATURE}}": "In-unit laundry",
+    "{{APPLIANCE_PACKAGE}}": "Stainless steel appliances",
+    "{{BUILDING_DESCRIPTION}}": "Modern building in prime location",
+    "{{BUILDING_AMENITY_1}}": "Fitness center",
+    "{{BUILDING_AMENITY_2}}": "Rooftop deck",
+    "{{BUILDING_AMENITY_3}}": "Concierge service",
+    "{{APPLICATION_FEE_TEXT}}": variation.fees?.application
+      ? `Application fee: $${variation.fees.application}`
+      : "No application fee",
+    "{{ADMIN_FEE_TEXT}}": variation.fees?.admin
+      ? `Admin fee: $${variation.fees.admin}`
+      : "No admin fee",
+    "{{MOVE_IN_SPECIAL}}": variation.specialOffers?.[0] ||
+      "Contact for current specials",
   };
 
   // Apply default replacements
   Object.entries(defaultReplacements).forEach(([placeholder, value]) => {
-    html = html.replace(new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'), value);
+    html = html.replace(
+      new RegExp(placeholder.replace(/[{}]/g, "\\$&"), "g"),
+      value,
+    );
   });
 
   // Handle any remaining placeholders with generic defaults
-  html = html.replace(/\{\{[^}]+\}\}/g, match => {
-    const placeholder = match.replace(/[{}]/g, '');
-    if (placeholder.toLowerCase().includes('fee')) return '$0';
-    if (placeholder.toLowerCase().includes('rate') || placeholder.toLowerCase().includes('price')) return '$1,500';
-    if (placeholder.toLowerCase().includes('occupancy')) return '4';
-    if (placeholder.toLowerCase().includes('stay')) return '30 days';
-    return 'Available';
+  html = html.replace(/\{\{[^}]+\}\}/g, (match) => {
+    const placeholder = match.replace(/[{}]/g, "");
+    if (placeholder.toLowerCase().includes("fee")) return "$0";
+    if (
+      placeholder.toLowerCase().includes("rate") ||
+      placeholder.toLowerCase().includes("price")
+    ) return "$1,500";
+    if (placeholder.toLowerCase().includes("occupancy")) return "4";
+    if (placeholder.toLowerCase().includes("stay")) return "30 days";
+    return "Available";
   });
-  
+
   return html;
 }
 
@@ -556,28 +659,33 @@ export function generateRealTestProperties(count: number = 100): Array<{
   expectedBathrooms: number;
 }> {
   const properties = [];
-  
+
   for (let i = 0; i < count; i++) {
-    const scenario = REAL_PROPERTY_SCENARIOS[i % REAL_PROPERTY_SCENARIOS.length];
+    const scenario =
+      REAL_PROPERTY_SCENARIOS[i % REAL_PROPERTY_SCENARIOS.length];
     const source = scenario.sources[i % scenario.sources.length];
     const variation = generatePropertyVariation(scenario, i, i);
     const html = fillScenarioTemplate(scenario, variation);
-    
+
     properties.push({
       id: i + 1,
       source,
-      url: `https://${source}/listing/${variation.state.toLowerCase()}-${i + 1}`,
+      url: `https://${source}/listing/${variation.state.toLowerCase()}-${
+        i + 1
+      }`,
       cleanHtml: html,
       external_id: `real-test-${source}-${i + 1}`,
-      source_url: `https://${source}/listing/${variation.state.toLowerCase()}-${i + 1}`,
+      source_url: `https://${source}/listing/${variation.state.toLowerCase()}-${
+        i + 1
+      }`,
       source_name: source,
       scraping_job_id: Math.floor(i / 10) + 1,
       scenario: scenario.type,
       expectedPrice: variation.monthlyRent,
       expectedBedrooms: variation.bedrooms,
-      expectedBathrooms: variation.bathrooms
+      expectedBathrooms: variation.bathrooms,
     });
   }
-  
+
   return properties;
 }

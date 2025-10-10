@@ -1,0 +1,65 @@
+﻿[
+    {
+        "rule":  "no-explicit-any",
+        "count":  144,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "require-await",
+        "count":  87,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "no-unused-vars",
+        "count":  80,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "no-empty",
+        "count":  13,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "ban-ts-comment",
+        "count":  9,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "no-import-prefix",
+        "count":  7,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "prefer-const",
+        "count":  7,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "no-case-declarations",
+        "count":  2,
+        "topFiles":  [
+
+                     ]
+    },
+    {
+        "rule":  "no-prototype-builtins",
+        "count":  1,
+        "topFiles":  [
+
+                     ]
+    }
+]

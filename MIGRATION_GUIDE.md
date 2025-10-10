@@ -1,7 +1,9 @@
 # 🗄️ Database Migration Guide
 
 ## Overview
-This guide helps you run the database migrations to set up the enhanced property scraper system schema.
+
+This guide helps you run the database migrations to set up the enhanced property
+scraper system schema.
 
 ## 🚀 Quick Migration (Recommended)
 
@@ -11,10 +13,10 @@ This guide helps you run the database migrations to set up the enhanced property
    ```bash
    # macOS
    brew install supabase/tap/supabase
-   
+
    # Linux/WSL
    curl -fsSL https://get.supabase.com | sh
-   
+
    # Windows
    scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
    scoop install supabase
@@ -43,16 +45,24 @@ This guide helps you run the database migrations to set up the enhanced property
 4. Run each migration file in order:
 
 #### Migration 1: Security Hardening
-Copy and run the contents of `supabase/migrations/20250928000000_security_hardening_rls.sql`
+
+Copy and run the contents of
+`supabase/migrations/20250928000000_security_hardening_rls.sql`
 
 #### Migration 2: Property Sources System
-Copy and run the contents of `supabase/migrations/20250928001000_create_property_sources_system.sql`
+
+Copy and run the contents of
+`supabase/migrations/20250928001000_create_property_sources_system.sql`
 
 #### Migration 3: Cost Monitoring Functions
-Copy and run the contents of `supabase/migrations/20250928002000_add_cost_monitoring_functions.sql`
+
+Copy and run the contents of
+`supabase/migrations/20250928002000_add_cost_monitoring_functions.sql`
 
 #### Migration 4: URL Migration
-Copy and run the contents of `supabase/migrations/20250928003000_migrate_existing_urls.sql`
+
+Copy and run the contents of
+`supabase/migrations/20250928003000_migrate_existing_urls.sql`
 
 ### Option 3: Using psql (Direct Database Connection)
 
@@ -72,32 +82,37 @@ Copy and run the contents of `supabase/migrations/20250928003000_migrate_existin
 ## 📋 Migration Files Overview
 
 ### 1. Security Hardening (20250928000000)
+
 **Purpose:** Enable Row Level Security (RLS) on all tables and secure functions
 **What it does:**
+
 - Enables RLS on 10+ tables
 - Creates secure policies for different user roles
 - Adds security definer functions with explicit search_path
 - Sets up proper permissions
 
 ### 2. Property Sources System (20250928001000)
-**Purpose:** Create centralized URL management system
-**What it does:**
+
+**Purpose:** Create centralized URL management system **What it does:**
+
 - Creates `property_sources` table for URL management
 - Adds priority-based scraping logic
 - Implements success rate tracking
 - Creates helper functions for batch processing
 
 ### 3. Cost Monitoring Functions (20250928002000)
-**Purpose:** Add comprehensive cost tracking and analytics
-**What it does:**
+
+**Purpose:** Add comprehensive cost tracking and analytics **What it does:**
+
 - Creates cost monitoring functions
 - Adds daily/weekly cost analytics
 - Implements performance metrics
 - Creates cost projection functions
 
 ### 4. URL Migration (20250928003000)
-**Purpose:** Migrate existing URLs to new system
-**What it does:**
+
+**Purpose:** Migrate existing URLs to new system **What it does:**
+
 - Migrates data from `apartments` and `scraped_properties` tables
 - Links existing data to new property sources
 - Updates relationships with foreign keys
@@ -108,6 +123,7 @@ Copy and run the contents of `supabase/migrations/20250928003000_migrate_existin
 After running migrations, verify the setup:
 
 ### 1. Check Tables Created
+
 ```sql
 SELECT table_name FROM information_schema.tables 
 WHERE table_schema = 'public' 
@@ -115,6 +131,7 @@ AND table_name IN ('property_sources', 'property_intelligence', 'scraping_costs'
 ```
 
 ### 2. Check Functions Created
+
 ```sql
 SELECT routine_name FROM information_schema.routines 
 WHERE routine_schema = 'public' 
@@ -123,12 +140,14 @@ OR routine_name LIKE '%scraping_cost%';
 ```
 
 ### 3. Check RLS Policies
+
 ```sql
 SELECT tablename, policyname FROM pg_policies 
 WHERE schemaname = 'public';
 ```
 
 ### 4. Check Data Migration
+
 ```sql
 -- Check property sources
 SELECT COUNT(*) as total_sources FROM property_sources;
@@ -144,20 +163,24 @@ WHERE property_source_id IS NOT NULL;
 ### Common Issues:
 
 #### "Permission Denied" Errors
+
 - Ensure you're using the service role key (not anon key)
 - Check if your user has proper database permissions
 
 #### "Table Already Exists" Errors
+
 - Migrations use `IF NOT EXISTS` clauses
 - Safe to re-run if needed
 - Check for partial migrations
 
 #### "Function Does Not Exist" Errors
+
 - Ensure migrations run in order
 - Some functions depend on others
 - Re-run the specific migration file
 
 #### "Foreign Key Constraint" Errors
+
 - Ensure base tables exist before running migration 4
 - Check data integrity in existing tables
 
@@ -210,4 +233,5 @@ After successful migration:
 
 ---
 
-**⚠️ Important:** Always backup your database before running migrations in production!
+**⚠️ Important:** Always backup your database before running migrations in
+production!

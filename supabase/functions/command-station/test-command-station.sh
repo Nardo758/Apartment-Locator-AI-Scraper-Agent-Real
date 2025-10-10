@@ -16,7 +16,7 @@ NC='\033[0m'
 
 # Configuration
 BASE_URL="${SUPABASE_URL:-}"
-FUNCTION_NAME="command-station"
+FUNCTION_NAME="command-center"
 
 if [ -z "$BASE_URL" ]; then
     echo -e "${RED}❌ SUPABASE_URL environment variable not set${NC}"
@@ -25,7 +25,7 @@ fi
 
 FUNCTION_URL="$BASE_URL/functions/v1/$FUNCTION_NAME"
 
-echo -e "${BLUE}🧪 Command Station Test Suite${NC}"
+echo -e "${BLUE}🧪 Command Center Test Suite${NC}"
 echo -e "${BLUE}============================${NC}"
 echo -e "Testing: $FUNCTION_URL\n"
 

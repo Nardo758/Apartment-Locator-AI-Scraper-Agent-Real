@@ -23,7 +23,7 @@ fi
 
 # Check if we're in the right directory
 if [ ! -f "index.ts" ]; then
-    echo -e "${RED}❌ Please run this script from the command-station directory${NC}"
+    echo -e "${RED}❌ Please run this script from the command-center directory${NC}"
     exit 1
 fi
 
@@ -47,7 +47,7 @@ fi
 
 # Option 1: Deploy as separate function
 echo -e "${BLUE}🎯 Deployment Options:${NC}"
-echo "1. Deploy as separate command-station function (RECOMMENDED)"
+echo "1. Deploy as separate command-center function (RECOMMENDED)"
 echo "2. Integrate with existing ai-scraper-worker"
 echo "3. Deploy both options"
 
@@ -55,26 +55,26 @@ read -p "Choose option (1-3): " option
 
 case $option in
     1|3)
-        echo -e "${BLUE}🚀 Deploying command-station as separate function...${NC}"
+    echo -e "${BLUE}🚀 Deploying command-center as separate function...${NC}"
         
         # Create function directory if it doesn't exist
-        mkdir -p ../supabase/functions/command-station
+    mkdir -p ../supabase/functions/command-center
         
         # Copy files to supabase functions directory
-        cp -r ./* ../supabase/functions/command-station/
+    cp -r ./* ../supabase/functions/command-center/
         
         # Deploy the function
         cd ../
-        supabase functions deploy command-station --no-verify-jwt
+    supabase functions deploy command-center --no-verify-jwt
         
         if [ $? -eq 0 ]; then
-            echo -e "${GREEN}✅ Command station deployed successfully!${NC}"
+            echo -e "${GREEN}✅ Command center deployed successfully!${NC}"
         else
             echo -e "${RED}❌ Deployment failed${NC}"
             exit 1
         fi
         
-        cd command-station
+    cd command-center
         ;;
 esac
 
@@ -89,10 +89,10 @@ case $option in
         fi
         
         # Copy command station files to ai-scraper-worker
-        mkdir -p ../supabase/functions/ai-scraper-worker/command-station
-        cp ./* ../supabase/functions/ai-scraper-worker/command-station/
+    mkdir -p ../supabase/functions/ai-scraper-worker/command-center
+    cp ./* ../supabase/functions/ai-scraper-worker/command-center/
         
-        echo -e "${YELLOW}⚠️  Integration files copied. You'll need to manually update the ai-scraper-worker index.ts to include command station routes.${NC}"
+    echo -e "${YELLOW}⚠️  Integration files copied. You'll need to manually update the ai-scraper-worker index.ts to include command-center routes.${NC}"
         ;;
 esac
 
@@ -162,32 +162,32 @@ supabase db push
 echo -e "${GREEN}✅ Database migration completed!${NC}"
 
 # Display access information
-echo -e "${BLUE}🌐 Command Station Access Points:${NC}"
+    echo -e "${BLUE}🌐 Command Center Access Points:${NC}"
 echo ""
 echo -e "${GREEN}Main Dashboard:${NC}"
-echo "curl \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-station/status\""
+echo "curl \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-center/status\""
 echo ""
 echo -e "${GREEN}Control Commands:${NC}"
 echo "# Enable scraping"
-echo "curl -X POST \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-station/enable-scraping\""
+echo "curl -X POST \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-center/enable-scraping\""
 echo ""
 echo "# Disable scraping"
-echo "curl -X POST \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-station/disable-scraping\""
+echo "curl -X POST \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-center/disable-scraping\""
 echo ""
 echo "# Run immediate batch"
-echo "curl -X POST \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-station/run-now\""
+echo "curl -X POST \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-center/run-now\""
 echo ""
 echo "# Get metrics"
-echo "curl \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-station/metrics\""
+echo "curl \"https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-center/metrics\""
 echo ""
 echo -e "${YELLOW}📝 Note: Replace the URL with your actual Supabase project URL in production${NC}"
 
 # Create a simple test script
-cat > test-command-station.sh << 'EOF'
+cat > test-command-station-ARCHIVE.sh << 'EOF'
 #!/bin/bash
 
 # Test script for Command Station
-BASE_URL="https://your-project.supabase.co/functions/v1/command-station"
+BASE_URL="https://your-project.supabase.co/functions/v1/command-center"
 
 echo "🧪 Testing Command Station..."
 
@@ -203,10 +203,11 @@ curl -s "$BASE_URL/metrics" | jq .
 echo -e "\n✅ Tests completed!"
 EOF
 
-chmod +x test-command-station.sh
+# mark archive script as executable but avoid accidental runs
+chmod +x test-command-station-ARCHIVE.sh
 
-echo -e "${GREEN}🎉 Command Station deployment completed successfully!${NC}"
-echo -e "${BLUE}📄 Test script created: test-command-station.sh${NC}"
+echo -e "${GREEN}🎉 Command Center deployment completed successfully!${NC}"
+echo -e "${BLUE}📄 Test script created: test-command-station-ARCHIVE.sh${NC}"
 echo -e "${YELLOW}📚 Don't forget to update your environment variables and test the endpoints!${NC}"
 
-cd command-station
+cd command-center

@@ -26,8 +26,8 @@ if command -v supabase &> /dev/null; then
     echo "📦 Deploying ai-scraper-worker..."
     supabase functions deploy ai-scraper-worker --no-verify-jwt
     
-    echo "📦 Deploying command-station..."
-    supabase functions deploy command-station --no-verify-jwt
+    echo "📦 Deploying command-center..."
+    supabase functions deploy command-center --no-verify-jwt
     
     echo "✅ Functions deployed successfully!"
     
@@ -38,11 +38,11 @@ if command -v supabase &> /dev/null; then
     API_URL=$(supabase status 2>/dev/null | grep "API URL" | awk '{print $3}' || echo "")
     
     if [ -n "$API_URL" ]; then
-        echo "Testing command station health..."
-        curl -f "$API_URL/functions/v1/command-station/health" || echo "Health check endpoint not available"
-        
-        echo "Testing command station status..."
-        curl -f "$API_URL/functions/v1/command-station/status" || echo "Status endpoint may need time to initialize"
+    echo "Testing command center health..."
+    curl -f "$API_URL/functions/v1/command-center/health" || echo "Health check endpoint not available"
+
+    echo "Testing command center status..."
+    curl -f "$API_URL/functions/v1/command-center/status" || echo "Status endpoint may need time to initialize"
     else
         echo "⚠️  Could not determine API URL for testing"
     fi
@@ -52,7 +52,7 @@ else
     echo "Please deploy manually via Supabase Dashboard:"
     echo "1. Go to Functions in your Supabase Dashboard"
     echo "2. Update ai-scraper-worker with the new code"
-    echo "3. Update command-station with the new endpoints"
+    echo "3. Update command-center with the new endpoints"
     echo "4. Set the environment variables in Settings > Environment Variables"
 fi
 

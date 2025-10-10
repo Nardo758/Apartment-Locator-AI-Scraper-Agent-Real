@@ -2,11 +2,12 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase.ts';
 import { getModelCost } from './costs';
 import {
-  transformScrapedToFrontendFormat,
   batchTransformProperties,
   saveTransformedProperties,
-} from './data-transformer';
-import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
+  transformScrapedToFrontendFormat,
+} from "./data-transformer.ts";
+import type { FrontendProperty, ScrapedPropertyData } from "../types/frontend.ts";
+import process from "node:process";
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;
@@ -21,9 +22,9 @@ export type ScrapingJob = Record<string, unknown> & {
 
 export async function getScrapingBatch(supabase: SupabaseClient<Database>, limit = 100): Promise<ScrapingJob[]> {
   const { data: properties, error } = await supabase
-    .from('scraped_properties')
+    .from("scraped_properties")
     .select(`*, price_history(count), scraping_logs(status, created_at)`)
-    .order('priority_score', { ascending: false })
+    .order("priority_score", { ascending: false })
     .limit(limit);
 
   if (error) throw error;
@@ -34,8 +35,10 @@ export async function getScrapingBatch(supabase: SupabaseClient<Database>, limit
   const mapped = await Promise.all(rows.map(async (property) => ({
     ...property,
     should_scrape: await shouldScrapeProperty(property),
-    ai_model: (property.change_frequency ?? 0) > 30 ? 'gpt-3.5-turbo' : 'gpt-4-turbo-preview',
-    processing_level: property.stability_level ?? 'default'
+    ai_model: (property.change_frequency ?? 0) > 30
+      ? "gpt-3.5-turbo"
+      : "gpt-4-turbo-preview",
+    processing_level: property.stability_level ?? "default",
   })));
 
   return mapped;
@@ -45,11 +48,25 @@ export async function getScrapingBatch(supabase: SupabaseClient<Database>, limit
 // Attempts to build a batch of properties for the week that fits an approximate cost target
 export async function getCostOptimizedBatch(supabase: SupabaseClient<Database>, weeklyTargetUSD = 300): Promise<ScrapingJob[]> {
   // We'll pick high/medium/low priority buckets by querying top-N in each priority score range
-  const highQuery = supabase.from('scraped_properties').select('*').gte('priority_score', 70).order('priority_score', { ascending: false }).limit(50000);
-  const medQuery = supabase.from('scraped_properties').select('*').gte('priority_score', 40).lt('priority_score', 70).order('priority_score', { ascending: false }).limit(50000);
-  const lowQuery = supabase.from('scraped_properties').select('*').lt('priority_score', 40).order('priority_score', { ascending: false }).limit(50000);
+  const highQuery = supabase.from("scraped_properties").select("*").gte(
+    "priority_score",
+    70,
+  ).order("priority_score", { ascending: false }).limit(50000);
+  const medQuery = supabase.from("scraped_properties").select("*").gte(
+    "priority_score",
+    40,
+  ).lt("priority_score", 70).order("priority_score", { ascending: false })
+    .limit(50000);
+  const lowQuery = supabase.from("scraped_properties").select("*").lt(
+    "priority_score",
+    40,
+  ).order("priority_score", { ascending: false }).limit(50000);
 
-  const [highRes, medRes, lowRes] = await Promise.all([highQuery, medQuery, lowQuery]);
+  const [highRes, medRes, lowRes] = await Promise.all([
+    highQuery,
+    medQuery,
+    lowQuery,
+  ]);
   const highRows = (highRes.data || []) as ScrapingJob[];
   const medRows = (medRes.data || []) as ScrapingJob[];
   const lowRows = (lowRes.data || []) as ScrapingJob[];
@@ -58,9 +75,14 @@ export async function getCostOptimizedBatch(supabase: SupabaseClient<Database>, 
 
   // Heuristic: assume tokens per scrape by stability level (minimal -> 1k, default -> 3k)
   function estCostForJob(job: ScrapingJob) {
-    const model = String(job.ai_model ?? ((job.change_frequency ?? 0) > 30 ? 'gpt-3.5-turbo' : 'gpt-4-turbo-preview'));
-    const pl = String(job.stability_level ?? job.processing_level ?? 'default');
-    const tokens = pl === 'minimal' ? 1000 : 3000;
+    const model = String(
+      job.ai_model ??
+        ((job.change_frequency ?? 0) > 30
+          ? "gpt-3.5-turbo"
+          : "gpt-4-turbo-preview"),
+    );
+    const pl = String(job.stability_level ?? job.processing_level ?? "default");
+    const tokens = pl === "minimal" ? 1000 : 3000;
     return getModelCost(model) * tokens / 1000;
   }
 
@@ -90,8 +112,10 @@ export async function getCostOptimizedBatch(supabase: SupabaseClient<Database>, 
   const mapped = await Promise.all(selected.map(async (property) => ({
     ...property,
     should_scrape: await shouldScrapeProperty(property),
-    ai_model: (property.change_frequency ?? 0) > 30 ? 'gpt-3.5-turbo' : 'gpt-4-turbo-preview',
-    processing_level: property.stability_level ?? 'default'
+    ai_model: (property.change_frequency ?? 0) > 30
+      ? "gpt-3.5-turbo"
+      : "gpt-4-turbo-preview",
+    processing_level: property.stability_level ?? "default",
   })));
 
   return mapped;
@@ -99,51 +123,73 @@ export async function getCostOptimizedBatch(supabase: SupabaseClient<Database>, 
 
 // Enhanced batch processing with frontend data transformation
 export async function getScrapingBatchWithTransformation(
-  supabase: SupabaseClient, 
+  supabase: SupabaseClient,
   limit = 100,
-  enableFrontendSync = false
-): Promise<{ jobs: ScrapingJob[], frontendProperties?: FrontendProperty[] }> {
+  enableFrontendSync = false,
+): Promise<{ jobs: ScrapingJob[]; frontendProperties?: FrontendProperty[] }> {
   const jobs = await getScrapingBatch(supabase, limit);
-  
+
   if (!enableFrontendSync) {
     return { jobs };
   }
-  
+
   try {
     // Transform scraped properties to frontend format
-    const scrapedProperties: ScrapedPropertyData[] = jobs.map(job => ({
+    const scrapedProperties: ScrapedPropertyData[] = jobs.map((job) => ({
       external_id: job.external_id,
-      property_id: String(job.property_id || job.external_id.split('_')[0] || ''),
-      unit_number: String(job.unit_number || job.external_id.split('_')[1] || '1'),
-      source: String(job.source || 'unknown'),
-      name: String(job.name || job.title || ''),
-      address: String(job.address || ''),
-      city: String(job.city || ''),
-      state: String(job.state || ''),
+      property_id: String(
+        job.property_id || job.external_id.split("_")[0] || "",
+      ),
+      unit_number: String(
+        job.unit_number || job.external_id.split("_")[1] || "1",
+      ),
+      source: String(job.source || "unknown"),
+      name: String(job.name || job.title || ""),
+      address: String(job.address || ""),
+      city: String(job.city || ""),
+      state: String(job.state || ""),
       current_price: Number(job.current_price || 0),
       bedrooms: Number(job.bedrooms || 0),
       bathrooms: Number(job.bathrooms || 1),
       square_feet: job.square_feet ? Number(job.square_feet) : undefined,
-      listing_url: String(job.listing_url || job.url || ''),
-      status: String(job.status || 'active'),
-      
+      listing_url: String(job.listing_url || job.url || ""),
+      status: String(job.status || "active"),
+
       // Optional fields
-      free_rent_concessions: job.free_rent_concessions ? String(job.free_rent_concessions) : undefined,
-      application_fee: job.application_fee ? Number(job.application_fee) : undefined,
+      free_rent_concessions: job.free_rent_concessions
+        ? String(job.free_rent_concessions)
+        : undefined,
+      application_fee: job.application_fee
+        ? Number(job.application_fee)
+        : undefined,
       admin_fee_waived: Boolean(job.admin_fee_waived),
-      admin_fee_amount: job.admin_fee_amount ? Number(job.admin_fee_amount) : undefined,
-      security_deposit: job.security_deposit ? Number(job.security_deposit) : undefined,
-      amenities: Array.isArray(job.amenities) ? job.amenities.map(String) : undefined,
-      features: Array.isArray(job.features) ? job.features.map(String) : undefined,
+      admin_fee_amount: job.admin_fee_amount
+        ? Number(job.admin_fee_amount)
+        : undefined,
+      security_deposit: job.security_deposit
+        ? Number(job.security_deposit)
+        : undefined,
+      amenities: Array.isArray(job.amenities)
+        ? job.amenities.map(String)
+        : undefined,
+      features: Array.isArray(job.features)
+        ? job.features.map(String)
+        : undefined,
       pet_policy: job.pet_policy ? String(job.pet_policy) : undefined,
       parking: job.parking ? String(job.parking) : undefined,
       latitude: job.latitude ? Number(job.latitude) : undefined,
       longitude: job.longitude ? Number(job.longitude) : undefined,
       zip_code: job.zip_code ? String(job.zip_code) : undefined,
       market_rent: job.market_rent ? Number(job.market_rent) : undefined,
-      rent_estimate_low: job.rent_estimate_low ? Number(job.rent_estimate_low) : undefined,
-      rent_estimate_high: job.rent_estimate_high ? Number(job.rent_estimate_high) : undefined,
-      days_on_market: job.days_on_market ? Number(job.days_on_market) : undefined,
+      rent_estimate_low: job.rent_estimate_low
+        ? Number(job.rent_estimate_low)
+        : undefined,
+      rent_estimate_high: job.rent_estimate_high
+        ? Number(job.rent_estimate_high)
+        : undefined,
+      days_on_market: job.days_on_market
+        ? Number(job.days_on_market)
+        : undefined,
       price_changes: job.price_changes ? Number(job.price_changes) : undefined,
       first_seen_at: job.first_seen_at ? String(job.first_seen_at) : undefined,
       last_seen_at: job.last_seen_at ? String(job.last_seen_at) : undefined,
@@ -151,12 +197,14 @@ export async function getScrapingBatchWithTransformation(
       created_at: job.created_at ? String(job.created_at) : undefined,
       updated_at: job.updated_at ? String(job.updated_at) : undefined,
     }));
-    
-    const frontendProperties = await batchTransformProperties(scrapedProperties);
-    
+
+    const frontendProperties = await batchTransformProperties(
+      scrapedProperties,
+    );
+
     return { jobs, frontendProperties };
-  } catch (error) {
-    console.error('Error transforming properties for frontend:', error);
+  } catch (_e) {
+    console.error("Error transforming properties for frontend:", error);
     return { jobs };
   }
 }
@@ -165,35 +213,43 @@ export async function getScrapingBatchWithTransformation(
 export async function syncToFrontendSchema(
   supabase: SupabaseClient,
   frontendProperties: FrontendProperty[],
-  targetTable = 'properties'
+  targetTable = "properties",
 ): Promise<{ success: number; errors: number; details: string[] }> {
   const details: string[] = [];
-  
+
   try {
-    const result = await saveTransformedProperties(supabase, frontendProperties, targetTable);
-    
-    details.push(`Successfully synced ${result.success} properties to ${targetTable}`);
+    const result = await saveTransformedProperties(
+      supabase,
+      frontendProperties,
+      targetTable,
+    );
+
+    details.push(
+      `Successfully synced ${result.success} properties to ${targetTable}`,
+    );
     if (result.errors > 0) {
       details.push(`Failed to sync ${result.errors} properties`);
     }
-    
+
     return {
       success: result.success,
       errors: result.errors,
-      details
+      details,
     };
-  } catch (error) {
+  } catch (_e) {
     const message = error instanceof Error ? error.message : String(error);
     details.push(`Error syncing to frontend schema: ${message}`);
     return {
       success: 0,
       errors: frontendProperties.length,
-      details
+      details,
     };
   }
 }
 
-export async function shouldScrapeProperty(property: ScrapingJob): Promise<boolean> {
+export async function shouldScrapeProperty(
+  property: ScrapingJob,
+): Promise<boolean> {
   // small awaited no-op to avoid 'async function has no await' lint errors
   await Promise.resolve();
 
@@ -204,7 +260,7 @@ export async function shouldScrapeProperty(property: ScrapingJob): Promise<boole
   // Smart sampling: for low-tier properties (tier >= 3) only sample ~10% weekly
   // If a property doesn't provide an explicit `tier`, derive a coarse tier from priority_score
   try {
-    const rawTier = property['tier'];
+    const rawTier = property["tier"];
     let tierNum: number | null = null;
     if (rawTier !== undefined && rawTier !== null) {
       tierNum = Number(rawTier as unknown);
@@ -220,19 +276,25 @@ export async function shouldScrapeProperty(property: ScrapingJob): Promise<boole
 
     if (tierNum >= 3) {
       // Deterministic sampling: sample ~10% weekly using external_id + weekNumber + optional seed
-      const externalId = String(property.external_id ?? '');
-  const now = new Date();
-  const weekNumber = isoWeekNumber(now);
-      const deno = (globalThis as unknown as { Deno?: { env?: { get: (k: string) => string | undefined } } }).Deno;
-      const seed = Number((deno?.env?.get('SAMPLING_SEED') ?? process.env.SAMPLING_SEED) ?? 0);
-      if (!deterministicSample(externalId, weekNumber, 0.10, seed)) return false;
+      const externalId = String(property.external_id ?? "");
+      const now = new Date();
+      const weekNumber = isoWeekNumber(now);
+      const deno = (globalThis as unknown as {
+        Deno?: { env?: { get: (k: string) => string | undefined } };
+      }).Deno;
+      const seed = Number(
+        (deno?.env?.get("SAMPLING_SEED") ?? process.env.SAMPLING_SEED) ?? 0,
+      );
+      if (!deterministicSample(externalId, weekNumber, 0.10, seed)) {
+        return false;
+      }
     }
   } catch {
     // If anything goes wrong with sampling, fall back to normal behavior
   }
   if (daysSinceLastScrape < recommended) return false;
 
-  if (property.status === 'leased' && daysSinceLastScrape < 30) return false;
+  if (property.status === "leased" && daysSinceLastScrape < 30) return false;
 
   return true;
 }
@@ -247,7 +309,12 @@ function simpleHash(str: string): number {
   return Math.abs(hash);
 }
 
-function deterministicSample(external_id: string, weekNumber: number, sampleRate: number, sampling_seed = 0): boolean {
+function deterministicSample(
+  external_id: string,
+  weekNumber: number,
+  sampleRate: number,
+  sampling_seed = 0,
+): boolean {
   const key = `${external_id}_${weekNumber}_${sampling_seed}`;
   const hash = simpleHash(key);
   return (hash % 100) < Math.round(sampleRate * 100);
@@ -260,7 +327,9 @@ function isoWeekNumber(d: Date): number {
   const dayNum = date.getUTCDay() || 7;
   date.setUTCDate(date.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  const weekNo = Math.ceil(
+    ((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
+  );
   return weekNo;
 }
 
@@ -277,7 +346,8 @@ export function calculateStabilityScore(property: ScrapingJob): number {
   // Simple heuristic: fewer price changes and longer days_on_market => more stable
   const priceChanges = Number(property.price_changes ?? 0);
   const daysOnMarket = Number(property.days_on_market ?? 9999);
-  let score = 100 - Math.min(priceChanges * 10, 50) - Math.min(daysOnMarket / 3, 50);
+  let score = 100 - Math.min(priceChanges * 10, 50) -
+    Math.min(daysOnMarket / 3, 50);
   // clamp
   if (score < 0) score = 0;
   if (score > 100) score = 100;

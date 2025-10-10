@@ -1,7 +1,7 @@
 // @ts-nocheck
-import * as process from 'node:process';
+import * as process from "node:process";
 
-jest.mock('@supabase/supabase-js', () => {
+jest.mock("@supabase/supabase-js", () => {
   return {
     createClient: () => ({
       from: () => ({
@@ -16,19 +16,21 @@ jest.mock('@supabase/supabase-js', () => {
   };
 });
 
-import SupabaseClientWrapper from '../../tools/supabaseClient';
+import SupabaseClientWrapper from "../../tools/supabaseClient.ts";
 
-test('upsertApartment returns row', async () => {
-  process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key';
+test("upsertApartment returns row", async () => {
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
   const c = new SupabaseClientWrapper();
-  const res = await c.upsertApartment({ external_id: 't1', rent_price: 1000 } as any);
+  const res = await c.upsertApartment(
+    { external_id: "t1", rent_price: 1000 } as any,
+  );
   expect(res).toBeTruthy();
-  expect((res as any).external_id).toBe('t1');
+  expect((res as any).external_id).toBe("t1");
 });
 
-test('deactivateOldListings returns count', async () => {
-  process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key';
+test("deactivateOldListings returns count", async () => {
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
   const c = new SupabaseClientWrapper();
-  const n = await c.deactivateOldListings('any', 7);
+  const n = await c.deactivateOldListings("any", 7);
   expect(n).toBe(1);
 });

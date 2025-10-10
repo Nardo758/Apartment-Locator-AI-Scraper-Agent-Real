@@ -1,12 +1,12 @@
-const { Client } = require('pg');
+const { Client } = require("pg");
 
 async function checkAllTables() {
   const client = new Client({
-    host: '127.0.0.1',
+    host: "127.0.0.1",
     port: 54322,
-    user: 'postgres',
-    password: 'postgres',
-    database: 'postgres'
+    user: "postgres",
+    password: "postgres",
+    database: "postgres",
   });
 
   try {
@@ -21,7 +21,7 @@ async function checkAllTables() {
       ORDER BY table_name;
     `);
 
-    console.log('Available tables:');
+    console.log("Available tables:");
     for (const table of tables.rows) {
       console.log(`  ${table.table_name}`);
     }
@@ -34,13 +34,12 @@ async function checkAllTables() {
       ORDER BY ordinal_position
       LIMIT 15;
     `);
-    console.log('\nScraped_properties table (first 15 columns):');
-    scrapedSchema.rows.forEach(col => {
+    console.log("\nScraped_properties table (first 15 columns):");
+    scrapedSchema.rows.forEach((col) => {
       console.log(`  ${col.column_name}: ${col.data_type}`);
     });
-
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error("Error:", error.message);
   } finally {
     await client.end();
   }

@@ -15,7 +15,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-FUNCTION_NAME="command-station"
+FUNCTION_NAME="command-center"
 PROJECT_ID="${SUPABASE_PROJECT_ID:-}"
 BASE_URL="${SUPABASE_URL:-}"
 
@@ -40,20 +40,20 @@ check_prerequisites() {
         exit 1
     fi
     
-    # Check if command-station directory exists
-    if [ ! -d "supabase/functions/command-station" ]; then
-        echo -e "${RED}❌ Command Station directory not found${NC}"
-        echo -e "   Expected: supabase/functions/command-station/"
+    # Check if command-center directory exists
+    if [ ! -d "supabase/functions/command-center" ]; then
+        echo -e "${RED}❌ Command Center directory not found${NC}"
+        echo -e "   Expected: supabase/functions/command-center/"
         exit 1
     fi
     
     # Check required files
     required_files=(
-        "supabase/functions/command-station/index.ts"
-        "supabase/functions/command-station/controller.ts"
-        "supabase/functions/command-station/dashboard.ts"
-        "supabase/functions/command-station/metrics.ts"
-        "supabase/functions/command-station/config-manager.ts"
+        "supabase/functions/command-center/index.ts"
+        "supabase/functions/command-center/controller.ts"
+        "supabase/functions/command-center/dashboard.ts"
+        "supabase/functions/command-center/metrics.ts"
+        "supabase/functions/command-center/config-manager.ts"
     )
     
     for file in "${required_files[@]}"; do

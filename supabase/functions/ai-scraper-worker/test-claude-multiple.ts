@@ -2,7 +2,7 @@
 
 /**
  * Multiple Property Test with Claude
- * 
+ *
  * Tests Claude with multiple different property types to validate
  * consistency and accuracy across various scenarios.
  */
@@ -44,8 +44,8 @@ const TEST_PROPERTIES: TestProperty[] = [
       state: "NY",
       current_price: 4500,
       bedrooms: 1,
-      bathrooms: 1
-    }
+      bathrooms: 1,
+    },
   },
   {
     id: 2,
@@ -67,8 +67,8 @@ const TEST_PROPERTIES: TestProperty[] = [
       state: "AZ",
       current_price: 1200,
       bedrooms: 2,
-      bathrooms: 1
-    }
+      bathrooms: 1,
+    },
   },
   {
     id: 3,
@@ -94,8 +94,8 @@ const TEST_PROPERTIES: TestProperty[] = [
       state: "CO",
       current_price: 2400,
       bedrooms: 3,
-      bathrooms: 2
-    }
+      bathrooms: 2,
+    },
   },
   {
     id: 4,
@@ -117,8 +117,8 @@ const TEST_PROPERTIES: TestProperty[] = [
       state: "WA",
       current_price: 1800,
       bedrooms: 0,
-      bathrooms: 1
-    }
+      bathrooms: 1,
+    },
   },
   {
     id: 5,
@@ -141,9 +141,9 @@ const TEST_PROPERTIES: TestProperty[] = [
       state: "FL",
       current_price: 3200,
       bedrooms: 1,
-      bathrooms: 1
-    }
-  }
+      bathrooms: 1,
+    },
+  },
 ];
 
 async function testClaudeWithProperty(property: TestProperty): Promise<{
@@ -159,12 +159,7 @@ Extract the following fields from HTML and return ONLY valid JSON:
 - name, address, city, state (2 letters)
 - current_price (number only, no symbols)
 - bedrooms, bathrooms (numbers)
-- free_rent_concessions (text description)
-- application_fee (number or null)
-- admin_fee_waived (boolean)
-- admin_fee_amount (number or null)
-
-Return valid JSON. Use null for missing fields.`;
+- free_rent_concessions (text description)`;
 
   const userMessage = `Extract apartment data from this rental website HTML:\n\n${property.html}`;
 
@@ -176,15 +171,15 @@ Return valid JSON. Use null for missing fields.`;
       headers: {
         "Content-Type": "application/json",
         "x-api-key": Deno.env.get("ANTHROPIC_API_KEY")!,
-        "anthropic-version": "2023-06-01"
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
         model: "claude-3-haiku-20240307",
         max_tokens: 1000,
         temperature: 0.1,
         system: systemPrompt,
-        messages: [{ role: "user", content: userMessage }]
-      })
+        messages: [{ role: "user", content: userMessage }],
+      }),
     });
 
     const duration = Date.now() - startTime;
@@ -196,45 +191,45 @@ Return valid JSON. Use null for missing fields.`;
         cost: 0,
         duration,
         tokens: 0,
-        errors: [`HTTP ${response.status}: ${await response.text()}`]
+        errors: [`HTTP ${response.status}: ${await response.text()}`],
       };
     }
 
     const result = await response.json();
     const content = result.content?.[0]?.text || "";
-    const usage = result.usage;
-    const tokens = usage.input_tokens + usage.output_tokens;
-    const cost = ((usage.input_tokens * 0.80) + (usage.output_tokens * 4.00)) / 1000000;
+    const usage = result.usage || { input_tokens: 0, output_tokens: 0 };
+    const tokens = (usage.input_tokens || 0) + (usage.output_tokens || 0);
+    const cost = ((usage.input_tokens || 0) * 0.8 + (usage.output_tokens || 0) * 4.0) / 1_000_000;
 
     // Parse JSON
     let parsed: any;
     try {
       parsed = JSON.parse(content);
-    } catch (error) {
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
       return {
         success: false,
         accuracy: 0,
         cost,
         duration,
         tokens,
-        errors: [`JSON parse error: ${error.message}`]
+        errors: [`JSON parse error: ${msg}`],
       };
     }
 
-    // Check accuracy
     const validations = [
-      { field: 'name', expected: property.expected.name, actual: parsed.name },
-      { field: 'city', expected: property.expected.city, actual: parsed.city },
-      { field: 'state', expected: property.expected.state, actual: parsed.state },
-      { field: 'current_price', expected: property.expected.current_price, actual: parsed.current_price },
-      { field: 'bedrooms', expected: property.expected.bedrooms, actual: parsed.bedrooms },
-      { field: 'bathrooms', expected: property.expected.bathrooms, actual: parsed.bathrooms }
+      { field: "name", expected: property.expected.name, actual: parsed.name },
+      { field: "city", expected: property.expected.city, actual: parsed.city },
+      { field: "state", expected: property.expected.state, actual: parsed.state },
+      { field: "current_price", expected: property.expected.current_price, actual: parsed.current_price },
+      { field: "bedrooms", expected: property.expected.bedrooms, actual: parsed.bedrooms },
+      { field: "bathrooms", expected: property.expected.bathrooms, actual: parsed.bathrooms },
     ];
 
     let correctFields = 0;
     const errors: string[] = [];
 
-    validations.forEach(validation => {
+    validations.forEach((validation) => {
       if (validation.actual == validation.expected) {
         correctFields++;
       } else {
@@ -250,17 +245,17 @@ Return valid JSON. Use null for missing fields.`;
       cost,
       duration,
       tokens,
-      errors
+      errors,
     };
-
-  } catch (error) {
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
     return {
       success: false,
       accuracy: 0,
       cost: 0,
       duration: Date.now() - startTime,
       tokens: 0,
-      errors: [error.message]
+      errors: [msg],
     };
   }
 }
@@ -278,53 +273,75 @@ async function runMultiplePropertyTest(): Promise<void> {
 
   for (const property of TEST_PROPERTIES) {
     console.log(`🔄 Testing Property ${property.id}: ${property.type}`);
-    
+
     const result = await testClaudeWithProperty(property);
     results.push({ property, result });
-    
+
     totalCost += result.cost;
     totalTokens += result.tokens;
     totalDuration += result.duration;
 
     if (result.success) {
-      console.log(`   ✅ Success - ${result.accuracy.toFixed(1)}% accuracy (${result.duration}ms, $${result.cost.toFixed(6)})`);
+      console.log(
+        `   ✅ Success - ${
+          result.accuracy.toFixed(1)
+        }% accuracy (${result.duration}ms, $${result.cost.toFixed(6)})`,
+      );
       if (result.errors.length > 0) {
-        result.errors.forEach(error => console.log(`   ⚠️  ${error}`));
+        result.errors.forEach((error) => console.log(`   ⚠️  ${error}`));
       }
     } else {
-      console.log(`   ❌ Failed - ${result.errors.join(', ')}`);
+      console.log(`   ❌ Failed - ${result.errors.join(", ")}`);
     }
-    
+
     // Small delay between requests
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
   console.log();
   console.log("📊 COMPREHENSIVE TEST RESULTS");
   console.log("=============================");
 
-  const successfulTests = results.filter(r => r.result.success);
-  const averageAccuracy = successfulTests.length > 0 ? 
-    successfulTests.reduce((sum, r) => sum + r.result.accuracy, 0) / successfulTests.length : 0;
+  const successfulTests = results.filter((r) => r.result.success);
+  const averageAccuracy = successfulTests.length > 0
+    ? successfulTests.reduce((sum, r) => sum + r.result.accuracy, 0) /
+      successfulTests.length
+    : 0;
 
   console.log(`Total Properties Tested: ${results.length}`);
-  console.log(`Successful: ${successfulTests.length}/${results.length} (${(successfulTests.length/results.length*100).toFixed(1)}%)`);
+  console.log(
+    `Successful: ${successfulTests.length}/${results.length} (${
+      (successfulTests.length / results.length * 100).toFixed(1)
+    }%)`,
+  );
   console.log(`Average Accuracy: ${averageAccuracy.toFixed(1)}%`);
   console.log(`Total Cost: $${totalCost.toFixed(6)}`);
   console.log(`Total Tokens: ${totalTokens.toLocaleString()}`);
-  console.log(`Average Duration: ${(totalDuration/results.length).toFixed(0)}ms per property`);
+  console.log(
+    `Average Duration: ${
+      (totalDuration / results.length).toFixed(0)
+    }ms per property`,
+  );
   console.log();
 
   console.log("💰 Cost Projections:");
-  console.log(`   Cost per property: $${(totalCost/results.length).toFixed(6)}`);
-  console.log(`   100 properties: $${(totalCost/results.length*100).toFixed(4)}`);
-  console.log(`   1,000 properties: $${(totalCost/results.length*1000).toFixed(2)}`);
-  console.log(`   10,000 properties: $${(totalCost/results.length*10000).toFixed(2)}`);
+  console.log(
+    `   Cost per property: $${(totalCost / results.length).toFixed(6)}`,
+  );
+  console.log(
+    `   100 properties: $${(totalCost / results.length * 100).toFixed(4)}`,
+  );
+  console.log(
+    `   1,000 properties: $${(totalCost / results.length * 1000).toFixed(2)}`,
+  );
+  console.log(
+    `   10,000 properties: $${(totalCost / results.length * 10000).toFixed(2)}`,
+  );
   console.log();
 
   console.log("🏠 Property Type Performance:");
   results.forEach(({ property, result }) => {
-    const status = result.success ? `${result.accuracy.toFixed(1)}%` : 'FAILED';
+    const status = result.success ? `${result.accuracy.toFixed(1)}%` : "FAILED";
     console.log(`   ${property.type}: ${status}`);
   });
 
@@ -349,6 +366,6 @@ if (import.meta.main) {
     console.error("❌ ANTHROPIC_API_KEY not set");
     Deno.exit(1);
   }
-  
+
   await runMultiplePropertyTest();
 }

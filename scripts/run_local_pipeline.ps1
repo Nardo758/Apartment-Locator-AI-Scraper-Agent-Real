@@ -24,6 +24,34 @@ param(
 
 Set-StrictMode -Version Latest
 
+# Normalize accidental boolean positional bindings:
+# If the user calls the script like: .\scripts\run_local_pipeline.ps1 -StartFunctionInBackground $true
+# PowerShell may treat the $true as a positional argument and bind it to $PostgresPort. Detect that and normalize.
+if ($PostgresPort -is [bool]) {
+    $detected = [bool]$PostgresPort
+    Write-Warning "Detected boolean value passed for the first positional parameter; assuming you intended -StartFunctionInBackground. Normalizing PostgresPort to default 54331 and StartFunctionInBackground=$detected"
+    $StartFunctionInBackground = $detected
+    $PostgresPort = 54331
+}
+if ($FunctionsPort -is [bool]) {
+    $detected = [bool]$FunctionsPort
+    Write-Warning "Detected boolean value passed for the second positional parameter; assuming you intended -StartFunctionInBackground. Normalizing FunctionsPort to default 54321 and StartFunctionInBackground=$detected"
+    $StartFunctionInBackground = $detected
+    $FunctionsPort = 54321
+}
+
+# If the boolean was converted to an integer (1) by positional binding into the typed int parameter,
+# detect the pattern: PostgresPort==1 and StartFunctionInBackground explicitly requested.
+# Normalize back to defaults so we don't try to connect to port 1.
+if (($PostgresPort -eq 1) -and ($StartFunctionInBackground -eq $true) -and $PSBoundParameters.ContainsKey('StartFunctionInBackground')) {
+    Write-Warning "Detected numeric 1 in PostgresPort while StartFunctionInBackground was explicitly set — normalizing PostgresPort to default 54331"
+    $PostgresPort = 54331
+}
+if (($FunctionsPort -eq 1) -and ($StartFunctionInBackground -eq $true) -and $PSBoundParameters.ContainsKey('StartFunctionInBackground')) {
+    Write-Warning "Detected numeric 1 in FunctionsPort while StartFunctionInBackground was explicitly set — normalizing FunctionsPort to default 54321"
+    $FunctionsPort = 54321
+}
+
 Write-Host "Starting local pipeline: postgres on port $PostgresPort, functions port $FunctionsPort"
 
 # 1) Start Postgres via docker-compose
@@ -56,8 +84,9 @@ $env:FUNCTIONS_PORT = "${FunctionsPort}"
 Write-Host "Exported POSTGRES_URI and FUNCTIONS_PORT for this session."
 
 # 4) Apply migrations
-Write-Host "Applying migrations using scripts/apply_migrations_to_staging.py"
+Write-Host "Applying migrations using scripts/apply_migrations_to_staging.py (--yes to avoid interactive prompt)"
 try {
+    # Pass --yes so the script does not prompt interactively when run from this helper
     python scripts/apply_migrations_to_staging.py --yes
 } catch {
     Write-Warning "Applying migrations failed. Check that Python is available and the script exists."
@@ -67,21 +96,20 @@ try {
 # 5) Start the Deno function (background or foreground depending on flag)
 $functionPath = 'supabase/functions/claude-queue-builder/index.ts'
 if ($StartFunctionInBackground) {
-    Write-Host "Starting Deno function in background (FUNCTIONS_PORT=${FunctionsPort}) using Start-Job so env vars are explicitly set in the child runspace."
-    # Capture current service key so the background job can set it explicitly in its environment
+    Write-Host "Starting Deno function in background (FUNCTIONS_PORT=${FunctionsPort}) using Start-Process so we get a real OS process. PID will be stored in .run_local_pipeline_deno.pid"
+    # Capture current service key so the child process can inherit it
     $serviceKey = $env:SUPABASE_SERVICE_ROLE_KEY
-    $funcPort = "${FunctionsPort}"
+    $env:FUNCTIONS_PORT = "${FunctionsPort}"
     $fPath = $functionPath
-    # Start a background PowerShell job that sets the env vars and runs deno. This ensures the child process sees the service key.
-    $job = Start-Job -ScriptBlock {
-        param($skey, $port, $path)
-        $env:SUPABASE_SERVICE_ROLE_KEY = $skey
-        $env:FUNCTIONS_PORT = $port
-        # Run deno; this will block inside the job until stopped.
-        deno run -A --unstable $path
-    } -ArgumentList $serviceKey, $funcPort, $fPath
+    # Start Deno via Start-Process. This creates a real OS process we can Stop-Process later.
+    $startInfo = Start-Process -FilePath deno -ArgumentList @('run','-A','--unstable',$fPath) -PassThru
     Start-Sleep -Seconds 2
-    Write-Host "Deno started as background job (Id=$($job.Id)). Use Get-Job and Receive-Job to inspect output or Stop-Job to stop it." 
+    if ($startInfo -and $startInfo.Id) {
+        $startInfo.Id | Out-File -FilePath .run_local_pipeline_deno.pid -Encoding ascii
+        Write-Host "Deno started as process Id=$($startInfo.Id). PID written to .run_local_pipeline_deno.pid"
+    } else {
+        Write-Warning "Failed to start Deno as a process. Consider running deno manually (see README)."
+    }
 } else {
     Write-Host "Starting Deno function in foreground (will block this shell). Run with -StartFunctionInBackground to run it detached."
     $env:FUNCTIONS_PORT = "${FunctionsPort}"
@@ -98,3 +126,4 @@ try {
 }
 
 Write-Host "Local pipeline complete. If you started Deno in background, stop it manually or run 'Get-Process deno | Stop-Process'."
+Write-Host "To stop the background Deno process started by this helper, run: if (Test-Path .run_local_pipeline_deno.pid) { Get-Content .run_local_pipeline_deno.pid | ForEach-Object { Stop-Process -Id ([int]$_) -ErrorAction SilentlyContinue } ; Remove-Item .run_local_pipeline_deno.pid }"

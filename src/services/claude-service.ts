@@ -1,4 +1,5 @@
-import { Anthropic } from '@anthropic-ai/sdk';
+import { Anthropic } from "@anthropic-ai/sdk";
+import process from "node:process";
 
 export interface PropertyIntelligence {
   concessions: string[];
@@ -29,43 +30,64 @@ export class ClaudeService {
   private anthropic: Anthropic;
 
   constructor() {
-    const deno = (globalThis as unknown as { Deno?: { env?: { get: (k: string) => string | undefined } } }).Deno;
-    const apiKey = deno?.env?.get('ANTHROPIC_API_KEY') ?? process.env.ANTHROPIC_API_KEY;
+    const deno = (globalThis as unknown as {
+      Deno?: { env?: { get: (k: string) => string | undefined } };
+    }).Deno;
+    const apiKey = deno?.env?.get("ANTHROPIC_API_KEY") ??
+      process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-      throw new Error('ANTHROPIC_API_KEY is required');
+      throw new Error("ANTHROPIC_API_KEY is required");
     }
     this.anthropic = new Anthropic({ apiKey });
   }
 
-  async analyzeProperty(url: string, htmlContent: string, propertyName: string): Promise<ClaudeAnalysisResult> {
+  async analyzeProperty(
+    url: string,
+    htmlContent: string,
+    propertyName: string,
+  ): Promise<ClaudeAnalysisResult> {
     try {
-      const prompt = this.buildPropertyAnalysisPrompt(url, htmlContent, propertyName);
-      
+      const prompt = this.buildPropertyAnalysisPrompt(
+        url,
+        htmlContent,
+        propertyName,
+      );
+
       const response = await this.anthropic.messages.create({
-        model: 'claude-3-haiku-20240307', // Cost-effective for initial testing
+        model: "claude-3-haiku-20240307", // Cost-effective for initial testing
         max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: "user", content: prompt }],
       });
 
-      const firstBlock = response.content[0] as unknown as { type?: string; text?: string } | undefined;
-      const text = firstBlock && typeof firstBlock === 'object' && 'text' in firstBlock ? (firstBlock.text as string | undefined) : undefined;
+      const firstBlock = response.content[0] as unknown as {
+        type?: string;
+        text?: string;
+      } | undefined;
+      const text =
+        firstBlock && typeof firstBlock === "object" && "text" in firstBlock
+          ? (firstBlock.text as string | undefined)
+          : undefined;
       if (text) {
-        console.log('Claude raw response:', text);
+        console.log("Claude raw response:", text);
       }
-      const intelligence = this.parseClaudeResponse(text ?? '');
+      const intelligence = this.parseClaudeResponse(text ?? "");
       return { success: true, data: intelligence };
-      
-    } catch (error) {
-      console.error('Claude analysis error:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : String(error),
-        data: this.getDefaultResponse() 
+    } catch (e) {
+      // Narrow the unknown error and log safely
+      console.error("Claude analysis error:", e instanceof Error ? e.message : String(e));
+      return {
+        success: false,
+        error: e instanceof Error ? e.message : String(e),
+        data: this.getDefaultResponse(),
       };
     }
   }
 
-  private buildPropertyAnalysisPrompt(url: string, htmlContent: string, propertyName: string): string {
+  private buildPropertyAnalysisPrompt(
+    url: string,
+    htmlContent: string,
+    propertyName: string,
+  ): string {
     return `CRITICAL: You are analyzing data DIRECTLY from the property's official website. This is the PRIMARY source and should be trusted over any third-party data.
 
 PROPERTY: ${propertyName}
@@ -131,17 +153,17 @@ IMPORTANT: If concessions or free rent are mentioned ANYWHERE in the content, th
   private parseClaudeResponse(responseText: string): PropertyIntelligence {
     try {
       // Clean the response and extract JSON
-      const cleaned = responseText.replace(/```json|```/g, '').trim();
+      const cleaned = responseText.replace(/```json|```/g, "").trim();
       const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-      
+
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
         return this.validateIntelData(parsed);
       }
-      
-      throw new Error('No JSON found in Claude response');
-    } catch (error) {
-      console.error('JSON parsing error:', error);
+
+      throw new Error("No JSON found in Claude response");
+    } catch (e) {
+      console.error("JSON parsing error:", e instanceof Error ? e.message : String(e));
       return this.getDefaultResponse();
     }
   }
@@ -150,21 +172,25 @@ IMPORTANT: If concessions or free rent are mentioned ANYWHERE in the content, th
     // Ensure required fields with defaults
     return {
       concessions: Array.isArray(data.concessions) ? data.concessions : [],
-      free_rent_offers: Array.isArray(data.free_rent_offers) ? data.free_rent_offers : [],
-      base_rent_by_unit: typeof data.base_rent_by_unit === 'object' ? data.base_rent_by_unit : {},
-      fees: typeof data.fees === 'object' ? data.fees : {},
+      free_rent_offers: Array.isArray(data.free_rent_offers)
+        ? data.free_rent_offers
+        : [],
+      base_rent_by_unit: typeof data.base_rent_by_unit === "object"
+        ? data.base_rent_by_unit
+        : {},
+      fees: typeof data.fees === "object" ? data.fees : {},
       year_built: data.year_built || null,
       unit_count: data.unit_count || null,
-      property_type: data.property_type || 'unknown',
+      property_type: data.property_type || "unknown",
       amenities: Array.isArray(data.amenities) ? data.amenities : [],
-      neighborhood: data.neighborhood || 'unknown',
-      building_type: data.building_type || 'unknown',
-      transit_access: data.transit_access || 'unknown',
+      neighborhood: data.neighborhood || "unknown",
+      building_type: data.building_type || "unknown",
+      transit_access: data.transit_access || "unknown",
       walk_score: data.walk_score || null,
       confidence_score: data.confidence_score || 0,
       researched_at: new Date().toISOString(),
-      research_source: 'claude',
-      data_source: data.data_source || 'property_website'
+      research_source: "claude",
+      data_source: data.data_source || "property_website",
     };
   }
 
@@ -176,16 +202,16 @@ IMPORTANT: If concessions or free rent are mentioned ANYWHERE in the content, th
       fees: {},
       year_built: null,
       unit_count: null,
-      property_type: 'unknown',
+      property_type: "unknown",
       amenities: [],
-      neighborhood: 'unknown',
-      building_type: 'unknown',
-      transit_access: 'unknown',
+      neighborhood: "unknown",
+      building_type: "unknown",
+      transit_access: "unknown",
       walk_score: null,
       confidence_score: 0,
       researched_at: new Date().toISOString(),
-      research_source: 'claude_fallback',
-      data_source: 'property_website'
+      research_source: "claude_fallback",
+      data_source: "property_website",
     };
   }
 }

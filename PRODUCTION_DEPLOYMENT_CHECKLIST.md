@@ -20,7 +20,7 @@
 ## Function Deployment
 
 - [ ] `ai-scraper-worker` deployed with frontend integration
-- [ ] `command-station` deployed and accessible
+- [ ] `command-center` deployed and accessible
 - [ ] `scraper-orchestrator` updated with new pipeline
 - [ ] All functions have required environment variables
 
@@ -82,6 +82,6 @@
 
 ---
 
-**Date**: ___________  
-**Deployed by**: ___________  
+**Date**: ___________\
+**Deployed by**: ___________\
 **Approved by**: ___________

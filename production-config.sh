@@ -280,10 +280,10 @@ create_deployment_checklist() {
 - [ ] Batch size configured: `BATCH_SIZE=50`
 - [ ] Cost limits set: `DAILY_COST_LIMIT=50`
 
-## Function Deployment
+# Function Deployment
 
-- [ ] `ai-scraper-worker` deployed with frontend integration
-- [ ] `command-station` deployed and accessible
+# [ ] `ai-scraper-worker` deployed with frontend integration
+- [ ] `command-center` deployed and accessible
 - [ ] `scraper-orchestrator` updated with new pipeline
 - [ ] All functions have required environment variables
 
@@ -388,12 +388,12 @@ fi
 # Deploy functions
 echo "📡 Deploying functions..."
 supabase functions deploy ai-scraper-worker --no-verify-jwt
-supabase functions deploy command-station --no-verify-jwt
+supabase functions deploy command-center --no-verify-jwt
 supabase functions deploy scraper-orchestrator --no-verify-jwt
 
 # Test deployment
 echo "🧪 Testing deployment..."
-curl -f "https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-station/health" || {
+curl -f "https://$(supabase status | grep 'API URL' | awk '{print $3}' | sed 's|https://||')/functions/v1/command-center/health" || {
     echo "❌ Health check failed"
     exit 1
 }

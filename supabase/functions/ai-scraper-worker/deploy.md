@@ -1,9 +1,11 @@
 # 🚀 Production Deployment Guide
+
 ## Claude-Powered AI Apartment Scraper
 
 ### 📋 Pre-Deployment Checklist
 
 **✅ Completed:**
+
 - [x] Claude API integration tested and working (100% success rate)
 - [x] Cost analysis completed ($0.0007 per property)
 - [x] Performance validated (93.3% accuracy, 1.08s response time)
@@ -11,6 +13,7 @@
 - [x] Error handling and validation implemented
 
 **🔧 Production Requirements:**
+
 - [ ] Production Supabase project set up
 - [ ] Claude API key with sufficient credits
 - [ ] Database tables created (`apartments`, `scraping_costs`)
@@ -39,12 +42,12 @@
 
 ## 📊 Performance Specifications
 
-| Metric | Production Target | Achieved |
-|--------|------------------|----------|
-| Success Rate | >95% | **100%** ✅ |
-| Accuracy | >90% | **93.3%** ✅ |
-| Response Time | <3s | **1.08s** ✅ |
-| Cost per Property | <$0.01 | **$0.0007** ✅ |
+| Metric            | Production Target | Achieved       |
+| ----------------- | ----------------- | -------------- |
+| Success Rate      | >95%              | **100%** ✅    |
+| Accuracy          | >90%              | **93.3%** ✅   |
+| Response Time     | <3s               | **1.08s** ✅   |
+| Cost per Property | <$0.01            | **$0.0007** ✅ |
 
 ---
 
@@ -151,11 +154,11 @@ $$ LANGUAGE plpgsql;
 
 ### Traffic Projections
 
-| Daily Volume | Monthly Cost | Recommended Setup |
-|--------------|--------------|-------------------|
-| 1,000 properties | $22 | Single instance |
-| 10,000 properties | $216 | Load balancing |
-| 100,000 properties | $2,160 | Auto-scaling |
+| Daily Volume       | Monthly Cost | Recommended Setup |
+| ------------------ | ------------ | ----------------- |
+| 1,000 properties   | $22          | Single instance   |
+| 10,000 properties  | $216         | Load balancing    |
+| 100,000 properties | $2,160       | Auto-scaling      |
 
 ### Performance Optimization
 
@@ -166,7 +169,7 @@ const PRODUCTION_CONFIG = {
   requestTimeout: 30000,
   retryAttempts: 3,
   batchSize: 5,
-  rateLimitDelay: 1000
+  rateLimitDelay: 1000,
 };
 ```
 
@@ -187,10 +190,10 @@ const PRODUCTION_CONFIG = {
 ```javascript
 // Alert thresholds
 const ALERTS = {
-  successRate: 0.95,      // Alert if <95%
-  avgResponseTime: 3000,   // Alert if >3s
-  dailyCost: 50.00,       // Alert if >$50/day
-  errorRate: 0.05         // Alert if >5% errors
+  successRate: 0.95, // Alert if <95%
+  avgResponseTime: 3000, // Alert if >3s
+  dailyCost: 50.00, // Alert if >$50/day
+  errorRate: 0.05, // Alert if >5% errors
 };
 ```
 
@@ -237,21 +240,24 @@ curl -X POST https://your-project.supabase.co/functions/v1/ai-scraper-worker \
 ### Single Property Scraping
 
 ```javascript
-const response = await fetch('https://your-project.supabase.co/functions/v1/ai-scraper-worker', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json'
+const response = await fetch(
+  "https://your-project.supabase.co/functions/v1/ai-scraper-worker",
+  {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      source: "apartments.com",
+      cleanHtml: propertyHtml,
+      external_id: `apt-${propertyId}`,
+      source_url: propertyUrl,
+      source_name: "apartments.com",
+      scraping_job_id: jobId,
+    }),
   },
-  body: JSON.stringify({
-    source: 'apartments.com',
-    cleanHtml: propertyHtml,
-    external_id: `apt-${propertyId}`,
-    source_url: propertyUrl,
-    source_name: 'apartments.com',
-    scraping_job_id: jobId
-  })
-});
+);
 
 const result = await response.json();
 ```
@@ -260,10 +266,10 @@ const result = await response.json();
 
 ```javascript
 async function processBatch(properties) {
-  const promises = properties.map(property => 
-    scrapeProperty(property).catch(err => ({ error: err.message }))
+  const promises = properties.map((property) =>
+    scrapeProperty(property).catch((err) => ({ error: err.message }))
   );
-  
+
   const results = await Promise.allSettled(promises);
   return results;
 }
@@ -316,10 +322,10 @@ supabase secrets set VARIABLE_NAME=new_value
 
 Your Claude-powered AI apartment scraper is now ready for production use with:
 
-✅ **Ultra-low costs** ($0.0007 per property)  
-✅ **High accuracy** (93.3% average)  
-✅ **Fast processing** (1.08s response time)  
-✅ **100% reliability** (no failed API calls)  
-✅ **Production-grade monitoring**  
+✅ **Ultra-low costs** ($0.0007 per property)\
+✅ **High accuracy** (93.3% average)\
+✅ **Fast processing** (1.08s response time)\
+✅ **100% reliability** (no failed API calls)\
+✅ **Production-grade monitoring**
 
 **Ready to revolutionize apartment data extraction!** 🚀
