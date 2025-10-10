@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
+import type { Database } from '../types/database.types.ts';
 import type { ScrapingJob } from './orchestrator.ts';
 import { syncToFrontendSchema } from './orchestrator.ts';
 import { transformScrapedToFrontendFormat } from './data-transformer.ts';

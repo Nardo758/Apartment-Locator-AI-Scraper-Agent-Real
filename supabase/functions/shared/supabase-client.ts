@@ -11,3 +11,13 @@ export function createTypedClient(url: string, key: string): SupabaseClient<Data
 }
 
 export default createTypedClient;
+export function getServiceClient(): SupabaseClient<Database> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseKey)
+}

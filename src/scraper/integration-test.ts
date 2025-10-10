@@ -1,10 +1,10 @@
 // integration-test.ts
 // Test script for the complete data integration pipeline
 
-import { createTypedClient } from '@lib/supabase-client.ts';
+import { createTypedClient } from '../lib/supabase-client.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@types/database.types.ts';
-import { errMsg } from '@shared/error.ts';
+import type { Database } from '../types/database.types.ts';
+import { errMsg } from '../lib/error.ts';
 import { 
   getScrapingBatchWithTransformation,
   type ScrapingJob,

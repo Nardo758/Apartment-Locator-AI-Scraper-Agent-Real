@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types.ts';
-import { errMsg } from '@shared/error.ts';
+import { errMsg } from '../lib/error.ts';
 import * as market from './market.ts';
 import { extractAmenities } from './amenities.ts';
 import { classifyPropertyType } from './propertyType.ts';
@@ -30,14 +30,13 @@ export function detectSignificantChanges(
 async function logScrapingActivity(supabase: SupabaseClient<Database>, externalId: string, event: string, payload: Record<string, unknown>) {
   // best-effort logging; swallow errors
   try {
-    // Use the generated types: 'scraping_logs' has columns (level, message, meta, job_id, created_at, id)
-    const row: import('../../types/supabase').TablesInsert<'scraping_logs'> = {
+    const row: Record<string, unknown> = {
       level: 'info',
       message: event,
-      meta: payload as unknown as import('../../types/supabase').Json,
+      meta: payload,
       created_at: new Date().toISOString(),
     };
-    await supabase.from('scraping_logs').insert(row);
+    await (supabase as any).from('scraping_logs').insert(row as any);
   } catch (_err) {
     // ignore logging failures
   }
@@ -45,7 +44,7 @@ async function logScrapingActivity(supabase: SupabaseClient<Database>, externalI
 
 async function logSignificantChanges(supabase: SupabaseClient<Database>, externalId: string, changes: unknown[]) {
   try {
-    await supabase.from("scraping_change_logs").insert({
+    await (supabase as any).from("scraping_change_logs").insert({
       external_id: externalId,
       changes: JSON.stringify(changes),
       created_at: new Date().toISOString(),
@@ -62,9 +61,9 @@ async function logSignificantChanges(supabase: SupabaseClient<Database>, externa
 export async function updatePropertyWithHistory(supabase: SupabaseClient<Database>, externalId: string, payload: Record<string, unknown>) {
   // Attempt RPC first
   try {
-    const { data, error } = await supabase.rpc('rpc_update_property_with_history', {
+    const { data, error } = await (supabase as any).rpc('rpc_update_property_with_history', {
       p_external_id: externalId,
-      p_payload: payload as unknown as import('../../types/supabase').Json,
+      p_payload: payload as unknown as Record<string, unknown>,
     });
     if (error) throw error;
     return data;
@@ -76,7 +75,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
     delete (updatePayload as Record<string, unknown>)["id"];
 
     type CurrentRow = { current_price?: number | null } | null;
-    const { data: currentRow } = await supabase.from("scraped_properties")
+    const { data: currentRow } = await (supabase as any).from("scraped_properties")
       .select("current_price").eq("external_id", externalId).maybeSingle() as {
         data: CurrentRow;
       };
@@ -85,7 +84,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
         ? currentRow.current_price
         : null;
 
-    const { error: upErr } = await supabase.from("scraped_properties").update(
+    const { error: upErr } = await (supabase as any).from("scraped_properties").update(
       updatePayload,
     ).eq("external_id", externalId);
     if (upErr) throw upErr;
@@ -102,7 +101,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
       newPriceNum !== null && oldPriceNum !== null &&
       newPriceNum !== oldPriceNum
     ) {
-      await supabase.from("price_history").insert({
+      await (supabase as any).from("price_history").insert({
         external_id: externalId,
         price: newPriceNum,
         change_type: newPriceNum > oldPriceNum ? "increased" : "decreased",

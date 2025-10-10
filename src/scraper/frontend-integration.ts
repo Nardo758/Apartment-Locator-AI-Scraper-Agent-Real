@@ -44,7 +44,12 @@ export class ScraperFrontendIntegration {
   private supabase: SupabaseClient<Database>;
 
   constructor() {
-    this.supabase = createTypedClient();
+    const url = (globalThis as any).Deno?.env?.get?.('SUPABASE_URL') || ''
+    const key = (globalThis as any).Deno?.env?.get?.('SUPABASE_SERVICE_ROLE_KEY') || (globalThis as any).Deno?.env?.get?.('SUPABASE_ANON_KEY') || ''
+    if (!url || !key) {
+      throw new Error('Supabase configuration missing for frontend integration')
+    }
+    this.supabase = createTypedClient(url, key)
   }
 
   /**
