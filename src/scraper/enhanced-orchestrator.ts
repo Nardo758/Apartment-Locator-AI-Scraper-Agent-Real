@@ -2,10 +2,10 @@
 // src/scraper/enhanced-orchestrator.ts
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
-import { getModelCost } from './costs';
-import { scraperFrontendIntegration } from './frontend-integration';
-import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
+import type { Database } from '../types/database.types.ts';
+import { getModelCost } from './costs.ts';
+import { scraperFrontendIntegration } from './frontend-integration.ts';
+import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend.ts';
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;

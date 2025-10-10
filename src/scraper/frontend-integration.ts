@@ -1,12 +1,12 @@
 // Scraper Frontend Integration
 // src/scraper/frontend-integration.ts
 
-import { frontendDataService } from '@services/frontend-data-service.ts';
+import { frontendDataService } from '../services/frontend-data-service.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../types/database.types.ts';
 import { createTypedClient } from '../lib/supabase-client.ts';
 import typedUpsert from '../lib/typed-upsert.ts';
-import { errMsg } from '../shared/error.ts';
+import { errMsg } from '../lib/error.ts';
 
 interface ScraperResult {
   success: boolean;
@@ -16,7 +16,7 @@ interface ScraperResult {
   metadata: Record<string, unknown>;
 }
 
-type LocalScrapedProperty = SharedScrapedProperty & {
+interface LocalScrapedProperty {
   id?: string;
   external_id?: string;
   name?: string;
@@ -24,7 +24,21 @@ type LocalScrapedProperty = SharedScrapedProperty & {
   bedrooms?: number;
   square_feet?: number;
   free_rent_concessions?: unknown;
-};
+  unit_number?: string;
+  unit?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  price?: number;
+  rent?: number;
+  application_fee?: number;
+  admin_fee_waived?: boolean;
+  admin_fee?: number;
+  security_deposit?: number;
+  url?: string;
+  listing_url?: string;
+  amenities?: string[];
+}
 
 export class ScraperFrontendIntegration {
   private supabase: SupabaseClient<Database>;
@@ -131,7 +145,7 @@ export class ScraperFrontendIntegration {
           'scraped_properties',
           scrapedProperty,
           { onConflict: 'external_id', ignoreDuplicates: false }
-        ).select().single();
+        );
 
         if (error) {
           console.error('Error upserting scraped property:', error);
