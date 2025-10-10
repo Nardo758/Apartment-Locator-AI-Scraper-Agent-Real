@@ -77,20 +77,20 @@ export const validationFailByReason = wrapCounter(
   },
 );
 
-export function getMetrics(): Promise<string> {
-  // Try to delegate to prom-client if available, otherwise synthesize minimal metrics output
+export async function getMetrics(): Promise<string> {
+  // Prefer prom-client if available and non-empty; otherwise synthesize from local counters
   try {
-    if (
-      promClient && promClient.register &&
-      typeof (promClient.register.metrics) === "function"
-    ) {
-      const result = promClient.register.metrics();
-      return result instanceof Promise
-        ? result
-        : Promise.resolve(String(result));
+    // @ts-ignore
+    const hasRegister = !!(promClient && promClient.register && typeof promClient.register.metrics === 'function');
+    if (hasRegister) {
+      // @ts-ignore
+      const text: string = await promClient.register.metrics();
+      if (text && text.trim().length > 0) {
+        return text;
+      }
     }
-  } catch (_e) {
-    // fall through to synthesize
+  } catch {
+    // ignore and fall back to synthesized output
   }
 
   let out = "";
@@ -99,7 +99,7 @@ export function getMetrics(): Promise<string> {
   for (const r of Object.keys(failByReasonMap)) {
     out += `validation_fail_by_reason{reason="${r}"} ${failByReasonMap[r]}\n`;
   }
-  return Promise.resolve(out);
+  return out;
 }
 
 // @ts-ignore: prom-client default export may be untyped in this runtime/test shim

@@ -1,6 +1,7 @@
-import { createTypedClient } from "../lib/supabase-client.ts";
-import * as process from "node:process";
-import type { Apartment } from "../types/index.ts";
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '../../types/supabase.ts'
+import * as process from 'node:process'
+import type { Apartment } from '../types'
 
 // Minimal supabase-like interface for the methods used by SearchService
 interface QueryBuilder {
@@ -18,15 +19,11 @@ interface QueryBuilder {
   >;
 }
 
-interface SupabaseLike {
-  from: (table: string) => QueryBuilder;
-}
+type SupabaseLike = Pick<SupabaseClient<Database>, 'from'>
 
-const SUPABASE_URL = process.env.SUPABASE_URL ||
-  "https://jdymvpasjsdbryatscux.supabase.co";
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.SUPABASE_ANON_KEY || "test-key";
-const supabase = createTypedClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jdymvpasjsdbryatscux.supabase.co'
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || 'test-key'
+const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
 
 export interface SearchFilters {
   city?: string;
@@ -56,10 +53,12 @@ export class SearchService {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    let qb = this.client
-      .from("apartments")
-      .select("*", { count: "exact" })
-      .eq("is_active", true) as QueryBuilder;
+    // Work with a narrowed interface to avoid leaking supabase-js generic builder types
+    const base = this.client
+      .from('apartments')
+      .select('*', { count: 'exact' })
+      .eq('is_active', true) as unknown as QueryBuilder
+    let qb = base
 
     if (filters.city) qb = qb.eq("city", filters.city);
     if (typeof filters.minPrice === "number") {

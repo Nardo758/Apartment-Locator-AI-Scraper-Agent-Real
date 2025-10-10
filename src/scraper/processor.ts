@@ -1,19 +1,14 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { ScrapingJob } from "./orchestrator.ts";
-import { syncToFrontendSchema } from "./orchestrator.ts";
-import { transformScrapedToFrontendFormat } from "./data-transformer.ts";
-import type { ScrapedPropertyData } from "../types/frontend.ts";
-import {
-  ScrapedPropertySchema,
-  type ScrapedPropertyType,
-} from "../schemas/scraped-property-schema.ts";
-import {
-  validationFailByReason,
-  validationFailCounter,
-  validationPassCounter,
-} from "../observability/metrics.ts";
-import process from "node:process";
-import { startMetricsServer } from "../observability/server.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase';
+import type { ScrapingJob } from './orchestrator';
+import { syncToFrontendSchema } from './orchestrator';
+import { transformScrapedToFrontendFormat } from './data-transformer';
+import type { ScrapedPropertyData } from '../types/frontend';
+import { ScrapedPropertySchema, type ScrapedPropertyType } from '../schemas/scraped-property-schema';
+import { validationPassCounter, validationFailCounter, validationFailByReason } from '../observability/metrics';
+import process from 'node:process';
+import { startMetricsServer } from '../observability/server';
+
 
 type WorkerResult = {
   success: boolean;
@@ -71,7 +66,7 @@ async function dispatchToWorker(
 })();
 
 export async function processBatchWithCostOptimization(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>, 
   batch: ScrapingJob[],
   options: { enableFrontendSync?: boolean; frontendTable?: string } = {},
 ) {

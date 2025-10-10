@@ -1,16 +1,10 @@
 // Scraper Frontend Integration
 // src/scraper/frontend-integration.ts
-// TODO(typing): Tighten these types further. Prefer per-symbol typing over
-// file-level suppressions; this file progressively replaces `any` with the
-// `ScrapedProperty` type and `Record<string, unknown>` where appropriate.
 
-import { frontendDataService } from "../services/frontend-data-service.ts";
-import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property.ts";
-import { createTypedClient } from "../lib/supabase-client.ts";
-import type Database from "../types/supabase-db.ts";
-import { typedUpsert } from "../lib/typed-upsert.ts";
-import { errMsg } from "../lib/error.ts";
-import process from "node:process";
+import { frontendDataService } from '../services/frontend-data-service';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
 
 interface ScraperResult {
   success: boolean;
@@ -31,24 +25,10 @@ type LocalScrapedProperty = SharedScrapedProperty & {
 };
 
 export class ScraperFrontendIntegration {
-  private supabase: import("@supabase/supabase-js").SupabaseClient<Database> | null = null;
+  private supabase: SupabaseClient<Database>;
 
   constructor() {
-    const deno = (globalThis as unknown as {
-      Deno?: { env?: { get: (k: string) => string | undefined } };
-    }).Deno;
-    const supabaseUrl = deno?.env?.get("SUPABASE_URL") ??
-      process.env.SUPABASE_URL ?? "";
-    const supabaseKey = deno?.env?.get("SUPABASE_SERVICE_ROLE_KEY") ??
-      process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error(
-        "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required",
-      );
-    }
-    // Use the central typed client wrapper. We'll cast to the Database-typed
-    // SupabaseClient so downstream code can use typed Row definitions.
-    this.supabase = createTypedClient(supabaseUrl, supabaseKey);
+    this.supabase = createTypedClient();
   }
 
   /**
@@ -144,23 +124,21 @@ export class ScraperFrontendIntegration {
         };
 
         // Upsert to scraped_properties
-          try {
-            const { data, error } = await typedUpsert(
-              this.supabase!,
-              "scraped_properties",
-              scrapedProperty as Database["public"]["Tables"]["scraped_properties"]["Insert"],
-              { onConflict: "external_id", ignoreDuplicates: false },
-            );
-            if (error) {
-              console.error("Error upserting scraped property:", errMsg(error));
-            } else {
-              scrapedProperties.push(data as LocalScrapedProperty);
-            }
-          } catch (e) {
-            console.error("Error upserting scraped property:", errMsg(e));
-          }
-      } catch (_e) {
-        console.error("Error processing property:", _e);
+        const { data, error } = await typedUpsert(
+          this.supabase,
+          'scraped_properties',
+          scrapedProperty,
+          { onConflict: 'external_id', ignoreDuplicates: false }
+        ).select().single();
+
+        if (error) {
+          console.error('Error upserting scraped property:', error);
+        } else {
+          scrapedProperties.push(data);
+        }
+
+      } catch (error) {
+        console.error('Error processing property:', error);
       }
     }
 
@@ -262,12 +240,12 @@ export class ScraperFrontendIntegration {
       };
 
       // Upsert market intelligence
-      await this.supabase
-        .from("market_intelligence")
-        .upsert(marketIntelligence, {
-          onConflict: "location",
-          ignoreDuplicates: false,
-        });
+      await typedUpsert(
+        this.supabase,
+        'market_intelligence',
+        marketIntelligence,
+        { onConflict: 'location', ignoreDuplicates: false }
+      );
 
       console.log(
         `📊 Updated market intelligence for ${location}: ${properties.length} properties, avg rent $${averageRent}`,

@@ -1,8 +1,10 @@
 // integration-test.ts
 // Test script for the complete data integration pipeline
 
-import { createClient } from "@supabase/supabase-js";
-import {
+import { createTypedClient } from '../tools/supabase-helpers.ts';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import { 
   getScrapingBatchWithTransformation,
   type ScrapingJob,
   syncToFrontendSchema,
@@ -36,11 +38,8 @@ export async function runIntegrationTest(): Promise<void> {
 
   try {
     // Initialize Supabase client
-    const supabase = createClient(
-      TEST_CONFIG.SUPABASE_URL,
-      TEST_CONFIG.SUPABASE_SERVICE_ROLE_KEY,
-    );
-
+    const supabase: SupabaseClient<Database> = createTypedClient(TEST_CONFIG.SUPABASE_URL, TEST_CONFIG.SUPABASE_SERVICE_ROLE_KEY);
+    
     // Test 1: Schema Verification
     await testSchemaVerification(supabase);
 

@@ -1,14 +1,10 @@
 {
-  "compilerOptions": {
-    "lib": ["deno.ns", "deno.window"],
+    "compilerOptions": {
+        "lib": ["deno.ns", "deno.window"],
     "strict": true,
-    "allowImportingTsExtensions": true
-  },
-  "tasks": {
-    "scrape": {
-      "script": "src/main.ts",
-      "args": [],
-      "type": "run"
+    "types": [
+      "./types/test-globals.d.ts"
+    ]
     },
     "test-claude": {
       "script": "test-claude.ts",

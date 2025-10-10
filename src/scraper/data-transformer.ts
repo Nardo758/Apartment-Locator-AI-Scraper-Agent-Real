@@ -1,12 +1,9 @@
 // src/scraper/data-transformer.ts
 // Data transformation pipeline for converting scraper data to frontend schema
 
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type {
-  ApartmentIQData,
-  FrontendProperty,
-  ScrapedPropertyData,
-} from "../types/frontend.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import type { ScrapedPropertyData, FrontendProperty, ApartmentIQData } from '../types/frontend';
 
 /**
  * Transform scraped data to match frontend requirements
@@ -469,22 +466,22 @@ export async function batchTransformProperties(
  * Save transformed properties to the new frontend schema
  */
 export async function saveTransformedProperties(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   frontendProperties: FrontendProperty[],
-  targetTable: string = "properties",
+  targetTable: keyof (Database['public']['Tables'] & Database['public']['Views']) | string = 'properties'
 ): Promise<{ success: number; errors: number }> {
   let success = 0;
   let errors = 0;
 
   for (const property of frontendProperties) {
     try {
+      // Cast the table name when using dynamic strings to avoid overly strict generics
+      const table = targetTable as unknown as keyof Database['public']['Tables']
+      const insertPayload = property as unknown as import('../../types/supabase').TablesInsert<typeof table>
       const { error } = await supabase
-        .from(targetTable)
-        .upsert(property, {
-          onConflict: "external_id",
-          ignoreDuplicates: false,
-        });
-
+        .from(table)
+        .upsert(insertPayload as any, { onConflict: 'external_id', ignoreDuplicates: false });
+      
       if (error) {
         console.error(`Error saving property ${property.external_id}:`, error);
         errors++;

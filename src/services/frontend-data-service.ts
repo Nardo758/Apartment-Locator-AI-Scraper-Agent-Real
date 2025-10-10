@@ -1,12 +1,27 @@
 // Frontend Data Service - Bridge between scraper and frontend schema
 // src/services/frontend-data-service.ts
 
-import process from "node:process";
-import { createTypedClient } from "../lib/supabase-client.ts";
-import type { ScrapedProperty as SharedScrapedProperty } from "../types/scraped-property.ts";
-import type Database from "../types/supabase-db.ts";
-import { typedUpsert } from "../lib/typed-upsert.ts";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
+
+interface ScrapedProperty {
+  id: number;
+  external_id: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  current_price: number;
+  bedrooms: number;
+  bathrooms: number;
+  square_feet?: number;
+  listing_url: string;
+  property_source_id?: number;
+  scraped_at: string;
+  free_rent_concessions?: string;
+  // Add other scraped fields as needed
+}
 
 interface FrontendProperty {
   external_id: string;
@@ -70,11 +85,9 @@ interface ApartmentIQData {
 }
 
 export class FrontendDataService {
-  // Use the Supabase client typed with our Database generic. This enables
-  // better safety at call sites without requiring pervasive local casts.
   private supabase: SupabaseClient<Database>;
 
-  constructor(supabaseUrl: string, supabaseKey: string) {
+  constructor(supabaseUrl?: string, supabaseKey?: string) {
     this.supabase = createTypedClient(supabaseUrl, supabaseKey);
   }
 
@@ -410,12 +423,9 @@ export class FrontendDataService {
         // Upsert to properties table
         const { error } = await typedUpsert(
           this.supabase,
-          "properties",
-          frontendProperty as Database["public"]["Tables"]["properties"]["Insert"],
-          {
-            onConflict: "external_id",
-            ignoreDuplicates: false,
-          },
+          'properties',
+          frontendProperty,
+          { onConflict: 'external_id', ignoreDuplicates: false }
         );
 
         if (error) {
@@ -467,15 +477,9 @@ export class FrontendDataService {
 
         await typedUpsert(
           this.supabase,
-          "apartment_iq_data",
-          ({
-            property_id: propertyDataRow.id,
-            ...iqData,
-          } as Database["public"]["Tables"]["apartment_iq_data"]["Insert"]),
-          {
-            onConflict: "property_id",
-            ignoreDuplicates: false,
-          },
+          'apartment_iq_data',
+          { property_id: propertyData.id, ...iqData },
+          { onConflict: 'property_id', ignoreDuplicates: false }
         );
       }
     } catch (_e) {

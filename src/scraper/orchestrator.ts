@@ -1,5 +1,6 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { getModelCost } from "./costs.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import { getModelCost } from './costs';
 import {
   batchTransformProperties,
   saveTransformedProperties,
@@ -19,10 +20,7 @@ export type ScrapingJob = Record<string, unknown> & {
   priority_score?: number | null;
 };
 
-export async function getScrapingBatch(
-  supabase: SupabaseClient,
-  limit = 100,
-): Promise<ScrapingJob[]> {
+export async function getScrapingBatch(supabase: SupabaseClient<Database>, limit = 100): Promise<ScrapingJob[]> {
   const { data: properties, error } = await supabase
     .from("scraped_properties")
     .select(`*, price_history(count), scraping_logs(status, created_at)`)
@@ -48,10 +46,7 @@ export async function getScrapingBatch(
 
 // Cost-optimized weekly batch selector
 // Attempts to build a batch of properties for the week that fits an approximate cost target
-export async function getCostOptimizedBatch(
-  supabase: SupabaseClient,
-  weeklyTargetUSD = 300,
-): Promise<ScrapingJob[]> {
+export async function getCostOptimizedBatch(supabase: SupabaseClient<Database>, weeklyTargetUSD = 300): Promise<ScrapingJob[]> {
   // We'll pick high/medium/low priority buckets by querying top-N in each priority score range
   const highQuery = supabase.from("scraped_properties").select("*").gte(
     "priority_score",

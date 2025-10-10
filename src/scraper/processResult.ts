@@ -1,7 +1,8 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import * as market from "./market.ts";
-import { extractAmenities } from "./amenities.ts";
-import { classifyPropertyType } from "./propertyType.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import * as market from './market';
+import { extractAmenities } from './amenities';
+import { classifyPropertyType } from './propertyType';
 
 // Minimal helpers: detectSignificantChanges, log helpers are intentionally small and pluggable.
 export function detectSignificantChanges(
@@ -25,30 +26,23 @@ export function detectSignificantChanges(
   return changes;
 }
 
-async function logScrapingActivity(
-  supabase: SupabaseClient,
-  externalId: string,
-  event: string,
-  payload: Record<string, unknown>,
-) {
+async function logScrapingActivity(supabase: SupabaseClient<Database>, externalId: string, event: string, payload: Record<string, unknown>) {
   // best-effort logging; swallow errors
   try {
-    await supabase.from("scraping_logs").insert({
-      external_id: externalId,
-      event,
-      payload,
+    // Use the generated types: 'scraping_logs' has columns (level, message, meta, job_id, created_at, id)
+    const row: import('../../types/supabase').TablesInsert<'scraping_logs'> = {
+      level: 'info',
+      message: event,
+      meta: payload as unknown as import('../../types/supabase').Json,
       created_at: new Date().toISOString(),
-    });
+    };
+    await supabase.from('scraping_logs').insert(row);
   } catch (_err) {
     // ignore logging failures
   }
 }
 
-async function logSignificantChanges(
-  supabase: SupabaseClient,
-  externalId: string,
-  changes: unknown[],
-) {
+async function logSignificantChanges(supabase: SupabaseClient<Database>, externalId: string, changes: unknown[]) {
   try {
     await supabase.from("scraping_change_logs").insert({
       external_id: externalId,
@@ -64,17 +58,13 @@ async function logSignificantChanges(
  * Update a property using the server-side RPC `rpc_update_property_with_history` if available,
  * otherwise fall back to a direct update and separately insert price_history when price changed.
  */
-export async function updatePropertyWithHistory(
-  supabase: SupabaseClient,
-  externalId: string,
-  payload: Record<string, unknown>,
-) {
+export async function updatePropertyWithHistory(supabase: SupabaseClient<Database>, externalId: string, payload: Record<string, unknown>) {
   // Attempt RPC first
   try {
-    const { data, error } = await supabase.rpc(
-      "rpc_update_property_with_history",
-      { p_external_id: externalId, p_payload: payload },
-    );
+    const { data, error } = await supabase.rpc('rpc_update_property_with_history', {
+      p_external_id: externalId,
+      p_payload: payload as unknown as import('../../types/supabase').Json,
+    });
     if (error) throw error;
     return data;
   } catch (_rpcErr) {
@@ -127,11 +117,7 @@ export async function updatePropertyWithHistory(
  * Process the scraping result by performing change-only updates when no significant changes
  * and full updates (with history) when significant changes are detected.
  */
-export async function processScrapingResult(
-  supabase: SupabaseClient,
-  oldData: Record<string, unknown>,
-  newData: Record<string, unknown>,
-) {
+export async function processScrapingResult(supabase: SupabaseClient<Database>, oldData: Record<string, unknown>, newData: Record<string, unknown>) {
   const changes = detectSignificantChanges(oldData, newData);
 
   if (changes.length === 0) {

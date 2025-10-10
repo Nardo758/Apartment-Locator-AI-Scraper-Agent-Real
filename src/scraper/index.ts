@@ -1,22 +1,14 @@
-import { SCRAPING_STRATEGY } from "./priority.ts";
-import type { CostPriority, ScrapingStrategy, ScrapingTier } from "./priority.ts";
-import {
-  calculateStabilityScore,
-  getDaysSince,
-  getRecommendedFrequency,
-  getScrapingBatch,
-  shouldScrapeProperty,
-} from "./orchestrator.ts";
-import { processScrapingResult } from "./processResult.ts";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import * as market from "./market.ts";
-import { extractAmenities } from "./amenities.ts";
-import { classifyPropertyType } from "./propertyType.ts";
-import { computeAiPricing } from "../lib/pricing-engine.ts";
-import {
-  ClaudeService,
-  type PropertyIntelligence,
-} from "../services/claude-service.ts";
+import { SCRAPING_STRATEGY } from './priority';
+import type { ScrapingStrategy, ScrapingTier, CostPriority } from './priority';
+import { getScrapingBatch, shouldScrapeProperty, getDaysSince, calculateStabilityScore, getRecommendedFrequency } from './orchestrator';
+import { processScrapingResult } from './processResult';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../types/supabase.ts';
+import * as market from './market';
+import { extractAmenities } from './amenities';
+import { classifyPropertyType } from './propertyType';
+import { computeAiPricing } from '../lib/pricing-engine';
+import { ClaudeService, type PropertyIntelligence } from '../services/claude-service';
 
 export { SCRAPING_STRATEGY };
 export type { CostPriority, ScrapingStrategy, ScrapingTier };
@@ -64,24 +56,18 @@ export async function enhanceWithClaudeIntelligence(
 
 // Enrich scraped property data with market intelligence. Accepts a Supabase client
 // to fetch an existing property record by external_id so we can preserve first_seen_at.
-export async function scrapePropertyWithMarketData(
-  supabase: SupabaseClient,
-  propertyData: Record<string, unknown>,
-) {
-  const concessions = market.extractConcessions(
-    (propertyData["description"] as string) ?? "",
-  );
-  let firstSeen: string | null = null;
-  const externalId = propertyData["external_id"] as string | undefined;
-  if (externalId) {
-    try {
-      type FirstSeenRow = { first_seen_at?: string | null } | null;
-      const { data } = await supabase.from("scraped_properties").select(
-        "first_seen_at",
-      ).eq("external_id", externalId).maybeSingle() as { data: FirstSeenRow };
-      if (data && data.first_seen_at) firstSeen = data.first_seen_at;
-    } catch (_err) {
-      // ignore lookup errors; we'll default to now
+export async function scrapePropertyWithMarketData(supabase: SupabaseClient<Database>, propertyData: Record<string, unknown>) {
+    const concessions = market.extractConcessions((propertyData['description'] as string) ?? '');
+    let firstSeen: string | null = null;
+    const externalId = propertyData['external_id'] as string | undefined;
+    if (externalId) {
+        try {
+            type FirstSeenRow = { first_seen_at?: string | null } | null;
+            const { data } = await supabase.from('scraped_properties').select('first_seen_at').eq('external_id', externalId).maybeSingle() as { data: FirstSeenRow };
+            if (data && data.first_seen_at) firstSeen = data.first_seen_at;
+        } catch (_err) {
+            // ignore lookup errors; we'll default to now
+        }
     }
   }
 
@@ -96,30 +82,27 @@ export async function scrapePropertyWithMarketData(
 }
 
 // Final enhanced scraping function: runs enhanced scraping, market enrichment, amenities parsing and classification.
-export async function scrapePropertyComplete(
-  supabase: SupabaseClient,
-  propertyData: Record<string, unknown>,
-  htmlContent?: string,
-) {
-  // Phase 1: Basic enhancements
-  const phase1Data = scrapePropertyEnhanced(propertyData);
-  // Phase 2: Market intelligence (needs supabase to lookup first_seen)
-  // preserve original external_id (if present) so lookup for first_seen_at succeeds
-  const phase1Record = {
-    ...(phase1Data as unknown as Record<string, unknown>),
-  };
-  if (propertyData && propertyData["external_id"]) {
-    phase1Record["external_id"] = propertyData["external_id"];
-  }
-  const phase2Data = await scrapePropertyWithMarketData(supabase, phase1Record);
-  // Phase 3: Amenities and classification
-  const amenities = extractAmenities(
-    (propertyData["description"] as string) ?? "",
-  );
-  const propertyType = classifyPropertyType(
-    propertyData["name"] as string | undefined,
-    propertyData["description"] as string | undefined,
-  );
+export async function scrapePropertyComplete(supabase: SupabaseClient<Database>, propertyData: Record<string, unknown>, htmlContent?: string) {
+    // Phase 1: Basic enhancements
+    const phase1Data = scrapePropertyEnhanced(propertyData);
+    // Phase 2: Market intelligence (needs supabase to lookup first_seen)
+    // preserve original external_id (if present) so lookup for first_seen_at succeeds
+    const phase1Record = { ...(phase1Data as unknown as Record<string, unknown>) };
+    if (propertyData && propertyData['external_id']) phase1Record['external_id'] = propertyData['external_id'];
+    const phase2Data = await scrapePropertyWithMarketData(supabase, phase1Record);
+    // Phase 3: Amenities and classification
+    const amenities = extractAmenities((propertyData['description'] as string) ?? '');
+    const propertyType = classifyPropertyType(propertyData['name'] as string | undefined, propertyData['description'] as string | undefined);
+
+    // Phase 4: Claude AI intelligence (if HTML content is available)
+    let claudeIntelligence = null;
+    if (htmlContent && propertyData['url'] && propertyData['name']) {
+        claudeIntelligence = await enhanceWithClaudeIntelligence(
+            propertyData['url'] as string,
+            htmlContent,
+            propertyData['name'] as string
+        );
+    }
 
   // Phase 4: Claude AI intelligence (if HTML content is available)
   let claudeIntelligence = null;
