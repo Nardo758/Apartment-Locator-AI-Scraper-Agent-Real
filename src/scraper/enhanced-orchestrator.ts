@@ -193,8 +193,8 @@ export class EnhancedScrapingOrchestrator {
     // Integrate with frontend data system
     try {
       console.log("🔄 Integrating scraping results with frontend system...");
-      const frontendIntegration = await scraperFrontendIntegration
-        .processScraperResults(scrapingResult);
+      const frontendIntegration = await (scraperFrontendIntegration as any)
+        .processScraperResults(scrapingResult as any);
       scrapingResult.frontend_integration = frontendIntegration;
 
       // Update property source metrics
@@ -247,7 +247,7 @@ export class EnhancedScrapingOrchestrator {
         const totalCost = avgCost * unitsFound;
         const success = unitsFound > 0;
 
-        await this.supabase.rpc("update_property_source_metrics", {
+        await (this.supabase as any).rpc("update_property_source_metrics", {
           source_id: sourceId,
           units_found: unitsFound,
           scrape_cost: totalCost,
@@ -440,7 +440,7 @@ export class EnhancedScrapingOrchestrator {
   async getFrontendProperties(
     filters: Record<string, unknown> = {},
   ): Promise<FrontendProperty[]> {
-    return scraperFrontendIntegration.getFrontendProperties(
+    return (scraperFrontendIntegration as any).getFrontendProperties(
       filters as any,
     ) as Promise<FrontendProperty[]>;
   }

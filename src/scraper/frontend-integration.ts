@@ -44,8 +44,8 @@ export class ScraperFrontendIntegration {
   private supabase: SupabaseClient<Database>;
 
   constructor() {
-    const url = (globalThis as any).Deno?.env?.get?.('SUPABASE_URL') || ''
-    const key = (globalThis as any).Deno?.env?.get?.('SUPABASE_SERVICE_ROLE_KEY') || (globalThis as any).Deno?.env?.get?.('SUPABASE_ANON_KEY') || ''
+    const url = (globalThis as any).Deno?.env?.get?.('SUPABASE_URL') || (process as any)?.env?.SUPABASE_URL || ''
+    const key = (globalThis as any).Deno?.env?.get?.('SUPABASE_SERVICE_ROLE_KEY') || (globalThis as any).Deno?.env?.get?.('SUPABASE_ANON_KEY') || (process as any)?.env?.SUPABASE_SERVICE_ROLE_KEY || (process as any)?.env?.SUPABASE_ANON_KEY || ''
     if (!url || !key) {
       throw new Error('Supabase configuration missing for frontend integration')
     }
@@ -119,22 +119,22 @@ export class ScraperFrontendIntegration {
   const p = property as LocalScrapedProperty;
         // Transform raw scraper data to scraped_properties format (use safe conversions)
         const idStr = String(p["id"] ?? "");
-        const sourceStr = String(p["source"] ?? "unknown");
+        const sourceStr = String((p as any)["source"] ?? "unknown");
         const scrapedProperty: Record<string, unknown> = {
           external_id: idStr || `${sourceStr}_${Date.now()}_${Math.random()}`,
           property_id: idStr ? (idStr.split("_")[0] || "unknown") : "unknown",
           unit_number: String(p["unit_number"] ?? p["unit"] ?? "1"),
           source: sourceStr,
-          name: String(p["title"] ?? p["name"] ?? "Unknown Property"),
+          name: String((p as any)["title"] ?? (p as any)["name"] ?? "Unknown Property"),
           address: String(p["address"] ?? ""),
-          unit: p["unit"] ?? null,
+          unit: (p as any)["unit"] ?? null,
           city: String(p["city"] ?? ""),
           state: String(p["state"] ?? ""),
           current_price: Number(p["price"] ?? p["rent"] ?? 0),
           bedrooms: Number(p["bedrooms"] ?? 0),
-          bathrooms: Number(p["bathrooms"] ?? 1.0),
-          square_feet: p["sqft"] ?? p["square_feet"] ?? null,
-          free_rent_concessions: p["concessions"] ?? p["specials"] ?? null,
+          bathrooms: Number((p as any)["bathrooms"] ?? 1.0),
+          square_feet: (p as any)["sqft"] ?? (p as any)["square_feet"] ?? null,
+          free_rent_concessions: (p as any)["concessions"] ?? (p as any)["specials"] ?? null,
           application_fee: p["application_fee"] ?? null,
           admin_fee_waived: Boolean(p["admin_fee_waived"] ?? false),
           admin_fee_amount: p["admin_fee"] ?? null,
@@ -148,14 +148,14 @@ export class ScraperFrontendIntegration {
         const { data, error } = await typedUpsert(
           this.supabase,
           'scraped_properties',
-          scrapedProperty,
+          scrapedProperty as any,
           { onConflict: 'external_id', ignoreDuplicates: false }
         );
 
         if (error) {
           console.error('Error upserting scraped property:', error);
         } else {
-          scrapedProperties.push(data);
+          scrapedProperties.push(data as any);
         }
 
       } catch (error) {
@@ -285,7 +285,7 @@ export class ScraperFrontendIntegration {
   ): Promise<"hot" | "normal" | "slow" | "stale"> {
     try {
       // Get historical data for comparison
-      const { data: historicalData } = await this.supabase
+      const { data: historicalData } = await (this.supabase as any)
         .from("market_intelligence")
         .select("average_rent, concession_prevalence")
         .eq("location", location)
@@ -483,7 +483,7 @@ export class ScraperFrontendIntegration {
 
       // Geographic search
       if (filters.latitude && filters.longitude) {
-        const { data } = await this.supabase.rpc(
+      const { data } = await (this.supabase as any).rpc(
           "search_properties_near_location",
           {
             lat: filters.latitude,

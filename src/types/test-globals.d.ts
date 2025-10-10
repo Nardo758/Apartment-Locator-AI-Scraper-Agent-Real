@@ -63,5 +63,9 @@ declare const jest: {
   mock: (moduleName: string, factory?: () => any) => void;
 };
 declare namespace jest {
-  type MockedFunction<T extends (...args: any[]) => any> = T & { mock: any };
+  type MockedFunction<T extends (...args: any[]) => any> = T & {
+    mock: any;
+    mockReset: () => void;
+    mockReturnValue: (value: any) => void;
+  };
 }

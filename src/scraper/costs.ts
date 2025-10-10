@@ -34,7 +34,7 @@ export async function recordDailyScrapingCost(supabase: SupabaseClient<Database>
     );
     const today = new Date().toISOString().slice(0, 10);
 
-    await supabase.from("scraping_costs").upsert([
+    await (supabase as any).from("scraping_costs").upsert([
       {
         date: today,
         properties_scraped: 1,
