@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
+import type { Database } from '../types/database.types.ts';
 
 export function estimateCostFromTokens(
   modelKey: string,
@@ -51,7 +51,7 @@ export async function recordDailyScrapingCost(supabase: SupabaseClient<Database>
     ], { onConflict: "date" });
   } catch (_e) {
     // non-fatal
-    console.error("recordDailyScrapingCost failed", e);
+    console.error("recordDailyScrapingCost failed", _e);
   }
 }
 

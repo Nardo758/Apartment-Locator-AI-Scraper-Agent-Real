@@ -17,7 +17,7 @@ try {
 } catch {
   // ignore - we'll use createClient fallback where needed
 }
-import type { ScrapedPropertiesRow } from "../../../src/types/supabase-db.ts";
+// Types come from local shared database types if needed
 import { ClaudeService } from "../../../src/services/claude-service.ts";
 import { ConcessionDetector } from "../../../src/services/enhanced-concession-detector.ts";
 import { ConcessionTracker } from "../../../src/services/concession-tracker.ts";

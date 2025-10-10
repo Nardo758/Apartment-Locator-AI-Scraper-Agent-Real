@@ -1,9 +1,10 @@
 // integration-test.ts
 // Test script for the complete data integration pipeline
 
-import { createTypedClient } from '../tools/supabase-helpers.ts';
+import { createTypedClient } from '../lib/supabase-client.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
+import type { Database } from '../types/database.types.ts';
+import { errMsg } from '../lib/error.ts';
 import { 
   getScrapingBatchWithTransformation,
   type ScrapingJob,
@@ -60,7 +61,7 @@ export async function runIntegrationTest(): Promise<void> {
 
     console.log("\n✅ All integration tests completed successfully!");
   } catch (error) {
-    console.error("❌ Integration test failed:", error);
+    console.error("❌ Integration test failed:", errMsg(error));
     throw error;
   }
 }
@@ -264,7 +265,7 @@ async function testBatchProcessingWithSync(supabase: any): Promise<void> {
       console.log(
         `📊 Sync Results: ${syncResult.success} success, ${syncResult.errors} errors`,
       );
-      syncResult.details.forEach((detail) => console.log(`  ${detail}`));
+      syncResult.details.forEach((detail: string) => console.log(`  ${detail}`));
     } catch (syncError) {
       console.log("⚠️  Frontend sync skipped - table may not exist");
     }

@@ -2,10 +2,10 @@
 // src/scraper/enhanced-orchestrator.ts
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
-import { getModelCost } from './costs';
-import { scraperFrontendIntegration } from './frontend-integration';
-import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
+import type { Database } from '../types/database.types.ts';
+import { getModelCost } from './costs.ts';
+import { scraperFrontendIntegration } from './frontend-integration.ts';
+import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend.ts';
 
 export type ScrapingJob = Record<string, unknown> & {
   external_id: string;
@@ -47,7 +47,7 @@ export class EnhancedScrapingOrchestrator {
     region?: string,
   ): Promise<ScrapingJob[]> {
     // Call RPC and gracefully handle errors
-    const { data: sources, error } = await this.supabase.rpc(
+    const { data: sources, error } = await (this.supabase as any).rpc(
       "get_next_property_sources_batch",
       {
         batch_size: limit,
@@ -327,7 +327,7 @@ export class EnhancedScrapingOrchestrator {
     // Frontend-specific considerations
     try {
       // Check if this property is in high demand (has recent user searches/matches)
-      const { data: recentActivity } = await this.supabase
+      const { data: recentActivity } = await (this.supabase as any)
         .from("properties")
         .select("match_score, updated_at")
         .eq("external_id", property.external_id)

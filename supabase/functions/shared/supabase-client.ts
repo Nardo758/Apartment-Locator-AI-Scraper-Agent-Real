@@ -1,5 +1,5 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type Database from "../../../src/types/supabase-db.ts";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import type { Database } from "./database.types.ts";
 
 /**
  * Local wrapper for Supabase functions: re-exports the repo-level
@@ -7,7 +7,17 @@ import type Database from "../../../src/types/supabase-db.ts";
  * when checking / bundling functions.
  */
 export function createTypedClient(url: string, key: string): SupabaseClient<Database> {
-  return createClient(url, key) as unknown as SupabaseClient<Database>;
+  return createClient<Database>(url, key);
 }
 
 export default createTypedClient;
+export function getServiceClient(): SupabaseClient<Database> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase environment variables')
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseKey)
+}

@@ -1,10 +1,12 @@
 // Scraper Frontend Integration
 // src/scraper/frontend-integration.ts
 
-import { frontendDataService } from '../services/frontend-data-service';
+import { frontendDataService } from '../services/frontend-data-service.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
-import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
+import type { Database } from '../types/database.types.ts';
+import { createTypedClient } from '../lib/supabase-client.ts';
+import typedUpsert from '../lib/typed-upsert.ts';
+import { errMsg } from '../lib/error.ts';
 
 interface ScraperResult {
   success: boolean;
@@ -14,7 +16,7 @@ interface ScraperResult {
   metadata: Record<string, unknown>;
 }
 
-type LocalScrapedProperty = SharedScrapedProperty & {
+interface LocalScrapedProperty {
   id?: string;
   external_id?: string;
   name?: string;
@@ -22,13 +24,32 @@ type LocalScrapedProperty = SharedScrapedProperty & {
   bedrooms?: number;
   square_feet?: number;
   free_rent_concessions?: unknown;
-};
+  unit_number?: string;
+  unit?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  price?: number;
+  rent?: number;
+  application_fee?: number;
+  admin_fee_waived?: boolean;
+  admin_fee?: number;
+  security_deposit?: number;
+  url?: string;
+  listing_url?: string;
+  amenities?: string[];
+}
 
 export class ScraperFrontendIntegration {
   private supabase: SupabaseClient<Database>;
 
   constructor() {
-    this.supabase = createTypedClient();
+    const url = (globalThis as any).Deno?.env?.get?.('SUPABASE_URL') || ''
+    const key = (globalThis as any).Deno?.env?.get?.('SUPABASE_SERVICE_ROLE_KEY') || (globalThis as any).Deno?.env?.get?.('SUPABASE_ANON_KEY') || ''
+    if (!url || !key) {
+      throw new Error('Supabase configuration missing for frontend integration')
+    }
+    this.supabase = createTypedClient(url, key)
   }
 
   /**
@@ -75,9 +96,9 @@ export class ScraperFrontendIntegration {
       console.log(
         `✅ Frontend integration complete: ${frontendPropertiesCreated} properties processed`,
       );
-    } catch (_e) {
-      console.error("❌ Frontend integration error:", _e);
-      errors.push(String(_e));
+    } catch (error) {
+      console.error("❌ Frontend integration error:", errMsg(error));
+      errors.push(errMsg(error));
     }
 
     return {
@@ -129,7 +150,7 @@ export class ScraperFrontendIntegration {
           'scraped_properties',
           scrapedProperty,
           { onConflict: 'external_id', ignoreDuplicates: false }
-        ).select().single();
+        );
 
         if (error) {
           console.error('Error upserting scraped property:', error);
@@ -138,7 +159,7 @@ export class ScraperFrontendIntegration {
         }
 
       } catch (error) {
-        console.error('Error processing property:', error);
+        console.error('Error processing property:', errMsg(error));
       }
     }
 
@@ -167,8 +188,8 @@ export class ScraperFrontendIntegration {
       for (const [location, properties] of locationGroups) {
         await this.updateLocationIntelligence(location, properties);
       }
-    } catch (_e) {
-      console.error("Error updating market intelligence:", _e);
+    } catch (error) {
+      console.error("Error updating market intelligence:", errMsg(error));
     }
   }
 
@@ -292,8 +313,8 @@ export class ScraperFrontendIntegration {
       if (currentConcessionRate > 0.15) return "slow";
       if (currentConcessionRate < 0.05) return "hot";
       return "normal";
-    } catch (_e) {
-      console.warn("Error calculating market velocity:", _e);
+    } catch (error) {
+      console.warn("Error calculating market velocity:", errMsg(error));
       return "normal";
     }
   }
