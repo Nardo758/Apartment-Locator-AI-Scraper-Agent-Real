@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type Database from "../../../src/types/supabase-db.ts";
+import type { Database } from "./database.types.ts";
 
 /**
  * Local wrapper for Supabase functions: re-exports the repo-level
@@ -7,7 +7,7 @@ import type Database from "../../../src/types/supabase-db.ts";
  * when checking / bundling functions.
  */
 export function createTypedClient(url: string, key: string): SupabaseClient<Database> {
-  return createClient(url, key) as unknown as SupabaseClient<Database>;
+  return createClient<Database>(url, key);
 }
 
 export default createTypedClient;

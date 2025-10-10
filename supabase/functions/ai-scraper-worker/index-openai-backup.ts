@@ -2,8 +2,7 @@
 import { serve } from "std/http/server.ts";
 import { recommendedConfig } from "../openai_config.ts";
 import { createTypedClient } from "../shared/supabase-client.ts";
-import type { ScrapedPropertiesRow } from "../../../src/types/supabase-db.ts";
-import type Database from "../../../src/types/supabase-db.ts";
+import type { Database } from "../shared/database.types.ts";
 import { typedUpsert } from "../shared/typed-upsert.ts";
 
 // Validate AI-extracted fields

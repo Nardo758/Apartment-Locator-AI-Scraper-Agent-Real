@@ -1,4 +1,4 @@
-import type Database from "../../../src/types/supabase-db.ts";
+import type { Database } from "./database.types.ts";
 
 /**
  * Small helper to centralize calling Supabase's upsert while keeping
