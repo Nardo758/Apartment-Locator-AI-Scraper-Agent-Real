@@ -459,7 +459,7 @@ export class FrontendDataService {
         .single();
       const propertyDataRow = propertyData as Database['public']['Tables']['properties']['Row'] | null;
 
-      if (propertyDataRow) {
+      if (propertyDataRow && propertyDataRow.id) {
         const iqData: Partial<ApartmentIQData> = {
           current_rent: property.original_price,
           original_rent: property.original_price,
@@ -478,7 +478,7 @@ export class FrontendDataService {
         await typedUpsert(
           this.supabase,
           'apartment_iq_data',
-          { property_id: propertyData.id, ...iqData },
+          { property_id: propertyDataRow.id as any, ...iqData },
           { onConflict: 'property_id', ignoreDuplicates: false }
         );
       }

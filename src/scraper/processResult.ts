@@ -206,7 +206,7 @@ export async function processScrapingResult(supabase: SupabaseClient<Database>, 
           // non-fatal: if market helpers fail, ignore
         }
 
-        await supabase
+        await (supabase as any)
           .from("scraped_properties")
           .update(minimalUpdate)
           .eq("external_id", externalId);

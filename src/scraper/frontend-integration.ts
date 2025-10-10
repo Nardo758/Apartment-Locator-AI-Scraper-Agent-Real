@@ -38,6 +38,13 @@ interface LocalScrapedProperty {
   url?: string;
   listing_url?: string;
   amenities?: string[];
+  // additional optional fields we may receive from scrapers
+  title?: string;
+  bathrooms?: number;
+  sqft?: number;
+  concessions?: string | unknown;
+  specials?: string | unknown;
+  source?: string;
 }
 
 export class ScraperFrontendIntegration {
@@ -49,7 +56,7 @@ export class ScraperFrontendIntegration {
     if (!url || !key) {
       throw new Error('Supabase configuration missing for frontend integration')
     }
-    this.supabase = createTypedClient(url, key)
+    this.supabase = createTypedClient(url, key) as unknown as SupabaseClient<Database>
   }
 
   /**
@@ -146,10 +153,10 @@ export class ScraperFrontendIntegration {
 
         // Upsert to scraped_properties
         const { data, error } = await typedUpsert(
-          this.supabase,
+          this.supabase as unknown,
           'scraped_properties',
-          scrapedProperty,
-          { onConflict: 'external_id', ignoreDuplicates: false }
+          scrapedProperty as any,
+          { onConflict: 'external_id', ignoreDuplicates: false } as any
         );
 
         if (error) {
@@ -285,7 +292,7 @@ export class ScraperFrontendIntegration {
   ): Promise<"hot" | "normal" | "slow" | "stale"> {
     try {
       // Get historical data for comparison
-      const { data: historicalData } = await this.supabase
+      const { data: historicalData } = await (this.supabase as any)
         .from("market_intelligence")
         .select("average_rent, concession_prevalence")
         .eq("location", location)
@@ -413,7 +420,7 @@ export class ScraperFrontendIntegration {
   private async scheduleMatchScoreUpdates(): Promise<void> {
     try {
       // Get active users (users who have logged in recently)
-      const { data: activeUsers } = await this.supabase
+      const { data: activeUsers } = await (this.supabase as any)
         .from("user_profiles")
         .select("user_id")
         .gte(
@@ -421,14 +428,15 @@ export class ScraperFrontendIntegration {
           new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         ); // 30 days
 
-      if (activeUsers && activeUsers.length > 0) {
+      const users = (activeUsers ?? []) as Array<{ user_id: string }>;
+      if (users.length > 0) {
         console.log(
-          `🎯 Scheduling match score updates for ${activeUsers.length} active users`,
+          `🎯 Scheduling match score updates for ${users.length} active users`,
         );
 
         // In a production system, this would queue background jobs
         // For now, we'll process a limited number immediately
-        const usersToProcess = activeUsers.slice(0, 10); // Limit to prevent timeout
+        const usersToProcess = users.slice(0, 10); // Limit to prevent timeout
 
         for (const user of usersToProcess) {
           try {
@@ -483,7 +491,7 @@ export class ScraperFrontendIntegration {
 
       // Geographic search
       if (filters.latitude && filters.longitude) {
-        const { data } = await this.supabase.rpc(
+      const { data } = await (this.supabase as any).rpc(
           "search_properties_near_location",
           {
             lat: filters.latitude,

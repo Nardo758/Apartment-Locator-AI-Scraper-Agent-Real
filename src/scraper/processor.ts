@@ -98,7 +98,7 @@ export async function processBatchWithCostOptimization(
         (await dispatchToWorker(workerUrl, payload, 2)) as WorkerResult;
       const duration = workerResult.duration ?? (Date.now() - startTime);
 
-      await supabase.rpc("update_scraping_metrics", {
+      await (supabase as any).rpc("update_scraping_metrics", {
         p_external_id: job.external_id,
         p_success: workerResult.success === true,
         p_duration: duration,
@@ -134,7 +134,7 @@ export async function processBatchWithCostOptimization(
               estimateCostFromTokens(model, prompt, completion),
           );
           const today = new Date().toISOString().slice(0, 10);
-          await supabase.rpc("rpc_inc_scraping_costs", {
+          await (supabase as any).rpc("rpc_inc_scraping_costs", {
             p_date: today,
             p_properties_scraped: 1,
             p_ai_requests: 1,
@@ -152,7 +152,7 @@ export async function processBatchWithCostOptimization(
       }
 
       const newStatus = workerResult.success ? "completed" : "failed";
-      await supabase.from("scraping_queue").update({
+      await (supabase as any).from("scraping_queue").update({
         status: newStatus,
         completed_at: new Date().toISOString(),
       }).eq("external_id", job.external_id).eq("id", job.queue_id);
@@ -211,7 +211,7 @@ export async function processBatchWithCostOptimization(
             validationFailCounter.inc();
             validationFailByReason.inc({ reason: "zod_error" }, 1);
             try {
-              await supabase.from("failed_scrapes").insert({
+              await (supabase as any).from("failed_scrapes").insert({
                 external_id: job.external_id,
                 payload: scrapedDataRaw,
                 error: parsed.error.flatten(),
@@ -245,7 +245,7 @@ export async function processBatchWithCostOptimization(
         result: workerResult,
       });
     } catch (err) {
-      await supabase.rpc("update_scraping_metrics", {
+      await (supabase as any).rpc("update_scraping_metrics", {
         p_external_id: job.external_id,
         p_success: false,
         p_duration: 0,
