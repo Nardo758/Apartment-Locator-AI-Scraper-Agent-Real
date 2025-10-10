@@ -47,7 +47,7 @@ export class EnhancedScrapingOrchestrator {
     region?: string,
   ): Promise<ScrapingJob[]> {
     // Call RPC and gracefully handle errors
-    const { data: sources, error } = await this.supabase.rpc(
+    const { data: sources, error } = await (this.supabase as any).rpc(
       "get_next_property_sources_batch",
       {
         batch_size: limit,
@@ -327,7 +327,7 @@ export class EnhancedScrapingOrchestrator {
     // Frontend-specific considerations
     try {
       // Check if this property is in high demand (has recent user searches/matches)
-      const { data: recentActivity } = await this.supabase
+      const { data: recentActivity } = await (this.supabase as any)
         .from("properties")
         .select("match_score, updated_at")
         .eq("external_id", property.external_id)

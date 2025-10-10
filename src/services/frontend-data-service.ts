@@ -2,7 +2,7 @@
 // src/services/frontend-data-service.ts
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
+import type { Database } from '../types/database.types.ts';
 import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
 
 interface ScrapedProperty {
@@ -95,7 +95,7 @@ export class FrontendDataService {
    * Transform scraped property data to frontend format
    */
   async transformScrapedToFrontend(
-    scrapedProperty: SharedScrapedProperty,
+    scrapedProperty: any,
   ): Promise<FrontendProperty> {
     // Calculate AI-enhanced pricing
     const aiPrice = await this.calculateAIPrice(scrapedProperty);
@@ -161,7 +161,7 @@ export class FrontendDataService {
   /**
    * Calculate AI-enhanced price using market intelligence
    */
-  private async calculateAIPrice(property: SharedScrapedProperty): Promise<number> {
+  private async calculateAIPrice(property: any): Promise<number> {
     try {
       // Get market data for the area
       const { data: marketData } = await this.supabase
@@ -205,7 +205,7 @@ export class FrontendDataService {
    * Calculate effective price accounting for concessions
    */
   private async calculateEffectivePrice(
-    property: SharedScrapedProperty,
+    property: any,
   ): Promise<number> {
   let effectivePrice = Number(property.current_price ?? 0);
 
@@ -250,7 +250,7 @@ export class FrontendDataService {
   /**
    * Extract features from scraped data
    */
-  private extractFeatures(property: SharedScrapedProperty): string[] {
+  private extractFeatures(property: any): string[] {
     const features: string[] = [];
 
     // Add bedroom/bathroom info as features
@@ -271,7 +271,7 @@ export class FrontendDataService {
   /**
    * Extract amenities from scraped data
    */
-  private extractAmenities(property: SharedScrapedProperty): string[] {
+  private extractAmenities(property: any): string[] {
     const amenities: string[] = [];
 
     // This would be enhanced based on your scraped data structure
@@ -294,7 +294,7 @@ export class FrontendDataService {
   /**
    * Extract pet policy information
    */
-  private extractPetPolicy(property: SharedScrapedProperty): string | undefined {
+  private extractPetPolicy(property: any): string | undefined {
     // Add logic to extract pet policy from scraped data
     return "Contact for pet policy";
   }
@@ -302,7 +302,7 @@ export class FrontendDataService {
   /**
    * Extract parking information
    */
-  private extractParkingInfo(property: SharedScrapedProperty): string | undefined {
+  private extractParkingInfo(property: any): string | undefined {
     // Add logic to extract parking info from scraped data
     return "Parking available";
   }
@@ -311,7 +311,7 @@ export class FrontendDataService {
    * Calculate market velocity based on recent data
    */
   private async calculateMarketVelocity(
-    property: SharedScrapedProperty,
+    property: any,
   ): Promise<"hot" | "normal" | "slow" | "stale"> {
     try {
       // Get recent market intelligence for the area
@@ -338,7 +338,7 @@ export class FrontendDataService {
    * Calculate days vacant/on market
    */
   private async calculateDaysVacant(
-    property: SharedScrapedProperty,
+    property: any,
   ): Promise<number> {
     try {
       // Check when this property was first seen
@@ -380,7 +380,7 @@ export class FrontendDataService {
    * Generate comprehensive ApartmentIQ data
    */
   private async generateApartmentIQData(
-    property: SharedScrapedProperty,
+    property: any,
   ): Promise<Record<string, any>> {
   const effectiveRent = await this.calculateEffectivePrice(property);
   const concessionValue = Number(property.current_price ?? 0) - effectiveRent;
@@ -410,7 +410,7 @@ export class FrontendDataService {
    * Bulk transform and upsert scraped properties to frontend format
    */
   async bulkTransformAndUpsert(
-    scrapedProperties: SharedScrapedProperty[],
+    scrapedProperties: any[],
   ): Promise<number> {
     let processedCount = 0;
 

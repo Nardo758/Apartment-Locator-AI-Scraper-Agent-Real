@@ -477,9 +477,9 @@ export async function saveTransformedProperties(
     try {
       // Cast the table name when using dynamic strings to avoid overly strict generics
       const table = targetTable as unknown as keyof Database['public']['Tables']
-      const insertPayload = property as Record<string, unknown>
-      const { error } = await supabase
-        .from(table)
+      const insertPayload = property as unknown as Record<string, unknown>
+      const { error } = await (supabase as any)
+        .from(table as any)
         .upsert(insertPayload as any, { onConflict: 'external_id', ignoreDuplicates: false });
       
       if (error) {
@@ -491,7 +491,7 @@ export async function saveTransformedProperties(
     } catch (_e) {
       console.error(
         `Exception saving property ${property.external_id}:`,
-        error,
+        _e,
       );
       errors++;
     }

@@ -26,6 +26,10 @@ declare const expect: {
     toMatchObject(object: any): void;
     toThrow(error?: any): void;
     toBeCloseTo(expected: number, precision?: number): void;
+    toBeLessThan(expected: number): void;
+    toBeLessThanOrEqual(expected: number): void;
+    toBeGreaterThan(expected: number): void;
+    toBeGreaterThanOrEqual(expected: number): void;
     arrayContaining(expected: any[]): any;
     objectContaining(expected: any): any;
     stringContaining(expected: string): any;
@@ -52,3 +56,12 @@ declare const expect: {
   assertions(expected: number): void;
   extend(matchers: any): void;
 };
+
+// Minimal Jest compatibility for Deno type-checking in tests
+declare const jest: {
+  fn: (...args: any[]) => any;
+  mock: (moduleName: string, factory?: () => any) => void;
+};
+declare namespace jest {
+  type MockedFunction<T extends (...args: any[]) => any> = T & { mock: any };
+}
