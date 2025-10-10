@@ -70,7 +70,6 @@ export async function scrapePropertyWithMarketData(supabase: SupabaseClient<Data
             // ignore lookup errors; we'll default to now
         }
     }
-  }
 
   const marketData: Record<string, unknown> = {
     concession_value: concessions.concessionValue,
