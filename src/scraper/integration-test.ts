@@ -39,7 +39,10 @@ export async function runIntegrationTest(): Promise<void> {
 
   try {
     // Initialize Supabase client
-    const supabase: SupabaseClient<Database> = createTypedClient(TEST_CONFIG.SUPABASE_URL, TEST_CONFIG.SUPABASE_SERVICE_ROLE_KEY);
+    const supabase = createTypedClient(
+      TEST_CONFIG.SUPABASE_URL,
+      TEST_CONFIG.SUPABASE_SERVICE_ROLE_KEY,
+    ) as unknown as SupabaseClient<Database>;
     
     // Test 1: Schema Verification
     await testSchemaVerification(supabase);

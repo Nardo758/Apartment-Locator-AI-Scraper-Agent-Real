@@ -7,8 +7,8 @@ import type { Database } from '../types/database.types.ts';
 import * as market from './market.ts';
 import { extractAmenities } from './amenities.ts';
 import { classifyPropertyType } from './propertyType.ts';
-import { computeAiPricing } from '@lib/pricing-engine.ts';
-import { ClaudeService, type PropertyIntelligence } from '@services/claude-service.ts';
+import { computeAiPricing } from '../lib/pricing-engine.ts';
+import { ClaudeService, type PropertyIntelligence } from '../services/claude-service.ts';
 
 export { SCRAPING_STRATEGY };
 export type { CostPriority, ScrapingStrategy, ScrapingTier };
@@ -49,7 +49,7 @@ export async function enhanceWithClaudeIntelligence(
       return result.data; // Still return fallback data
     }
   } catch (error) {
-    const { errMsg } = await import('@shared/error.ts');
+    const { errMsg } = await import('../lib/error.ts');
     console.error("❌ Claude intelligence error:", errMsg(error));
     return null;
   }

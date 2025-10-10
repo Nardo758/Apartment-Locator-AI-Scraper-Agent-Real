@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
+import type { Database } from '../types/database.types.ts';
 
 type EnvLike = { get?: (k: string) => string | undefined } | undefined;
 

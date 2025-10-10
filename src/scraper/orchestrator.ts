@@ -204,7 +204,7 @@ export async function getScrapingBatchWithTransformation(
 
     return { jobs, frontendProperties };
   } catch (error) {
-    const { errMsg } = await import('@shared/error.ts');
+    const { errMsg } = await import('../lib/error.ts');
     console.error("Error transforming properties for frontend:", errMsg(error));
     return { jobs };
   }
@@ -238,7 +238,7 @@ export async function syncToFrontendSchema(
       details,
     };
   } catch (error) {
-    const { errMsg } = await import('@shared/error.ts');
+    const { errMsg } = await import('../lib/error.ts');
     const message = errMsg(error);
     details.push(`Error syncing to frontend schema: ${message}`);
     return {
