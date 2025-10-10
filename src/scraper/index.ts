@@ -3,12 +3,12 @@ import type { ScrapingStrategy, ScrapingTier, CostPriority } from './priority';
 import { getScrapingBatch, shouldScrapeProperty, getDaysSince, calculateStabilityScore, getRecommendedFrequency } from './orchestrator';
 import { processScrapingResult } from './processResult';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
+import type { Database } from '@types/database.types.ts';
 import * as market from './market';
 import { extractAmenities } from './amenities';
 import { classifyPropertyType } from './propertyType';
-import { computeAiPricing } from '../lib/pricing-engine';
-import { ClaudeService, type PropertyIntelligence } from '../services/claude-service';
+import { computeAiPricing } from '@lib/pricing-engine.ts';
+import { ClaudeService, type PropertyIntelligence } from '@services/claude-service.ts';
 
 export { SCRAPING_STRATEGY };
 export type { CostPriority, ScrapingStrategy, ScrapingTier };
@@ -48,8 +48,9 @@ export async function enhanceWithClaudeIntelligence(
       console.warn("⚠️ Claude analysis failed, using fallback:", result.error);
       return result.data; // Still return fallback data
     }
-  } catch (_e) {
-    console.error("❌ Claude intelligence error:", error);
+  } catch (error) {
+    const { errMsg } = await import('@shared/error.ts');
+    console.error("❌ Claude intelligence error:", errMsg(error));
     return null;
   }
 }

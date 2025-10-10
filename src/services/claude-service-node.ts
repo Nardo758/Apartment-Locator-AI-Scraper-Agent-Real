@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import process from "node:process";
+import { errMsg } from "@shared/error.ts";
 
 export interface PropertyIntelligence {
   year_built: number | null;
@@ -60,10 +61,10 @@ export class ClaudeService {
       const intelligence = this.parseClaudeResponse(textContent.text);
       return { success: true, data: intelligence };
     } catch (error: any) {
-      console.error("Claude analysis error:", error);
+      console.error("Claude analysis error:", errMsg(error));
       return {
         success: false,
-        error: error.message,
+        error: errMsg(error),
         data: this.getDefaultResponse(),
       };
     }
@@ -111,8 +112,8 @@ Return ONLY valid JSON, no other text.`;
       }
 
       throw new Error("No JSON found in Claude response");
-    } catch (_e) {
-      console.error("JSON parsing error:", error);
+    } catch (error) {
+      console.error("JSON parsing error:", errMsg(error));
       return this.getDefaultResponse();
     }
   }

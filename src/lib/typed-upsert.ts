@@ -1,4 +1,4 @@
-import type Database from "../types/supabase-db.ts";
+import type { Database } from "@types/database.types.ts";
 
 /**
  * Typed upsert helper for non-functions code (Node/Esm path). Keeps a

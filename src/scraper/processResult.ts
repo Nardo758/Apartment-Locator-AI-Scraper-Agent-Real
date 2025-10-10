@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
+import type { Database } from '@types/database.types.ts';
+import { errMsg } from '@shared/error.ts';
 import * as market from './market';
 import { extractAmenities } from './amenities';
 import { classifyPropertyType } from './propertyType';
@@ -213,13 +214,13 @@ export async function processScrapingResult(supabase: SupabaseClient<Database>, 
 
         await logScrapingActivity(supabase, externalId, "no_change", {});
       }
-    } catch (_e) {
+  } catch (err) {
       // best-effort; log and swallow
       const externalId = typeof oldData?.external_id === "string"
         ? oldData.external_id
         : "unknown";
       await logScrapingActivity(supabase, externalId, "no_change_error", {
-        error: String(err),
+        error: errMsg(err),
       });
     }
     return;
@@ -285,12 +286,12 @@ export async function processScrapingResult(supabase: SupabaseClient<Database>, 
       await updatePropertyWithHistory(supabase, externalId, enriched);
       await logSignificantChanges(supabase, externalId, changes);
     }
-  } catch (_e) {
+  } catch (err) {
     const externalId = typeof oldData?.external_id === "string"
       ? oldData.external_id
       : "unknown";
     await logScrapingActivity(supabase, externalId, "update_error", {
-      error: String(err),
+      error: errMsg(err),
     });
   }
 }

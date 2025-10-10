@@ -1,10 +1,12 @@
 // Scraper Frontend Integration
 // src/scraper/frontend-integration.ts
 
-import { frontendDataService } from '../services/frontend-data-service';
+import { frontendDataService } from '@services/frontend-data-service.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../types/supabase.ts';
-import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
+import type { Database } from '@types/database.types.ts';
+import { createTypedClient } from '@lib/supabase-client.ts';
+import typedUpsert from '@lib/typed-upsert.ts';
+import { errMsg } from '@shared/error.ts';
 
 interface ScraperResult {
   success: boolean;
@@ -75,9 +77,9 @@ export class ScraperFrontendIntegration {
       console.log(
         `✅ Frontend integration complete: ${frontendPropertiesCreated} properties processed`,
       );
-    } catch (_e) {
-      console.error("❌ Frontend integration error:", _e);
-      errors.push(String(_e));
+    } catch (error) {
+      console.error("❌ Frontend integration error:", errMsg(error));
+      errors.push(errMsg(error));
     }
 
     return {
@@ -138,7 +140,7 @@ export class ScraperFrontendIntegration {
         }
 
       } catch (error) {
-        console.error('Error processing property:', error);
+        console.error('Error processing property:', errMsg(error));
       }
     }
 
@@ -167,8 +169,8 @@ export class ScraperFrontendIntegration {
       for (const [location, properties] of locationGroups) {
         await this.updateLocationIntelligence(location, properties);
       }
-    } catch (_e) {
-      console.error("Error updating market intelligence:", _e);
+    } catch (error) {
+      console.error("Error updating market intelligence:", errMsg(error));
     }
   }
 
@@ -292,8 +294,8 @@ export class ScraperFrontendIntegration {
       if (currentConcessionRate > 0.15) return "slow";
       if (currentConcessionRate < 0.05) return "hot";
       return "normal";
-    } catch (_e) {
-      console.warn("Error calculating market velocity:", _e);
+    } catch (error) {
+      console.warn("Error calculating market velocity:", errMsg(error));
       return "normal";
     }
   }

@@ -1,16 +1,27 @@
 {
-    "compilerOptions": {
-        "lib": ["deno.ns", "deno.window"],
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env --allow-read --watch src/main.ts",
+    "check": "deno check src/",
+    "check:functions": "deno check supabase/functions/",
+    "test": "deno test --allow-net --allow-env src/",
+    "lint": "deno lint src/",
+    "fmt": "deno fmt src/ supabase/functions/"
+  },
+  "compilerOptions": {
+    "lib": ["deno.ns", "dom"],
     "strict": true,
+    "noImplicitAny": false,
     "types": [
-      "./types/test-globals.d.ts"
+      "./src/types/test-globals.d.ts"
     ]
-    },
-    "test-claude": {
-      "script": "test-claude.ts",
-      "args": [],
-      "type": "run"
-    }
+  },
+  "imports": {
+    "@std/assert": "https://deno.land/std@0.177.0/testing/asserts.ts",
+    "@shared/": "./supabase/functions/shared/",
+    "@types/": "./src/types/",
+    "@scraper/": "./src/scraper/",
+    "@services/": "./src/services/",
+    "@lib/": "./src/lib/"
   },
   "importMap": "./import_map.json"
 }
