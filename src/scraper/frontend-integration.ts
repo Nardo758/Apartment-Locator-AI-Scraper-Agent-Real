@@ -3,10 +3,10 @@
 
 import { frontendDataService } from '@services/frontend-data-service.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@types/database.types.ts';
-import { createTypedClient } from '@lib/supabase-client.ts';
-import typedUpsert from '@lib/typed-upsert.ts';
-import { errMsg } from '@shared/error.ts';
+import type { Database } from '../types/database.types.ts';
+import { createTypedClient } from '../lib/supabase-client.ts';
+import typedUpsert from '../lib/typed-upsert.ts';
+import { errMsg } from '../shared/error.ts';
 
 interface ScraperResult {
   success: boolean;
