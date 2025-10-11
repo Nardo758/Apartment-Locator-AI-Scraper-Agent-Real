@@ -3,7 +3,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase.ts';
-import type { ScrapedPropertyData, FrontendProperty, ApartmentIQData } from '../types/frontend';
+import type { ScrapedPropertyData, FrontendProperty, ApartmentIQData } from '../types/frontend.ts';
 
 /**
  * Transform scraped data to match frontend requirements

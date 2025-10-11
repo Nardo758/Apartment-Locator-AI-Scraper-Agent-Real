@@ -1,16 +1,15 @@
 {
-    "compilerOptions": {
-        "lib": ["deno.ns", "deno.window"],
+  "compilerOptions": {
+    "lib": ["deno.ns", "deno.window"],
     "strict": true,
     "types": [
       "./types/test-globals.d.ts"
     ]
-    },
-    "test-claude": {
-      "script": "test-claude.ts",
-      "args": [],
-      "type": "run"
-    }
+  },
+  "test-claude": {
+    "script": "test-claude.ts",
+    "args": [],
+    "type": "run"
   },
   "importMap": "./import_map.json"
 }

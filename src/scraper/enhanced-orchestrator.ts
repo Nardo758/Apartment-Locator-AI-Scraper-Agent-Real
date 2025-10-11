@@ -3,8 +3,8 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase.ts';
-import { getModelCost } from './costs';
-import { scraperFrontendIntegration } from './frontend-integration';
+import { getModelCost } from './costs.ts';
+import { scraperFrontendIntegration } from './frontend-integration.ts';
 import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend';
 
 export type ScrapingJob = Record<string, unknown> & {

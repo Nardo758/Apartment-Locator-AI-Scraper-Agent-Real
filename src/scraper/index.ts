@@ -1,12 +1,12 @@
-import { SCRAPING_STRATEGY } from './priority';
-import type { ScrapingStrategy, ScrapingTier, CostPriority } from './priority';
-import { getScrapingBatch, shouldScrapeProperty, getDaysSince, calculateStabilityScore, getRecommendedFrequency } from './orchestrator';
-import { processScrapingResult } from './processResult';
+import { SCRAPING_STRATEGY } from './priority.ts';
+import type { ScrapingStrategy, ScrapingTier, CostPriority } from './priority.ts';
+import { getScrapingBatch, shouldScrapeProperty, getDaysSince, calculateStabilityScore, getRecommendedFrequency } from './orchestrator.ts';
+import { processScrapingResult } from './processResult.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase.ts';
-import * as market from './market';
-import { extractAmenities } from './amenities';
-import { classifyPropertyType } from './propertyType';
+import * as market from './market.ts';
+import { extractAmenities } from './amenities.ts';
+import { classifyPropertyType } from './propertyType.ts';
 import { computeAiPricing } from '../lib/pricing-engine';
 import { ClaudeService, type PropertyIntelligence } from '../services/claude-service';
 
@@ -49,7 +49,7 @@ export async function enhanceWithClaudeIntelligence(
       return result.data; // Still return fallback data
     }
   } catch (_e) {
-    console.error("❌ Claude intelligence error:", error);
+    console.error("❌ Claude intelligence error:", _e);
     return null;
   }
 }
@@ -69,8 +69,7 @@ export async function scrapePropertyWithMarketData(supabase: SupabaseClient<Data
             // ignore lookup errors; we'll default to now
         }
     }
-  }
-
+  
   const marketData: Record<string, unknown> = {
     concession_value: concessions.concessionValue,
     concession_type: concessions.concessionType,
@@ -97,22 +96,12 @@ export async function scrapePropertyComplete(supabase: SupabaseClient<Database>,
     // Phase 4: Claude AI intelligence (if HTML content is available)
     let claudeIntelligence = null;
     if (htmlContent && propertyData['url'] && propertyData['name']) {
-        claudeIntelligence = await enhanceWithClaudeIntelligence(
-            propertyData['url'] as string,
-            htmlContent,
-            propertyData['name'] as string
-        );
+      claudeIntelligence = await enhanceWithClaudeIntelligence(
+        propertyData['url'] as string,
+        htmlContent,
+        propertyData['name'] as string,
+      );
     }
-
-  // Phase 4: Claude AI intelligence (if HTML content is available)
-  let claudeIntelligence = null;
-  if (htmlContent && propertyData["url"] && propertyData["name"]) {
-    claudeIntelligence = await enhanceWithClaudeIntelligence(
-      propertyData["url"] as string,
-      htmlContent,
-      propertyData["name"] as string,
-    );
-  }
 
   const baseResult = {
     ...phase2Data,
