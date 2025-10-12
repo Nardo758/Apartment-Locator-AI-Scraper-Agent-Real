@@ -43,7 +43,7 @@ export class SupabaseClientWrapper {
 
     // Cast to TablesInsert<'apartments'> at the boundary to satisfy supabase-js types
     // while still allowing us to build the payload ergonomically.
-    const insertPayload = payload as unknown as import('../../types/supabase').TablesInsert<'apartments'>
+  const insertPayload = payload as unknown as import('../../types/supabase.ts').TablesInsert<'apartments'>
     const result = await this.client
       .from('apartments')
       .upsert(insertPayload, { onConflict: 'external_id' }) as PostgrestResponse<unknown>

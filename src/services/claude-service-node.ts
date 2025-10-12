@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import process from "node:process";
+import { errMsg } from '../lib/error.ts';
 
 export interface PropertyIntelligence {
   year_built: number | null;
@@ -112,7 +113,7 @@ Return ONLY valid JSON, no other text.`;
 
       throw new Error("No JSON found in Claude response");
     } catch (_e) {
-      console.error("JSON parsing error:", error);
+        console.error("JSON parsing error:", errMsg(_e));
       return this.getDefaultResponse();
     }
   }

@@ -23,4 +23,5 @@ export interface ScrapedProperty {
   [key: string]: unknown;
 }
 
+export type SharedScrapedProperty = ScrapedProperty;
 export default ScrapedProperty;

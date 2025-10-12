@@ -1,7 +1,7 @@
 // Shared frontend and scraped data types used across the scraping pipeline
 
 export interface ScrapedPropertyData {
-  id?: number;
+  id?: string | number;
   external_id: string;
   property_id: string;
   unit_number: string;
@@ -43,6 +43,7 @@ export interface ScrapedPropertyData {
   price_changes?: number;
   stability_score?: number;
   change_frequency?: number;
+  [key: string]: unknown;
 }
 
 export interface ApartmentIQData {

@@ -7,8 +7,8 @@ import type { Database } from '../../types/supabase.ts';
 import * as market from './market.ts';
 import { extractAmenities } from './amenities.ts';
 import { classifyPropertyType } from './propertyType.ts';
-import { computeAiPricing } from '../lib/pricing-engine';
-import { ClaudeService, type PropertyIntelligence } from '../services/claude-service';
+import { computeAiPricing } from '../lib/pricing-engine.ts';
+import { ClaudeService, type PropertyIntelligence } from '../services/claude-service.ts';
 
 export { SCRAPING_STRATEGY };
 export type { CostPriority, ScrapingStrategy, ScrapingTier };

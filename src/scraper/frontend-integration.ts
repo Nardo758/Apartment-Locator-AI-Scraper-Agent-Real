@@ -5,6 +5,7 @@ import { frontendDataService } from '../services/frontend-data-service.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase.ts';
 import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
+import { errMsg } from '../lib/error.ts';
 
 interface ScraperResult {
   success: boolean;
@@ -15,7 +16,7 @@ interface ScraperResult {
 }
 
 type LocalScrapedProperty = SharedScrapedProperty & {
-  id?: string;
+  id?: string | number;
   external_id?: string;
   name?: string;
   current_price?: number;
@@ -76,8 +77,8 @@ export class ScraperFrontendIntegration {
         `✅ Frontend integration complete: ${frontendPropertiesCreated} properties processed`,
       );
     } catch (_e) {
-      console.error("❌ Frontend integration error:", _e);
-      errors.push(String(_e));
+      console.error("❌ Frontend integration error:", errMsg(_e));
+      errors.push(errMsg(_e));
     }
 
     return {
@@ -138,7 +139,7 @@ export class ScraperFrontendIntegration {
         }
 
       } catch (error) {
-        console.error('Error processing property:', error);
+        console.error('Error processing property:', errMsg(error));
       }
     }
 
@@ -168,7 +169,7 @@ export class ScraperFrontendIntegration {
         await this.updateLocationIntelligence(location, properties);
       }
     } catch (_e) {
-      console.error("Error updating market intelligence:", _e);
+      console.error("Error updating market intelligence:", errMsg(_e));
     }
   }
 
@@ -251,7 +252,7 @@ export class ScraperFrontendIntegration {
         `📊 Updated market intelligence for ${location}: ${properties.length} properties, avg rent $${averageRent}`,
       );
     } catch (_e) {
-      console.error(`Error updating intelligence for ${location}:`, _e);
+      console.error(`Error updating intelligence for ${location}:`, errMsg(_e));
     }
   }
 
@@ -415,13 +416,13 @@ export class ScraperFrontendIntegration {
           } catch (_e) {
             console.error(
               `Error updating match scores for user ${user.user_id}:`,
-              _e,
+                errMsg(_e),
             );
           }
         }
       }
     } catch (_e) {
-      console.error("Error scheduling match score updates:", _e);
+        console.error("Error scheduling match score updates:", errMsg(_e));
     }
   }
 
@@ -462,7 +463,7 @@ export class ScraperFrontendIntegration {
 
       // Geographic search
       if (filters.latitude && filters.longitude) {
-        const { data } = await this.supabase.rpc(
+        const _rpcRes = await this.supabase.rpc(
           "search_properties_near_location",
           {
             lat: filters.latitude,
@@ -474,9 +475,9 @@ export class ScraperFrontendIntegration {
             max_price: filters.max_price,
             user_id_param: filters.user_id,
           },
-        );
+        ) as { data: Database['public']['Functions']['search_properties_near_location']['Returns'] | null; error?: unknown };
 
-        return data || [];
+        return _rpcRes.data || [];
       }
 
       // Apply limit and ordering

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase.ts';
+import { errMsg } from '../lib/error.ts';
 import * as market from './market.ts';
 import { extractAmenities } from './amenities.ts';
 import { classifyPropertyType } from './propertyType.ts';
@@ -30,10 +31,10 @@ async function logScrapingActivity(supabase: SupabaseClient<Database>, externalI
   // best-effort logging; swallow errors
   try {
     // Use the generated types: 'scraping_logs' has columns (level, message, meta, job_id, created_at, id)
-    const row: import('../../types/supabase').TablesInsert<'scraping_logs'> = {
+  const row: import('../../types/supabase.ts').TablesInsert<'scraping_logs'> = {
       level: 'info',
       message: event,
-      meta: payload as unknown as import('../../types/supabase').Json,
+  meta: payload as unknown as import('../../types/supabase.ts').Json,
       created_at: new Date().toISOString(),
     };
     await supabase.from('scraping_logs').insert(row);
@@ -61,12 +62,12 @@ async function logSignificantChanges(supabase: SupabaseClient<Database>, externa
 export async function updatePropertyWithHistory(supabase: SupabaseClient<Database>, externalId: string, payload: Record<string, unknown>) {
   // Attempt RPC first
   try {
-    const { data, error } = await supabase.rpc('rpc_update_property_with_history', {
+    const _rpcRes = await supabase.rpc('rpc_update_property_with_history', {
       p_external_id: externalId,
-      p_payload: payload as unknown as import('../../types/supabase').Json,
-    });
-    if (error) throw error;
-    return data;
+  p_payload: payload as unknown as import('../../types/supabase.ts').Json,
+    }) as { data: Database['public']['Functions']['rpc_update_property_with_history']['Returns'] | null; error?: unknown };
+    if ((_rpcRes as any).error) throw (_rpcRes as any).error;
+    return _rpcRes.data;
   } catch (_rpcErr) {
     // Fallback path
     const updatePayload: Record<string, unknown> = { ...payload };
@@ -219,7 +220,7 @@ export async function processScrapingResult(supabase: SupabaseClient<Database>, 
         ? oldData.external_id
         : "unknown";
       await logScrapingActivity(supabase, externalId, "no_change_error", {
-        error: String(err),
+        error: errMsg(_e),
       });
     }
     return;
@@ -290,7 +291,7 @@ export async function processScrapingResult(supabase: SupabaseClient<Database>, 
       ? oldData.external_id
       : "unknown";
     await logScrapingActivity(supabase, externalId, "update_error", {
-      error: String(err),
+      error: errMsg(_e),
     });
   }
 }

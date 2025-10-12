@@ -19,3 +19,4 @@ export interface ScraperOptions {
 }
 
 export type { Apartment } from "./apartment.ts";
+export type { SharedScrapedProperty } from "./scraped-property.ts";

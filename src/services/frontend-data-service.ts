@@ -3,6 +3,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase.ts';
+import { errMsg } from '../lib/error.ts';
 import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
 
 interface ScrapedProperty {
@@ -429,7 +430,7 @@ export class FrontendDataService {
         );
 
         if (error) {
-          console.error("Error upserting property:", error);
+          console.error("Error upserting property:", errMsg(error));
         } else {
           processedCount++;
 
@@ -437,7 +438,7 @@ export class FrontendDataService {
           await this.upsertApartmentIQData(frontendProperty);
         }
       } catch (_e) {
-        console.error("Error transforming property:", _e);
+        console.error("Error transforming property:", errMsg(_e));
       }
     }
 
@@ -478,12 +479,12 @@ export class FrontendDataService {
         await typedUpsert(
           this.supabase,
           'apartment_iq_data',
-          { property_id: propertyData.id, ...iqData },
+          { property_id: propertyDataRow.id, ...iqData },
           { onConflict: 'property_id', ignoreDuplicates: false }
         );
       }
     } catch (_e) {
-      console.error("Error upserting ApartmentIQ data:", _e);
+      console.error("Error upserting ApartmentIQ data:", errMsg(_e));
     }
   }
 
@@ -502,23 +503,23 @@ export class FrontendDataService {
       if (propertiesList) {
         for (const property of propertiesList) {
           // Use the database function to calculate match score
-          const { data: matchScore } = (await (this.supabase as any)
-            .rpc("calculate_property_match_score", {
-              property_id_param: property.id,
-              user_id_param: userId,
-            })) as any;
+          const _ms = await (this.supabase as unknown as any).rpc("calculate_property_match_score", {
+            property_id_param: property.id,
+            user_id_param: userId,
+          }) as { data: number | null; error?: unknown };
+          const matchScore = _ms.data;
 
           if (matchScore !== null) {
             // Update the property with the match score
-            await (this.supabase as any)
-              .from("properties")
-              .update({ match_score: matchScore } as any)
-              .eq("id", property.id);
+            await this.supabase
+              .from('properties')
+              .update({ match_score: matchScore } as Partial<Database['public']['Tables']['properties']['Update']>)
+              .eq('id', property.id);
           }
         }
       }
     } catch (_e) {
-      console.error("Error calculating match scores:", _e);
+      console.error("Error calculating match scores:", errMsg(_e));
     }
   }
 }

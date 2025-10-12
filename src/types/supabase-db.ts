@@ -6,6 +6,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface ScrapedPropertiesRow {
   id?: string;
   external_id: string;
+  property_source_id?: number | null;
   property_id?: string;
   unit_number?: string | null;
   source?: string | null;
@@ -27,6 +28,16 @@ export interface ScrapedPropertiesRow {
   listing_url?: string | null;
   scraped_at?: string | null;
   status?: string | null;
+  ai_price?: number | null;
+  effective_price?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  zip_code?: string | null;
+  ai_provider?: string | null;
+  ai_raw?: Json | null;
+  amenities?: Json | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface PropertiesRow {
@@ -205,6 +216,19 @@ export interface Database {
         Insert: Partial<ScrapingCostsRow>;
         Update: Partial<ScrapingCostsRow>;
       };
+      failed_scrapes: {
+        Row: {
+          id: number;
+          external_id?: string | null;
+          payload?: Json | null;
+          error?: Json | null;
+          created_at?: string | null;
+          requeue_count?: number | null;
+          training_batch_id?: string | null;
+        };
+        Insert: Partial<{ external_id?: string | null; payload?: Json | null; error?: Json | null; created_at?: string | null }>;
+        Update: Partial<{ external_id?: string | null; payload?: Json | null; error?: Json | null; created_at?: string | null }>;
+      };
       apartment_iq_data: {
         Row: {
           id?: number;
@@ -302,6 +326,10 @@ export interface Database {
       rpc_inc_scraping_costs: {
         Args: { p_date?: string; p_properties_scraped?: number; p_ai_requests?: number; p_tokens_used?: number; p_estimated_cost?: number; p_details?: Json };
         Returns: void;
+      };
+      rpc_bulk_upsert_properties_v2: {
+        Args: { p_rows: Json };
+        Returns: Json;
       };
     };
   };

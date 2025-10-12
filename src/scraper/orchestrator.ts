@@ -6,6 +6,7 @@ import {
   saveTransformedProperties,
   transformScrapedToFrontendFormat,
 } from "./data-transformer.ts";
+import { errMsg } from '../lib/error.ts';
 import type { FrontendProperty, ScrapedPropertyData } from "../types/frontend.ts";
 import process from "node:process";
 
@@ -204,7 +205,7 @@ export async function getScrapingBatchWithTransformation(
 
     return { jobs, frontendProperties };
   } catch (_e) {
-    console.error("Error transforming properties for frontend:", error);
+      console.error("Error transforming properties for frontend:", errMsg(_e));
     return { jobs };
   }
 }
@@ -237,7 +238,7 @@ export async function syncToFrontendSchema(
       details,
     };
   } catch (_e) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = errMsg(_e);
     details.push(`Error syncing to frontend schema: ${message}`);
     return {
       success: 0,

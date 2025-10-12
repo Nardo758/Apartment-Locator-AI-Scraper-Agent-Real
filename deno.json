@@ -3,7 +3,8 @@
     "lib": ["deno.ns", "deno.window"],
     "strict": true,
     "types": [
-      "./types/test-globals.d.ts"
+      "./types/test-globals.d.ts",
+      "./src/types/globals.d.ts"
     ]
   },
   "test-claude": {
