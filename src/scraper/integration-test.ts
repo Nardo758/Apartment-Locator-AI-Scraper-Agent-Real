@@ -77,7 +77,7 @@ async function testSchemaVerification(supabase: any): Promise<void> {
 
   try {
     // Check if required tables exist
-    const { data: tables, error: tablesError } = await supabase
+    const { data: tables, error: tablesError } = await (supabase as unknown as any)
       .rpc("sql", {
         query: `
           SELECT table_name 
@@ -85,7 +85,7 @@ async function testSchemaVerification(supabase: any): Promise<void> {
           WHERE table_schema = 'public' 
           AND table_name IN ('properties', 'scraped_properties', 'apartment_iq_data')
         `,
-      });
+      }) as { data?: any[] | null; error?: unknown };
 
     if (tablesError) {
       console.log("⚠️  Cannot verify schema - using mock data for testing");
@@ -97,7 +97,7 @@ async function testSchemaVerification(supabase: any): Promise<void> {
 
     // Check properties table structure
     if (tableNames.includes("properties")) {
-      const { data: columns } = await supabase
+      const { data: columns } = await (supabase as unknown as any)
         .rpc("sql", {
           query: `
             SELECT column_name, data_type 
@@ -105,7 +105,7 @@ async function testSchemaVerification(supabase: any): Promise<void> {
             WHERE table_name = 'properties' 
             ORDER BY ordinal_position
           `,
-        });
+        }) as { data?: any[] | null; error?: unknown };
 
       console.log("📋 Properties table columns:", columns?.length || 0);
     }
@@ -364,8 +364,8 @@ async function testAiPriceCalculation(supabase: any): Promise<void> {
       },
     ];
 
-    for (const testCase of testCases) {
-      const { data: aiPrice, error } = await supabase
+      for (const testCase of testCases) {
+      const { data: aiPrice, error } = await (supabase as unknown as any)
         .rpc("calculate_ai_price_estimate", {
           base_price: testCase.base_price,
           bedrooms: testCase.bedrooms,
@@ -373,7 +373,7 @@ async function testAiPriceCalculation(supabase: any): Promise<void> {
           sqft: testCase.sqft,
           amenities: ["pool", "gym"],
           market_rent: testCase.market_rent,
-        });
+        }) as { data?: number | null; error?: unknown };
 
       if (error) {
         console.log(
@@ -402,7 +402,7 @@ async function testDataQuality(supabase: any): Promise<void> {
 
   try {
     // Check scraped_properties data quality
-    const { data: qualityData, error } = await supabase
+    const { data: qualityData, error } = await (supabase as unknown as any)
       .rpc("sql", {
         query: `
           SELECT 
@@ -415,7 +415,7 @@ async function testDataQuality(supabase: any): Promise<void> {
           FROM scraped_properties
           WHERE EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'scraped_properties')
         `,
-      });
+      }) as { data?: any[] | null; error?: unknown };
 
     if (error || !qualityData || qualityData.length === 0) {
       console.log(

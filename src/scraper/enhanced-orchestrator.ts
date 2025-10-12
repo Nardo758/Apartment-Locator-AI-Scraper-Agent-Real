@@ -2,9 +2,10 @@
 // src/scraper/enhanced-orchestrator.ts
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../../types/supabase.ts';
 import { getModelCost } from './costs.ts';
 import { scraperFrontendIntegration } from './frontend-integration.ts';
+import { errMsg } from '../lib/error.ts';
 import type { ScrapedPropertyData, FrontendProperty } from '../types/frontend.ts';
 
 export type ScrapingJob = Record<string, unknown> & {
@@ -37,7 +38,7 @@ export type ScrapingResult = {
  * Enhanced orchestrator that integrates with frontend data requirements
  */
 export class EnhancedScrapingOrchestrator {
-  constructor(private supabase: SupabaseClient<Database>) {}
+  constructor(private supabase: SupabaseClient<any>) {}
 
   /**
    * Get properties to scrape using the new property_sources system
@@ -47,13 +48,15 @@ export class EnhancedScrapingOrchestrator {
     region?: string,
   ): Promise<ScrapingJob[]> {
     // Call RPC and gracefully handle errors
-    const { data: sources, error } = await (this.supabase as any).rpc(
+    const _srcRes = (this.supabase as unknown as any).rpc(
       "get_next_property_sources_batch",
       {
         batch_size: limit,
         region_filter: region,
       },
-    );
+    ) as { data: any[] | null; error?: unknown };
+    const sources = _srcRes.data;
+    const error = _srcRes.error;
 
     if (error) {
       console.error("Error getting property sources batch:", error);
@@ -204,14 +207,10 @@ export class EnhancedScrapingOrchestrator {
         `✅ Frontend integration complete: ${frontendIntegration.frontend_properties_created} properties processed`,
       );
     } catch (error) {
-      console.error("❌ Frontend integration error:", error);
-      const errMsg = (error && typeof error === "object" &&
-          "message" in (error as Record<string, unknown>))
-        ? String((error as Record<string, unknown>)["message"])
-        : String(error);
+      console.error("❌ Frontend integration error:", errMsg(error));
       scrapingResult.frontend_integration = {
         processed: 0,
-        errors: [errMsg],
+        errors: [errMsg(error)],
         frontend_properties_created: 0,
       };
     }
@@ -247,15 +246,15 @@ export class EnhancedScrapingOrchestrator {
         const totalCost = avgCost * unitsFound;
         const success = unitsFound > 0;
 
-        await this.supabase.rpc("update_property_source_metrics", {
+        await (this.supabase as unknown as any).rpc("update_property_source_metrics", {
           source_id: sourceId,
           units_found: unitsFound,
           scrape_cost: totalCost,
           success: success,
           error_message: success ? null : "No properties found",
-        });
+        }) as { data: any | null; error?: unknown };
       } catch (error) {
-        console.error(`Error updating metrics for source ${sourceId}:`, error);
+    console.error(`Error updating metrics for source ${sourceId}:`, errMsg(error));
       }
     }
   }
@@ -327,7 +326,7 @@ export class EnhancedScrapingOrchestrator {
     // Frontend-specific considerations
     try {
       // Check if this property is in high demand (has recent user searches/matches)
-      const { data: recentActivity } = await (this.supabase as any)
+      const { data: recentActivity } = await this.supabase
         .from("properties")
         .select("match_score, updated_at")
         .eq("external_id", property.external_id)
@@ -348,7 +347,7 @@ export class EnhancedScrapingOrchestrator {
     if (tierNum >= 3) {
       const externalId = String(property.external_id ?? "");
       const weekNumber = this.isoWeekNumber(new Date());
-      const seed = Number(Deno.env.get("SAMPLING_SEED") ?? 0);
+  const seed = Number(((globalThis as unknown as { Deno?: { env?: { get?(k: string): string | undefined } } }).Deno?.env?.get?.("SAMPLING_SEED") ?? process.env.SAMPLING_SEED) ?? 0);
       if (!this.deterministicSample(externalId, weekNumber, 0.10, seed)) {
         return false;
       }
@@ -440,9 +439,9 @@ export class EnhancedScrapingOrchestrator {
   async getFrontendProperties(
     filters: Record<string, unknown> = {},
   ): Promise<FrontendProperty[]> {
-    return scraperFrontendIntegration.getFrontendProperties(
+    return (scraperFrontendIntegration.getFrontendProperties(
       filters as any,
-    ) as Promise<FrontendProperty[]>;
+    ) as unknown) as Promise<FrontendProperty[]>;
   }
 }
 

@@ -504,8 +504,8 @@ export class Metrics {
       const today = new Date().toISOString().slice(0, 10);
 
       // Get database size (approximate)
-      const { data: dbStats } = await this.supabase
-        .rpc("get_database_size");
+      const { data: dbStats } = await (this.supabase as unknown as any)
+        .rpc("get_database_size") as { data?: { size?: number } | null; error?: unknown };
 
       // Get function calls today
       const { count: functionCallsToday } = await this.supabase

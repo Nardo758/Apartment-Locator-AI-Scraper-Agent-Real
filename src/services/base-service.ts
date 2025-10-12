@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import type { Database } from '../types/database.types.ts'
-import { errMsg } from '@shared/error.ts'
+import { errMsg } from '../lib/error.ts'
 
 type Tables = Database['public']['Tables']
 

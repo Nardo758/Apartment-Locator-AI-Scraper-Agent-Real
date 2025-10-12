@@ -2,7 +2,8 @@
 // src/services/frontend-data-service.ts
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../../types/supabase.ts';
+import { errMsg } from '../lib/error.ts';
 import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
 
 interface ScrapedProperty {
@@ -85,7 +86,7 @@ interface ApartmentIQData {
 }
 
 export class FrontendDataService {
-  private supabase: SupabaseClient<Database>;
+  private supabase: SupabaseClient<any>;
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     this.supabase = createTypedClient(supabaseUrl, supabaseKey);
@@ -95,7 +96,7 @@ export class FrontendDataService {
    * Transform scraped property data to frontend format
    */
   async transformScrapedToFrontend(
-    scrapedProperty: any,
+    scrapedProperty: SharedScrapedProperty,
   ): Promise<FrontendProperty> {
     // Calculate AI-enhanced pricing
     const aiPrice = await this.calculateAIPrice(scrapedProperty);
@@ -161,7 +162,7 @@ export class FrontendDataService {
   /**
    * Calculate AI-enhanced price using market intelligence
    */
-  private async calculateAIPrice(property: any): Promise<number> {
+  private async calculateAIPrice(property: SharedScrapedProperty): Promise<number> {
     try {
       // Get market data for the area
       const { data: marketData } = await this.supabase
@@ -205,7 +206,7 @@ export class FrontendDataService {
    * Calculate effective price accounting for concessions
    */
   private async calculateEffectivePrice(
-    property: any,
+    property: SharedScrapedProperty,
   ): Promise<number> {
   let effectivePrice = Number(property.current_price ?? 0);
 
@@ -250,7 +251,7 @@ export class FrontendDataService {
   /**
    * Extract features from scraped data
    */
-  private extractFeatures(property: any): string[] {
+  private extractFeatures(property: SharedScrapedProperty): string[] {
     const features: string[] = [];
 
     // Add bedroom/bathroom info as features
@@ -271,7 +272,7 @@ export class FrontendDataService {
   /**
    * Extract amenities from scraped data
    */
-  private extractAmenities(property: any): string[] {
+  private extractAmenities(property: SharedScrapedProperty): string[] {
     const amenities: string[] = [];
 
     // This would be enhanced based on your scraped data structure
@@ -294,7 +295,7 @@ export class FrontendDataService {
   /**
    * Extract pet policy information
    */
-  private extractPetPolicy(property: any): string | undefined {
+  private extractPetPolicy(property: SharedScrapedProperty): string | undefined {
     // Add logic to extract pet policy from scraped data
     return "Contact for pet policy";
   }
@@ -302,7 +303,7 @@ export class FrontendDataService {
   /**
    * Extract parking information
    */
-  private extractParkingInfo(property: any): string | undefined {
+  private extractParkingInfo(property: SharedScrapedProperty): string | undefined {
     // Add logic to extract parking info from scraped data
     return "Parking available";
   }
@@ -311,7 +312,7 @@ export class FrontendDataService {
    * Calculate market velocity based on recent data
    */
   private async calculateMarketVelocity(
-    property: any,
+    property: SharedScrapedProperty,
   ): Promise<"hot" | "normal" | "slow" | "stale"> {
     try {
       // Get recent market intelligence for the area
@@ -338,7 +339,7 @@ export class FrontendDataService {
    * Calculate days vacant/on market
    */
   private async calculateDaysVacant(
-    property: any,
+    property: SharedScrapedProperty,
   ): Promise<number> {
     try {
       // Check when this property was first seen
@@ -380,7 +381,7 @@ export class FrontendDataService {
    * Generate comprehensive ApartmentIQ data
    */
   private async generateApartmentIQData(
-    property: any,
+    property: SharedScrapedProperty,
   ): Promise<Record<string, any>> {
   const effectiveRent = await this.calculateEffectivePrice(property);
   const concessionValue = Number(property.current_price ?? 0) - effectiveRent;
@@ -410,7 +411,7 @@ export class FrontendDataService {
    * Bulk transform and upsert scraped properties to frontend format
    */
   async bulkTransformAndUpsert(
-    scrapedProperties: any[],
+    scrapedProperties: SharedScrapedProperty[],
   ): Promise<number> {
     let processedCount = 0;
 
@@ -429,7 +430,7 @@ export class FrontendDataService {
         );
 
         if (error) {
-          console.error("Error upserting property:", error);
+          console.error("Error upserting property:", errMsg(error));
         } else {
           processedCount++;
 
@@ -437,7 +438,7 @@ export class FrontendDataService {
           await this.upsertApartmentIQData(frontendProperty);
         }
       } catch (_e) {
-        console.error("Error transforming property:", _e);
+        console.error("Error transforming property:", errMsg(_e));
       }
     }
 
@@ -459,7 +460,7 @@ export class FrontendDataService {
         .single();
       const propertyDataRow = propertyData as Database['public']['Tables']['properties']['Row'] | null;
 
-      if (propertyDataRow && propertyDataRow.id) {
+      if (propertyDataRow) {
         const iqData: Partial<ApartmentIQData> = {
           current_rent: property.original_price,
           original_rent: property.original_price,
@@ -478,12 +479,12 @@ export class FrontendDataService {
         await typedUpsert(
           this.supabase,
           'apartment_iq_data',
-          { property_id: propertyDataRow.id as any, ...iqData },
+          { property_id: propertyDataRow.id, ...iqData },
           { onConflict: 'property_id', ignoreDuplicates: false }
         );
       }
     } catch (_e) {
-      console.error("Error upserting ApartmentIQ data:", _e);
+      console.error("Error upserting ApartmentIQ data:", errMsg(_e));
     }
   }
 
@@ -502,23 +503,23 @@ export class FrontendDataService {
       if (propertiesList) {
         for (const property of propertiesList) {
           // Use the database function to calculate match score
-          const { data: matchScore } = (await (this.supabase as any)
-            .rpc("calculate_property_match_score", {
-              property_id_param: property.id,
-              user_id_param: userId,
-            })) as any;
+          const _ms = await (this.supabase as unknown as any).rpc("calculate_property_match_score", {
+            property_id_param: property.id,
+            user_id_param: userId,
+          }) as { data: number | null; error?: unknown };
+          const matchScore = _ms.data;
 
           if (matchScore !== null) {
             // Update the property with the match score
-            await (this.supabase as any)
-              .from("properties")
-              .update({ match_score: matchScore } as any)
-              .eq("id", property.id);
+            await this.supabase
+              .from('properties')
+              .update({ match_score: matchScore } as Partial<Database['public']['Tables']['properties']['Update']>)
+              .eq('id', property.id);
           }
         }
       }
     } catch (_e) {
-      console.error("Error calculating match scores:", _e);
+      console.error("Error calculating match scores:", errMsg(_e));
     }
   }
 }

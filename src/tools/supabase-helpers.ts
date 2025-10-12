@@ -3,7 +3,7 @@ import type { Database } from '../types/database.types.ts';
 
 type EnvLike = { get?: (k: string) => string | undefined } | undefined;
 
-export function createTypedClient(url?: string, key?: string): SupabaseClient<Database> {
+export function createTypedClient(url?: string, key?: string): SupabaseClient<any> {
   // Support both Deno and Node environments
   const denoEnv: EnvLike = (globalThis as unknown as { Deno?: { env?: EnvLike } }).Deno?.env;
   const resolvedUrl = url ?? denoEnv?.get?.('SUPABASE_URL') ?? process.env.SUPABASE_URL ?? '';
@@ -14,7 +14,7 @@ export function createTypedClient(url?: string, key?: string): SupabaseClient<Da
   return createClient<Database>(resolvedUrl, resolvedKey);
 }
 
-export function getSupabaseOrThrow(): SupabaseClient<Database> {
+export function getSupabaseOrThrow(): SupabaseClient<any> {
   return createTypedClient();
 }
 

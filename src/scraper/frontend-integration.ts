@@ -3,9 +3,8 @@
 
 import { frontendDataService } from '../services/frontend-data-service.ts';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
-import { createTypedClient } from '../lib/supabase-client.ts';
-import typedUpsert from '../lib/typed-upsert.ts';
+import type { Database } from '../../types/supabase.ts';
+import { createTypedClient, typedUpsert } from '../tools/supabase-helpers.ts';
 import { errMsg } from '../lib/error.ts';
 
 interface ScraperResult {
@@ -16,47 +15,21 @@ interface ScraperResult {
   metadata: Record<string, unknown>;
 }
 
-interface LocalScrapedProperty {
-  id?: string;
+type LocalScrapedProperty = SharedScrapedProperty & {
+  id?: string | number;
   external_id?: string;
   name?: string;
   current_price?: number;
   bedrooms?: number;
   square_feet?: number;
   free_rent_concessions?: unknown;
-  unit_number?: string;
-  unit?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  price?: number;
-  rent?: number;
-  application_fee?: number;
-  admin_fee_waived?: boolean;
-  admin_fee?: number;
-  security_deposit?: number;
-  url?: string;
-  listing_url?: string;
-  amenities?: string[];
-  // additional optional fields we may receive from scrapers
-  title?: string;
-  bathrooms?: number;
-  sqft?: number;
-  concessions?: string | unknown;
-  specials?: string | unknown;
-  source?: string;
-}
+};
 
 export class ScraperFrontendIntegration {
-  private supabase: SupabaseClient<Database>;
+  private supabase: SupabaseClient<any>;
 
   constructor() {
-    const url = (globalThis as any).Deno?.env?.get?.('SUPABASE_URL') || ''
-    const key = (globalThis as any).Deno?.env?.get?.('SUPABASE_SERVICE_ROLE_KEY') || (globalThis as any).Deno?.env?.get?.('SUPABASE_ANON_KEY') || ''
-    if (!url || !key) {
-      throw new Error('Supabase configuration missing for frontend integration')
-    }
-    this.supabase = createTypedClient(url, key) as unknown as SupabaseClient<Database>
+  this.supabase = createTypedClient();
   }
 
   /**
@@ -103,9 +76,9 @@ export class ScraperFrontendIntegration {
       console.log(
         `✅ Frontend integration complete: ${frontendPropertiesCreated} properties processed`,
       );
-    } catch (error) {
-      console.error("❌ Frontend integration error:", errMsg(error));
-      errors.push(errMsg(error));
+    } catch (_e) {
+      console.error("❌ Frontend integration error:", errMsg(_e));
+      errors.push(errMsg(_e));
     }
 
     return {
@@ -153,11 +126,11 @@ export class ScraperFrontendIntegration {
 
         // Upsert to scraped_properties
         const { data, error } = await typedUpsert(
-          this.supabase as unknown,
+          this.supabase,
           'scraped_properties',
-          scrapedProperty as any,
-          { onConflict: 'external_id', ignoreDuplicates: false } as any
-        );
+          scrapedProperty,
+          { onConflict: 'external_id', ignoreDuplicates: false }
+        ).select().single();
 
         if (error) {
           console.error('Error upserting scraped property:', error);
@@ -195,8 +168,8 @@ export class ScraperFrontendIntegration {
       for (const [location, properties] of locationGroups) {
         await this.updateLocationIntelligence(location, properties);
       }
-    } catch (error) {
-      console.error("Error updating market intelligence:", errMsg(error));
+    } catch (_e) {
+      console.error("Error updating market intelligence:", errMsg(_e));
     }
   }
 
@@ -279,7 +252,7 @@ export class ScraperFrontendIntegration {
         `📊 Updated market intelligence for ${location}: ${properties.length} properties, avg rent $${averageRent}`,
       );
     } catch (_e) {
-      console.error(`Error updating intelligence for ${location}:`, _e);
+      console.error(`Error updating intelligence for ${location}:`, errMsg(_e));
     }
   }
 
@@ -292,7 +265,7 @@ export class ScraperFrontendIntegration {
   ): Promise<"hot" | "normal" | "slow" | "stale"> {
     try {
       // Get historical data for comparison
-      const { data: historicalData } = await (this.supabase as any)
+      const { data: historicalData } = await this.supabase
         .from("market_intelligence")
         .select("average_rent, concession_prevalence")
         .eq("location", location)
@@ -320,8 +293,8 @@ export class ScraperFrontendIntegration {
       if (currentConcessionRate > 0.15) return "slow";
       if (currentConcessionRate < 0.05) return "hot";
       return "normal";
-    } catch (error) {
-      console.warn("Error calculating market velocity:", errMsg(error));
+    } catch (_e) {
+      console.warn("Error calculating market velocity:", _e);
       return "normal";
     }
   }
@@ -420,7 +393,7 @@ export class ScraperFrontendIntegration {
   private async scheduleMatchScoreUpdates(): Promise<void> {
     try {
       // Get active users (users who have logged in recently)
-      const { data: activeUsers } = await (this.supabase as any)
+      const { data: activeUsers } = await this.supabase
         .from("user_profiles")
         .select("user_id")
         .gte(
@@ -428,15 +401,14 @@ export class ScraperFrontendIntegration {
           new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         ); // 30 days
 
-      const users = (activeUsers ?? []) as Array<{ user_id: string }>;
-      if (users.length > 0) {
+      if (activeUsers && activeUsers.length > 0) {
         console.log(
-          `🎯 Scheduling match score updates for ${users.length} active users`,
+          `🎯 Scheduling match score updates for ${activeUsers.length} active users`,
         );
 
         // In a production system, this would queue background jobs
         // For now, we'll process a limited number immediately
-        const usersToProcess = users.slice(0, 10); // Limit to prevent timeout
+        const usersToProcess = activeUsers.slice(0, 10); // Limit to prevent timeout
 
         for (const user of usersToProcess) {
           try {
@@ -444,13 +416,13 @@ export class ScraperFrontendIntegration {
           } catch (_e) {
             console.error(
               `Error updating match scores for user ${user.user_id}:`,
-              _e,
+                errMsg(_e),
             );
           }
         }
       }
     } catch (_e) {
-      console.error("Error scheduling match score updates:", _e);
+        console.error("Error scheduling match score updates:", errMsg(_e));
     }
   }
 
@@ -491,7 +463,7 @@ export class ScraperFrontendIntegration {
 
       // Geographic search
       if (filters.latitude && filters.longitude) {
-      const { data } = await (this.supabase as any).rpc(
+        const _rpcRes = await this.supabase.rpc(
           "search_properties_near_location",
           {
             lat: filters.latitude,
@@ -503,9 +475,9 @@ export class ScraperFrontendIntegration {
             max_price: filters.max_price,
             user_id_param: filters.user_id,
           },
-        );
+        ) as { data: Database['public']['Functions']['search_properties_near_location']['Returns'] | null; error?: unknown };
 
-        return data || [];
+        return _rpcRes.data || [];
       }
 
       // Apply limit and ordering

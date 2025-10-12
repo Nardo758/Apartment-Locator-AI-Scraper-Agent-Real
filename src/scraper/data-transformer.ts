@@ -2,7 +2,8 @@
 // Data transformation pipeline for converting scraper data to frontend schema
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../../types/supabase.ts';
+import { errMsg } from '../lib/error.ts';
 import type { ScrapedPropertyData, FrontendProperty, ApartmentIQData } from '../types/frontend.ts';
 
 /**
@@ -104,7 +105,7 @@ export async function calculateAiPrice(
 
     return Math.round(adjustedPrice);
   } catch (_e) {
-    console.error("Error calculating AI price:", _e);
+    console.error("Error calculating AI price:", errMsg(_e));
     return scrapedData.current_price;
   }
 }
@@ -132,7 +133,7 @@ export async function calculateEffectivePrice(
 
     return Math.round(Math.max(effectivePrice, 0));
   } catch (_e) {
-    console.error("Error calculating effective price:", _e);
+    console.error("Error calculating effective price:", errMsg(_e));
     return scrapedData.current_price || 0;
   }
 }
@@ -381,7 +382,7 @@ export async function generateIqData(
       last_updated: new Date().toISOString(),
     };
   } catch (_e) {
-    console.error("Error generating IQ data:", _e);
+  console.error("Error generating IQ data:", errMsg(_e));
     return {
       market_position: "at_market",
       confidence_score: 0.5,
@@ -450,11 +451,11 @@ export async function batchTransformProperties(
     try {
       const transformed = await transformScrapedToFrontendFormat(property);
       transformedProperties.push(transformed);
-  } catch (_e) {
-    console.error(
-      `Error transforming property ${property.external_id}:`,
-      _e,
-    );
+    } catch (_e) {
+      console.error(
+        `Error transforming property ${property.external_id}:`,
+  errMsg(_e),
+      );
       // Continue with other properties
     }
   }
@@ -468,7 +469,7 @@ export async function batchTransformProperties(
 export async function saveTransformedProperties(
   supabase: SupabaseClient<Database>,
   frontendProperties: FrontendProperty[],
-  targetTable: keyof Database['public']['Tables'] | string = 'properties'
+  targetTable: keyof (Database['public']['Tables'] & Database['public']['Views']) | string = 'properties'
 ): Promise<{ success: number; errors: number }> {
   let success = 0;
   let errors = 0;
@@ -477,13 +478,13 @@ export async function saveTransformedProperties(
     try {
       // Cast the table name when using dynamic strings to avoid overly strict generics
       const table = targetTable as unknown as keyof Database['public']['Tables']
-      const insertPayload = property as unknown as Record<string, unknown>
-      const { error } = await (supabase as any)
-        .from(table as any)
+  const insertPayload = property as unknown as import('../../types/supabase.ts').TablesInsert<typeof table>
+      const { error } = await supabase
+        .from(table)
         .upsert(insertPayload as any, { onConflict: 'external_id', ignoreDuplicates: false });
       
       if (error) {
-        console.error(`Error saving property ${property.external_id}:`, error);
+          console.error(`Error saving property ${property.external_id}:`, errMsg(error));
         errors++;
       } else {
         success++;
@@ -491,7 +492,7 @@ export async function saveTransformedProperties(
     } catch (_e) {
       console.error(
         `Exception saving property ${property.external_id}:`,
-        _e,
+  errMsg(_e),
       );
       errors++;
     }

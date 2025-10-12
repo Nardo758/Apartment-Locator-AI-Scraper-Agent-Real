@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient as SClient, PostgrestResponse } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
-import type { Apartment } from '../types/apartment.ts'
+import type { Database } from '../../types/supabase.ts';
+import type { Apartment } from '../types/index.ts'
 import * as process from 'node:process';
 
 // Apartment type moved to src/types/apartment.ts
@@ -43,8 +43,8 @@ export class SupabaseClientWrapper {
 
     // Cast to TablesInsert<'apartments'> at the boundary to satisfy supabase-js types
     // while still allowing us to build the payload ergonomically.
-    const insertPayload = payload as unknown as Record<string, unknown>
-    const result = await (this.client as any)
+  const insertPayload = payload as unknown as import('../../types/supabase.ts').TablesInsert<'apartments'>
+    const result = await this.client
       .from('apartments')
       .upsert(insertPayload, { onConflict: 'external_id' }) as PostgrestResponse<unknown>
   // result.data may be null; narrow safely
@@ -58,7 +58,7 @@ export class SupabaseClientWrapper {
   async deactivateOldListings(source: string, cutoffDays = 7) {
     const cutoff = new Date(Date.now() - cutoffDays * 24 * 3600 * 1000)
       .toISOString();
-    const { data, error } = await (this.client as any).from("apartments").update({
+    const { data, error } = await this.client.from("apartments").update({
       is_active: false,
     }).eq("source", source).lt("scraped_at", cutoff).select();
     if (error) throw error;

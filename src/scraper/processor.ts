@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../../types/supabase.ts';
 import type { ScrapingJob } from './orchestrator.ts';
 import { syncToFrontendSchema } from './orchestrator.ts';
 import { transformScrapedToFrontendFormat } from './data-transformer.ts';
@@ -8,6 +8,7 @@ import { ScrapedPropertySchema, type ScrapedPropertyType } from '../schemas/scra
 import { validationPassCounter, validationFailCounter, validationFailByReason } from '../observability/metrics.ts';
 import process from 'node:process';
 import { startMetricsServer } from '../observability/server.ts';
+import { errMsg } from '../lib/error.ts';
 
 
 type WorkerResult = {
@@ -98,12 +99,12 @@ export async function processBatchWithCostOptimization(
         (await dispatchToWorker(workerUrl, payload, 2)) as WorkerResult;
       const duration = workerResult.duration ?? (Date.now() - startTime);
 
-      await (supabase as any).rpc("update_scraping_metrics", {
+      await supabase.rpc("update_scraping_metrics", {
         p_external_id: job.external_id,
         p_success: workerResult.success === true,
         p_duration: duration,
         p_price_changed: workerResult.price_changed === true,
-      });
+      }) as { data: Database['public']['Functions']['update_scraping_metrics']['Returns'] | null; error?: unknown };
 
       // If worker returned usage metadata, record it
       try {
@@ -134,7 +135,7 @@ export async function processBatchWithCostOptimization(
               estimateCostFromTokens(model, prompt, completion),
           );
           const today = new Date().toISOString().slice(0, 10);
-          await (supabase as any).rpc("rpc_inc_scraping_costs", {
+          await supabase.rpc("rpc_inc_scraping_costs", {
             p_date: today,
             p_properties_scraped: 1,
             p_ai_requests: 1,
@@ -145,17 +146,17 @@ export async function processBatchWithCostOptimization(
               prompt_tokens: prompt,
               completion_tokens: completion,
             },
-          });
+          }) as { data: Database['public']['Functions']['rpc_inc_scraping_costs']['Returns'] | null; error?: unknown };
         }
       } catch (e) {
         console.error("Failed to record scraping cost in processor:", e);
       }
 
       const newStatus = workerResult.success ? "completed" : "failed";
-      await (supabase as any).from("scraping_queue").update({
+      await supabase.from("scraping_queue").update({
         status: newStatus,
         completed_at: new Date().toISOString(),
-      }).eq("external_id", job.external_id).eq("id", job.queue_id);
+  }).eq("external_id", job.external_id).eq("id", Number(job.queue_id) as any);
 
       // If successful and frontend sync is enabled, prepare for transformation
       if (workerResult.success && enableFrontendSync && workerResult.data) {
@@ -210,19 +211,29 @@ export async function processBatchWithCostOptimization(
             );
             validationFailCounter.inc();
             validationFailByReason.inc({ reason: "zod_error" }, 1);
-            try {
-              await (supabase as any).from("failed_scrapes").insert({
-                external_id: job.external_id,
-                payload: scrapedDataRaw,
-                error: parsed.error.flatten(),
-                created_at: new Date().toISOString(),
-              });
-            } catch (dbErr) {
-              console.error(
-                "Failed to write schema violation to failed_scrapes:",
-                dbErr,
-              );
-            }
+              try {
+                // Some generated type sets may not include `failed_scrapes`. Use a small local shape
+                // and call the table with a cast to avoid widening many call-sites to `any`.
+                type FailedScrapesInsert = {
+                  external_id?: string | null;
+                  payload?: unknown | null;
+                  error?: unknown | null;
+                  created_at?: string | null;
+                };
+                const insertRow: FailedScrapesInsert = {
+                  external_id: job.external_id,
+                  payload: scrapedDataRaw,
+                  error: parsed.error.flatten(),
+                  created_at: new Date().toISOString(),
+                };
+                // cast relation string to any to bypass generated-table union mismatch
+                await (supabase as any).from('failed_scrapes').insert(insertRow);
+              } catch (dbErr) {
+                console.error(
+                  "Failed to write schema violation to failed_scrapes:",
+                  errMsg(dbErr),
+                );
+              }
           } else {
             validationPassCounter.inc();
             const scrapedData = parsed.data as ScrapedPropertyType;
@@ -234,7 +245,7 @@ export async function processBatchWithCostOptimization(
         } catch (transformError) {
           console.error(
             `Error transforming property ${job.external_id} for frontend:`,
-            transformError,
+            errMsg(transformError),
           );
         }
       }
@@ -245,7 +256,7 @@ export async function processBatchWithCostOptimization(
         result: workerResult,
       });
     } catch (err) {
-      await (supabase as any).rpc("update_scraping_metrics", {
+      await supabase.rpc("update_scraping_metrics", {
         p_external_id: job.external_id,
         p_success: false,
         p_duration: 0,

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../../types/supabase.ts';
+import { errMsg } from '../lib/error.ts';
 
 export function estimateCostFromTokens(
   modelKey: string,
@@ -34,7 +35,7 @@ export async function recordDailyScrapingCost(supabase: SupabaseClient<Database>
     );
     const today = new Date().toISOString().slice(0, 10);
 
-    await (supabase as any).from("scraping_costs").upsert([
+    await supabase.from("scraping_costs").upsert([
       {
         date: today,
         properties_scraped: 1,
@@ -48,10 +49,10 @@ export async function recordDailyScrapingCost(supabase: SupabaseClient<Database>
         },
         created_at: new Date().toISOString(),
       },
-    ] as any, { onConflict: "date" } as any);
+    ], { onConflict: "date" });
   } catch (_e) {
     // non-fatal
-    console.error("recordDailyScrapingCost failed", _e);
+    console.error("recordDailyScrapingCost failed", errMsg(_e));
   }
 }
 

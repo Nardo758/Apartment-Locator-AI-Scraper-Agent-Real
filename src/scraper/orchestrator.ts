@@ -1,11 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../../types/supabase.ts';
 import { getModelCost } from './costs.ts';
 import {
   batchTransformProperties,
   saveTransformedProperties,
   transformScrapedToFrontendFormat,
 } from "./data-transformer.ts";
+import { errMsg } from '../lib/error.ts';
 import type { FrontendProperty, ScrapedPropertyData } from "../types/frontend.ts";
 import process from "node:process";
 
@@ -203,9 +204,8 @@ export async function getScrapingBatchWithTransformation(
     );
 
     return { jobs, frontendProperties };
-  } catch (error) {
-    const { errMsg } = await import('../lib/error.ts');
-    console.error("Error transforming properties for frontend:", errMsg(error));
+  } catch (_e) {
+      console.error("Error transforming properties for frontend:", errMsg(_e));
     return { jobs };
   }
 }
@@ -237,9 +237,8 @@ export async function syncToFrontendSchema(
       errors: result.errors,
       details,
     };
-  } catch (error) {
-    const { errMsg } = await import('../lib/error.ts');
-    const message = errMsg(error);
+  } catch (_e) {
+    const message = errMsg(_e);
     details.push(`Error syncing to frontend schema: ${message}`);
     return {
       success: 0,

@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types.ts';
+import type { Database } from '../../types/supabase.ts';
 import { errMsg } from '../lib/error.ts';
 import * as market from './market.ts';
 import { extractAmenities } from './amenities.ts';
@@ -27,24 +27,25 @@ export function detectSignificantChanges(
   return changes;
 }
 
-async function logScrapingActivity(supabase: SupabaseClient<Database>, externalId: string, event: string, payload: Record<string, unknown>) {
+async function logScrapingActivity(supabase: SupabaseClient<any>, externalId: string, event: string, payload: Record<string, unknown>) {
   // best-effort logging; swallow errors
   try {
-    const row: Record<string, unknown> = {
+    // Use the generated types: 'scraping_logs' has columns (level, message, meta, job_id, created_at, id)
+  const row: import('../../types/supabase.ts').TablesInsert<'scraping_logs'> = {
       level: 'info',
       message: event,
-      meta: payload,
+  meta: payload as unknown as import('../../types/supabase.ts').Json,
       created_at: new Date().toISOString(),
     };
-    await (supabase as any).from('scraping_logs').insert(row as any);
+    await supabase.from('scraping_logs').insert(row);
   } catch (_err) {
     // ignore logging failures
   }
 }
 
-async function logSignificantChanges(supabase: SupabaseClient<Database>, externalId: string, changes: unknown[]) {
+async function logSignificantChanges(supabase: SupabaseClient<any>, externalId: string, changes: unknown[]) {
   try {
-    await (supabase as any).from("scraping_change_logs").insert({
+    await (supabase as unknown as any).from("scraping_change_logs").insert({
       external_id: externalId,
       changes: JSON.stringify(changes),
       created_at: new Date().toISOString(),
@@ -58,15 +59,15 @@ async function logSignificantChanges(supabase: SupabaseClient<Database>, externa
  * Update a property using the server-side RPC `rpc_update_property_with_history` if available,
  * otherwise fall back to a direct update and separately insert price_history when price changed.
  */
-export async function updatePropertyWithHistory(supabase: SupabaseClient<Database>, externalId: string, payload: Record<string, unknown>) {
+export async function updatePropertyWithHistory(supabase: SupabaseClient<any>, externalId: string, payload: Record<string, unknown>) {
   // Attempt RPC first
   try {
-    const { data, error } = await (supabase as any).rpc('rpc_update_property_with_history', {
+    const _rpcRes = await supabase.rpc('rpc_update_property_with_history', {
       p_external_id: externalId,
-      p_payload: payload as unknown as Record<string, unknown>,
-    });
-    if (error) throw error;
-    return data;
+  p_payload: payload as unknown as import('../../types/supabase.ts').Json,
+    }) as { data: Database['public']['Functions']['rpc_update_property_with_history']['Returns'] | null; error?: unknown };
+    if ((_rpcRes as any).error) throw (_rpcRes as any).error;
+    return _rpcRes.data;
   } catch (_rpcErr) {
     // Fallback path
     const updatePayload: Record<string, unknown> = { ...payload };
@@ -75,7 +76,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
     delete (updatePayload as Record<string, unknown>)["id"];
 
     type CurrentRow = { current_price?: number | null } | null;
-    const { data: currentRow } = await (supabase as any).from("scraped_properties")
+    const { data: currentRow } = await supabase.from("scraped_properties")
       .select("current_price").eq("external_id", externalId).maybeSingle() as {
         data: CurrentRow;
       };
@@ -84,7 +85,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
         ? currentRow.current_price
         : null;
 
-    const { error: upErr } = await (supabase as any).from("scraped_properties").update(
+    const { error: upErr } = await supabase.from("scraped_properties").update(
       updatePayload,
     ).eq("external_id", externalId);
     if (upErr) throw upErr;
@@ -101,7 +102,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
       newPriceNum !== null && oldPriceNum !== null &&
       newPriceNum !== oldPriceNum
     ) {
-      await (supabase as any).from("price_history").insert({
+      await supabase.from("price_history").insert({
         external_id: externalId,
         price: newPriceNum,
         change_type: newPriceNum > oldPriceNum ? "increased" : "decreased",
@@ -117,7 +118,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
  * Process the scraping result by performing change-only updates when no significant changes
  * and full updates (with history) when significant changes are detected.
  */
-export async function processScrapingResult(supabase: SupabaseClient<Database>, oldData: Record<string, unknown>, newData: Record<string, unknown>) {
+export async function processScrapingResult(supabase: SupabaseClient<any>, oldData: Record<string, unknown>, newData: Record<string, unknown>) {
   const changes = detectSignificantChanges(oldData, newData);
 
   if (changes.length === 0) {
@@ -206,20 +207,20 @@ export async function processScrapingResult(supabase: SupabaseClient<Database>, 
           // non-fatal: if market helpers fail, ignore
         }
 
-        await (supabase as any)
+        await supabase
           .from("scraped_properties")
           .update(minimalUpdate)
           .eq("external_id", externalId);
 
         await logScrapingActivity(supabase, externalId, "no_change", {});
       }
-  } catch (err) {
+    } catch (_e) {
       // best-effort; log and swallow
       const externalId = typeof oldData?.external_id === "string"
         ? oldData.external_id
         : "unknown";
       await logScrapingActivity(supabase, externalId, "no_change_error", {
-        error: errMsg(err),
+        error: errMsg(_e),
       });
     }
     return;
@@ -285,12 +286,12 @@ export async function processScrapingResult(supabase: SupabaseClient<Database>, 
       await updatePropertyWithHistory(supabase, externalId, enriched);
       await logSignificantChanges(supabase, externalId, changes);
     }
-  } catch (err) {
+  } catch (_e) {
     const externalId = typeof oldData?.external_id === "string"
       ? oldData.external_id
       : "unknown";
     await logScrapingActivity(supabase, externalId, "update_error", {
-      error: errMsg(err),
+      error: errMsg(_e),
     });
   }
 }
