@@ -27,7 +27,7 @@ export function detectSignificantChanges(
   return changes;
 }
 
-async function logScrapingActivity(supabase: SupabaseClient<Database>, externalId: string, event: string, payload: Record<string, unknown>) {
+async function logScrapingActivity(supabase: SupabaseClient<any>, externalId: string, event: string, payload: Record<string, unknown>) {
   // best-effort logging; swallow errors
   try {
     // Use the generated types: 'scraping_logs' has columns (level, message, meta, job_id, created_at, id)
@@ -43,9 +43,9 @@ async function logScrapingActivity(supabase: SupabaseClient<Database>, externalI
   }
 }
 
-async function logSignificantChanges(supabase: SupabaseClient<Database>, externalId: string, changes: unknown[]) {
+async function logSignificantChanges(supabase: SupabaseClient<any>, externalId: string, changes: unknown[]) {
   try {
-    await supabase.from("scraping_change_logs").insert({
+    await (supabase as unknown as any).from("scraping_change_logs").insert({
       external_id: externalId,
       changes: JSON.stringify(changes),
       created_at: new Date().toISOString(),
@@ -59,7 +59,7 @@ async function logSignificantChanges(supabase: SupabaseClient<Database>, externa
  * Update a property using the server-side RPC `rpc_update_property_with_history` if available,
  * otherwise fall back to a direct update and separately insert price_history when price changed.
  */
-export async function updatePropertyWithHistory(supabase: SupabaseClient<Database>, externalId: string, payload: Record<string, unknown>) {
+export async function updatePropertyWithHistory(supabase: SupabaseClient<any>, externalId: string, payload: Record<string, unknown>) {
   // Attempt RPC first
   try {
     const _rpcRes = await supabase.rpc('rpc_update_property_with_history', {
@@ -118,7 +118,7 @@ export async function updatePropertyWithHistory(supabase: SupabaseClient<Databas
  * Process the scraping result by performing change-only updates when no significant changes
  * and full updates (with history) when significant changes are detected.
  */
-export async function processScrapingResult(supabase: SupabaseClient<Database>, oldData: Record<string, unknown>, newData: Record<string, unknown>) {
+export async function processScrapingResult(supabase: SupabaseClient<any>, oldData: Record<string, unknown>, newData: Record<string, unknown>) {
   const changes = detectSignificantChanges(oldData, newData);
 
   if (changes.length === 0) {
