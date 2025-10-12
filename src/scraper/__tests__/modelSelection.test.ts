@@ -9,9 +9,7 @@ jest.mock("../orchestrator", () => ({
   calculateStabilityScore: jest.fn(),
 }));
 
-const mocked = calculateStabilityScore as jest.MockedFunction<
-  typeof calculateStabilityScore
->;
+const mocked = calculateStabilityScore as unknown as jest.MockedFunction<any>;
 
 describe("model selection", () => {
   afterEach(() => mocked.mockReset());

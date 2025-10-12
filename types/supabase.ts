@@ -14,78 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-        scraping_change_logs: {
-          Row: {
-            id: string
-            external_id: string
-            changes: Json | string | null
-            created_at: string | null
-          }
-          Insert: {
-            id?: string
-            external_id: string
-            changes?: Json | string | null
-            created_at?: string | null
-          }
-          Update: {
-            id?: string
-            external_id?: string
-            changes?: Json | string | null
-            created_at?: string | null
-          }
-          Relationships: []
-        }
-        concession_analytics: {
-          Row: {
-            id: number
-            market_name: string
-            analysis_date: string
-            total_properties: number
-            properties_with_concessions: number
-            concession_rate: number
-            free_rent_offers: number
-            waived_fees: number
-            reduced_deposits: number
-            average_discount: number
-            total_discount_amount: number
-            market_analysis: Json | null
-            created_at: string | null
-            updated_at: string | null
-          }
-          Insert: {
-            id?: number
-            market_name: string
-            analysis_date: string
-            total_properties?: number
-            properties_with_concessions?: number
-            concession_rate?: number
-            free_rent_offers?: number
-            waived_fees?: number
-            reduced_deposits?: number
-            average_discount?: number
-            total_discount_amount?: number
-            market_analysis?: Json | null
-            created_at?: string | null
-            updated_at?: string | null
-          }
-          Update: {
-            id?: number
-            market_name?: string
-            analysis_date?: string
-            total_properties?: number
-            properties_with_concessions?: number
-            concession_rate?: number
-            free_rent_offers?: number
-            waived_fees?: number
-            reduced_deposits?: number
-            average_discount?: number
-            total_discount_amount?: number
-            market_analysis?: Json | null
-            created_at?: string | null
-            updated_at?: string | null
-          }
-          Relationships: []
-        }
       ai_results: {
         Row: {
           created_at: string | null
@@ -322,11 +250,9 @@ export type Database = {
         Row: {
           average_rent: number | null
           calculated_at: string | null
-          valid_until: string | null
           concession_prevalence: number | null
           days_on_market_avg: number | null
           id: string
-          location_type: string | null
           insights: Json | null
           leasing_velocity: number | null
           location: string
@@ -342,11 +268,9 @@ export type Database = {
         Insert: {
           average_rent?: number | null
           calculated_at?: string | null
-          valid_until?: string | null
           concession_prevalence?: number | null
           days_on_market_avg?: number | null
           id?: string
-          location_type?: string | null
           insights?: Json | null
           leasing_velocity?: number | null
           location: string
@@ -362,11 +286,9 @@ export type Database = {
         Update: {
           average_rent?: number | null
           calculated_at?: string | null
-          valid_until?: string | null
           concession_prevalence?: number | null
           days_on_market_avg?: number | null
           id?: string
-          location_type?: string | null
           insights?: Json | null
           leasing_velocity?: number | null
           location?: string
@@ -1468,10 +1390,6 @@ export type Database = {
         }
         Returns: number
       }
-      calculate_next_scrape_time: {
-        Args: { frequency: string; base_time?: string }
-        Returns: string
-      }
       export_user_data: {
         Args: { p_export_type?: string; p_user_id: string }
         Returns: Json
@@ -1485,18 +1403,6 @@ export type Database = {
           queue_id: number
           source: string
           url: string
-        }[]
-      }
-      get_next_property_sources_batch: {
-        Args: { batch_size?: number; region_filter?: string }
-        Returns: {
-          id: number
-          url: string
-          property_name: string | null
-          website_name: string | null
-          priority: number | null
-          expected_units: number | null
-          metadata: Json | null
         }[]
       }
       has_property_changed: {
@@ -1606,29 +1512,6 @@ export type Database = {
           p_success: boolean
         }
         Returns: undefined
-      }
-      update_property_source_metrics: {
-        Args: {
-          source_id: number
-          units_found: number
-          scrape_cost?: number
-          success?: boolean
-          error_message?: string | null
-        }
-        Returns: boolean
-      }
-      add_property_source: {
-        Args: {
-          source_url: string
-          source_property_name?: string | null
-          source_website_name?: string | null
-          source_region?: string | null
-          source_priority?: number
-          source_frequency?: string
-          source_expected_units?: number | null
-          source_metadata?: Json | null
-        }
-        Returns: number
       }
     }
     Enums: {

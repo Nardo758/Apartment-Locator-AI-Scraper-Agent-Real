@@ -69,7 +69,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
         }
         throw err;
       }
-    }, 20000);
+    });
 
     afterAll(async () => {
       if (skipIntegration) return;
@@ -82,7 +82,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
         "external_id",
         testExternalId,
       );
-    }, 20000);
+    });
 
     test(
       "reprocess moves entry into scraping_queue and updates requeue_count",
@@ -127,7 +127,6 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
         expect(typeof failedRow.requeue_count).toBe("number");
         expect(failedRow.requeue_count).toBeGreaterThanOrEqual(0);
       },
-      20000,
     );
   });
 }
