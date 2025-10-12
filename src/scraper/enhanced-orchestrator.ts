@@ -38,7 +38,7 @@ export type ScrapingResult = {
  * Enhanced orchestrator that integrates with frontend data requirements
  */
 export class EnhancedScrapingOrchestrator {
-  constructor(private supabase: SupabaseClient<Database>) {}
+  constructor(private supabase: SupabaseClient<any>) {}
 
   /**
    * Get properties to scrape using the new property_sources system
@@ -48,13 +48,13 @@ export class EnhancedScrapingOrchestrator {
     region?: string,
   ): Promise<ScrapingJob[]> {
     // Call RPC and gracefully handle errors
-    const _srcRes = await this.supabase.rpc(
+    const _srcRes = (this.supabase as unknown as any).rpc(
       "get_next_property_sources_batch",
       {
         batch_size: limit,
         region_filter: region,
       },
-    ) as { data: Database['public']['Functions']['get_next_property_sources_batch']['Returns'] | null; error?: unknown };
+    ) as { data: any[] | null; error?: unknown };
     const sources = _srcRes.data;
     const error = _srcRes.error;
 
@@ -246,13 +246,13 @@ export class EnhancedScrapingOrchestrator {
         const totalCost = avgCost * unitsFound;
         const success = unitsFound > 0;
 
-        await this.supabase.rpc("update_property_source_metrics", {
+        await (this.supabase as unknown as any).rpc("update_property_source_metrics", {
           source_id: sourceId,
           units_found: unitsFound,
           scrape_cost: totalCost,
           success: success,
           error_message: success ? null : "No properties found",
-        }) as { data: Database['public']['Functions']['update_property_source_metrics']['Returns'] | null; error?: unknown };
+        }) as { data: any | null; error?: unknown };
       } catch (error) {
     console.error(`Error updating metrics for source ${sourceId}:`, errMsg(error));
       }

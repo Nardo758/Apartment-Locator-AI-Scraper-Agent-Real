@@ -86,7 +86,7 @@ interface ApartmentIQData {
 }
 
 export class FrontendDataService {
-  private supabase: SupabaseClient<Database>;
+  private supabase: SupabaseClient<any>;
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     this.supabase = createTypedClient(supabaseUrl, supabaseKey);

@@ -26,10 +26,10 @@ type LocalScrapedProperty = SharedScrapedProperty & {
 };
 
 export class ScraperFrontendIntegration {
-  private supabase: SupabaseClient<Database>;
+  private supabase: SupabaseClient<any>;
 
   constructor() {
-    this.supabase = createTypedClient();
+  this.supabase = createTypedClient();
   }
 
   /**
