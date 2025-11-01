@@ -69,6 +69,18 @@ CREATE TABLE IF NOT EXISTS public.properties (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Ensure is_active column exists (for upgrades from older schemas)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'properties' 
+        AND column_name = 'is_active'
+    ) THEN
+        ALTER TABLE public.properties ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+    END IF;
+END $$;
+
 -- Enable RLS on properties table
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
 
@@ -78,21 +90,42 @@ DROP POLICY IF EXISTS "Service role full access" ON public.properties;
 DROP POLICY IF EXISTS "Authenticated users read access" ON public.properties;
 DROP POLICY IF EXISTS "Anonymous users read active properties" ON public.properties;
 
-CREATE POLICY "Service role full access" ON public.properties
-    FOR ALL USING (auth.role() = 'service_role');
+DO $$ BEGIN
+    CREATE POLICY "Service role full access" ON public.properties
+        FOR ALL USING (auth.role() = 'service_role');
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "Authenticated users read access" ON public.properties
-    FOR SELECT USING (auth.role() = 'authenticated');
+DO $$ BEGIN
+    CREATE POLICY "Authenticated users read access" ON public.properties
+        FOR SELECT USING (auth.role() = 'authenticated');
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY "Anonymous users read active properties" ON public.properties
-    FOR SELECT USING (is_active = true);
+DO $$ BEGIN
+    CREATE POLICY "Anonymous users read active properties" ON public.properties
+        FOR SELECT USING (is_active = true);
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Create performance indexes
 CREATE INDEX IF NOT EXISTS idx_properties_location ON public.properties(city, state);
+-- Create coordinates index only if both latitude and longitude columns exist
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_properties_coordinates') THEN
-        CREATE INDEX idx_properties_coordinates ON public.properties(latitude, longitude) WHERE latitude IS NOT NULL AND longitude IS NOT NULL;
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'properties' AND column_name = 'latitude'
+    ) AND EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'properties' AND column_name = 'longitude'
+    ) THEN
+        IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = 'idx_properties_coordinates') THEN
+            CREATE INDEX idx_properties_coordinates ON public.properties(latitude, longitude) WHERE latitude IS NOT NULL AND longitude IS NOT NULL;
+        END IF;
     END IF;
 END$$;
 CREATE INDEX IF NOT EXISTS idx_properties_price_range ON public.properties(original_price, effective_price);

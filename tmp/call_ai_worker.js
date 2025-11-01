@@ -1,13 +1,13 @@
 import process from "node:process";
 (async () => {
-  const SUPABASE_URL = "http://127.0.0.1:54321";
+  const SUPABASE_URL = "http://127.0.0.1:54380";
   const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ||
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
   const payload = {
-    urls: ["https://www.vuemidtown.com"],
+    urls: ["https://www.apartments.com/atlanta-ga/"],
     property_source_id: 9999,
-    claude_analysis: false,
-    metadata: { property_name: "Vue Midtown", website_name: "vue" },
+    claude_analysis: true,
+    metadata: { property_name: "Atlanta Apartments", website_name: "apartments.com" },
   };
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-scraper-worker`, {

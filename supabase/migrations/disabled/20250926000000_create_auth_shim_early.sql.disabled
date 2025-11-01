@@ -1,0 +1,26 @@
+-- Early auth shim to satisfy Supabase-specific auth.role() references
+-- This migration intentionally uses straightforward SQL so it's portable
+-- and will be applied before 20250927100000_create_sources_table.sql
+
+-- Check if auth schema exists and create if not, grant usage
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'auth') THEN
+    CREATE SCHEMA auth;
+  END IF;
+END $$;
+
+-- Grant necessary permissions on auth schema
+GRANT USAGE ON SCHEMA auth TO postgres, anon, authenticated, service_role;
+
+-- Create a simple auth.role() function returning 'service_role'
+-- Use SQL-language function for maximum portability
+CREATE OR REPLACE FUNCTION auth.role()
+RETURNS TEXT
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  SELECT 'service_role';
+$$;
+
+COMMENT ON FUNCTION auth.role() IS 'Early shim: returns service_role for CI';

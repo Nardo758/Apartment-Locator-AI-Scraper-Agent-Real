@@ -84,20 +84,40 @@ ALTER TABLE scraping_jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE scraping_costs ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
-CREATE POLICY IF NOT EXISTS "Properties are viewable by everyone" ON properties
-  FOR SELECT USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Properties are viewable by everyone" ON properties
+    FOR SELECT USING (true);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Properties are insertable by service role" ON properties
-  FOR INSERT WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "Properties are insertable by service role" ON properties
+    FOR INSERT WITH CHECK (true);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Properties are updatable by service role" ON properties
-  FOR UPDATE USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Properties are updatable by service role" ON properties
+    FOR UPDATE USING (true);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Scraping jobs are service role only" ON scraping_jobs
-  FOR ALL USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Scraping jobs are service role only" ON scraping_jobs
+    FOR ALL USING (true);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Scraping costs are service role only" ON scraping_costs
-  FOR ALL USING (true);
+DO $$ BEGIN
+  CREATE POLICY "Scraping costs are service role only" ON scraping_costs
+    FOR ALL USING (true);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_properties_external_id ON properties(external_id);
