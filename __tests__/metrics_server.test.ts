@@ -1,3 +1,4 @@
+// @ts-ignore - node-fetch import issue
 import fetch from "node-fetch";
 import {
   startMetricsServer,
@@ -22,6 +23,6 @@ test("metrics endpoint responds and health endpoint OK", async () => {
 
   const healthResp = await fetch(`http://127.0.0.1:${PORT}/health`);
   expect(healthResp.status).toBe(200);
-  const json = await healthResp.json();
+  const json = await healthResp.json() as { status: string };
   expect(json.status).toBe("ok");
 });

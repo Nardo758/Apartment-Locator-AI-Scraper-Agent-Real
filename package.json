@@ -2,6 +2,7 @@
   "name": "apartment-scraper",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "supabase start",
     "db:push": "supabase db push",
@@ -15,17 +16,19 @@
     "populate": "node scripts/populate_queue.js"
   },
   "dependencies": {
-    "prom-client": "^14.2.0",
-    "zod": "^3.23.0",
     "@anthropic-ai/sdk": "^0.25.0",
     "@supabase/supabase-js": "^2.58.0",
     "@types/node": "^24.5.2",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.2",
+    "jsdom": "^27.1.0",
+    "node-fetch": "^3.3.2",
     "node-geocoder": "^4.4.1",
     "pg": "^8.16.3",
+    "prom-client": "^14.2.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",
@@ -39,6 +42,9 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/**/*.test.ts"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!node-fetch)"
     ]
   }
 }

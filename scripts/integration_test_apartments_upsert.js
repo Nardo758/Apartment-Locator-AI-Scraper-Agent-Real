@@ -5,7 +5,7 @@ Integration test that simulates the Claude worker upserting into `apartments`.
 Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
 */
 import process from "node:process";
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ||
