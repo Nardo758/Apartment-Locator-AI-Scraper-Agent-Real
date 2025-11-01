@@ -1413,14 +1413,8 @@ export type Database = {
         Args: { new_data: Json; old_data: Json }
         Returns: boolean
       }
-      rpc_bulk_upsert_properties: {
-        Args: { p_rows: Json }
-        Returns: Json
-      }
-      rpc_bulk_upsert_properties_v2: {
-        Args: { p_rows: Json }
-        Returns: Json
-      }
+      rpc_bulk_upsert_properties: { Args: { p_rows: Json }; Returns: Json }
+      rpc_bulk_upsert_properties_v2: { Args: { p_rows: Json }; Returns: Json }
       rpc_compute_percentile: {
         Args: { p_external_id: string }
         Returns: number
@@ -1496,14 +1490,8 @@ export type Database = {
           state: string
         }[]
       }
-      transform_scraped_to_properties: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      update_days_on_market: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      transform_scraped_to_properties: { Args: never; Returns: number }
+      update_days_on_market: { Args: never; Returns: undefined }
       update_scraping_metrics: {
         Args: {
           p_duration: number
