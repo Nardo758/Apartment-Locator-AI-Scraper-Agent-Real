@@ -1,0 +1,41 @@
+{
+  "components": {
+    "ai-scraper-worker": {
+      "enabled": true,
+      "schedule": "0 2 * * *",
+      "last_run": "2025-11-01T02:55:05.518Z",
+      "run_count": 1
+    },
+    "claude-queue-builder": {
+      "enabled": false,
+      "schedule": "0 1 * * 0",
+      "last_run": null,
+      "run_count": 0
+    },
+    "command-station": {
+      "enabled": true,
+      "schedule": "always",
+      "last_run": null,
+      "run_count": 0
+    },
+    "scraper-orchestrator": {
+      "enabled": false,
+      "schedule": "0 */6 * * *",
+      "last_run": null,
+      "run_count": 0
+    },
+    "scheduled-scraper": {
+      "enabled": false,
+      "schedule": "0 0 * * 0",
+      "last_run": null,
+      "run_count": 0
+    }
+  },
+  "global": {
+    "enabled": true,
+    "max_concurrent_jobs": 5,
+    "daily_cost_limit": 50,
+    "auto_retry": true
+  },
+  "last_updated": "2025-11-01T02:55:05.518Z"
+}
