@@ -17,11 +17,11 @@ import process from "node:process";
     const txt = await res.text();
     try {
       console.log(JSON.parse(txt));
-    } catch (e) {
+    } catch (_e) {
       console.log(txt);
     }
-  } catch (e) {
-    console.error("CALL ERROR", e);
+  } catch (_e) {
+    console.error("CALL ERROR", _e);
     process.exit(1);
   }
 })();
