@@ -1,3 +1,4 @@
+
 # 🎛️ Scraper Control Panel Guide
 
 **Simple Component Management & Scheduling**

@@ -1,0 +1,14 @@
+{
+  "test-property.com": {
+    "learned_at": "2025-10-31T21:16:15.370426",
+    "url": "https://www.test-property.com",
+    "selectors": {
+      "cookie_selector": "button[class*='close']",
+      "floorplan_selector": "a[href*='floorplans']",
+      "price_selector": ".rent-price"
+    },
+    "success_rate": 1.0,
+    "usage_count": 2,
+    "last_used": "2025-10-31T21:26:12.773657"
+  }
+}

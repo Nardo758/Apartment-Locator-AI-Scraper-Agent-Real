@@ -1,3 +1,4 @@
+
 # How The Apartment Scraper System Works
 
 **Complete System Architecture & Data Flow Documentation**
