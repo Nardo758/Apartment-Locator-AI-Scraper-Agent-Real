@@ -1,11 +1,27 @@
-// @ts-ignore - node-fetch import issue
-import fetch from "node-fetch";
 import {
   startMetricsServer,
   stopMetricsServer,
 } from "../src/observability/server";
 
 const PORT = 9999;
+
+// Mock fetch for testing
+const fetch = async (url: string) => {
+  const http = await import('http');
+  return new Promise<{ status: number; text: () => Promise<string>; json: () => Promise<any> }>((resolve, reject) => {
+    http.get(url, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        resolve({
+          status: res.statusCode || 200,
+          text: async () => data,
+          json: async () => JSON.parse(data)
+        });
+      });
+    }).on('error', reject);
+  });
+};
 
 beforeAll(() => {
   startMetricsServer({ port: PORT, enabled: true });

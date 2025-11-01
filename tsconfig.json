@@ -5,34 +5,39 @@
     "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./",
-  "noEmit": true,
+    "noEmit": true,
     "strict": true,
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-  "allowImportingTsExtensions": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true
   },
   "include": [
-    "src/**/*",
     "test-claude-node.ts",
-    "scripts/**/*"
+    "scripts/*.js",
+    "scripts/*.mjs"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
-    "scripts/*_deno.ts",
-    "scripts/validate-config.ts",
-    "scripts/*_deno/**/*.ts",
-    "scripts/preview_weekly_batch_deno.ts",
-    "scripts/preview_weekly_batch_deno.ts",
-    "scripts/**/deno*.ts",
-    "supabase/functions/**",
-    "supabase/**/deno.json"
+    "scripts/**/*.ts",
+    "src/**/*",
+    "supabase/**/*",
+    "agents/**/*",
+    "data/**/*",
+    "database/**/*",
+    "app/**/*",
+    "browser-extension/**/*",
+    "command-station/**/*",
+    "docs/**/*",
+    "tmp/**/*",
+    "types/**/*",
+    "utils/**/*",
+    "__tests__/**/*"
   ]
 }
