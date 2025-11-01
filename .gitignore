@@ -30,7 +30,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-**/__pycache__/
 .Python
 build/
 develop-eggs/
@@ -80,19 +79,9 @@ agents/video_analysis/
 agents/*_scraping_*.json
 agents/*_analysis_*.json
 agents/*_results*.json
-agents/test_templates.json
 
 # Test artifacts
 test_*.html
 test_*.png
 scraped_*.json
 *_preview.json
-test_real_scraper.js
-test_connectivity.js
-
-# Deno lock files
-**/deno.lock
-
-# Local Supabase config (ports may vary)
-# Comment out if you want to commit local port changes
-# supabase/config.toml
