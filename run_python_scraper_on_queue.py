@@ -83,22 +83,78 @@ async def store_rental_data(rental_data_list, source_url):
     if not rental_data_list:
         return False
     
-    # Convert RentalData objects to dict format for database
-    # Use absolute minimum required columns only (schema is unknown)
+    # Convert RentalData objects to match scraped_properties schema
+    # Schema uses: property_id, unit_number, source, current_price, square_feet, bedrooms, bathrooms
     records = []
     for idx, data in enumerate(rental_data_list):
+        timestamp = int(asyncio.get_event_loop().time() * 1000)
+        
+        # Extract property name from URL (domain name)
+        from urllib.parse import urlparse
+        parsed = urlparse(source_url)
+        property_name = parsed.netloc.replace('www.', '').split('.')[0].title()
+        
         record = {
-            'property_id': f'scraped_{int(asyncio.get_event_loop().time() * 1000)}_{idx}',
+            'property_id': f'vision_scraped_{timestamp}',
             'unit_number': getattr(data, 'floorplan_name', 'Unknown'),
             'source': source_url,
+            'name': property_name,  # Required field
+            'address': 'Vision Extracted',  # Required field - placeholder
+            'city': 'Atlanta',  # Required field - we know it's Atlanta from our search
+            'state': 'GA',  # Optional but let's add it too
+            'listing_url': source_url,  # Required field
+            # external_id is generated, don't set it
         }
+        
+        # Add optional fields if they exist
+        has_price = False
+        if hasattr(data, 'monthly_rent') and data.monthly_rent:
+            # Handle price ranges like '$500-$10000' by taking the lower value
+            price_str = str(data.monthly_rent).replace('$', '').replace(',', '').strip()
+            if '-' in price_str:
+                # Take the lower bound of the range
+                price_str = price_str.split('-')[0].strip()
+            try:
+                # Convert to int - current_price column is integer
+                record['current_price'] = int(float(price_str))
+                has_price = True
+            except (ValueError, TypeError):
+                pass
+        
+        # current_price is required - use 0 as placeholder if not found
+        if not has_price:
+            record['current_price'] = 0
+        if hasattr(data, 'sqft') and data.sqft:
+            # Convert to int - schema expects integer
+            try:
+                record['square_feet'] = int(float(data.sqft))
+            except (ValueError, TypeError):
+                pass
+        if hasattr(data, 'bedrooms') and data.bedrooms is not None:
+            try:
+                record['bedrooms'] = int(data.bedrooms)
+            except (ValueError, TypeError):
+                pass
+        if hasattr(data, 'bathrooms') and data.bathrooms is not None:
+            try:
+                # Bathrooms can be decimal (1.5, 2.5, etc.)
+                record['bathrooms'] = int(data.bathrooms) if data.bathrooms == int(data.bathrooms) else float(data.bathrooms)
+            except (ValueError, TypeError):
+                pass
+        
         records.append(record)
     
     try:
+        # Debug: print first record to see what we're sending
+        if records:
+            print(f'   [DEBUG] Sample record: {records[0]}')
+        
         response = supabase.table('scraped_properties').insert(records).execute()
         return True
     except Exception as e:
-        print(f'   [ERROR] Failed to save: {str(e)[:100]}')
+        print(f'   [ERROR] Failed to save: {str(e)}')
+        if records:
+            print(f'   [DEBUG] Attempted record: {records[0]}')
         return False
 
 async def save_to_failed_scrapes(queue_item, error):
