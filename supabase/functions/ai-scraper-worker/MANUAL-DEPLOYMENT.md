@@ -103,7 +103,7 @@ supabase functions list
 
 ```bash
 # Set your Claude API key
-supabase secrets set ANTHROPIC_API_KEY="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"
+supabase secrets set ANTHROPIC_API_KEY="your-anthropic-api-key"
 
 # Set Claude model
 supabase secrets set CLAUDE_MODEL="claude-3-haiku-20240307"

@@ -51,7 +51,7 @@ deployment** with outstanding test results and comprehensive infrastructure.
 
 ```bash
 # 1. Set your environment variables
-export ANTHROPIC_API_KEY="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"
+export ANTHROPIC_API_KEY="your-anthropic-api-key"
 export SUPABASE_PROJECT_REF="your-project-ref"
 
 # 2. Run the deployment script
