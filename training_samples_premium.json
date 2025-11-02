@@ -1,0 +1,364 @@
+{
+  "template_type": "single-property-premium",
+  "total_target_sites": 62,
+  "training_samples": [
+    {
+      "id": 56,
+      "url": "https://www.highrises.com/for-sale/poncey-highland_atlanta_ga",
+      "property_name": "Condos for Sale in Poncey Highland, Atlanta, GA",
+      "domain": "highrises.com",
+      "failure_reason": "failed_to_scrape",
+      "extraction_method": "universal",
+      "attempts": 1,
+      "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+      "status": "pending",
+      "notes": null,
+      "created_at": "2025-11-02T14:29:03.736083+00:00",
+      "updated_at": "2025-11-02T14:29:03.736083+00:00",
+      "reason": "Representative of highrises.com pattern"
+    },
+    {
+      "id": 67,
+      "url": "https://sentral.com/atlanta/west-midtown",
+      "property_name": "West Midtown, Atlanta Apartments for Rent | Sentral",
+      "domain": "sentral.com",
+      "failure_reason": "failed_to_scrape",
+      "extraction_method": "universal",
+      "attempts": 1,
+      "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+      "status": "pending",
+      "notes": null,
+      "created_at": "2025-11-02T14:29:03.736083+00:00",
+      "updated_at": "2025-11-02T14:29:03.736083+00:00",
+      "reason": "Representative of sentral.com pattern"
+    },
+    {
+      "id": 76,
+      "url": "https://www.themitchellatl.com/photogallery",
+      "property_name": "High-Rise Apartments in Atlanta",
+      "domain": "themitchellatl.com",
+      "failure_reason": "failed_to_scrape",
+      "extraction_method": "universal",
+      "attempts": 1,
+      "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+      "status": "pending",
+      "notes": null,
+      "created_at": "2025-11-02T14:29:03.736083+00:00",
+      "updated_at": "2025-11-02T14:29:03.736083+00:00",
+      "reason": "Representative of themitchellatl.com pattern"
+    }
+  ],
+  "all_premium_sites": [
+    {
+      "url": "https://www.linkgrantpark.com/",
+      "domain": "linkgrantpark.com",
+      "property_name": "Link Apartments® Grant Park"
+    },
+    {
+      "url": "https://www.lumenatlanta.com/",
+      "domain": "lumenatlanta.com",
+      "property_name": "Lumen Grant Park | Apartments in Atlanta, GA"
+    },
+    {
+      "url": "https://platformgrantpark.com/",
+      "domain": "platformgrantpark.com",
+      "property_name": "Platform at Grant Park: Atlanta apartments for rent"
+    },
+    {
+      "url": "https://boulevardatgrantpark.com/",
+      "domain": "boulevardatgrantpark.com",
+      "property_name": "The Boulevard at Grant Park: Upscale Apartments in Atlanta"
+    },
+    {
+      "url": "https://smartcitylocating.com/atlanta-apartments/neighborhoods/poncey-highland/",
+      "domain": "smartcitylocating.com",
+      "property_name": "Poncey-Highland"
+    },
+    {
+      "url": "https://www.highrises.com/for-sale/poncey-highland_atlanta_ga",
+      "domain": "highrises.com",
+      "property_name": "Condos for Sale in Poncey Highland, Atlanta, GA"
+    },
+    {
+      "url": "https://www.livestationr.com/",
+      "domain": "livestationr.com",
+      "property_name": "Station R Apartments | Inman Park Apartments in Atlanta, GA"
+    },
+    {
+      "url": "https://www.edgeonthebeltline.com/",
+      "domain": "edgeonthebeltline.com",
+      "property_name": "EDGE on the Beltline: Atlanta, GA Luxury Apartments in ..."
+    },
+    {
+      "url": "https://thegoatfarmatl.com/",
+      "domain": "thegoatfarmatl.com",
+      "property_name": "The Goat Farm: Creative Apartments in West Midtown Atlanta"
+    },
+    {
+      "url": "https://mstreetatlanta.com/",
+      "domain": "mstreetatlanta.com",
+      "property_name": "West Midtown Atlanta Apartments | M Street"
+    },
+    {
+      "url": "https://www.millatwestside.com/",
+      "domain": "millatwestside.com",
+      "property_name": "The Mill at Westside: West Midtown Atlanta, GA Apartments for ..."
+    },
+    {
+      "url": "https://sentral.com/atlanta/west-midtown",
+      "domain": "sentral.com",
+      "property_name": "West Midtown, Atlanta Apartments for Rent | Sentral"
+    },
+    {
+      "url": "https://www.overlineresidences.com/",
+      "domain": "overlineresidences.com",
+      "property_name": "Apartments for Rent in Old Fourth Ward | Overline | Home"
+    },
+    {
+      "url": "https://www.thestonekeygroup.com/bloom-at-virginia-highland",
+      "domain": "thestonekeygroup.com",
+      "property_name": "Bloom at Virginia Highland"
+    },
+    {
+      "url": "https://www.bradenfellmanresidential.com/apartments/ga/atlanta/virginia-highland/",
+      "domain": "bradenfellmanresidential.com",
+      "property_name": "Apartments in Virginia Highland, Atlanta, GA"
+    },
+    {
+      "url": "https://www.mlcprop.com/neighborhood-information-2",
+      "domain": "mlcprop.com",
+      "property_name": "Virginia Highlands"
+    },
+    {
+      "url": "https://www.themitchellatl.com/photogallery",
+      "domain": "themitchellatl.com",
+      "property_name": "High-Rise Apartments in Atlanta"
+    },
+    {
+      "url": "https://www.highrises.com/for-sale/atlanta_ga?highrise=true",
+      "domain": "highrises.com",
+      "property_name": "High-rise Condos in Atlanta, GA"
+    },
+    {
+      "url": "https://www.tollbrothersapartmentliving.com/portfolio/momentum-midtown/",
+      "domain": "tollbrothersapartmentliving.com",
+      "property_name": "Momentum Midtown - Luxury Apartments"
+    },
+    {
+      "url": "https://www.themitchellatl.com/",
+      "domain": "themitchellatl.com",
+      "property_name": "The Mitchell: Apartments in Downtown Atlanta"
+    },
+    {
+      "url": "https://livealtitudeatlanta.com/",
+      "domain": "livealtitudeatlanta.com",
+      "property_name": "Modern Luxury Apartments in Atlanta, GA | Altitude"
+    },
+    {
+      "url": "https://www.atlantadowntown.com/go/city-view",
+      "domain": "atlantadowntown.com",
+      "property_name": "City View Apartments"
+    },
+    {
+      "url": "https://www.simpsonpropertygroup.com/apartments/atlanta-georgia/the-residence-atlanta-buckhead/apartment-floor-plans",
+      "domain": "simpsonpropertygroup.com",
+      "property_name": "Apartment Floor Plans - The Residence Buckhead Atlanta"
+    },
+    {
+      "url": "https://livehanovermidtown.com/",
+      "domain": "livehanovermidtown.com",
+      "property_name": "Hanover Midtown | Luxury High-Rise Apartments in ..."
+    },
+    {
+      "url": "https://www.eloraatbuckhead.com/",
+      "domain": "eloraatbuckhead.com",
+      "property_name": "Elora at Buckhead: Home Page"
+    },
+    {
+      "url": "https://www.liveascentmidtown.com/",
+      "domain": "liveascentmidtown.com",
+      "property_name": "Ascent Midtown: Apartments For Rent In Midtown Atlanta, GA"
+    },
+    {
+      "url": "https://www.thedagnymidtown.com/the-dagny-atlanta-ga",
+      "domain": "thedagnymidtown.com",
+      "property_name": "The Dagny Midtown: Midtown Atlanta Apartments"
+    },
+    {
+      "url": "https://www.thejunipermidtown.com/",
+      "domain": "thejunipermidtown.com",
+      "property_name": "The Juniper & The Reserve | Midtown Atlanta Luxury Apartments"
+    },
+    {
+      "url": "https://www.highrises.com/for-rent/atlanta_ga?luxury=true&page=3",
+      "domain": "highrises.com",
+      "property_name": "Luxury Apartments for Rent in Atlanta, GA"
+    },
+    {
+      "url": "https://www.livebriarcliff.com/atlanta/campus-crossings-briarcliff/student/",
+      "domain": "livebriarcliff.com",
+      "property_name": "Apartments Near Emory University - Campus Crossings Briarcliff"
+    },
+    {
+      "url": "https://www.americancampus.com/student-apartments/ga/atlanta/the-ridge",
+      "domain": "americancampus.com",
+      "property_name": "The Ridge | Emory Graduate Housing | Atlanta, GA"
+    },
+    {
+      "url": "https://emory-point.com/",
+      "domain": "emory-point.com",
+      "property_name": "Emory Point: Atlanta apartments for rent"
+    },
+    {
+      "url": "https://housing.gatech.edu/locations/eighth-street-east",
+      "domain": "housing.gatech.edu",
+      "property_name": "Eighth Street East - Georgia Tech: Student Housing"
+    },
+    {
+      "url": "https://housing.gatech.edu/explore-housing/on-campus-housing",
+      "domain": "housing.gatech.edu",
+      "property_name": "On Campus Housing - Georgia Tech: Student Housing"
+    },
+    {
+      "url": "https://offcampus.housing.gatech.edu/listing",
+      "domain": "offcampus.housing.gatech.edu",
+      "property_name": "Georgia Tech | Off-Campus Housing Marketplace"
+    },
+    {
+      "url": "https://www.homes.com/atlanta-ga/townhouses-for-rent/",
+      "domain": "homes.com",
+      "property_name": "Townhomes for Rent in Atlanta, GA"
+    },
+    {
+      "url": "https://www.live131ponce.com/",
+      "domain": "live131ponce.com",
+      "property_name": "Apartments for Rent in Atlanta, GA | 131 Ponce - Home"
+    },
+    {
+      "url": "https://ascentpeachtree.com/floorplans/one-bedroom-two-bath-with-den/",
+      "domain": "ascentpeachtree.com",
+      "property_name": "One Bedroom Two Bath with Den | Studio, 1, & 2 ..."
+    },
+    {
+      "url": "https://www.theblueground.com/m/furnished-apartments/atlanta-ga-usa/f/bedrooms-studio",
+      "domain": "theblueground.com",
+      "property_name": "Furnished studio apartments for rent in Atlanta, GA"
+    },
+    {
+      "url": "https://www.apartmentadvisor.com/apartments/atlanta-ga/studio",
+      "domain": "apartmentadvisor.com",
+      "property_name": "Atlanta, GA Studio Rentals"
+    },
+    {
+      "url": "https://interimhomes.com/city/atlanta/",
+      "domain": "interimhomes.com",
+      "property_name": "Corporate Housing and Furnished Apartments in Atlanta"
+    },
+    {
+      "url": "https://www.theblueground.com/furnished-apartments-atlanta-ga",
+      "domain": "theblueground.com",
+      "property_name": "Furnished apartments in Atlanta for rent - Blueground"
+    },
+    {
+      "url": "https://www.synergyhousing.com/key-locations/furnished-apartments-atlanta/",
+      "domain": "synergyhousing.com",
+      "property_name": "Furnished Apartments in Atlanta"
+    },
+    {
+      "url": "https://sentral.com/atlanta",
+      "domain": "sentral.com",
+      "property_name": "Furnished & Unfurnished Apartments in Atlanta, GA - Sentral"
+    },
+    {
+      "url": "https://aspirelenoxpark.com/amenities/",
+      "domain": "aspirelenoxpark.com",
+      "property_name": "Amenities | Pet-Friendly Apartments Atlanta, GA"
+    },
+    {
+      "url": "https://www.fultonsupplylofts.com/",
+      "domain": "fultonsupplylofts.com",
+      "property_name": "Fulton Supply Lofts - in Atlanta, GA (Official Site)"
+    },
+    {
+      "url": "https://www.highrises.com/for-sale/atlanta_ga?lofts=true",
+      "domain": "highrises.com",
+      "property_name": "Atlanta, GA Lofts For Sale"
+    },
+    {
+      "url": "https://www.17streetlofts.com/",
+      "domain": "17streetlofts.com",
+      "property_name": "Elevate Your Lifestyle at 17th Street Lofts | In the heart of ..."
+    },
+    {
+      "url": "https://livetheroosevelt.com/",
+      "domain": "livetheroosevelt.com",
+      "property_name": "Atlanta Loft-Style Apartments | Roosevelt"
+    },
+    {
+      "url": "https://beckymorris.com/property-finder/luxury-condos-townhomes-in-atlanta/",
+      "domain": "beckymorris.com",
+      "property_name": "Luxury Condos & Townhomes in Atlanta - Becky Morris"
+    },
+    {
+      "url": "https://www.atlantaskyrise.com/index.php",
+      "domain": "atlantaskyrise.com",
+      "property_name": "atlantaSKYrise | Atlanta Condos for Sale, Atlanta Luxury ..."
+    },
+    {
+      "url": "https://www.jamesedition.com/real_estate/apartment-atlanta-ga-usa",
+      "domain": "jamesedition.com",
+      "property_name": "Luxury Apartments for Sale in Atlanta, Georgia, United States"
+    },
+    {
+      "url": "https://www.aboveatlanta.com/",
+      "domain": "aboveatlanta.com",
+      "property_name": "Atlanta High Rise Condos For Sale or Rent or For Lease in ..."
+    },
+    {
+      "url": "https://atlhomesearch.com/condos/atlanta-condominiums-for-sale-over-1-million/",
+      "domain": "atlhomesearch.com",
+      "property_name": "Atlanta Condominiums for Sale | Luxury Condos Over $1.0 ..."
+    },
+    {
+      "url": "https://www.highrises.com/for-sale/atlanta_ga?luxury=true",
+      "domain": "highrises.com",
+      "property_name": "Luxury Condos in Atlanta, GA"
+    },
+    {
+      "url": "https://www.kinsleyatperimetercenter.com/",
+      "domain": "kinsleyatperimetercenter.com",
+      "property_name": "Perimeter Center Atlanta, GA Apartments for Rent ..."
+    },
+    {
+      "url": "https://venterraliving.com/apartments/tuscany-at-lindbergh/",
+      "domain": "venterraliving.com",
+      "property_name": "Tuscany at Lindbergh - Atlanta"
+    },
+    {
+      "url": "https://www.theloftsatatlanticstation.com/",
+      "domain": "theloftsatatlanticstation.com",
+      "property_name": "The Lofts at Atlantic Station"
+    },
+    {
+      "url": "https://offcampus.housing.gatech.edu/city/atlanta-ga/listing/the-flats-at-atlantic-station-83500",
+      "domain": "offcampus.housing.gatech.edu",
+      "property_name": "The Flats at Atlantic Station | Atlanta GA Apartments For Rent"
+    },
+    {
+      "url": "https://atlanticstation.com/live-work/",
+      "domain": "atlanticstation.com",
+      "property_name": "Live & Work - Atlantic Station"
+    },
+    {
+      "url": "https://livefultoncottonmill.com/",
+      "domain": "livefultoncottonmill.com",
+      "property_name": "Fulton Cotton Mill Lofts: Loft-Style Apartments in Cabbagetown"
+    },
+    {
+      "url": "https://www.glenwoodatgrantpark.com/",
+      "domain": "glenwoodatgrantpark.com",
+      "property_name": "Glenwood at Grant Park Apartments"
+    }
+  ],
+  "selection_date": "2025-11-02T14:58:56.604Z"
+}

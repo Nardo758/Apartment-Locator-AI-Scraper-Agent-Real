@@ -1,0 +1,1158 @@
+{
+  "summary": {
+    "total": 99,
+    "classified": 66,
+    "unclassified": 33,
+    "templates": 4
+  },
+  "classifications": {
+    "single-property-premium": [
+      {
+        "id": 30,
+        "url": "https://www.aboveatlanta.com/",
+        "property_name": "Atlanta High Rise Condos For Sale or Rent or For Lease in ...",
+        "domain": "aboveatlanta.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 22,
+        "url": "https://aspirelenoxpark.com/amenities/",
+        "property_name": "Amenities | Pet-Friendly Apartments Atlanta, GA",
+        "domain": "aspirelenoxpark.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 82,
+        "url": "https://www.atlantadowntown.com/go/city-view",
+        "property_name": "City View Apartments",
+        "domain": "atlantadowntown.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 28,
+        "url": "https://www.atlantaskyrise.com/index.php",
+        "property_name": "atlantaSKYrise | Atlanta Condos for Sale, Atlanta Luxury ...",
+        "domain": "atlantaskyrise.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 47,
+        "url": "https://atlanticstation.com/live-work/",
+        "property_name": "Live & Work - Atlantic Station",
+        "domain": "atlanticstation.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 31,
+        "url": "https://atlhomesearch.com/condos/atlanta-condominiums-for-sale-over-1-million/",
+        "property_name": "Atlanta Condominiums for Sale | Luxury Condos Over $1.0 ...",
+        "domain": "atlhomesearch.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 54,
+        "url": "https://boulevardatgrantpark.com/",
+        "property_name": "The Boulevard at Grant Park: Upscale Apartments in Atlanta",
+        "domain": "boulevardatgrantpark.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 62,
+        "url": "https://www.edgeonthebeltline.com/",
+        "property_name": "EDGE on the Beltline: Atlanta, GA Luxury Apartments in ...",
+        "domain": "edgeonthebeltline.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 93,
+        "url": "https://www.eloraatbuckhead.com/",
+        "property_name": "Elora at Buckhead: Home Page",
+        "domain": "eloraatbuckhead.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 50,
+        "url": "https://www.glenwoodatgrantpark.com/",
+        "property_name": "Glenwood at Grant Park Apartments",
+        "domain": "glenwoodatgrantpark.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 6,
+        "url": "https://housing.gatech.edu/locations/eighth-street-east",
+        "property_name": "Eighth Street East - Georgia Tech: Student Housing",
+        "domain": "housing.gatech.edu",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.541+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 8,
+        "url": "https://housing.gatech.edu/explore-housing/on-campus-housing",
+        "property_name": "On Campus Housing - Georgia Tech: Student Housing",
+        "domain": "housing.gatech.edu",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.541+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 37,
+        "url": "https://www.kinsleyatperimetercenter.com/",
+        "property_name": "Perimeter Center Atlanta, GA Apartments for Rent ...",
+        "domain": "kinsleyatperimetercenter.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 12,
+        "url": "https://www.live131ponce.com/",
+        "property_name": "Apartments for Rent in Atlanta, GA | 131 Ponce - Home",
+        "domain": "live131ponce.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 80,
+        "url": "https://livealtitudeatlanta.com/",
+        "property_name": "Modern Luxury Apartments in Atlanta, GA | Altitude",
+        "domain": "livealtitudeatlanta.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 94,
+        "url": "https://www.liveascentmidtown.com/",
+        "property_name": "Ascent Midtown: Apartments For Rent In Midtown Atlanta, GA",
+        "domain": "liveascentmidtown.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.543+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 1,
+        "url": "https://www.livebriarcliff.com/atlanta/campus-crossings-briarcliff/student/",
+        "property_name": "Apartments Near Emory University - Campus Crossings Briarcliff",
+        "domain": "livebriarcliff.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.538+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 49,
+        "url": "https://livefultoncottonmill.com/",
+        "property_name": "Fulton Cotton Mill Lofts: Loft-Style Apartments in Cabbagetown",
+        "domain": "livefultoncottonmill.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 89,
+        "url": "https://livehanovermidtown.com/",
+        "property_name": "Hanover Midtown | Luxury High-Rise Apartments in ...",
+        "domain": "livehanovermidtown.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 60,
+        "url": "https://www.livestationr.com/",
+        "property_name": "Station R Apartments | Inman Park Apartments in Atlanta, GA",
+        "domain": "livestationr.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 26,
+        "url": "https://livetheroosevelt.com/",
+        "property_name": "Atlanta Loft-Style Apartments | Roosevelt",
+        "domain": "livetheroosevelt.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 52,
+        "url": "https://www.lumenatlanta.com/",
+        "property_name": "Lumen Grant Park | Apartments in Atlanta, GA",
+        "domain": "lumenatlanta.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 66,
+        "url": "https://www.millatwestside.com/",
+        "property_name": "The Mill at Westside: West Midtown Atlanta, GA Apartments for ...",
+        "domain": "millatwestside.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 65,
+        "url": "https://mstreetatlanta.com/",
+        "property_name": "West Midtown Atlanta Apartments | M Street",
+        "domain": "mstreetatlanta.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 9,
+        "url": "https://offcampus.housing.gatech.edu/listing",
+        "property_name": "Georgia Tech | Off-Campus Housing Marketplace",
+        "domain": "offcampus.housing.gatech.edu",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.541+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 43,
+        "url": "https://offcampus.housing.gatech.edu/city/atlanta-ga/listing/the-flats-at-atlantic-station-83500",
+        "property_name": "The Flats at Atlantic Station | Atlanta GA Apartments For Rent",
+        "domain": "offcampus.housing.gatech.edu",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 72,
+        "url": "https://www.overlineresidences.com/",
+        "property_name": "Apartments for Rent in Old Fourth Ward | Overline | Home",
+        "domain": "overlineresidences.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 53,
+        "url": "https://platformgrantpark.com/",
+        "property_name": "Platform at Grant Park: Atlanta apartments for rent",
+        "domain": "platformgrantpark.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 55,
+        "url": "https://smartcitylocating.com/atlanta-apartments/neighborhoods/poncey-highland/",
+        "property_name": "Poncey-Highland",
+        "domain": "smartcitylocating.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 14,
+        "url": "https://www.theblueground.com/m/furnished-apartments/atlanta-ga-usa/f/bedrooms-studio",
+        "property_name": "Furnished studio apartments for rent in Atlanta, GA",
+        "domain": "theblueground.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 18,
+        "url": "https://www.theblueground.com/furnished-apartments-atlanta-ga",
+        "property_name": "Furnished apartments in Atlanta for rent - Blueground",
+        "domain": "theblueground.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 95,
+        "url": "https://www.thedagnymidtown.com/the-dagny-atlanta-ga",
+        "property_name": "The Dagny Midtown: Midtown Atlanta Apartments",
+        "domain": "thedagnymidtown.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.543+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 64,
+        "url": "https://thegoatfarmatl.com/",
+        "property_name": "The Goat Farm: Creative Apartments in West Midtown Atlanta",
+        "domain": "thegoatfarmatl.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 96,
+        "url": "https://www.thejunipermidtown.com/",
+        "property_name": "The Juniper & The Reserve | Midtown Atlanta Luxury Apartments",
+        "domain": "thejunipermidtown.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.543+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 42,
+        "url": "https://www.theloftsatatlanticstation.com/",
+        "property_name": "The Lofts at Atlantic Station",
+        "domain": "theloftsatatlanticstation.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 76,
+        "url": "https://www.themitchellatl.com/photogallery",
+        "property_name": "High-Rise Apartments in Atlanta",
+        "domain": "themitchellatl.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 79,
+        "url": "https://www.themitchellatl.com/",
+        "property_name": "The Mitchell: Apartments in Downtown Atlanta",
+        "domain": "themitchellatl.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 73,
+        "url": "https://www.thestonekeygroup.com/bloom-at-virginia-highland",
+        "property_name": "Bloom at Virginia Highland",
+        "domain": "thestonekeygroup.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 78,
+        "url": "https://www.tollbrothersapartmentliving.com/portfolio/momentum-midtown/",
+        "property_name": "Momentum Midtown - Luxury Apartments",
+        "domain": "tollbrothersapartmentliving.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      }
+    ],
+    "university-housing": [
+      {
+        "id": 3,
+        "url": "https://www.americancampus.com/student-apartments/ga/atlanta/the-ridge",
+        "property_name": "The Ridge | Emory Graduate Housing | Atlanta, GA",
+        "domain": "americancampus.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.541+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 5,
+        "url": "https://offcampushousing.emory.edu/housing",
+        "property_name": "Off-Campus Apartments for Rent near Emory University",
+        "domain": "offcampushousing.emory.edu",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.541+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 17,
+        "url": "https://offcampushousing.emory.edu/housing/neighborhood-Emory%7CDruid+Hills_1h9v987/extras-Furnished",
+        "property_name": "Off-Campus Furnished Apartments for Rent in Emory/Druid ...",
+        "domain": "offcampushousing.emory.edu",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 58,
+        "url": "https://offcampushousing.emory.edu/housing/neighborhood-Poncey--Highland_hxwh4t2",
+        "property_name": "Off-Campus Apartments for Rent in Poncey-Highland",
+        "domain": "offcampushousing.emory.edu",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 7,
+        "url": "https://www.rentcollegepads.com/off-campus-housing/georgia-tech/search",
+        "property_name": "Georgia Tech Off-Campus Housing",
+        "domain": "rentcollegepads.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.541+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 19,
+        "url": "https://www.synergyhousing.com/key-locations/furnished-apartments-atlanta/",
+        "property_name": "Furnished Apartments in Atlanta",
+        "domain": "synergyhousing.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      }
+    ],
+    "property-management-standard": [
+      {
+        "id": 44,
+        "url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-atlantic-station",
+        "property_name": "Luxury Atlantic Station Apartments",
+        "domain": "amli.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 45,
+        "url": "https://www.amli.com/apartments/atlanta/midtown-apartments/amli-atlantic-station/floorplans",
+        "property_name": "Studio & 1-2 Bedroom Apartments | AMLI Atlantic Station",
+        "domain": "amli.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 71,
+        "url": "https://www.amli.com/apartments/atlanta/old-4th-ward-apartments/amli-old-4th-ward",
+        "property_name": "Old Fourth Ward Apartments | AMLI Old 4th Ward",
+        "domain": "amli.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 87,
+        "url": "https://www.amli.com/apartments/atlanta/buckhead-apartments/amli-buckhead",
+        "property_name": "Buckhead Atlanta Apartments",
+        "domain": "amli.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 15,
+        "url": "https://www.apartmentadvisor.com/apartments/atlanta-ga/studio",
+        "property_name": "Atlanta, GA Studio Rentals",
+        "domain": "apartmentadvisor.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 13,
+        "url": "https://ascentpeachtree.com/floorplans/one-bedroom-two-bath-with-den/",
+        "property_name": "One Bedroom Two Bath with Den | Studio, 1, & 2 ...",
+        "domain": "ascentpeachtree.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 36,
+        "url": "https://www.bellperimetercenter.com/",
+        "property_name": "Bell Perimeter Center | Luxury Apartments in Dunwoody",
+        "domain": "bellperimetercenter.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 74,
+        "url": "https://www.bradenfellmanresidential.com/apartments/ga/atlanta/virginia-highland/",
+        "property_name": "Apartments in Virginia Highland, Atlanta, GA",
+        "domain": "bradenfellmanresidential.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 35,
+        "url": "https://cortland.com/apartments/perimeter-circle/",
+        "property_name": "Perimeter Center Apartments | Perimeter Circle",
+        "domain": "cortland.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 59,
+        "url": "https://cortland.com/apartments/cortland-old-fourth-ward/floorplans/inman-park/",
+        "property_name": "Inman Park Floor Plan | Cortland Old Fourth Ward",
+        "domain": "cortland.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 70,
+        "url": "https://cortland.com/apartments/cortland-old-fourth-ward/",
+        "property_name": "Downtown Atlanta Apartments | Cortland Old Fourth Ward",
+        "domain": "cortland.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 92,
+        "url": "https://cortland.com/apartments/cortland-at-buckhead-village/",
+        "property_name": "Buckhead Apartments | Cortland at Buckhead Village",
+        "domain": "cortland.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 85,
+        "url": "https://www.simpsonpropertygroup.com/apartments/atlanta-georgia/the-residence-atlanta-buckhead/apartment-floor-plans",
+        "property_name": "Apartment Floor Plans - The Residence Buckhead Atlanta",
+        "domain": "simpsonpropertygroup.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 39,
+        "url": "https://venterraliving.com/apartments/tuscany-at-lindbergh/",
+        "property_name": "Tuscany at Lindbergh - Atlanta",
+        "domain": "venterraliving.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 63,
+        "url": "https://venterraliving.com/apartments/apex-west-midtown/",
+        "property_name": "Apex West Midtown | Luxury Apartments in Midtown Atlanta ...",
+        "domain": "venterraliving.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      }
+    ],
+    "boutique-builder": [
+      {
+        "id": 24,
+        "url": "https://www.highrises.com/for-sale/atlanta_ga?lofts=true",
+        "property_name": "Atlanta, GA Lofts For Sale",
+        "domain": "highrises.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 32,
+        "url": "https://www.highrises.com/for-sale/atlanta_ga?luxury=true",
+        "property_name": "Luxury Condos in Atlanta, GA",
+        "domain": "highrises.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.552575+00:00",
+        "updated_at": "2025-11-02T14:29:03.552575+00:00"
+      },
+      {
+        "id": 56,
+        "url": "https://www.highrises.com/for-sale/poncey-highland_atlanta_ga",
+        "property_name": "Condos for Sale in Poncey Highland, Atlanta, GA",
+        "domain": "highrises.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 77,
+        "url": "https://www.highrises.com/for-sale/atlanta_ga?highrise=true",
+        "property_name": "High-rise Condos in Atlanta, GA",
+        "domain": "highrises.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 99,
+        "url": "https://www.highrises.com/for-rent/atlanta_ga?luxury=true&page=3",
+        "property_name": "Luxury Apartments for Rent in Atlanta, GA",
+        "domain": "highrises.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.543+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      },
+      {
+        "id": 69,
+        "url": "https://www.windsorcommunities.com/properties/windsor-old-fourth-ward/",
+        "property_name": "Windsor Old Fourth Ward | Atlanta, GA Apartments",
+        "domain": "windsorcommunities.com",
+        "failure_reason": "failed_to_scrape",
+        "extraction_method": "universal",
+        "attempts": 1,
+        "last_attempt_at": "2025-11-02T14:29:02.542+00:00",
+        "status": "pending",
+        "notes": null,
+        "created_at": "2025-11-02T14:29:03.736083+00:00",
+        "updated_at": "2025-11-02T14:29:03.736083+00:00"
+      }
+    ]
+  },
+  "unclassified": [
+    {
+      "domain": "17streetlofts.com",
+      "url": "https://www.17streetlofts.com/"
+    },
+    {
+      "domain": "505courtlandapts.com",
+      "url": "https://505courtlandapts.com/"
+    },
+    {
+      "domain": "675nhighland.com",
+      "url": "https://www.675nhighland.com/"
+    },
+    {
+      "domain": "771lindberghapts.com",
+      "url": "https://www.771lindberghapts.com/"
+    },
+    {
+      "domain": "99westpaces.com",
+      "url": "https://99westpaces.com/"
+    },
+    {
+      "domain": "beckymorris.com",
+      "url": "https://beckymorris.com/property-finder/luxury-condos-townhomes-in-atlanta/"
+    },
+    {
+      "domain": "broadstone2thirty.com",
+      "url": "https://broadstone2thirty.com/"
+    },
+    {
+      "domain": "corelindbergh.com",
+      "url": "https://www.corelindbergh.com/"
+    },
+    {
+      "domain": "elleofbuckhead.com",
+      "url": "https://www.elleofbuckhead.com/"
+    },
+    {
+      "domain": "emory-point.com",
+      "url": "https://emory-point.com/"
+    },
+    {
+      "domain": "farringtonmidtown.com",
+      "url": "https://www.farringtonmidtown.com/"
+    },
+    {
+      "domain": "forrentuniversity.com",
+      "url": "https://www.forrentuniversity.com/Emory-University"
+    },
+    {
+      "domain": "fultonsupplylofts.com",
+      "url": "https://www.fultonsupplylofts.com/"
+    },
+    {
+      "domain": "homes.com",
+      "url": "https://www.homes.com/atlanta-ga/townhouses-for-rent/"
+    },
+    {
+      "domain": "inmanquarter.com",
+      "url": "https://inmanquarter.com/"
+    },
+    {
+      "domain": "interimhomes.com",
+      "url": "https://interimhomes.com/city/atlanta/"
+    },
+    {
+      "domain": "jamesedition.com",
+      "url": "https://www.jamesedition.com/real_estate/apartment-atlanta-ga-usa"
+    },
+    {
+      "domain": "kennett776.com",
+      "url": "https://www.kennett776.com/"
+    },
+    {
+      "domain": "lillimidtown.com",
+      "url": "https://lillimidtown.com/"
+    },
+    {
+      "domain": "linkgrantpark.com",
+      "url": "https://www.linkgrantpark.com/"
+    },
+    {
+      "domain": "marqperimeter.com",
+      "url": "https://www.marqperimeter.com/"
+    },
+    {
+      "domain": "mezzoapartmenthomes.com",
+      "url": "https://www.mezzoapartmenthomes.com/home.html"
+    },
+    {
+      "domain": "mlcprop.com",
+      "url": "https://www.mlcprop.com/neighborhood-information-2"
+    },
+    {
+      "domain": "moderamidtown.com",
+      "url": "https://www.moderamidtown.com/"
+    },
+    {
+      "domain": "mqperimetercenter.com",
+      "url": "https://www.mqperimetercenter.com/"
+    },
+    {
+      "domain": "nine15midtown.com",
+      "url": "https://www.nine15midtown.com/"
+    },
+    {
+      "domain": "novelwestmidtown.com",
+      "url": "https://www.novelwestmidtown.com/"
+    },
+    {
+      "domain": "peninsulabuckhead.com",
+      "url": "https://www.peninsulabuckhead.com/"
+    },
+    {
+      "domain": "piedmonthouseapts.com",
+      "url": "https://piedmonthouseapts.com/"
+    },
+    {
+      "domain": "rtdairies.com",
+      "url": "https://rtdairies.com/"
+    },
+    {
+      "domain": "sentral.com",
+      "url": "https://sentral.com/atlanta"
+    },
+    {
+      "domain": "sentral.com",
+      "url": "https://sentral.com/atlanta/west-midtown"
+    },
+    {
+      "domain": "willowestinlindbergh.com",
+      "url": "https://www.willowestinlindbergh.com/"
+    }
+  ],
+  "templates": {
+    "property-management-standard": {
+      "domains": [
+        "amli.com",
+        "cortland.com",
+        "equity",
+        "bell",
+        "avenue5",
+        "greystar",
+        "lincolnapts"
+      ],
+      "indicators": [
+        "floorplans",
+        "availability",
+        "/apartments/",
+        "resident"
+      ],
+      "description": "Large property management companies with standardized layouts"
+    },
+    "single-property-premium": {
+      "domains": [
+        "live",
+        "the",
+        "at",
+        "residence",
+        "tower",
+        "place"
+      ],
+      "indicators": [
+        "floorplans",
+        "gallery",
+        "amenities",
+        "contact"
+      ],
+      "description": "Individual luxury properties with custom branding"
+    },
+    "university-housing": {
+      "domains": [
+        "housing.",
+        ".edu/",
+        "campus",
+        "student"
+      ],
+      "indicators": [
+        "housing",
+        "student",
+        "dormitory",
+        "residence-hall"
+      ],
+      "description": "University and student housing portals"
+    },
+    "listing-aggregator": {
+      "domains": [
+        "apartments.com",
+        "zillow",
+        "trulia",
+        "realtor",
+        "rentcafe"
+      ],
+      "indicators": [
+        "search",
+        "filter",
+        "results",
+        "listings"
+      ],
+      "description": "Multi-property listing aggregators"
+    },
+    "boutique-builder": {
+      "domains": [
+        "highrises",
+        "luxury",
+        "condos"
+      ],
+      "indicators": [
+        "properties",
+        "search",
+        "listings",
+        "featured"
+      ],
+      "description": "Boutique real estate with property search"
+    }
+  }
+}

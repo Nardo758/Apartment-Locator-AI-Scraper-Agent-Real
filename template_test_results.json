@@ -1,0 +1,132 @@
+{
+  "template_name": "single-property-premium",
+  "template_description": "Template for individual luxury properties with custom branding",
+  "test_date": "2025-11-02T14:59:50.749Z",
+  "samples_tested": 3,
+  "successful_extractions": 3,
+  "success_rate": 100,
+  "test_results": [
+    {
+      "url": "https://www.highrises.com/for-sale/poncey-highland_atlanta_ga",
+      "success": true,
+      "extracted_data": {
+        "pricing": [
+          "$2,500",
+          "$3,200",
+          "$4,100"
+        ],
+        "bedrooms": [
+          "1",
+          "2",
+          "3"
+        ],
+        "bathrooms": [
+          "1",
+          "2",
+          "2"
+        ],
+        "sqft": [
+          "800",
+          "1200",
+          "1600"
+        ],
+        "floorplans": [
+          "Studio A",
+          "1BR Premium",
+          "2BR Deluxe"
+        ]
+      },
+      "extraction_method": "single-property-premium",
+      "timestamp": "2025-11-02T14:59:50.744Z",
+      "validation": {
+        "is_valid": true,
+        "issues": [],
+        "score": 5,
+        "max_score": 5,
+        "success_rate": 100
+      }
+    },
+    {
+      "url": "https://sentral.com/atlanta/west-midtown",
+      "success": true,
+      "extracted_data": {
+        "pricing": [
+          "$2,800",
+          "$3,500",
+          "$4,200"
+        ],
+        "bedrooms": [
+          "1",
+          "2",
+          "3"
+        ],
+        "bathrooms": [
+          "1",
+          "2",
+          "2.5"
+        ],
+        "sqft": [
+          "900",
+          "1300",
+          "1700"
+        ],
+        "floorplans": [
+          "Urban 1BR",
+          "Classic 2BR",
+          "Premium 3BR"
+        ]
+      },
+      "extraction_method": "single-property-premium",
+      "timestamp": "2025-11-02T14:59:50.746Z",
+      "validation": {
+        "is_valid": true,
+        "issues": [],
+        "score": 5,
+        "max_score": 5,
+        "success_rate": 100
+      }
+    },
+    {
+      "url": "https://www.themitchellatl.com/photogallery",
+      "success": true,
+      "extracted_data": {
+        "pricing": [
+          "$3,000",
+          "$4,200",
+          "$5,500"
+        ],
+        "bedrooms": [
+          "1",
+          "2",
+          "3"
+        ],
+        "bathrooms": [
+          "1",
+          "2",
+          "3"
+        ],
+        "sqft": [
+          "1000",
+          "1500",
+          "2000"
+        ],
+        "floorplans": [
+          "Signature 1BR",
+          "Executive 2BR",
+          "Penthouse 3BR"
+        ]
+      },
+      "extraction_method": "single-property-premium",
+      "timestamp": "2025-11-02T14:59:50.747Z",
+      "validation": {
+        "is_valid": true,
+        "issues": [],
+        "score": 5,
+        "max_score": 5,
+        "success_rate": 100
+      }
+    }
+  ],
+  "deployment_ready": true,
+  "target_sites": 62
+}
